@@ -193,6 +193,7 @@ class Mesh(AB):
 
         edges = utils.arr.make_c_contiguous(edges, np.int32)
         self._update_property("edges", edges)
+        self._clear_cached()
 
         if self.edges is not None and len(self._properties) == 2:
             self._update_cached("whatami", "line")
@@ -274,6 +275,7 @@ class Mesh(AB):
 
         faces = utils.arr.make_c_contiguous(faces, np.int32)
         self._update_property("faces", faces)
+        self._clear_cached()
 
         if self.faces is not None and len(self._properties) == 2:
             if self.faces.shape[1] == 3:
@@ -340,6 +342,7 @@ class Mesh(AB):
 
         elements = utils.arr.make_c_contiguous(elements, np.int32)
         self._update_property("faces", elements)
+        self._clear_cached()
 
         if self.elements is not None and len(self._properties) == 2:
             if self.faces.shape[1] == 4:
