@@ -48,6 +48,7 @@ def unique_rows(
         in_arr,
         return_index=True,
         return_inverse=True,
+        return_counts=True,
         dtype_name="int32",
 ):
     """
@@ -58,9 +59,10 @@ def unique_rows(
     Parameters
     -----------
     in_arr: (n, m) 2D array-like
+    return_index: bool
+    return_inverse: bool
+    return_counts: bool
     dtype_name: str
-    **kwargs: **kwargs
-      Keyword arguments for `np.unique()`
 
     Returns
     --------
@@ -81,4 +83,5 @@ def unique_rows(
         in_arr_row_view,
         return_index=return_index,
         return_inverse=return_inverse,
+        return_counts=return_counts,
     )
