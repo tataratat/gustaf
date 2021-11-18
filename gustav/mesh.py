@@ -8,6 +8,7 @@ import os
 import numpy as np
 
 from gustav import utils
+from gustav import settings
 from gustav._abstract_base import AB
 from gustav.utils.errors import InvalidSetterCallError
 
@@ -72,6 +73,8 @@ class Mesh(AB):
         """
         Sends `Mesh` on a journey to fetch an answer to a deep question:
         whatami?
+        On this journey, it also finds its "kind".
+        {"Nothing", "points", "line", ""}
 
         Parameters
         -----------
@@ -84,10 +87,44 @@ class Mesh(AB):
         # whatami is not a property, since mesh only has 2 properties.
         whatami = self._get_cached("whatami")
         if whatami is None:
+            self._update_cached("kind", None)
             return "Nothing"
 
         else:
+            if whatami == "points":
+                self._update_cached("kind", "points")
+
+            elif whatami == "line":
+                self._udpate_cached("kind", "line")
+
+            elif whatami == "tri" or whatami == "quad":
+                self._update_cached("kind", "surface")
+
+            elif whatami == "tet" or whatami == "hexa":
+                self._update_cached("kind", "volume")
+
             return whatami
+
+    @property
+    def kind(self):
+        """
+        Returns its kind. It is one of the followings:
+        {"Nothing", "points", "line", "surface", "volume"}
+
+        Parameters
+        -----------
+        None
+
+        Returns
+        --------
+        kind: str
+        """
+        _ = self.whatami # cheap operation
+        kind = self._get_cached("kind")
+        if kind is None:
+            return "Nothing"
+
+        return kind
 
     @property
     def vertices(self):
@@ -378,6 +415,80 @@ class Mesh(AB):
 
         else:
             raise RuntimeError("Something went wrong during setting faces")
+
+    def _connectivity(self, copy=True):
+        """
+        Smart copied connectivity returner.
+
+        Parameters
+        -----------
+        return_kind: bool
+        copy: bool
+          Default is True
+
+        Returns
+        --------
+        connectivity: (n, 2) or (n, 3) or (n, 4) or (n, 6) np.ndarray
+        kind: str
+        """
+        self._logd("Copying connectivity info")
+        kind = self.kind
+        if kind == "points" or whatami == "Nothing":
+            connectivity = None
+
+        elif kind == "line":
+            connectivity = self.edges.copy()
+
+        elif kind == "surface":
+            connectivity = self.faces.copy()
+
+        elif kind == "volume":
+            connectivity = self.elements.copy()
+
+        else:
+            raise RuntimeError(
+                "Something went wrong during `_connectivity()`, "
+                + "because `kind` is False."
+            )
+
+        return connectivity
+
+    def _reset_connectivity(self, connectivity, inplace=True):
+        """
+        Smart connectivity re-setter.
+        Only works if somesort of connectivity exists.
+
+        Parameters
+        -----------
+        connectivity: 
+        """
+        self._logd("Resetting connectivity")
+        kind = self.kind
+        if kind == "points" or kind == "Nothing":
+            raise ValueError(
+                "Sorry, I can't reset connectivity that does not exist."
+            )
+
+        if inplace:
+            if kind == "line":
+                self.edges = connectivity
+            elif kind == "surface":
+                self.faces = connectivity
+            elif kind == "volume":
+                self.elements = connectivity
+
+            return None
+
+        else:
+            new_mesh = Mesh(vertices=self.vertices.copy())
+            if kind == "line":
+                new_mesh.edges = connectivity
+            elif kind == "surface":
+                new_mesh.faces = connectivity
+            elif kind == "volume":
+                new_mesh.elements = connectivity
+
+            return new_mesh
 
     @property
     def sorted_edges(self):
@@ -688,3 +799,213 @@ class Mesh(AB):
         _ = self.unique_faces # Should compute unique_face_inverses and save it
 
         return self.unique_face_inverses
+
+    @property
+    def bounds(self,):
+        """
+        Returns bounds of the vertices.
+        Not saved.
+
+        Parameters
+        -----------
+        None
+
+        Returns
+        --------
+        bounds: (2, d) np.ndarray
+        """
+        return utils.arr.bounds(self.vertices)
+
+    @property
+    def bounding_box_center(self):
+        """
+        Returns center of the bounding box.
+        Not saved.
+
+        Parameters
+        -----------
+        None
+
+        Returns
+        --------
+        bounding_box_center: (n) np.ndarray
+        """
+        return utils.arr.bounding_box_center(self.ver)
+
+    def bounding_box(self):
+        """
+        Returns bounding box in corresponding dimension.
+        note: use create
+        """
+        pass
+
+    def bounding_sphere(self):
+        """
+        Returns bounding sphere in corresponding dimension
+        note: use create
+        """
+        pass
+
+    @property
+    def bounds_norm(self):
+        pass
+
+    @property
+    def bounding_box_center(self):
+        pass
+
+    def update_vertices(self, mask, inverse=None, inplace=True):
+        """
+        Update vertices with a mask.
+        Adapted from `github.com/mikedh/trimesh`.
+        Inplace operation.
+
+        Parameters
+        -----------
+        mask: (len(self.vertices)) np.ndarray
+          bool or int
+        inverse: (len(self.vertices)) np.ndarray
+          int
+        inplace: bool
+
+        Returns
+        --------
+        new_mesh: Mesh
+          Only returned if inplaces=False
+        """
+        vertices = self.vertices
+        if vertices is None:
+            return None
+
+        vertices = vertices.copy()
+
+        # make sure mask is a numpy array
+        mask = np.asanyarray(mask)
+
+        if (
+            (mask.dtype.name == 'bool' and mask.all())
+            or len(mask) == 0
+        ):
+            # mask doesn't remove any vertices so exit early
+            return None
+
+        # create the inverse mask if not passed
+        if inverse is None:
+            inverse = np.zeros(len(vertices), dtype=np.int64)
+            if mask.dtype.kind == 'b':
+                inverse[mask] = np.arange(mask.sum())
+            elif mask.dtype.kind == 'i':
+                inverse[mask] = np.arange(len(mask))
+            else:
+                inverse = None
+
+        # re-index connectivity from inverse
+        # TODO: preserve BC, maybe. Easier way is to destory it
+        whatami = self.whatami
+        connectivity = None
+        if inverse is not None and whatami != "points":
+            connectivity = self._connectivity(copy=True)
+            connectivity = inverse[connectivity.reshape(-1)].reshape(
+                (-1, connectivity.shape[1])
+            )
+
+        # apply the mask
+        vertices = vertices[mask]
+
+        # update
+        if inplace:
+            self.vertices = vertices
+            if connectivity is not None:
+                self._reset_connectivity(connectivity, inplace=inplace) # True
+                return None
+
+        else:
+            if connectivity is None:
+                return Mesh(vertices=vertices)
+
+            else:
+                new_mesh = self.copy()
+
+                return new_mesh._reset_connectivity(
+                    connectivity,
+                    inplace=inplace, # False
+                )
+
+    def select_vertices(
+            self,
+            method,
+            **kwargs
+    ):
+        pass
+
+    def remove_vertices(self, ids, inplace=True):
+        """
+        Given ids of vertices, remove them.
+        Similar to update_vertices, but inverted version of it.
+
+        Parameters
+        -----------
+        ids: (n,) np.ndarray
+        inplace: bool
+
+        Returns
+        --------
+        new_mesh: Mesh
+          iff `inplace=False`.
+        """
+        # Make mask
+        mask = np.ones(len(self.vertices), dtype=bool)
+        mask[ids] = False
+
+        return self.update_vertices(mask, inplace=inplace)
+
+    def remove_unreferenced_vertices(self, inplace=True):
+        """
+        Remove all the vertices that aren't referenced by connectivity.
+        Adapted from `github.com/mikedh/trimesh`.
+
+        Parameters
+        -----------
+        inplace: bool
+
+        Returns
+        --------
+        new_mesh: Mesh
+         iff `inplace=True`
+        """
+        kind = self.kind
+        # Return if there's no connectivity
+        if kind == "points" or kind == "Nothing":
+            return None
+
+        referenced = np.zeros(len(self.vertices), dtype=bool)
+
+        connectivity = self._connectivity(copy=False)
+        referenced[connectivity] = True
+
+        inverse = np.zeros(len(self.vertices), dtype=np.int64)
+        inverse[referenced] = np.arange(referenced.sum())
+
+        return self.update_vertices(
+            mask=referenced,
+            inverse=inverse,
+            inplace=inplace,
+        )
+
+    def merge_vertices(self, tolerance=settings.TOLERANCE, inplace=True):
+        """
+        """
+        pass
+
+    def update_connectivity():
+        """
+        """
+        pass
+
+    def copy(self):
+        """
+        """
+        new_mesh = Mesh()
+        new_mesh._properties = copy.deepcopy(self._properties)
+        new_mesh._cached = copy.deepcopy(self._cached)
+        return new_mesh
