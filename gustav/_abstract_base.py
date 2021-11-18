@@ -12,6 +12,18 @@ import numpy as np
 from gustav import utils
 
 class AB(abc.ABC):
+    """
+    Abstract (but not really) base class for gustav, where logging and property
+    / cache calls are nicely wrapped. If a class inherits this `AB`, one must
+    declare instance variable `_properties` and `_cached`.
+
+    Purpose of this base functions is to excessively log every action,
+    with a hope that it is easier to debug.
+
+    If you don't find any use of `_cached`, don't declare/use.
+    If you set `_properties = self.__dict__`. It will just act as normal
+    attribute.
+    """
 
     def _logd(self, *log):
         """
@@ -131,7 +143,7 @@ class AB(abc.ABC):
             type(self).__qualname__,
         )
 
-    def _delete_cached(self):
+    def _clear_cached(self):
         """
         Removes cached data by newly assigning dict.
 
@@ -144,6 +156,7 @@ class AB(abc.ABC):
         None
         """
         self._logd(
-            "Removing cached data:",
+            "Clearing cached data:",
             f"{str(self._cached.keys())[10:-1]}"
         )
+        self._cached.clear()
