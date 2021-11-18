@@ -858,7 +858,6 @@ class Mesh(AB):
         """
         Update vertices with a mask.
         Adapted from `github.com/mikedh/trimesh`.
-        Inplace operation.
 
         Parameters
         -----------
@@ -992,13 +991,95 @@ class Mesh(AB):
             inplace=inplace,
         )
 
-    def merge_vertices(self, tolerance=settings.TOLERANCE, inplace=True):
+    def merge_vertices(
+            self,
+            tolerance=settings.TOLERANCE,
+            inplace=True
+    ):
         """
         """
         pass
 
-    def update_connectivity():
+    def update_connectivity(self, mask, inplace=True):
         """
+        Update connectivity with a mask.
+
+        Parameters
+        -----------
+        mask: (n,) np.ndarray
+        inplace: bool
+
+        Returns
+        --------
+        new_mesh: Mesh
+          iff `inplace=True`
+        """
+        new_connectivity = self._connectivity(copy=True)
+        new_connectivity = new_connectivity[mask]
+
+        return self._reset_connectivity(
+            new_connectivity,
+            inplace=inplace
+        ).remove_unreferenced_vertices(inplace=inplace)
+
+    def remove_connectivity(self, ids, inplace=True):
+        """
+        Given ids of connectivity, remove them.
+        Similar to update_connectivity, but inverted version of it.
+
+        Parameters
+        -----------
+        ids: (n,) np.ndarray
+        inplace: bool
+
+        Returns
+        --------
+        new_mesh: Mesh
+          iff `inplace=False`.
+        """
+        # Make mask
+        mask = np.ones(len(self._connectivity(copy=False)), dtype=bool)
+        mask[ids] = False
+
+        return self.update_faces(mask, inplace=inplace)
+
+    @property
+    def connectivity_centers(self):
+        """
+        Returns center of connectivity. In other words, mean of vertices
+        that builds connectivity.
+        This will not be saved.
+
+        Parameters
+        -----------
+        None
+
+        Returns
+        --------
+        connectivity_centers: (n, d) np.ndarray
+        """
+        #connectivity_centers = self._get_cached("connectivity_centers")
+        #if connectivity_centers is not None:
+        #    return connectivity_centers
+
+        connectivity = self._connectivity(copy=False)
+        connectivity_centers = self.vertices[connectivity].mean(axis=1)
+        #self._update_cached("connectivity_centers", connectivity_centers)
+
+        return connectivity_centers
+
+    def select_faces(
+            self,
+            method,
+            **kwargs,
+    ):
+        """
+        """
+        pass
+
+    def subdivide(self):
+        """
+        Subdivides connectivity.
         """
         pass
 
