@@ -65,7 +65,16 @@ def _update_property(property_dict, key, value, log_head):
             )
             property_dict.pop(key)
 
-        return
+        else:
+            log._debug(
+                log_head,
+                "- `None` is given to update property",
+                f"`{key}`,",
+                "which doesn't exist.",
+                "Doing nothing.",
+            )
+
+        return None
 
     if key in property_dict:
         second_phrase = "- updating existing property `" + key + "`"
@@ -141,7 +150,16 @@ def _update_cached(cached_dict, key, value, log_head):
             )
             property_dict.pop(key)
 
-        return
+        else:
+            log._debug(
+                log_head,
+                "- `None` is given to update cached properties",
+                f"`{key}`,",
+                "which doesn't exist.",
+                "Doing nothing.",
+            )
+
+        return None
 
     if key in cached_dict:
         second_phrase = "- updating existing cached property `" + key + "`"
