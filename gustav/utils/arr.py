@@ -44,6 +44,7 @@ def make_c_contiguous(array, dtype=None):
     else:
         return np.ascontiguousarray(array)
 
+
 def unique_rows(
         in_arr,
         return_index=True,
@@ -85,3 +86,69 @@ def unique_rows(
         return_inverse=return_inverse,
         return_counts=return_counts,
     )
+
+
+def bounds(arr):
+    """
+    Return bounds.
+
+    Parameters
+    -----------
+    arr: (n, d) array-like
+
+    Returns
+    --------
+    bounds: (2, d) np.ndarray
+    """
+    return np.vstack(
+        (
+            np.min(a, axis=0).reshape(1, -1),
+            np.max(a, axis=0).reshape(1, -1),
+        )
+    )
+
+
+def bounds_diagonal(arr):
+    """
+    Returns diagonal vector of the bounds.
+    bounds[1] - bounds[0]
+
+    Parameters
+    -----------
+    arr: (n, d) array-like
+
+    Returns
+    --------
+    bounds_diagonal: (n,) np.ndarray
+    """
+    bounds = bounds(arr)
+    return bounds[1] - bounds[0]
+
+
+def bounds_norm(arr):
+    """
+    Returns norm of the bounds.
+
+    Parameters
+    -----------
+    arr: (n, d) array-like
+
+    Returns
+    --------
+    bounds_norm: float
+    """
+    return np.linalg.norm(bounds_diagonal(arr))
+
+def bounds_mean(arr):
+    """
+    Returns mean of the bounds
+
+    Parameters
+    -----------
+    arr: (n, d) array-like
+
+    Returns
+    --------
+    bounds_mean: (n,) array-like
+    """
+    return np.mean(bounds(arr), axis=0)
