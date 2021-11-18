@@ -32,7 +32,7 @@ def _get_property(property_dict, key, log_head):
     else:
         log._debug(
             log_head,
-            " - property `" + key + "` does not exist.",
+            "- property `" + key + "` does not exist.",
             "Retuning `None`."
         )
         return None
@@ -64,6 +64,8 @@ def _update_property(property_dict, key, value, log_head):
                 key
             )
             property_dict.pop(key)
+
+        return
 
     if key in property_dict:
         second_phrase = "- updating existing property `" + key + "`"
@@ -106,7 +108,7 @@ def _get_cached(cached_dict, key, log_head):
     else:
         log._debug(
             log_head,
-            " - `" + key + "` is not one of cached properties.",
+            "- `" + key + "` is not one of cached properties.",
             "Retuning `None`."
         )
         return None
@@ -138,6 +140,8 @@ def _update_cached(cached_dict, key, value, log_head):
                 key
             )
             property_dict.pop(key)
+
+        return
 
     if key in cached_dict:
         second_phrase = "- updating existing cached property `" + key + "`"
