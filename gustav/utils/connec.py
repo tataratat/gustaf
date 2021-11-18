@@ -5,6 +5,8 @@ Named connec because connectivity is too long. Would have been even cooler,
 if it was palindrome.
 """
 
+import numpy as np
+
 def tet_to_tri(elements):
     """
     Computes tri faces based on following index scheme.
@@ -161,7 +163,7 @@ def faces_to_edges(faces):
            
     num_edges = int(num_faces * vertices_per_face)
     edges = np.ones((num_edges, 2), dtype=np.int32) * -1 # -1 for safety
-    edges[:,0] = self._faces.flatten()
+    edges[:,0] = faces.flatten()
 
     for i in range(vertices_per_face):
         # v_ind : corresponding vertex index for i value
@@ -169,10 +171,123 @@ def faces_to_edges(faces):
             v_ind = 0
         else:
             v_ind = i + 1
+
         edges[i::vertices_per_face, 1] = faces[:,v_ind]
 
     # Quick sanity check - No entries are left untouched.
-    if (self._edges == -1).any():
+    if (edges == -1).any():
         raise ValueError("There was an error while computing edges.")
 
     return edges
+
+def subdivide_edges(edges):
+    """
+    Subdivide edges. We assume that mid point is newly added points.
+
+    ``Subdivided Edges``
+
+    .. code-block::
+
+        Edges (Lines)
+
+        Ref: (node_ids), edge_ids
+
+        (0)      (2)      (1)
+         *--------*--------*
+
+        edge_ids | node_ids
+        ---------|----------
+        0        | 0 2
+        1        | 2 1
+
+    Parameters
+    -----------
+    edges: (n, 2) np.ndarray
+
+    Returns
+    --------
+    subd_edges: (n * 2, 2) np.ndarray
+    """
+    if edges.ndim != 2 or edges.shape[1] != 2:
+        raise ValueError("Invalid edges shape!")
+
+    subd_edges = np.ones(
+        (edges.shape[0] * 2, 2)
+    )
+    raise NotImplementedError
+
+def subdivide_tri(faces, unique_edge_inverses):
+    """
+    Subdivide triangles.
+
+    ``Subdivided Faces``
+
+    .. code-block::
+
+        Triangles
+
+        Ref: (node_ind), face_ind
+
+                 (0)
+                 /\ 
+                / 0\ 
+            (3)/____\(5)
+              /\    /\ 
+             / 1\ 3/ 2\ 
+            /____\/____\ 
+          (1)   (4)    (2)
+
+        face_ind | node_ind
+        ---------|----------
+        0        | 0 3 5
+        1        | 1 4 3
+        2        | 2 5 4
+        3        | 3 4 5
+
+    Parameters
+    -----------
+    faces: (n, 3) np.ndarray
+    unique_edge_inverses: (m,) np.ndarray
+
+    Returns
+    --------
+    subd_faces: (n * 4, 3) np.ndarray
+    """
+    if faces.ndim != 2 or faces.shape[1] != 3:
+        raise ValueError("Invalid faces shape!")
+
+    subd_faces = np.ones(
+        (faces.shape[0] * 4, faces.shape[1]),
+        dtype=np.int32,
+    ) * -1
+
+    mask = np.ones(faces.shape[0], dtype=bool)
+    mask[3::4] = False
+
+    subd_faces[mask, 0] = faces.flatten()
+
+    new_vertices_inds = unique_edge_inverse + int(faces.max() + 1)
+    faces[mask, 1] = new_vertices_inds
+    faces[mask, 2] = new_vertices_inds.reshape(-1, 3)[:, [2,0,1]].flatten()
+    faces[~mask, :] = new_vertices_inds.reshape(-1, 3)
+
+    assert (faces != -1).any()
+
+    return faces
+    
+
+def subdivide_quad(faces):
+    """
+    Subdivide quads.
+
+    Parameters
+    -----------
+    faces: (n, 4) np.ndarray
+
+    Returns
+    --------
+    subd_faces: (n * 4, 4) np.ndarray
+    """
+    pass
+
+
