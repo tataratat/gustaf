@@ -8,9 +8,10 @@ import os
 import numpy as np
 
 from gustav import utils
+from gustav._abstract_base import AB
 from gustav.utils.errors import InvalidSetterCallError
 
-class Mesh:
+class Mesh(AB):
 
     def __init__(
             self,
@@ -24,6 +25,8 @@ class Mesh:
         It can be tri, quad, tet, and hexa.
         Even lines and points.
         At any time, it can only have max 2 properties including vertices.
+        Some connectivity information is "cached" and this will be eraised
+        each time one of the connectivity properties is newly set.
 
         Parameters
         -----------
@@ -63,124 +66,6 @@ class Mesh:
         self.faces = faces
         self.elements = elements
         self.edges = edges
-
-    def _logd(self, *log):
-        """
-        Debug logger wrapper for Mesh.
-
-        Parameters
-        -----------
-        *log: *str
-
-        Returns
-        --------
-        None
-        """
-        utils.log._debug("Mesh -", *log)
-
-    def _logi(self, *log):
-        """
-        Info logger wrapper for Mesh.
-
-        Parameters
-        -----------
-        *log: *str
-
-        Returns
-        --------
-        None
-        """
-        utils.log._info("Mesh -", *log)
-
-    def _logw(self, *log):
-        """
-        Warning logger wrapper for Mesh.
-
-        Parameters
-        -----------
-        *log: *str
-
-        Returns
-        --------
-        None
-        """
-        utils.log._warning("Mesh -", *log)
-
-    def _get_property(self, key):
-        """
-        Checks if property is defined with given key.
-
-        Parameters
-        -----------
-        key: str
-
-        Returns
-        --------
-        property: obj or None
-        """
-        return utils._dict._get_property(
-            self._properties,
-            key,
-            "Mesh",
-        )
-
-    def _update_property(self, key, value):
-        """
-        Updates property with given value.
-
-        Parameters
-        -----------
-        key: str
-        value: obj
-
-        Returns
-        --------
-        None
-        """
-        utils._dict._update_property(
-            self._properties,
-            key,
-            value,
-            "Mesh",
-        )
-
-    def _get_cached(self, key):
-        """
-        Checks if obj is cached with given key.
-
-        Parameters
-        -----------
-        key: str
-
-        Returns
-        --------
-        cached_property: obj or None
-        """
-        return utils._dict._get_cached(
-            self._cached,
-            key,
-            "Mesh",
-        )
-
-    def _update_cached(self, key, value):
-        """
-        Updates cached dict with given key and value.
-
-        Parameters
-        -----------
-        key: str
-        value: obj
-
-        Returns
-        --------
-        None
-        """
-        utils._dict._update_cached(
-            self._cached,
-            key,
-            value,
-            "Mesh",
-        )
 
     @property
     def whatami(self):
@@ -232,7 +117,11 @@ class Mesh:
         --------
         None
         """
-        if len(self._properties) >= 2:
+        if (
+            len(self._properties) == 2
+            and self._get_property("vertices") is None
+        ):
+            raise InvalidSetterCallError(self)
 
         vertices = utils.arr.make_c_contiguous(vertices, np.float64)
         self._update_property("vertices", vertices)
@@ -303,7 +192,7 @@ class Mesh:
             raise InvalidSetterCallError(self)
 
         edges = utils.arr.make_c_contiguous(edges, np.int32)
-        self._update_properties("edges", edges)
+        self._update_property("edges", edges)
 
         if self.edges is not None and len(self._properties) == 2:
             self._update_cached("whatami", "line")
@@ -350,12 +239,12 @@ class Mesh:
 
             if self.whatami == "tet" and elements.shape[1] == 4:
                 new_faces = utils.connec.tet_to_tri(elements)
-                self._update_cached("faces") = new_faces
+                self._update_cached("faces", new_faces)
                 return self.faces
 
             elif self.whatami == "hexa" and elements.shape[1] == 6:
                 new_faces = utils.connec.hexa_to_quad(elements)
-                self._update_cached("faces") = new_faces
+                self._update_cached("faces", new_faces)
                 return self.faces
 
         else:
@@ -384,7 +273,7 @@ class Mesh:
             raise InvalidSetterCallError(self)
 
         faces = utils.arr.make_c_contiguous(faces, np.int32)
-        self._update_properties("faces", faces)
+        self._update_property("faces", faces)
 
         if self.faces is not None and len(self._properties) == 2:
             if self.faces.shape[1] == 3:
@@ -450,7 +339,7 @@ class Mesh:
             raise InvalidSetterCallError(self)
 
         elements = utils.arr.make_c_contiguous(elements, np.int32)
-        self._update_properties("faces", elements)
+        self._update_property("faces", elements)
 
         if self.elements is not None and len(self._properties) == 2:
             if self.faces.shape[1] == 4:
