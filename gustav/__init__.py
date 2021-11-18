@@ -1,7 +1,7 @@
 from gustav import _version
 from gustav import mesh
+from gustav import settings
 from gustav.mesh import Mesh
-
 
 __version__ = _version.version
 

@@ -1,4 +1,4 @@
-"""gustav/gustav/global.py
+"""gustav/gustav/settings.py
 
 Global variables/constants that's used throughout `gustav`.
 """
