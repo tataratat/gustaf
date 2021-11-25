@@ -78,7 +78,7 @@ def unique_rows(
             "unique_rows can be only applied for 2D arrays"
         )
 
-    in_arr_row_view = in_arr.view(f"|S%{in_arr.itemsize * in_arr.shape[1]}")
+    in_arr_row_view = in_arr.view(f"|S{in_arr.itemsize * in_arr.shape[1]}")
 
     return np.unique(
         in_arr_row_view,
