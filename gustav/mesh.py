@@ -101,7 +101,7 @@ class Mesh(AB):
                 self._udpate_cached("kind", "line")
 
             elif whatami == "tri" or whatami == "quad":
-                self._update_cached("kind", "surface")
+                self._update_cached("kind", "face")
 
             elif whatami == "tet" or whatami == "hexa":
                 self._update_cached("kind", "volume")
@@ -112,7 +112,7 @@ class Mesh(AB):
     def kind(self):
         """
         Returns its kind. It is one of the followings:
-        {"Nothing", "points", "line", "surface", "volume"}
+        {"Nothing", "points", "line", "face", "volume"}
 
         Parameters
         -----------
@@ -442,7 +442,7 @@ class Mesh(AB):
         elif kind == "line":
             connectivity = self.edges.copy()
 
-        elif kind == "surface":
+        elif kind == "face":
             connectivity = self.faces.copy()
 
         elif kind == "volume":
@@ -475,7 +475,7 @@ class Mesh(AB):
         if inplace:
             if kind == "line":
                 self.edges = connectivity
-            elif kind == "surface":
+            elif kind == "face":
                 self.faces = connectivity
             elif kind == "volume":
                 self.volumes = connectivity
@@ -486,7 +486,7 @@ class Mesh(AB):
             new_mesh = Mesh(vertices=self.vertices.copy())
             if kind == "line":
                 new_mesh.edges = connectivity
-            elif kind == "surface":
+            elif kind == "face":
                 new_mesh.faces = connectivity
             elif kind == "volume":
                 new_mesh.volumes = connectivity
