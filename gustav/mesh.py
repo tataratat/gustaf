@@ -18,7 +18,7 @@ class Mesh(AB):
             self,
             vertices=None,
             faces=None,
-            elements=None,
+            volumes=None,
             edges=None
     ):
         """
@@ -28,6 +28,9 @@ class Mesh(AB):
         At any time, it can only have max 2 properties including vertices.
         Some connectivity information is "cached" and this will be eraised
         each time one of the connectivity properties is newly set.
+        This also implies, that if connectivity and vertices is edited
+        inplace, e.g. mesh.faces[3] = [1,2,3], cached information will not be
+        deleted, but will be inconsistent. 
 
         Parameters
         -----------
@@ -36,7 +39,7 @@ class Mesh(AB):
         faces: (k,l) np.ndarray
           int. `l` is either 3 or 4.
           This is also often referred as cells.
-        elements: (p,q) np.ndarray
+        volumes: (p,q) np.ndarray
           int. `q` is either 4 or 8.
         edges: (u, 2) np.ndarray
           int.
@@ -53,7 +56,7 @@ class Mesh(AB):
         unique_edges: np.ndarray
         outlines: list
         boundary_conditions: dict
-        elements: np.ndarray
+        volumes: np.ndarray
         surfaces: list
         faces_center: np.ndarray
         unique_faces: np.ndarray
@@ -65,7 +68,7 @@ class Mesh(AB):
 
         self.vertices = vertices
         self.faces = faces
-        self.elements = elements
+        self.volumes = volumes
         self.edges = edges
 
     @property
@@ -285,19 +288,19 @@ class Mesh(AB):
             return None
 
         # if "I" am tet or hexa, return either cached or generated faces
-        elements = self.elements
-        if elements is not None:
+        volumes = self.volumes
+        if volumes is not None:
             faces = self._get_cached("faces")
             if faces is not None:
                 return faces
 
-            if self.whatami == "tet" and elements.shape[1] == 4:
-                new_faces = utils.connec.tet_to_tri(elements)
+            if self.whatami == "tet" and volumes.shape[1] == 4:
+                new_faces = utils.connec.tet_to_tri(volumes)
                 self._update_cached("faces", new_faces)
                 return new_faces 
 
-            elif self.whatami == "hexa" and elements.shape[1] == 6:
-                new_faces = utils.connec.hexa_to_quad(elements)
+            elif self.whatami == "hexa" and volumes.shape[1] == 6:
+                new_faces = utils.connec.hexa_to_quad(volumes)
                 self._update_cached("faces", new_faces)
                 return new_faces
 
@@ -354,9 +357,9 @@ class Mesh(AB):
             raise RuntimeError("Something went wrong during setting faces")
 
     @property
-    def elements(self):
+    def volumes(self):
         """
-        Returns elements.
+        Returns volumes.
 
         Parameters
         -----------
@@ -364,19 +367,19 @@ class Mesh(AB):
 
         Returns
         --------
-        elements: (n, d)_ np.ndarray
+        volumes: (n, d)_ np.ndarray
         """
-        # elements is either property or nothing.
-        return self._get_property("elements")
+        # volumes is either property or nothing.
+        return self._get_property("volumes")
 
-    @elements.setter
-    def elements(self, elements):
+    @volumes.setter
+    def volumes(self, volumes):
         """
-        Sets elements.
+        Sets volumes.
 
         Parameters
         -----------
-        elements: (n, d) np.ndarray
+        volumes: (n, d) np.ndarray
 
         Returns
         --------
@@ -389,23 +392,23 @@ class Mesh(AB):
         if len(self._properties) == 1 and self.vertices is None:
             raise InvalidSetterCallError(self)
 
-        self._logd("Setting elements")
-        elements = utils.arr.make_c_contiguous(elements, np.int32)
-        self._update_property("elements", elements)
+        self._logd("Setting volumes")
+        volumes = utils.arr.make_c_contiguous(volumes, np.int32)
+        self._update_property("volumes", volumes)
         self._clear_cached()
 
         # Update whatami
-        new_elements = self.elements
-        if new_elements is not None and len(self._properties) == 2:
-            if new_elements.shape[1] == 4:
+        new_volumes = self.volumes
+        if new_volumes is not None and len(self._properties) == 2:
+            if new_volumes.shape[1] == 4:
                 self._update_cached("whatami", "tet")
                 return None
 
-            elif new_elements.shape[1] == 6:
+            elif new_volumes.shape[1] == 6:
                 self._update_cached("whatami", "hexa")
                 return None
 
-        elif new_elements is None and len(self._properties) == 1:
+        elif new_volumes is None and len(self._properties) == 1:
             self._update_cached("whatami", "points")
             return None
 
@@ -443,7 +446,7 @@ class Mesh(AB):
             connectivity = self.faces.copy()
 
         elif kind == "volume":
-            connectivity = self.elements.copy()
+            connectivity = self.volumes.copy()
 
         else:
             raise RuntimeError(
@@ -475,7 +478,7 @@ class Mesh(AB):
             elif kind == "surface":
                 self.faces = connectivity
             elif kind == "volume":
-                self.elements = connectivity
+                self.volumes = connectivity
 
             return None
 
@@ -486,7 +489,7 @@ class Mesh(AB):
             elif kind == "surface":
                 new_mesh.faces = connectivity
             elif kind == "volume":
-                new_mesh.elements = connectivity
+                new_mesh.volumes = connectivity
 
             return new_mesh
 
@@ -915,7 +918,7 @@ class Mesh(AB):
         if inplace:
             self.vertices = vertices
             if connectivity is not None:
-                self._reset_connectivity(connectivity, inplace=inplace) # True
+                self._reset_connectivity(connectivity, inplace=inplace)
                 return None
 
         else:
@@ -927,7 +930,7 @@ class Mesh(AB):
 
                 return new_mesh._reset_connectivity(
                     connectivity,
-                    inplace=inplace, # False
+                    inplace=inplace,
                 )
 
     def select_vertices(
@@ -1077,9 +1080,13 @@ class Mesh(AB):
         """
         pass
 
-    def subdivide(self):
+    def subdivide(self, inplace=True):
         """
         Subdivides connectivity.
+
+        Parameters
+        -----------
+        None
         """
         pass
 
