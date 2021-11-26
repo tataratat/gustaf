@@ -6,6 +6,41 @@ visualization and more.
 
 import splinelibpy
 
+def _mesh(spline, resolutions):
+    """
+    """
+    pass
+
+def _control_mesh(spline, resolutions):
+    pass
+
+def _knot_lines(spline, resolutions):
+    pass
+
+def _line(spline, resolutions):
+    pass
+
+def _show(
+        spline,
+        control_points=True,
+        control_point_ids=True,
+        control_mesh=False,
+        knots=True,
+        unique_knot_ids=False,
+        resolutions=100,
+        quads=True,
+        show_queries=True,
+        offscreen=False, # <- Implies that it returns plot and objects
+        dashed_line=False,
+        surface_only=True,
+        colorful_elements=False,
+        parametric_space=False,
+        surface_alpha=1,
+        lighting="glossy"
+):
+    pass
+
+
 class Spline(splinelibpy.Spline):
     def __init__(
         self,
