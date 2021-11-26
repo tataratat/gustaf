@@ -7,6 +7,8 @@ if it was palindrome.
 
 import numpy as np
 
+from gustav.utils import arr
+
 def tet_to_tri(volumes):
     """
     Computes tri faces based on following index scheme.
@@ -41,7 +43,7 @@ def tet_to_tri(volumes):
     --------
     faces: (n * 4, 3) np.ndarray
     """
-    volumes = utils.arr.make_c_contiguous(volumes, "int32")
+    volumes = arr.make_c_contiguous(volumes, settings.INT_DTYPE)
 
     if element.shape[1] != 4:
         raise ValueError("Given volumes are not `tet` volumes")
@@ -103,7 +105,7 @@ def hexa_to_quad(volumes):
     --------
     faces: (n * 6, 4) np.ndarray
     """
-    volumes = utils.arr.make_c_contiguous(volumes, "int32")
+    volumes = arr.make_c_contiguous(volumes, settings.INT_DTYPE)
 
     if element.shape[1] != 6:
         raise ValueError("Given volumes are not `hexa` volumes")
@@ -126,6 +128,24 @@ def hexa_to_quad(volumes):
 
     return faces
 
+def volumes_to_faces(volumes):
+    """
+    Guidance function for `tet_to_tri` and `hexa_to_quad`.
+
+    Parameters
+    -----------
+    volumes: (n, 4) or (m, 8) np.ndarray
+
+    Returns
+    --------
+    faces: (n*4, 3) or (m*6, 4) np.ndarray
+    """
+    volumes = arr.make_c_contiguous(volumes, settings.INT_DTYPE)
+    if volumes.shape[1] == 4:
+        return tet_to_tri(volumes)
+
+    elif volumes.shape[1] == 8:
+        return hexa_to_quad(volumes)
 
 def faces_to_edges(faces):
     """
