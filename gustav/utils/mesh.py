@@ -91,7 +91,7 @@ def subdivide_tri(mesh, return_kwargs=False,):
         raise ValueError("Invalid faces shape!")
 
     # Form new vertices
-    edge_mid_v = mesh.vertices[mesh.unique_edges].mean(axis=1)
+    edge_mid_v = mesh.vertices[mesh.edges_unique].mean(axis=1)
     new_vertices = np.vstack((mesh.vertices, edge_mid_v)
 
     subd_faces = np.empty(
@@ -106,7 +106,7 @@ def subdivide_tri(mesh, return_kwargs=False,):
     subd_faces[mask, 0] = mesh.faces.flatten() # copies
 
     # Form ids for new vertices
-    new_vertices_ids = mesh.unique_edge_inverses + int(mesh.faces.max() + 1)
+    new_vertices_ids = mesh.edges_unique_inverse + int(mesh.faces.max() + 1)
     # 1st & 2nd columns
     subd_faces[mask, 1] = new_vertices_ids
     subd_faces[mask, 2] = new_vertices_ids.reshape(-1, 3)[:, [2,0,1]].flatten()
@@ -146,8 +146,8 @@ def subdivide_quad(mesh, return_kwargs=False,):
         raise ValueError("Invalid faces shape!")
 
     # Form new vertices
-    edge_mid_v = mesh.vertices[mesh.unique_edges].mean(axis=1)
-    face_centers = mesh.connectivity_centers
+    edge_mid_v = mesh.vertices[mesh.edges_unique].mean(axis=1)
+    face_centers = mesh.element_centers
     new_vertices = np.vstack(
         (
             mesh.vertices,
@@ -162,7 +162,7 @@ def subdivide_quad(mesh, return_kwargs=False,):
     )
 
     subd_faces[:, 0] = mesh.faces.flatten()
-    subd_faces[:, 1] = mesh.unique_edge_inverses + len(self.vertices)
+    subd_faces[:, 1] = mesh.edges_unique_inverse + len(self.vertices)
     subd_faces[:, 2] = np.repeat(
         np.arange(len(face_centers)) + (len(mesh.vertices) + len(edge_mid_v)),
         4,
