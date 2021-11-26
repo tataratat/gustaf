@@ -26,9 +26,9 @@ class Mesh(AB):
         It can be tri, quad, tet, and hexa.
         Even lines and points.
         At any time, it can only have max 2 properties including vertices.
-        Some connectivity information is "cached" and this will be eraised
-        each time one of the connectivity properties is newly set.
-        This also implies, that if connectivity and vertices is edited
+        Some elements information is "cached" and this will be eraised
+        each time one of the elements properties is newly set.
+        This also implies, that if elements and vertices is edited
         inplace, e.g. mesh.faces[3] = [1,2,3], cached information will not be
         deleted, but will be inconsistent. 
 
@@ -58,7 +58,7 @@ class Mesh(AB):
         boundary_conditions: dict
         volumes: np.ndarray
         surfaces: list
-        faces_center: np.ndarray
+        element_centers: np.ndarray
         unique_faces: np.ndarray
         """
         self._logd("Init")
@@ -157,13 +157,13 @@ class Mesh(AB):
         --------
         None
         """
+        self._logd("Setting vertices.")
         if (
             len(self._properties) == 2
             and self._get_property("vertices") is None
         ):
             raise InvalidSetterCallError(self)
 
-        self._logd("Setting vertices.")
         vertices = utils.arr.make_c_contiguous(vertices, np.float64)
         self._update_property("vertices", vertices)
 
@@ -173,6 +173,7 @@ class Mesh(AB):
 
         elif new_vertices is None:
             self._update_cached("whatami", None)
+        self._logd("End setting vertices.")
 
     @property
     def edges(self):
@@ -230,14 +231,17 @@ class Mesh(AB):
         --------
         None
         """
+        self._logd("Setting edges.")
         if len(self._properties) >= 2:
-            raise InvalidSetterCallError(self)
+            if edges is None:
+                return None
+            else:
+                raise InvalidSetterCallError(self)
 
         # If there are 1 property and it is not vertices, error!
         if len(self._properties) == 1 and self.vertices is None:
             raise InvalidSetterCallError(self)
 
-        self._logd("Setting edges.")
         edges = utils.arr.make_c_contiguous(edges, np.int32)
         self._update_property("edges", edges)
         self._clear_cached()
@@ -260,6 +264,7 @@ class Mesh(AB):
             raise RuntimeError(
                 "Something went wrong while setting edges."
             )
+        self._logd("End setting edges.")
 
     @property
     def faces(self):
@@ -323,7 +328,10 @@ class Mesh(AB):
         None
         """
         if len(self._properties) >= 2:
-            raise InvalidSetterCallError(self)
+            if faes is None:
+                return None
+            else:
+                raise InvalidSetterCallError(self)
 
         # If there are 1 property and it is not vertices, error!
         if len(self._properties) == 1 and self.vertices is None:
@@ -386,7 +394,8 @@ class Mesh(AB):
         None
         """
         if len(self._properties) >= 2:
-            raise InvalidSetterCallError(self)
+            if volumes is not None and self.volumes is None:
+                raise InvalidSetterCallError(self)
 
         # If there are 1 property and it is not vertices, error!
         if len(self._properties) == 1 and self.vertices is None:
@@ -419,9 +428,9 @@ class Mesh(AB):
         else:
             raise RuntimeError("Something went wrong during setting faces")
 
-    def _connectivity(self, copy=True):
+    def _elements(self, copy=True):
         """
-        Smart copied connectivity returner.
+        Smart copied elements returner.
 
         Parameters
         -----------
@@ -431,65 +440,65 @@ class Mesh(AB):
 
         Returns
         --------
-        connectivity: (n, 2) or (n, 3) or (n, 4) or (n, 6) np.ndarray
+        elements: (n, 2) or (n, 3) or (n, 4) or (n, 6) np.ndarray
         kind: str
         """
-        self._logd("Copying connectivity info")
+        self._logd("Copying elements info")
         kind = self.kind
         if kind == "points" or whatami == "Nothing":
-            connectivity = None
+            elements = None
 
         elif kind == "line":
-            connectivity = self.edges.copy()
+            elements = self.edges.copy()
 
         elif kind == "face":
-            connectivity = self.faces.copy()
+            elements = self.faces.copy()
 
         elif kind == "volume":
-            connectivity = self.volumes.copy()
+            elements = self.volumes.copy()
 
         else:
             raise RuntimeError(
-                "Something went wrong during `_connectivity()`, "
+                "Something went wrong during `_elements()`, "
                 + "because `kind` is False."
             )
 
-        return connectivity
+        return elements
 
-    def _reset_connectivity(self, connectivity, inplace=True):
+    def _reset_elements(self, elements, inplace=True):
         """
-        Smart connectivity re-setter.
-        Only works if somesort of connectivity exists.
+        Smart elements re-setter.
+        Only works if somesort of elements exists.
 
         Parameters
         -----------
-        connectivity: 
+        elements: 
         """
-        self._logd("Resetting connectivity")
+        self._logd("Resetting elements")
         kind = self.kind
         if kind == "points" or kind == "Nothing":
             raise ValueError(
-                "Sorry, I can't reset connectivity that does not exist."
+                "Sorry, I can't reset elements that does not exist."
             )
 
         if inplace:
             if kind == "line":
-                self.edges = connectivity
+                self.edges = elements
             elif kind == "face":
-                self.faces = connectivity
+                self.faces = elements
             elif kind == "volume":
-                self.volumes = connectivity
+                self.volumes = elements
 
             return None
 
         else:
             new_mesh = Mesh(vertices=self.vertices.copy())
             if kind == "line":
-                new_mesh.edges = connectivity
+                new_mesh.edges = elements
             elif kind == "face":
-                new_mesh.faces = connectivity
+                new_mesh.faces = elements
             elif kind == "volume":
-                new_mesh.volumes = connectivity
+                new_mesh.volumes = elements
 
             return new_mesh
 
@@ -665,7 +674,7 @@ class Mesh(AB):
         if sorted_faces is not None:
             return sorted_faces
 
-        # If edges is not defined, return 
+        # If faces is not defined, return 
         sorted_faces = self.faces.copy() if self.faces is not None else None
         if sorted_faces is None:
             return None
@@ -901,14 +910,14 @@ class Mesh(AB):
             else:
                 inverse = None
 
-        # re-index connectivity from inverse
+        # re-index elements from inverse
         # TODO: preserve BC, maybe. Easier way is to destory it
         whatami = self.whatami
-        connectivity = None
+        elements = None
         if inverse is not None and whatami != "points":
-            connectivity = self._connectivity(copy=True)
-            connectivity = inverse[connectivity.reshape(-1)].reshape(
-                (-1, connectivity.shape[1])
+            elements = self._elements(copy=True)
+            elements = inverse[elements.reshape(-1)].reshape(
+                (-1, elements.shape[1])
             )
 
         # apply the mask
@@ -917,19 +926,19 @@ class Mesh(AB):
         # update
         if inplace:
             self.vertices = vertices
-            if connectivity is not None:
-                self._reset_connectivity(connectivity, inplace=inplace)
+            if elements is not None:
+                self._reset_elements(elements, inplace=inplace)
                 return None
 
         else:
-            if connectivity is None:
+            if elements is None:
                 return Mesh(vertices=vertices)
 
             else:
                 new_mesh = self.copy()
 
-                return new_mesh._reset_connectivity(
-                    connectivity,
+                return new_mesh._reset_elements(
+                    elements,
                     inplace=inplace,
                 )
 
@@ -963,7 +972,7 @@ class Mesh(AB):
 
     def remove_unreferenced_vertices(self, inplace=True):
         """
-        Remove all the vertices that aren't referenced by connectivity.
+        Remove all the vertices that aren't referenced by elements.
         Adapted from `github.com/mikedh/trimesh`.
 
         Parameters
@@ -976,14 +985,14 @@ class Mesh(AB):
          iff `inplace=True`
         """
         kind = self.kind
-        # Return if there's no connectivity
+        # Return if there's no elements
         if kind == "points" or kind == "Nothing":
             return None
 
         referenced = np.zeros(len(self.vertices), dtype=bool)
 
-        connectivity = self._connectivity(copy=False)
-        referenced[connectivity] = True
+        elements = self._elements(copy=False)
+        referenced[elements] = True
 
         inverse = np.zeros(len(self.vertices), dtype=np.int64)
         inverse[referenced] = np.arange(referenced.sum())
@@ -1003,9 +1012,9 @@ class Mesh(AB):
         """
         pass
 
-    def update_connectivity(self, mask, inplace=True):
+    def update_elements(self, mask, inplace=True):
         """
-        Update connectivity with a mask.
+        Update elements with a mask.
 
         Parameters
         -----------
@@ -1017,18 +1026,18 @@ class Mesh(AB):
         new_mesh: Mesh
           iff `inplace=True`
         """
-        new_connectivity = self._connectivity(copy=True)
-        new_connectivity = new_connectivity[mask]
+        new_elements = self._elements(copy=True)
+        new_elements = new_elements[mask]
 
-        return self._reset_connectivity(
-            new_connectivity,
+        return self._reset_elements(
+            new_elements,
             inplace=inplace
         ).remove_unreferenced_vertices(inplace=inplace)
 
-    def remove_connectivity(self, ids, inplace=True):
+    def remove_elements(self, ids, inplace=True):
         """
-        Given ids of connectivity, remove them.
-        Similar to update_connectivity, but inverted version of it.
+        Given ids of elements, remove them.
+        Similar to update_elements, but inverted version of it.
 
         Parameters
         -----------
@@ -1041,16 +1050,16 @@ class Mesh(AB):
           iff `inplace=False`.
         """
         # Make mask
-        mask = np.ones(len(self._connectivity(copy=False)), dtype=bool)
+        mask = np.ones(len(self._elements(copy=False)), dtype=bool)
         mask[ids] = False
 
         return self.update_faces(mask, inplace=inplace)
 
     @property
-    def connectivity_centers(self):
+    def element_centers(self):
         """
-        Returns center of connectivity. In other words, mean of vertices
-        that builds connectivity.
+        Returns center of elements. In other words, mean of vertices
+        that builds elements.
         This will not be saved.
 
         Parameters
@@ -1059,19 +1068,19 @@ class Mesh(AB):
 
         Returns
         --------
-        connectivity_centers: (n, d) np.ndarray
+        elements_centers: (n, d) np.ndarray
         """
-        #connectivity_centers = self._get_cached("connectivity_centers")
-        #if connectivity_centers is not None:
-        #    return connectivity_centers
+        #elements_centers = self._get_cached("elements_centers")
+        #if elements_centers is not None:
+        #    return elements_centers
 
-        connectivity = self._connectivity(copy=False)
-        connectivity_centers = self.vertices[connectivity].mean(axis=1)
-        #self._update_cached("connectivity_centers", connectivity_centers)
+        elements = self._elements(copy=False)
+        elements_centers = self.vertices[elements].mean(axis=1)
+        #self._update_cached("elements_centers", elements_centers)
 
-        return connectivity_centers
+        return elements_centers
 
-    def select_faces(
+    def select_elements(
             self,
             method,
             **kwargs,
@@ -1082,7 +1091,7 @@ class Mesh(AB):
 
     def subdivide(self, inplace=True):
         """
-        Subdivides connectivity.
+        Subdivides elements.
 
         Parameters
         -----------
