@@ -13,17 +13,27 @@ from gustav import utils
 
 class AB(abc.ABC):
     """
-    Abstract (but not really) base class for gustav, where logging and property
-    / cache calls are nicely wrapped. If a class inherits this `AB`, one must
-    declare instance variable `_properties` and `_cached`.
+    Abstract (but not really) base class for gustav, where logging is nicely
+    wrapped.
 
-    Purpose of this base functions is to excessively log every action,
-    with a hope that it is easier to debug.
+    All the classes are expected to have __slots__.
+    In this version, the idea of setter, getter and cached is disregarded.
 
-    If you don't find any use of `_cached`, don't declare/use.
-    If you set `_properties = self.__dict__`. It will just act as normal
-    attribute.
+    If some values are going to be used more than once, save it by yourself.
+
+    Since attributes are predefined with __slots__, we can pre define
+    all the properties that could have been cached.
+    Although leading underscore indicates internal use, feel free to grab it
+    it you know that you have no inplace changes.
+    One magic call `process` will make all these values available.
+
+    Other more complex operations will be a separate function.
     """
+
+    __slots__ = [
+        "whatami",
+        "kind",
+    ]
 
     def _logd(self, *log):
         """
@@ -66,97 +76,3 @@ class AB(abc.ABC):
         None
         """
         utils.log._warning(type(self).__qualname__, "-", *log)
-
-    def _get_property(self, key):
-        """
-        Checks if property is defined with given key.
-
-        Parameters
-        -----------
-        key: str
-
-        Returns
-        --------
-        property: obj or None
-        """
-        return utils._dict._get_property(
-            self._properties,
-            key,
-            type(self).__qualname__,
-        )
-
-    def _update_property(self, key, value):
-        """
-        Updates property with given value.
-
-        Parameters
-        -----------
-        key: str
-        value: obj
-
-        Returns
-        --------
-        None
-        """
-        utils._dict._update_property(
-            self._properties,
-            key,
-            value,
-            type(self).__qualname__,
-        )
-
-    def _get_cached(self, key):
-        """
-        Checks if obj is cached with given key.
-
-        Parameters
-        -----------
-        key: str
-
-        Returns
-        --------
-        cached_property: obj or None
-        """
-        return utils._dict._get_cached(
-            self._cached,
-            key,
-            type(self).__qualname__,
-        )
-
-    def _update_cached(self, key, value):
-        """
-        Updates cached dict with given key and value.
-
-        Parameters
-        -----------
-        key: str
-        value: obj
-
-        Returns
-        --------
-        None
-        """
-        utils._dict._update_cached(
-            self._cached,
-            key,
-            value,
-            type(self).__qualname__,
-        )
-
-    def _clear_cached(self):
-        """
-        Removes cached data by newly assigning dict.
-
-        Parameters
-        -----------
-        None
-
-        Returns
-        --------
-        None
-        """
-        self._logd(
-            "Clearing cached data:",
-            f"{str(self._cached.keys())[10:-1]}"
-        )
-        self._cached.clear()
