@@ -59,7 +59,20 @@ class Vertices(AB):
             self.vertices,
             settings.FLOAT_DTYPE
         )
-        pass
+
+        if (
+            vertices_unqiue
+            or vertices_unique_id
+            or vertices_unique_inverse
+            or force_process
+        ):
+            self.vertices_unique()
+
+        if bounbds or force_process:
+            self.bounds()
+
+        if centers or force_process:
+            self.centers()
 
     def elements(self, elements=None, **processkwargs):
         """
