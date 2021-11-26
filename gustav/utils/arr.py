@@ -152,3 +152,44 @@ def bounds_mean(arr):
     bounds_mean: (n,) array-like
     """
     return np.mean(bounds(arr), axis=0)
+
+def select_with_ranges(arr, ranges):
+    """
+    Select array with ranges of each column.
+    Always parsed as:
+    [[greater_than, less_than], [....], ...]
+
+    Parameters
+    -----------
+    ranges: (d, 2) array-like
+      Takes None.
+
+    Returns
+    --------
+    ids: (n,) np.ndarray
+    """
+    masks = []
+    for i, r in enumerate(ranges):
+        if r is None:
+            continue
+
+        else:
+            lower = arr[:, i] > r[0]
+            upper = arr[:, i] < r[1]
+            if r[1] > r[0]:
+                masks.append(np.logical_and(lower, upper))
+            else:
+                masks.append(np.logical_or(lower, upper))
+
+    if len(masks) > 1:
+        mask = np.zeros(arr.shape[0], dtype=bool)
+        for i, m in enumerate(masks):
+            if i == 0:
+                mask = np.logical_or(mask, m)
+            else:
+                mask = np.logical_and(mask, m)
+
+    else:
+        mask = masks[0]
+
+    return np.arange(arr.shape[0])[mask]
