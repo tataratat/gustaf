@@ -22,23 +22,27 @@ class Faces(Edges):
             vertices=None,
             faces=None,
             elements=None,
+            process=False,
     ):
-
+        super().__init__(vertices)
         if vertices is not None:
-            self.vertices = utils.make_c_contiguous(
+            self.vertices = utils.arr.make_c_contiguous(
                 vertices,
                 settings.FLOAT_DTYPE
             )
 
         if faces is not None:
-            self.faces = utils.make_c_contiguous(faces, settings.INT_DTYPE)
-            self.edges()
+            self.faces = utils.arr.make_c_contiguous(faces, settings.INT_DTYPE)
         elif elements is not None:
-            self.faces = utils.make_c_contiguous(elements, settings.INT_DTYPE)
-            self.edges()
+            self.faces = utils.arr.make_c_contiguous(
+                elements,
+                settings.INT_DTYPE
+            )
 
         self.whatami = "faces"
         self.kind = "face"
+
+        self.process(process)
 
     def process(
             self,
@@ -53,7 +57,7 @@ class Faces(Edges):
     ):
         pass
 
-    def edges(self,):
+    def get_edges(self,):
         """
         Generates edges based on faces and returns.
 
@@ -177,5 +181,8 @@ class Faces(Edges):
         """
         raise NotImplementedError
 
-    # alias
-    update_faces = self.update_elements
+    def update_faces(self, *args, **kwargs):
+        """
+        Alias to update_elements.
+        """
+        self.update_elements(*args, **kwargs)

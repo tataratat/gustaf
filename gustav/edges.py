@@ -18,6 +18,7 @@ class Edges(Vertices):
         "_edges_unique_id",
         "_edges_unique_inverse",
         "_edges_unique_count",
+        "_outlines"
     ]
 
     def __init__(
@@ -26,16 +27,16 @@ class Edges(Vertices):
             edges=None,
             elements=None,
     ):
-        if self.vertices is not None:
-            self.vertices = utils.make_c_contiguous(
+        if vertices is not None:
+            self.vertices = utils.arr.make_c_contiguous(
                 vertices,
-                settings.FLOATS_DTYPE
+                settings.FLOAT_DTYPE
             )
 
         if edges is not None:
-            self.edges = utils.make_c_contiguous(edges, settings.INT_DTYPE)
+            self.edges = utils.arr.make_c_contiguous(edges, settings.INT_DTYPE)
         elif elements is not None:
-            self.edges = utils.make_c_contiguous(
+            self.edges = utils.arr.make_c_contiguous(
                 elements,
                 settings.INT_DTYPE
             )
@@ -66,7 +67,7 @@ class Edges(Vertices):
         --------
         edges_sorted: (n_edges, 2) np.ndarray
         """
-        self.edges = utils.make_c_contiguous(
+        self.edges = utils.arr.make_c_contiguous(
             self.edges,
             settings.INT_DTYPE,
         )
@@ -97,10 +98,10 @@ class Edges(Vertices):
 
         # unpack
         self._edges_unique = unique_stuff[0]
-        self._edges_unique_ids = unique_stuff[1]
+        self._edges_unique_id = unique_stuff[1]
         self._edges_unique_inverse = unique_stuff[2]
         self._edges_unique_count = unique_stuff[3]
-        self._outlines = self._edges_unique_ids[self._edges_unique_count == 1]
+        self._outlines = self._edges_unique_id[self._edges_unique_count == 1]
 
         return self._edges_unique
 
@@ -157,7 +158,7 @@ class Edges(Vertices):
 
         return self._outlines
 
-    def update_elememts(self, mask, inplace=True):
+    def update_elements(self, mask, inplace=True):
         """
         Similar to update_vertices, but for elements.
 
@@ -183,10 +184,14 @@ class Edges(Vertices):
                 elements=new_elements
             ).remove_unreferrenced_vertices(inplace=True)
 
-    # alias
-    update_edges = self.update_elements
+    def update_edges(self, *args, **kwargs):
+        """
+        Alias to update_elements.
+        """
+        self.update_elements(*args, **kwargs)
 
     def subdivide(self):
         """
         """
         pass
+
