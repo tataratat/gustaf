@@ -7,6 +7,7 @@ if it was palindrome.
 
 import numpy as np
 
+from gustav import settings
 from gustav.utils import arr
 
 def tet_to_tri(volumes):
@@ -45,7 +46,7 @@ def tet_to_tri(volumes):
     """
     volumes = arr.make_c_contiguous(volumes, settings.INT_DTYPE)
 
-    if element.shape[1] != 4:
+    if volumes.shape[1] != 4:
         raise ValueError("Given volumes are not `tet` volumes")
 
     fpe = 4 # faces per element
@@ -99,15 +100,15 @@ def hexa_to_quad(volumes):
 
     Parameters
     -----------
-    volumes: (n, 6) np.ndarray
+    volumes: (n, 8) np.ndarray
 
     Returns
     --------
-    faces: (n * 6, 4) np.ndarray
+    faces: (n * 8, 4) np.ndarray
     """
     volumes = arr.make_c_contiguous(volumes, settings.INT_DTYPE)
 
-    if element.shape[1] != 6:
+    if volumes.shape[1] != 8:
         raise ValueError("Given volumes are not `hexa` volumes")
 
     fpe = 6 # faces per element
