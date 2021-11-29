@@ -4,7 +4,7 @@ Vertices. Base of all "Mesh" geometries.
 """
 
 from gustav import settings
-from gustav._abstact_base import AB
+from gustav._abstract_base import AB
 
 class Vertices(AB):
 
@@ -19,7 +19,7 @@ class Vertices(AB):
 
     def __init__(
             self,
-            vertices,
+            vertices=None,
     ):
         """
         Vertices. It has vertices.
@@ -32,7 +32,11 @@ class Vertices(AB):
         --------
         None
         """
-        self.vertices = utils.make_c_contiguous(vertices, settings.FLOAT_DTYPE)
+        if vertices is not None:
+            self.vertices = utils.arr.make_c_contiguous(
+                vertices,
+                settings.FLOAT_DTYPE
+            )
         self.whatami = "vertices"
         self.kind = "vertex"
 
@@ -172,7 +176,7 @@ class Vertices(AB):
 
         return self._centers
 
-    def clear(self):
+#    def clear(self):
         """
         Clear all properties.
 
@@ -184,12 +188,12 @@ class Vertices(AB):
         --------
         None
         """
-        self._logd("clearning attributes")
-        for s in self.__slots__:
-            if hasattr(self, s):
-                delattr(self, s)
+#        self._logd("clearning attributes")
+#        for s in self.__slots__:
+#            if hasattr(self, s):
+#                delattr(self, s)
 
-        self._logd("all attributes are cleared!")
+#        self._logd("all attributes are cleared!")
 
     def update_vertices(self, mask, inverse=None, inplace=True):
         """
