@@ -7,14 +7,16 @@ from gustav.edges import Edges
 
 class Faces(Edges):
 
+    kind = "face"
+
     __slots__ = [
         "faces",
-        "_faces_sorted",
-        "_faces_unique",
-        "_faces_unique_id",
-        "_faces_unique_inverse",
-        "_faces_unique_count",
-        "_surfaces",
+        "faces_sorted",
+        "faces_unique",
+        "faces_unique_id",
+        "faces_unique_inverse",
+        "faces_unique_count",
+        "surfaces",
     ]
 
     def __init__(
@@ -24,7 +26,6 @@ class Faces(Edges):
             elements=None,
             process=False,
     ):
-        super().__init__(vertices)
         if vertices is not None:
             self.vertices = utils.arr.make_c_contiguous(
                 vertices,
@@ -40,7 +41,6 @@ class Faces(Edges):
             )
 
         self.whatami = "faces"
-        self.kind = "face"
 
         self.process(process)
 
@@ -57,7 +57,31 @@ class Faces(Edges):
     ):
         pass
 
-    def get_edges(self,):
+    def get_whatami(self,):
+        """
+        Determines whatami.
+
+        Parameters
+        -----------
+        None
+
+        Returns
+        --------
+        None
+        """
+        if self.faces.shape[1] == 3:
+            self.whatami = "tri"
+        elif self.faces.shape[1] == 4:
+            self.whatami = "quad"
+        else:
+            raise ValueError(
+                "I have invalid faces array shape. It should be (n, 3) or "
+                + "(n, 4), but I have: " + self.faces.shape
+            )
+
+        return self.whatami
+
+    def get_faces(self,):
         """
         Generates edges based on faces and returns.
 
@@ -69,10 +93,28 @@ class Faces(Edges):
         --------
         None
         """
-        self.edges = utils.connec.faces_to_edges(self.faces)
-        return self.edges
+        if self.kind == "faces":
+            self.faces = utils.arr.make_c_contiguous(
+                self.edges,
+                settings.INT_DTYPE,
+            )
 
-    def faces_sorted(self):
+            return self.faces
+
+        if hasattr(self, "volumes"):
+            whatami = self.get_whatami()
+            if whatami.startswith("tet"):
+                self.faces = utils.connec.tet_to_tri(self.volumes)
+            elif whatami.startswith("hexa"):
+                self.faces = utils.connec.hexa_to_quad(self.volumes)
+
+            return self.faces
+
+        # Shouldn't reach this point, but in case it dooes
+        self._logd("cannot compute/return faces.")
+        return None
+
+    def get_faces_sorted(self):
         """
         Similar to edges_sorted but for faces.
 
@@ -84,16 +126,12 @@ class Faces(Edges):
         --------
         faces_sorted: (self.faces.shape) np.ndarray
         """
-        self.faces = utils.make_c_contigus(
-            self.faces,
-            settings.INT_DTYPE,
-        )
-        self._faces_sorted = self.faces.copy()
-        self._faces_sorted.sort(axis=1)
+        self.faces_sorted = self.get_faces().copy()
+        self.faces_sorted.sort(axis=1)
 
-        return self._faces_sorted
+        return self.faces_sorted
 
-    def faces_unique(self):
+    def get_faces_unique(self):
         """
         Similar to edges_unique but for faces.
 
@@ -114,15 +152,15 @@ class Faces(Edges):
         )
 
         # unpack
-        self._faces_unique = unique_stuff[0]
-        self._faces_unique_id = unique_stuff[1]
-        self._faces_unique_inverse = unique_stuff[2]
-        self._faces_unique_count = unique_stuff[3]
-        self._surfaces = self._faces_unique_ids[self._faces_unique_count == 1]
+        self.faces_unique = unique_stuff[0]
+        self.faces_unique_id = unique_stuff[1]
+        self.faces_unique_inverse = unique_stuff[2]
+        self.faces_unique_count = unique_stuff[3]
+        self.surfaces = self.faces_unique_ids[self.faces_unique_count == 1]
 
-        return self._faces_unique
+        return self.faces_unique
 
-    def faces_unique_id(self):
+    def get_faces_unique_id(self):
         """
         Similar to edges_unique_id but for faces.
 
@@ -136,9 +174,9 @@ class Faces(Edges):
         """
         _ = self.faces_unique()
 
-        return self._faces_unique_id
+        return self.faces_unique_id
 
-    def faces_unique_inverse(self,):
+    def get_faces_unique_inverse(self,):
         """
         Similar to edges_unique_inverse but for faces.
 
@@ -152,9 +190,9 @@ class Faces(Edges):
         """
         _ = self.faces_unique()
 
-        return self._faces_unique_inverse
+        return self.faces_unique_inverse
 
-    def surfaces(self,):
+    def get_surfaces(self,):
         """
         Returns indices of very unique faces: faces that appear only once.
         For well constructed faces, this can be considred as surfaces.
@@ -169,7 +207,7 @@ class Faces(Edges):
         """
         _ = self.faces_unique()
 
-        return self._surfaces
+        return self.surfaces
 
     def update_edges(self):
         """

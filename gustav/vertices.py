@@ -8,13 +8,15 @@ from gustav._abstract_base import AB
 
 class Vertices(AB):
 
+    kind = "vertex"
+
     __slots__ = [
         "vertices",
-        "_vertices_unique",
-        "_vertices_unique_id",
-        "_vertices_unique_inverse",
-        "_bounds",
-        "_centers",
+        "vertices_unique",
+        "vertices_unique_id",
+        "vertices_unique_inverse",
+        "bounds",
+        "centers",
     ]
 
     def __init__(
@@ -38,16 +40,15 @@ class Vertices(AB):
                 settings.FLOAT_DTYPE
             )
         self.whatami = "vertices"
-        self.kind = "vertex"
 
     def process(
             self,
-            vetices_unique=True,
-            vertices_unique_id=True,
-            vertices_unique_inverse=True,
-            bounds=True,
-            centers=True,
-            force_process=True,
+            vetices_unique=False,
+            vertices_unique_id=False,
+            vertices_unique_inverse=False,
+            bounds=False,
+            centers=False,
+            everything=False,
     ):
         """
         Returns unique vertices.
@@ -68,17 +69,17 @@ class Vertices(AB):
             vertices_unqiue
             or vertices_unique_id
             or vertices_unique_inverse
-            or force_process
+            or everything
         ):
             self.vertices_unique()
 
-        if bounbds or force_process:
+        if bounbds or everything:
             self.bounds()
 
-        if centers or force_process:
+        if centers or everything:
             self.centers()
 
-    def elements(self, elements=None, **processkwargs):
+    def elements(self, elements=None):
         """
         Returns current elements.
         Elements mean different things for different classes:
@@ -96,28 +97,26 @@ class Vertices(AB):
 
         Returns
         --------
-        None
+        elements: (n, d) np.ndarray
+          iff elements=None
         """
         if hasattr(self, "volumes"):
             if elements is None:
                 return self.volumes
             else:
                 self.volumes = elements
-                self.process(**processkwargs)
 
         elif hasattr(self, "faces"):
             if elements is None:
                 return self.faces
             else:
                 self.faces = elements
-                self.process(**processkwargs)
 
         elif hasattr(self, "edges"):
             if elements is None:
                 return self.edges
             else:
                 self.edges = elements
-                self.process(**processkwargs)
 
         elif hasattr(self, "vertices"):
             return np.arange(
@@ -128,23 +127,23 @@ class Vertices(AB):
         else:
             return None
 
-    def vertices_unique(self):
+    def get_vertices_unique(self):
         """
         jjcpp unique
         """
         pass
 
-    def vertices_unique_id(self):
+    def get_vertices_unique_id(self):
         """
         """
         pass
 
-    def vertices_unique_inverse(self):
+    def get_vertices_unique_inverse(self):
         """
         """
         pass
 
-    def bounds(self):
+    def get_bounds(self):
         """
         Returns bounds of the vertices.
 
@@ -155,11 +154,11 @@ class Vertices(AB):
         Returns
         bounds: (d,) np.ndarray
         """
-        self._bounds = utils.arr.bounds(self.vertices)
+        self.bounds = utils.arr.bounds(self.vertices)
 
-        return self._bounds
+        return self.bounds
 
-    def centers(self):
+    def get_centers(self):
         """
         Center of elements.
 
@@ -172,9 +171,9 @@ class Vertices(AB):
         centers: (n_elements, d) np.ndarray
         """
         elements = self.elements()
-        self._centers = self.vertices[elements].mean(axis=1)
+        self.centers = self.vertices[elements].mean(axis=1)
 
-        return self._centers
+        return self.centers
 
 #    def clear(self):
         """

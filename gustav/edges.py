@@ -11,14 +11,16 @@ from gustav.vertices import Vertices
 
 class Edges(Vertices):
 
+    kind = "edge"
+
     __slots__ = [
         "edges",
-        "_edges_sorted",
-        "_edges_unique",
-        "_edges_unique_id",
-        "_edges_unique_inverse",
-        "_edges_unique_count",
-        "_outlines"
+        "edges_sorted",
+        "edges_unique",
+        "edges_unique_id",
+        "edges_unique_inverse",
+        "edges_unique_count",
+        "outlines"
     ]
 
     def __init__(
@@ -26,6 +28,7 @@ class Edges(Vertices):
             vertices=None,
             edges=None,
             elements=None,
+            process=False,
     ):
         if vertices is not None:
             self.vertices = utils.arr.make_c_contiguous(
@@ -42,20 +45,51 @@ class Edges(Vertices):
             )
 
         self.whatami = "edges"
-        self.kind = "edge"
+
+        self.process(everything=process)
 
     def process(
             self,
-            edges_sorted=True,
-            edges_unique=True,
-            edges_unique_id=True,
-            edges_unique_inverse=True,
-            edges_unique_count=True,
-            force_process=True,
+            edges_sorted=False,
+            edges_unique=False,
+            edges_unique_id=False,
+            edges_unique_inverse=False,
+            edges_unique_count=False,
+            everything=False,
     ):
         pass
 
-    def edges_sorted(self):
+    def get_edges(self):
+        """
+        Returns edges. If edges is not its original property, it tries to
+        compute it based on existing elements.
+
+        Parameters
+        -----------
+        None
+
+        Returns
+        --------
+        edges: (n, 2) np.ndarray
+        """
+
+        if self.kind == "edge":
+            self.edges = utils.arr.make_c_contiguous(
+                self.edges,
+                settings.INT_DTYPE,
+            )
+
+            return self.edges
+
+        if hasattr(self, "volumes") or hasattr(self, "faces"):
+            self.edges = utils.connec.faces_to_edges(self.get_faces())
+            return self.edges
+
+        # Shouldn't reach this point, but in case it does
+        self._logd("cannot compute/return edges.")
+        return None
+
+    def get_edges_sorted(self):
         """
         Sort edges along axis=1.
 
@@ -67,16 +101,12 @@ class Edges(Vertices):
         --------
         edges_sorted: (n_edges, 2) np.ndarray
         """
-        self.edges = utils.arr.make_c_contiguous(
-            self.edges,
-            settings.INT_DTYPE,
-        )
-        self._edges_sorted = self.edges.copy()
-        self._edges_sorted.sort(axis=1)
+        self.edges_sorted = self.get_edges().copy()
+        self.edges_sorted.sort(axis=1)
 
-        return self._edges_sorted
+        return self.edges_sorted
 
-    def edges_unique(self):
+    def get_edges_unique(self):
         """
         Returns unique edges.
 
@@ -89,7 +119,7 @@ class Edges(Vertices):
         edges_unique: (n, 2) np.ndarray
         """
         unique_stuff = utils.arr.unique_rows(
-            self.edges_sorted(),
+            self.get_edges_sorted(),
             return_index=True,
             return_inverse=True,
             return_counts=True,
@@ -97,15 +127,15 @@ class Edges(Vertices):
         )
 
         # unpack
-        self._edges_unique = unique_stuff[0]
-        self._edges_unique_id = unique_stuff[1]
-        self._edges_unique_inverse = unique_stuff[2]
-        self._edges_unique_count = unique_stuff[3]
-        self._outlines = self._edges_unique_id[self._edges_unique_count == 1]
+        self.edges_unique = unique_stuff[0]
+        self.edges_unique_id = unique_stuff[1]
+        self.edges_unique_inverse = unique_stuff[2]
+        self.edges_unique_count = unique_stuff[3]
+        self.outlines = self.edges_unique_id[self.edges_unique_count == 1]
 
-        return self._edges_unique
+        return self.edges_unique
 
-    def edges_unique_id(self):
+    def get_edges_unique_id(self):
         """
         Returns ids of unique edges.
 
@@ -117,11 +147,11 @@ class Edges(Vertices):
         --------
         edges_unique_id: (n,) np.ndarray
         """
-        _ = self.edges_unique()
+        _ = self.get_edges_unique()
 
-        return self._edges_unique_id
+        return self.edges_unique_id
 
-    def edges_unique_inverse(self):
+    def get_edges_unique_inverse(self):
         """
         Returns ids that can be used to reconstruct sorted edges with unique
         edges.
@@ -137,11 +167,11 @@ class Edges(Vertices):
         --------
         edges_unique_inverse: (len(self.edges),) np.ndarray
         """
-        _ = self.edges_unique()
+        _ = self.get_edges_unique()
 
-        return self._edges_unique_inverse
+        return self.edges_unique_inverse
 
-    def outlines(self):
+    def get_outlines(self):
         """
         Returns indices of very unique edges: edges that appear only once.
         For well constructed edges, this can be considered as outlines.
@@ -154,9 +184,9 @@ class Edges(Vertices):
         --------
         outlines: (m,) np.ndarray
         """
-        _ = self.edges_unique()
+        _ = self.get_edges_unique()
 
-        return self._outlines
+        return self.outlines
 
     def update_elements(self, mask, inplace=True):
         """
@@ -188,10 +218,9 @@ class Edges(Vertices):
         """
         Alias to update_elements.
         """
-        self.update_elements(*args, **kwargs)
+        return self.update_elements(*args, **kwargs)
 
     def subdivide(self):
         """
         """
         pass
-

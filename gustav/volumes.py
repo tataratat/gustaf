@@ -7,34 +7,35 @@ from gustav.faces import Faces
 
 class Volumes(Faces):
 
+    kind = "volume"
+
     __slots__ = [
         "volumes",
     ]
 
     def __init__(
             self,
-            vertices,
-            volumes,
-            elements,
+            vertices=None,
+            volumes=None,
+            elements=None,
     ):
 
         self.whatami = "volumes"
-        self.kind = "volume"
 
         if vertices is not None:
-            self.vertices = utils.make_c_contiguous(
+            self.vertices = utils.arr.make_c_contiguous(
                 vertices,
                 settings.FLOAT_DTYPE,
             )
 
         if volumes is not None:
-            self.volumes = utils.make_c_contiguous(
+            self.volumes = utils.arr.make_c_contiguous(
                 volumes,
                 settings.INT_DTYPE,
             )
 
         elif elements is not None:
-            self.volumes = utils.make_c_contiguous(
+            self.volumes = utils.arr.make_c_contiguous(
                 elements,
                 settings.INT_DTYPE,
             )
@@ -52,9 +53,9 @@ class Volumes(Faces):
     ):
         pass
 
-    def faces(self,):
+    def get_whatami(self):
         """
-        Generates faces based on volumes and returns.
+        Determines whatami.
 
         Parameters
         -----------
@@ -62,18 +63,19 @@ class Volumes(Faces):
 
         Returns
         --------
-        faces: (n, d) np.ndarray
+        None
         """
-        #self.faces = utils.connec.volumes_to_faces(self.volumes)
         if self.volumes.shape[1] == 4:
             self.whatami = "tet"
-            self.faces = utils.connec.tet_to_tri(self.volumes)
-
         elif self.volumes.shape[1] == 8:
             self.whatami = "hexa"
-            self.faces = utils.connec.hexa_to_quad(self.volumes)
+        else:
+            raise ValueError(
+                "I have invalid volumes array shape. It should be (n, 4) or "
+                + "(n, 8), but I have: " + self.faces.shape
+            )
 
-        return self.faces
+        return self.whatami
 
     def update_faces(self):
         """
