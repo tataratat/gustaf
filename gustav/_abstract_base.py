@@ -32,7 +32,6 @@ class AB(abc.ABC):
 
     __slots__ = [
         "whatami",
-        "kind",
     ]
 
     def _logd(self, *log):
