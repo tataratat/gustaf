@@ -74,3 +74,14 @@ class Volumes(Faces):
             self.faces = utils.connec.hexa_to_quad(self.volumes)
 
         return self.faces
+
+    def update_faces(self):
+        """
+        """
+        raise NotImplementedError
+
+    def update_volumes(self, *args, **kwargs):
+        """
+        Alias to update_elements.
+        """
+        self.update_elements(*args, **kwargs)
