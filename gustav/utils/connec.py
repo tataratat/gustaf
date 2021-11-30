@@ -200,3 +200,64 @@ def faces_to_edges(faces):
         raise ValueError("There was an error while computing edges.")
 
     return edges
+
+
+def range_to_edges(range_, closed=False):
+    """
+    Given range, for example (a, b), returns an edge sequence that
+    sequentially connects indices. If int is given as range, it is considered
+    as (0, value).
+    Used to be called "closed/open_loop_index_train".
+
+    Parameters
+    -----------
+    range_: list, tuple, or int
+    closed: bool
+
+    Returns
+    --------
+    edges: (n, 2) np.ndarray
+    """
+    if isinstance(range_, int):
+        indices = np.arange(range_)
+    elif isinstance(range_, (list or tuple):
+        if len(range_) > 2:
+            raise ValueError("Input range is too long")
+
+        # keep the arange syntax. If this isn't wanted,
+        # change to (ran[0], ran[1]+1)
+        indices = np.arange(*range_)
+
+    indices = np.repeat(indices, 2)
+    if closed:
+        indices = np.append(indices, indices[0])[1:]
+    else:
+        indices = indices[1:-1]
+
+    return indices.reshape(-1, 2)
+
+
+def sequence_to_edges(seq, closed=False):
+    """
+    Given a sequence of int, "connect" to turn them into edges.
+
+    Parameters
+    -----------
+    seq: (n,) array-like
+    closed: bool
+
+    Returns
+    --------
+    edges: (m, 2) np.ndarray
+    """
+    edges = np.repeat(seq, 2)[1:-1]
+    edges = edges.reshape(-1, 2)
+    if closed:
+        edges = np.vstack(
+            (
+                edges,
+                [edges[-1, -1], edges[0, 0]]
+            )
+        )
+
+    return edges
