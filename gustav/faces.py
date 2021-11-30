@@ -144,7 +144,7 @@ class Faces(Edges):
         faces_unique: (n, d) np.ndarray
         """
         unique_stuff = utils.arr.unique_rows(
-            self.faces_sorted(),
+            self.get_faces_sorted(),
             return_index=True,
             return_inverse=True,
             return_counts=True,
@@ -153,9 +153,9 @@ class Faces(Edges):
 
         # unpack
         self.faces_unique = unique_stuff[0]
-        self.faces_unique_id = unique_stuff[1]
-        self.faces_unique_inverse = unique_stuff[2]
-        self.faces_unique_count = unique_stuff[3]
+        self.faces_unique_id = unique_stuff[1].astype(settings.INT_DTYPE)
+        self.faces_unique_inverse = unique_stuff[2].astype(settings.INT_DTYPE)
+        self.faces_unique_count = unique_stuff[3].astype(settings.INT_DTYPE)
         self.surfaces = self.faces_unique_ids[self.faces_unique_count == 1]
 
         return self.faces_unique

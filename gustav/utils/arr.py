@@ -6,6 +6,8 @@ Named `arr`, since `array` is python library and it sounds funny.
 
 import numpy as np
 
+from gustav import settings
+
 def make_c_contiguous(array, dtype=None):
     """
     Make given array like object a c contiguous np.ndarray.
@@ -50,7 +52,7 @@ def unique_rows(
         return_index=True,
         return_inverse=True,
         return_counts=True,
-        dtype_name="int32",
+        dtype_name=settings.INT_DTYPE,
 ):
     """
     Find unique rows using np.unique, but apply tricks. Adapted from
@@ -80,13 +82,21 @@ def unique_rows(
 
     in_arr_row_view = in_arr.view(f"|S{in_arr.itemsize * in_arr.shape[1]}")
 
-    return np.unique(
+    unique_stuff = np.unique(
         in_arr_row_view,
-        return_index=return_index,
+        return_index=True,
         return_inverse=return_inverse,
         return_counts=return_counts,
     )
+    unique_stuff = list(unique_stuff) # list, to allow item assignment
 
+    # switch view to original
+    unique_stuff[0] = in_arr[unique_stuff[1]]
+    if not return_index:
+        # pop return index
+        unique_stuff.pop(1)
+
+    return unique_stuff
 
 def bounds(arr):
     """
