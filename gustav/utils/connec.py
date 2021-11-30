@@ -220,7 +220,7 @@ def range_to_edges(range_, closed=False):
     """
     if isinstance(range_, int):
         indices = np.arange(range_)
-    elif isinstance(range_, (list or tuple):
+    elif isinstance(range_, (list or tuple)):
         if len(range_) > 2:
             raise ValueError("Input range is too long")
 
@@ -261,3 +261,116 @@ def sequence_to_edges(seq, closed=False):
         )
 
     return edges
+
+
+def make_quad_faces(resolutions):
+    """
+    Given number of nodes per each dimension, returns connectivity information 
+    of a structured mesh.
+    Counter clock wise connectivity.
+
+    (3)*------*(2)
+       |      |
+       |      |
+    (0)*------*(1)
+
+    Parameters
+    -----------
+    resolutions: list
+
+    Returns
+    --------
+    faces: (n, 4) np.ndarray
+    """
+    nnpd = np.asarray(number_of_nodes_per_dimension)
+    total_nodes = np.product(nnpd)
+    total_faces = (nnpd[0] - 1) * (nnpd[1] - 1)
+    node_indices = np.arange(total_nodes).reshape(nnpd[1], nnpd[0])
+    faces = np.ones((total_faces, 4)) * -1
+
+    faces[:,0] = node_indices[:(nnpd[1] - 1), :(nnpd[0] - 1)].flatten()
+    faces[:,1] = node_indices[:(nnpd[1] - 1), 1:nnpd[0]].flatten()
+    faces[:,2] = node_indices[1:nnpd[1], 1:nnpd[0]].flatten()
+    faces[:,3] = node_indices[1:nnpd[1], :(nnpd[0]-1)].flatten()
+
+    if faces.all() == -1:
+        raise ValueError("Something went wrong during `make_quad_faces`.")
+
+    return faces.astype(np.int32)
+
+
+def make_hexa_volumes(resolutions):
+    """
+    Given number of nodes per each dimension, returns connectivity information 
+    of structured hexahedron elements.
+    Counter clock wise connectivity.
+
+       (7)*-------*(6)
+         /|      /|
+        / | (5) / |
+    (4)*-------*  |
+       |  *----|--*(2)
+       | /(3)  | /
+       |/      |/
+    (0)*-------*(1)
+
+    Parameters
+    -----------
+    resolutions: list
+
+    Returns
+    --------
+    elements: (n, 8) np.ndarray
+    """
+    nnpd = np.asarray(number_of_nodes_per_dimension)
+    total_nodes = np.product(nnpd)
+    total_volumes = np.product(nnpd - 1)
+    node_indices = np.arange(total_nodes, dtype=np.int32).reshape(nnpd[::-1])
+    volumes = np.ones((total_volumes, 8), dtype=np.int32) * int(-1)
+
+    volumes[:, 0] = node_indices[
+        :(nnpd[2] - 1),
+        :(nnpd[1] - 1),
+        :(nnpd[0] - 1)
+    ].flatten()
+    volumes[:, 1] = node_indices[
+        :(nnpd[2] - 1),
+        :(nnpd[1] - 1),
+        1:nnpd[0]
+    ].flatten()
+    volumes[:, 2] = node_indices[
+        :(nnpd[2] - 1),
+        1:nnpd[1],
+        1:nnpd[0]
+    ].flatten()
+    volumes[:, 3] = node_indices[
+        :(nnpd[2] - 1),
+        1:nnpd[1],
+        :(nnpd[0]-1)
+    ].flatten()
+    volumes[:, 4] = node_indices[
+        1:nnpd[2],
+        :(nnpd[1] - 1),
+        :(nnpd[0] - 1)
+    ].flatten()
+    volumes[:, 5] = node_indices[
+        1:nnpd[2],
+        :(nnpd[1] - 1),
+        1:nnpd[0]
+    ].flatten()
+    volumes[:, 6] = node_indices[
+        1:nnpd[2],
+        1:nnpd[1],
+        1:nnpd[0]
+    ].flatten()
+    volumes[:, 7] = node_indices[
+        1:nnpd[2],
+        1:nnpd[1],
+        :(nnpd[0]-1)
+    ].flatten()
+
+    if (volumes == -1).any():
+        raise ValueError("Something went wrong during `make_hexa_volumes`.")
+
+    return volumes.astype(settings.INT_DTYPE)
+ 
