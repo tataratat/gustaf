@@ -6,18 +6,349 @@ visualization and more.
 
 import splinelibpy
 
-def _mesh(spline, resolutions):
+from gustav.vertices import Vertices
+from gustav.edges import Edges
+from gustav.faces import Faces
+from gustav.volumes import Volumes
+from gustav import utils
+
+
+def _edges(
+        spline,
+        resolutions,
+        extract_dim,
+        extract_
+):
     """
     """
+        if self._para_dim == 1:
+            if not raw:
+                from vedo import Points, Line, DashedLine
+
+                physical_points = Points(self.sample(resolution))
+                if not dashed_line:
+                    lines = Line(physical_points, closed=False, c="black", lw=6)
+
+                else:
+                    lines = DashedLine(
+                        physical_points,
+                        closed=False,
+                        c="black",
+                        lw=6
+                    )
+
+                return lines
+
+            else:
+                physical_points = self.sample(resolution)
+                edges = utils.closed_loop_index_train(physical_points.shape[1])
+
+                return physical_points, edges
+
+        elif self._para_dim == 2:
+            if extract is not None:
+                # Get non-extracting dimension
+                extract_along = [0,1] 
+                extract_along.pop(extract[0])
+
+                # Extract range
+                extract_range = [
+                    min(self.knot_vectors[extract_along[0]]),
+                    max(self.knot_vectors[extract_along[0]]),
+                ]
+                queries = np.zeros((resolution, 2), dtype=np.double)
+                queries[:, extract[0]] = extract[1]
+                queries[:, extract_along[0]] = np.linspace(
+                    extract_range[0],
+                    extract_range[1],
+                    resolution
+                )
+
+                # Extract
+                physical_points = self.evaluate(queries)
+
+            else:
+                raise ValueError(
+                    "To use line() for surface spline, you have to specify "
+                    + "a kwarg, `extract`"
+                )
+
+            if not raw:
+                from vedo import Points, Line, DashedLine
+
+                physical_points = Points(physical_points)
+                if not dashed_line:
+                    lines = Line(
+                        physical_points,
+                        closed=False,
+                        c="black",
+                        lw=2
+                    )
+
+                else:
+                    lines = DashedLine(
+                        physical_points,
+                        closed=False,
+                        c="black",
+                        lw=2
+                    )
+
+
+                return lines
+
+            else:
+                edges = utils.open_loop_index_train(
+                    physical_points.shape[0]
+                )
+
+                return physical_points, edges
+
+
+def _faces(spline, resolutions,):
+    """
+    Extract faces from spline.
+    Valid iff (para_dim, dim) is on of the followings: (2, 2), (2, 3), (3, 3).
+    In case of (3, 3), it will return only surfaces.
+
+    Parameters
+    -----------
+    spline: BSpline or NURBS
+
+    Returns
+    --------
+    faces: faces
+    """
+    if (
+        spline.para_dim == 2
+        and (
+                spline.dim == 2
+                or spline.dim == 3
+        )
+    ):
+        return Faces(
+            vertices=spline.sample(resolutions),
+            faces=utils.connec.make_quad_faces(resolutions),
+        )
+
+    elif(
+        spline.para_dim == 3
+        and spline.dim == 3
+    ):
+        # TODO: use spline extraction routine to first extract
+        # spline, extract faces, merge vertices.
+
+        # Spline to surfaces
+        vertices = []
+        faces = []
+        offset = 0
+        kvs = spline.knot_vectors
+        for i in range(spline.para_dim):
+            extract = i
+            # Get extracting dimension
+            extract_along = [0, 1, 2] 
+            extract_along.pop(extract)
+
+            # Extract range
+            extract_range = [
+                [
+                    min(kvs[extract_along[0]]),
+                    max(kvs[extract_along[0]]),
+                ],
+                [
+                    min(kvs[extract_along[1]]),
+                    max(kvs[extract_along[1]]),
+                ],
+            ]
+
+            extract_list = [
+                min(kvs[extract]),
+                max(kvs[extract]),
+            ]
+
+            # surface point queries (spq)
+            spq = np.linspace(
+                extract_range[0][0],
+                extract_range[0][1],
+                resolutions[extract_along[0]],
+            ).reshape(-1, 1)
+
+            # expand horizontally and init with 1
+            spq = np.hstack((spq, np.ones((len(spq), 1))))
+            spq = np.vstack(
+                np.linspace(
+                    spq * [1, extract_range[1][0]],
+                    spq * [1, extract_range[1][1]],
+                    resolutions[extract_along[1]],
+                )
+            )
+
+            # expand horizontally and init with 1
+            spq = np.hstack((spq, np.ones((len(spq), 1))))
+            spq = np.vstack(
+                np.linspace(
+                    spq * [1, 1, extract_list[0]],
+                    spq * [1, 1, extract_list[1]],
+                    2
+                )
+            )
+
+            surface_point_queries = utils.arr.make_c_contiguous(
+                spq,
+                dtype="float64", # hardcoded since splinelibpy uses this dtype
+            )
+            surface_point_queries = surface_point_queries[
+                :,
+                np.argsort(
+                    [extract_along[0], extract_along[1], extract]
+                )
+            ]
+
+            vertices.append(
+                spline.evaluate(
+                    surface_point_queries[
+                        :int(surface_point_queries.shape[0] / 2)
+                    ]
+                )
+            )
+
+            if len(faces) != 0:
+                offset = faces[-1].max() + 1
+
+            tmp_faces = utils.connec.make_quad_faces(
+                [
+                    resolutions[extract_along[0]],
+                    resolutions[extract_along[1]],
+                ]
+            )
+
+            faces.append(tmp_faces + int(offset))
+
+            vertices.append(
+                self.evaluate(
+                    surface_point_queries[
+                        int(surface_point_queries.shape[0] / 2):
+                    ]
+                )
+            )
+
+            offset = faces[-1].max() + 1
+
+            faces.append(tmp_faces + int(offset))
+
+        return Faces(
+            vertices=np.vstack(vertices),
+            faces=np.vstack(faces)
+        ) # TODO mergevertices
+
+    else:
+        raise ValueError(
+            "Invalid spline to make faces."
+        )
+
+
+def _volumes(spline, resolutions):
+    """
+    Extract volumes from spline.
+    Valid iff spline.para_dim == 3 and spline.dim == 3.
+
+    Parameters
+    -----------
+    spline: BSpline or NURBS
+
+    Returns
+    --------
+    volumes: Volumes
+    """
+    if (spline.para_dim != 3 or spine.dim != 3):
+        raise ValueError(
+            "Volume extraction from a spline is only valid for para_dim: 3 "
+            + "dim: 3 splines."
+        )
+
+    return Volumes(
+        vertices=spline.sample(resolutions),
+        volumes=utils.connec.make_hexa_volumes(resolutions),
+    )
+
+
+def _control_edges(spline):
+    """
+    Extract control edges (mesh).
+    Valid iff (para_dim, dim) is one of the followings: (1, 2), (1, 3)
+
+    Parameters
+    -----------
+    edges: BSpline or NURBS
+
+    Returns
+    --------
+    edges: Edges
+    """
+    if (spline.para_dim != 1
+        or not (spline.dim == 2 or spline.dim == 3)
+    ):
+        raise ValueError("Invalid spline type!")
+
+    return Edges(
+        vertices=spline.control_points,
+        edges=utils.connec.range_to_edges(
+            len(spline.control_points),
+            closed=False
+        )
+    )
+
+
+def _control_faces(spline):
+    """
+    Extract control face (mesh).
+    Valid iff (para_dim, dim) is one of the followings: (2, 2), (2, 3).
+
+    Parameters
+    -----------
+    spline: BSpline or NURBS
+
+    Returns
+    --------
+    faces: Faces
+    """
+    if (spline.para_dim != 2
+        or not (spline.dim == 2 or spline.dim == 3)
+    ):
+        raise ValueError("Invalid spline type!")
+
+
+    return Faces(
+        vertices=spline.control_points,
+        faces=utils.connec.make_quad_makes(spline.control_net_resolutions),
+    )
+
+
+def _control_volumes(spline):
+    """
+    Extract control volumes (mesh).
+    Valid iff (para_dim, dim) is (3, 3).
+
+    Parameters
+    -----------
+    spline: BSpline or NURBS
+
+    Returns
+    --------
+    volumes: Volumes
+    """
+    if (spline.para_dim != 3 or spline.dim != 3):
+        raise ValueError("Invalid spline type!")
+
+    return Volumes(
+        vertices=spline.control_points,
+        volumes=utils.connec.make_hexa_volumes(spline.control_net_resolutions),
+    )
+
+
+def _knot_edges(spline, resolutions):
     pass
 
-def _control_mesh(spline, resolutions):
-    pass
-
-def _knot_lines(spline, resolutions):
-    pass
-
-def _line(spline, resolutions):
+def _lines(spline, resolutions):
     pass
 
 def _show(
