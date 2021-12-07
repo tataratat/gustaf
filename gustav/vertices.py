@@ -4,6 +4,8 @@ Vertices. Base of all "Mesh" geometries.
 """
 
 from gustav import settings
+from gustav import utils
+from gustav import show
 from gustav._abstract_base import AB
 
 class Vertices(AB):
@@ -17,6 +19,7 @@ class Vertices(AB):
         "vertices_unique_inverse",
         "bounds",
         "centers",
+        "vis_dict"
     ]
 
     def __init__(
@@ -40,6 +43,7 @@ class Vertices(AB):
                 settings.FLOAT_DTYPE
             )
         self.whatami = "vertices"
+        self.vis_dict = dict()
 
     def process(
             self,
@@ -319,5 +323,43 @@ class Vertices(AB):
     def merge_vertices(self):
         """
         implement for element cases with hasattr
+        """
+        pass
+
+    def showable(self, **kwargs):
+        """
+        Returns showable object, meaning object of visualization backend.
+
+        Parameters
+        -----------
+        **kwargs:
+
+        Returns
+        --------
+        showable: obj
+          Obj of `gustav.settings.VISUALIZATION_BACKEND`
+        """
+        pass
+
+    def show(self, **kwargs):
+        """
+        Show current object using visualization backend.
+
+        Parameters
+        -----------
+        **kwargs:
+
+
+        Returns
+        --------
+        None          
+        """
+        show.show(self)
+
+
+    @classmethod
+    def concatenate(cls, instances):
+        """
+        Sequentially put them together to make one object.
         """
         pass
