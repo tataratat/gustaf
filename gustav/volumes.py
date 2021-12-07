@@ -21,6 +21,7 @@ class Volumes(Faces):
     ):
 
         self.whatami = "volumes"
+        self.vis_dict = dict()
 
         if vertices is not None:
             self.vertices = utils.arr.make_c_contiguous(
@@ -87,3 +88,21 @@ class Volumes(Faces):
         Alias to update_elements.
         """
         self.update_elements(*args, **kwargs)
+
+    def tofaces(self, unique=True):
+        """
+        Returns Faces obj.
+
+        Parameters
+        -----------
+        unique: bool
+          Default is True. If True, only takes unique faces.
+
+        Returns
+        --------
+        faces: Faces
+        """
+        return Faces(
+            self.vertices,
+            faces=self.get_faces_unique() if unique else self.get_faces()
+        )
