@@ -9,7 +9,7 @@ from gustav import settings
 from gustav import utils
 
 
-def show(*gusobj):
+def show(*gusobj, **kwargs):
     """
     Shows using appropriate backend.
 
@@ -21,7 +21,7 @@ def show(*gusobj):
     --------
     None
     """
-    showables = [make_showable(g) for g in gusobj]
+    showables = [make_showable(g, **kwargs) for g in gusobj]
     vis_b = settings.VISUALIZATION_BACKEND
 
     if vis_b.startswith("vedo"):
@@ -35,8 +35,9 @@ def show(*gusobj):
         raise NotImplementedError
 
 
-def show_vedo(gus_lists):
+def show_vedo(vedo_lists):
     """
+    Thin vedo show wrapper to nicely 
     """
     pass
 
@@ -57,13 +58,13 @@ def _vedo_showable(obj, **kwargs):
 
     utils.log._debug("making vedo-showable obj")
     if obj.kind == "vertex":
-        return vedo.Points(obj.vertices, **kwargs)
+        return vedo.Points(obj.vertices, **obj.vis_dict, **kwargs)
 
     elif obj.kind == "edge":
-        return vedo.Lines(obj.vertices[obj.edges], **kwargs)
+        return vedo.Lines(obj.vertices[obj.edges], **obj.vis_dict, **kwargs)
 
     elif obj.kind == "face":
-        return vedo.Mesh([obj.vertices, obj.faces], **kwargs)
+        return vedo.Mesh([obj.vertices, obj.faces], **obj.vis_dict, **kwargs)
 
     elif obj.kind == "volume":
         from vtk import VTK_TETRA as frau_tetra
@@ -88,7 +89,7 @@ def _vedo_showable(obj, **kwargs):
         if kwargs.get("shrink", True):
             vol = vol.tomesh(shrink=.8)
 
-        vol.color(kwargs.get("c","hotpink"))
+        vol.color(kwargs.get("c", "hotpink"))
 
         return vol
 
