@@ -41,6 +41,7 @@ class Faces(Edges):
             )
 
         self.whatami = "faces"
+        self.vis_dict = dict()
 
         self.process(process)
 
@@ -224,3 +225,21 @@ class Faces(Edges):
         Alias to update_elements.
         """
         self.update_elements(*args, **kwargs)
+
+    def toedges(self, unique=True):
+        """
+        Returns Edges obj.
+
+        Parameters
+        -----------
+        unique: bool
+          Default is True. If True, only takes unique edges.
+
+        Returns
+        --------
+        edges: Edges
+        """
+        return Edges(
+            self.vertices,
+            edges=self.get_edges_unique() if unique else self.get_edges()
+        )
