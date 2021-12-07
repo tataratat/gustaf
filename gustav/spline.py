@@ -4,111 +4,170 @@ Spline classes that are inherited from `splinelibpy`, in order to support
 visualization and more.
 """
 
+import math
+
 import splinelibpy
 
+from gustav import utils
+from gustav import settings
 from gustav.vertices import Vertices
 from gustav.edges import Edges
 from gustav.faces import Faces
 from gustav.volumes import Volumes
-from gustav import utils
 
+
+def _res_list(res, length):
+    """
+    Returns a list of resolutions.
+
+    Parameters
+    -----------
+    res: int or list
+    length: int
+      length of desired res_list. Usually corresponds to spline.para_dim
+
+    Returns
+    --------
+    res_list: list
+    """
+    if isinstance(res, list):
+        if len(res) != length:
+            raise ValueError(
+                "Invalid resolution length! "
+                + "It should match spline.length"
+            )
+
+        return res
+
+    elif isinstance(res, (int, float)):
+        res_list = [res for _ in range(length)]
+        return res_list
+
+    elif isinstance(res, tuple):
+        return _res_list(list(res), length)
+
+    else:
+        raise TypeError(
+            "Invalid resolutions input. It should be int, tuple, or list."
+        )
 
 def _edges(
         spline,
-        resolutions,
-        extract_dim,
-        extract_
+        resolution=100,
+        extract_dim=None,
+        extract_knot=None,
+        all_knots=False.
 ):
     """
+    Extract edges (lines) from a given spline.
+    Only entity you can extract without dimension limit
+
+    Parameters
+    -----------
+    spline: Spline
+    resolution: int 
+    extract_dim: int
+      Parametric dimension to extract.
+    extract_knot: list
+      (spline.para_dim - 1,) shaped knot location along extract_dim
+    all_knots: bool
+      Switch to allow all knot-line extraction.
+
+    Returns
+    --------
+    edges: Edges
     """
-        if self._para_dim == 1:
-            if not raw:
-                from vedo import Points, Line, DashedLine
+    #allowed_dim_combo = (
+    #    (1, 2),
+    #    (1, 3),
+    #    (2, 2),
+    #    (2, 3),
+    #    (3, 3),
+    #)
+    #if (spline.para_dim, spline.dim) not in allowed_dim_combo:
+    #    raise ValueError("Sorry, can't extract edges from given spline")
 
-                physical_points = Points(self.sample(resolution))
-                if not dashed_line:
-                    lines = Line(physical_points, closed=False, c="black", lw=6)
+    resolution = int(resolution)
 
-                else:
-                    lines = DashedLine(
-                        physical_points,
-                        closed=False,
-                        c="black",
-                        lw=6
-                    )
+    if spline.para_dim == 1:
+        return Edges(
+            vertices=spline.sample(resolution),
+            edges=utils.connec.range_to_edges(
+                (0, resolution),
+                closed=False,
+            )
+        )
 
-                return lines
-
-            else:
-                physical_points = self.sample(resolution)
-                edges = utils.closed_loop_index_train(physical_points.shape[1])
-
-                return physical_points, edges
-
-        elif self._para_dim == 2:
-            if extract is not None:
-                # Get non-extracting dimension
-                extract_along = [0,1] 
-                extract_along.pop(extract[0])
-
-                # Extract range
-                extract_range = [
-                    min(self.knot_vectors[extract_along[0]]),
-                    max(self.knot_vectors[extract_along[0]]),
-                ]
-                queries = np.zeros((resolution, 2), dtype=np.double)
-                queries[:, extract[0]] = extract[1]
-                queries[:, extract_along[0]] = np.linspace(
-                    extract_range[0],
-                    extract_range[1],
-                    resolution
-                )
-
-                # Extract
-                physical_points = self.evaluate(queries)
-
-            else:
+    else:
+        # This should be possible for spline of any dimension.
+        # As long as it satisfies the following condition
+        if extract_knot is not None:
+            if len(extract_knot) != spline.para_dim - 1:
                 raise ValueError(
-                    "To use line() for surface spline, you have to specify "
-                    + "a kwarg, `extract`"
+                    "Must satisfy len(extract_knot) == spline.para_dim -1."
                 )
 
-            if not raw:
-                from vedo import Points, Line, DashedLine
-
-                physical_points = Points(physical_points)
-                if not dashed_line:
-                    lines = Line(
-                        physical_points,
-                        closed=False,
-                        c="black",
-                        lw=2
-                    )
-
-                else:
-                    lines = DashedLine(
-                        physical_points,
-                        closed=False,
-                        c="black",
-                        lw=2
-                    )
-
-
-                return lines
-
-            else:
-                edges = utils.open_loop_index_train(
-                    physical_points.shape[0]
+        # This may take awhile.
+        if all_knots:
+            edgess = [] # edges' is not a valid syntax
+            unique_knots = np.array(spline.unique_knots, dtype=object)
+            for i in range(spline.para_dim):
+                mask = np.ones(spline.para_dim, dtype=bool)
+                mask[i] = False
+                # gather knots along current knot
+                extract_knot_queries = list(
+                    itertools.product(*unique_knots[mask])
                 )
 
-                return physical_points, edges
+                for ekq in extract_knot_queries:
+                    edgess.append(
+                        _edges(spline, resolution, i, ekq, False)
+                    )
+
+            # turn these edgess into one Edge
+#
+
+##
+
+#
+#
+#
+            raise NotImplementedError
+#
+
+            return edgess
+
+        # Get parametric points to extract
+        queries = np.empty(
+            (resolution, spline.para_dim),
+            dtype="float64", # hardcoded for splinelibpy
+            order="C", # hardcoded for splinelibpy
+        )
+        # get ~extract_dim 
+        not_ed = np.arange(spline.para_dim).tolist()
+        not_ed.pop(extract_dim)
+        queries[:, not_ed] = extract_knot
+        queries[:, extract_dim] = np.linspace(
+            min(spline.knot_vectors(extract_dim),
+            max(spline.knot_vectors(extract_dim),
+            resolution,
+        )
+
+        return Edges(
+            vertices=spline.evaluate(queries),
+            edges=utils.connec.ranges_to_edges(
+                (0, resolution),
+                closed=False,
+            )
+        )
 
 
 def _faces(spline, resolutions,):
     """
     Extract faces from spline.
     Valid iff (para_dim, dim) is on of the followings: (2, 2), (2, 3), (3, 3).
-    In case of (3, 3), it will return only surfaces.
+    In case of (3, 3), it will return only surfaces. If internal faces are
+    desired, used `spline.volumes().get_faces()`.
 
     Parameters
     -----------
@@ -345,31 +404,170 @@ def _control_volumes(spline):
     )
 
 
-def _knot_edges(spline, resolutions):
-    pass
-
-def _lines(spline, resolutions):
-    pass
-
 def _show(
         spline,
-        control_points=True,
-        control_point_ids=True,
-        control_mesh=False,
-        knots=True,
-        unique_knot_ids=False,
         resolutions=100,
-        quads=True,
-        show_queries=True,
-        offscreen=False, # <- Implies that it returns plot and objects
-        dashed_line=False,
-        surface_only=True,
-        colorful_elements=False,
+        control_points=True,
+        knots=True,
+        show_fitting_queries=True,
+        return_showables=False,
+        return_vedo_showables=True,
+        # From here | only has effect if "vedo" is backend.
+        #           V
         parametric_space=False,
         surface_alpha=1,
-        lighting="glossy"
+        lighting="glossy",
+        control_point_ids=True,
+        solution_spline=None,
 ):
-    pass
+    """
+    Shows splines with various options.
+    They are excessively listed, so that it can be adjustable.
+
+    """
+
+    allowed_dim_combo = (
+        (1, 2),
+        (1, 3),
+        (2, 2),
+        (2, 3),
+        (3, 3),
+    )
+    if (spline.para_dim, spline.dim) not in allowed_dim_combo:
+        raise ValueError("Sorry, can't show given spline.")
+
+    resolutions = _res_list(resolutions, spline.para_dim)
+
+    things_to_show = dict()
+
+    # spline itself
+    if spline.para_dim == 1:
+        sp = _edges(spline, resolutions[0])
+        sp.vis_dict.update(c="black", lw=8)
+    if spline.para_dim == 2 or spline.para_dim == 3:
+        sp = _faces(spline, resolutions)
+        sp.vis_dict.update(c="green")
+
+    things_to_show.update(spline=sp)
+
+    # control_points. = control mesh + control_points
+    if control_points:
+        if spline.para_dim == 1:
+            control_mesh = _control_edges(spline)
+        elif spline.para_dim == 2:
+            control_mesh = _control_faces(spline).toedges(unique=True)
+        elif spline.para_dim == 3:
+            control_mesh = _control_volumes(spline).toedges(unique=True)
+
+        control_mesh.vis_dict.update(c="red", lw=6, alpha=.8)
+        things_to_show.update(control_mesh=control_mesh) # mesh itself
+
+        cps = control_mesh.tovertices()
+        cps.vis_dict.update(c="red", r=10, alpha=.8)
+
+        things_to_show.update(control_points=cps) # only points
+
+    if knots:
+        if spline.para_dim > 1:
+            knot_lines = _edges(spline, resolutions, all_knots=True)
+            knot_lines.vis_dict.update(c="black", lw=6)
+            things_to_show.update(knots=knot_lines)
+
+    if show_queries and hasattr(spline, _fitting_queries):
+        fitting_queries = Vertices(spline._fitting_queries)
+        fitting_queries.vis_dict.update(c="blue", r=10)
+        things_to_show.update(fitting_queries=fitting_queries)
+        
+    if not settings.VISUALIZATION_BACKEND.startswith("vedo"):
+        if return_showables:
+            return things_to_show
+
+        else:
+            show.show(list(things_to_show.values()))
+            return None
+
+    # iff backend if vedo, we provide fancier visualization
+    elif settings.VISUALIZATION_BACKEND.startswith("vedo"):
+        # showable, but not specifically vedo_showable, then return
+        if return_showables and not return_vedo_showables:
+            return things_to_show
+
+        vedo_things = dict()
+        for key, gusobj in things_to_show.items():
+            vedo_things.update({key : show.make_showable(gusobj)})
+
+        if lighting is not None:
+            vedo_things["spline"].lighting(lighting)
+
+        if spline.para_dim > 1:
+            vedo_things["spline"].alpha(surface_alpha)
+
+        if control_points and control_point_ids:
+            vedo_things.update(
+                control_point_ids=vedo_things["control_points"].label("id")
+            )
+
+        if knots and spline.para_dim == 1:
+            uks = spline.unique_knots[0]
+            phys_uks = show.make_showable(
+                Vertices(spline.evaluate([[uk] for uk in uks]))
+            )
+            xs = ["x"] * len(uks)
+
+            vedo_things.update(
+                knots=phys_uks.labels(xs, justify="center", c="green")
+            )
+
+        if parametric_space and spline.para_dim > 1:
+            from vedo.addons import Axes
+            from gustav.create.splines import knot_vector_bounded
+
+            kv_spline = knot_vector_bounded(spline.knot_vectors)
+            kvs_showables = _show(
+                kv_spline,
+                control_points=False,
+                return_showables=True,
+                return_vedo_showables=True,
+                lighting=lighting,
+                knots=knots,
+            )
+            # Make lines a bit thicker
+            for l in naive_things[1:]: l.lw(3)
+
+            # Trick to show begin/end value
+            bs = np.asarray(naive_things[0].bounds()).reshape(-1,2).T
+            bs_diff_001 = (bs[1] - bs[0]) * 0.001
+            lowerb = bs[0] - bs_diff_001 
+            upperb = bs[1] + bs_diff_001
+
+            axes_config = dict(
+                xtitle="u",
+                ytitle="v",
+                xrange=[lowerb[0], upperb[0]],
+                yrange=[lowerb[1], upperb[1]],
+                tipSize=0,
+                xMinorTicks=3,
+                yMinorTicks=3,
+                xyGrid=False,
+                yzGrid=False,
+            )
+
+            if self._para_dim == 3:
+                axes_config.update(ztitle="w")
+                axes_config.update(zrange=[lowerb[2], upperb[2]])
+                axes_config.update(zMinorTicks=3)
+                axes_config.update(zxGrid=False)
+
+            naive_things.append(Axes(naive_things[0], **axes_config))
+
+        # showable return
+        if return_vedo_showable and return_showables:
+            return vedo_things
+
+        # now, show
+        
+
+        return None
 
 
 class Spline(splinelibpy.Spline):
