@@ -4,6 +4,7 @@ from gustav import vertices
 from gustav import edges
 from gustav import faces
 from gustav import volumes
+from gustav import show
 
 from gustav.vertices import Vertices
 from gustav.edges import Edges
