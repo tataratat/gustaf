@@ -45,6 +45,7 @@ class Edges(Vertices):
             )
 
         self.whatami = "edges"
+        self.vis_dict = dict()
 
         self.process(everything=process)
 
@@ -224,3 +225,17 @@ class Edges(Vertices):
         """
         """
         pass
+
+    def tovertices(self):
+        """
+        Returns Vertices obj.
+
+        Parameters
+        -----------
+        None
+
+        Returns
+        --------
+        vertices: Vertices
+        """
+        return Vertices(self.vertices)
