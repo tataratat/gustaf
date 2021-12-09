@@ -124,18 +124,7 @@ def _edges(
                         _edges(spline, resolution, i, ekq, False)
                     )
 
-            # turn these edgess into one Edge
-#
-
-##
-
-#
-#
-#
-            raise NotImplementedError
-#
-
-            return edgess
+            return Edges.concat(edgess)
 
         # Get parametric points to extract
         queries = np.empty(
@@ -177,6 +166,8 @@ def _faces(spline, resolutions,):
     --------
     faces: faces
     """
+    resolutions = _res_list(resolutions, spline.para_dim)
+
     if (
         spline.para_dim == 2
         and (
@@ -412,8 +403,8 @@ def _show(
         show_fitting_queries=True,
         return_showables=False,
         return_vedo_showables=True,
-        # From here | only has effect if "vedo" is backend.
-        #           V
+        # From here, | only relevant if "vedo" is backend.
+        #            V
         parametric_space=False,
         surface_alpha=1,
         lighting="glossy",
@@ -459,6 +450,7 @@ def _show(
         elif spline.para_dim == 3:
             control_mesh = _control_volumes(spline).toedges(unique=True)
 
+        # Set alpha to < 1, so that they don't "overshadow" spline
         control_mesh.vis_dict.update(c="red", lw=6, alpha=.8)
         things_to_show.update(control_mesh=control_mesh) # mesh itself
 
@@ -568,6 +560,84 @@ def _show(
         
 
         return None
+
+
+class BSpline(splinelibpy.BSpline):
+
+    def __init__(
+            self,
+            degrees=None,
+            knot_vectors=None,
+            control_points=None,
+    ):
+        """
+        BSpline of gustav. Inherited from splinelibpy.BSpline.
+
+        Parameters
+        -----------
+        degrees: (para_dim,) list-like
+        knot_vectors: (para_dim, ...) list
+        control_points: (m, dim) list-like
+
+        Returns
+        --------
+        None
+        """
+        super().__init__(
+            degrees=degrees,
+            knot_vectors=knot_vectors,
+            control_points=control_points
+        )
+
+    def edges(
+            self,
+            resolution=100,
+            extract_dim=None,
+            extract_knot=None,
+            all_knots=False,
+    ):
+        """
+        Extract edges(lines).
+        This is only discretization available for all dim/para_dim.
+
+        Parameters
+        -----------
+        resolution: int 
+        extract_dim: int
+          Parametric dimension to extract.
+        extract_knot: list
+          (spline.para_dim - 1,) shaped knot location along extract_dim
+        all_knots: bool
+          Switch to allow all knot-line extraction.
+
+        Returns
+        --------
+        edges: Edges
+        """
+        return _edges(self, resolution, extract_dim, extract_knot, all_knots)
+
+    def faces(
+            self,
+            resolutions=100,
+    ):
+        """
+        Extract faces from spline.
+        Valid iff (para_dim, dim) is on of the followings: (2, 2), (2, 3), (3, 3).
+        In case of (3, 3), it will return only surfaces. If internal faces are
+        desired, used `spline.volumes().get_faces()` or
+        `spline.volumes().tofaces()`.
+
+        Parameters
+        -----------
+        resolutions: int or list
+          If int, it will be expanded to a list of len(para_dim) with same
+          values. 
+
+        Returns
+        --------
+        faces: faces
+        """
+        return _faces(self, resolutions)
 
 
 class Spline(splinelibpy.Spline):
