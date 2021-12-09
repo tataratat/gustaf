@@ -375,6 +375,9 @@ class Vertices(AB):
             Return true, if it is same as type(cls)
             """
             if isinstance(inst, type(cls)):
+                return True
+            else:
+                return False
 
         # If only one instance is given and it is iterable, adjust
         # so that we will just iterate that.
@@ -391,6 +394,12 @@ class Vertices(AB):
             elements = []
 
         for ins in instances:
+            if not is_same_type(ins):
+                raise TypeError(
+                    "Can't concat. One of the instances is not "
+                    + f"{type(cls).__qualname__}."
+                )
+
             # make sure each element index starts from 0 & end at len(vertices)
             tmp_ins = ins.remove_unreferenced_vertices(inplace=False)
 
