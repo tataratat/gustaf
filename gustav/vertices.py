@@ -306,7 +306,7 @@ class Vertices(AB):
           iff inplace=True.
         """
         if self.kind == "vertex":
-            return None
+            return self
 
         referenced = np.zeros(len(self.vertices), dtype=settings.INT_DTYPE)
         referenced[self.elements()] = True
@@ -339,7 +339,7 @@ class Vertices(AB):
         showable: obj
           Obj of `gustav.settings.VISUALIZATION_BACKEND`
         """
-        pass
+        return show.make_showable(self, **kwargs)
 
     def show(self, **kwargs):
         """
@@ -354,12 +354,71 @@ class Vertices(AB):
         --------
         None          
         """
-        show.show(self)
-
+        show.show(self, **kwargs)
 
     @classmethod
-    def concatenate(cls, instances):
+    def concat(cls, *instances):
         """
         Sequentially put them together to make one object.
+
+        Parameters
+        -----------
+        *instances: *type(cls)
+          Allows one iterable object also.
+
+        Returns
+        --------
+        one_instance: type(cls)
         """
-        pass
+        def is_same_type(inst):
+            """
+            Return true, if it is same as type(cls)
+            """
+            if isinstance(inst, type(cls)):
+
+        # If only one instance is given and it is iterable, adjust
+        # so that we will just iterate that.
+        if (
+            len(instances) == 1
+            and not isinstance(instance[0], str)
+            and hasattr(instances[0], "__iter__")
+        ):
+            instances = intstances[0]
+
+        vertices = []
+        haselem = cls.kind != "vertex"
+        if haselem:
+            elements = []
+
+        for ins in instances:
+            # make sure each element index starts from 0 & end at len(vertices)
+            tmp_ins = ins.remove_unreferenced_vertices(inplace=False)
+
+            vertices.append(
+                tmp_ins.vertices.copy()
+            )
+
+            if haselem:
+                if len(elements) == 0:
+                    elements.append(
+                        tmp_ins.elements().copy()
+                    )
+                    e_offset = elements[-1].max() + 1
+
+                else:
+                    elements.append(
+                        tmp_ins.elements().copy() + e_offset
+                    )
+                    e_offset = elements[-1].max() + 1
+
+        if haselem:
+            return type(cls)(
+                vertices=np.vstack(vertices),
+                elements=np.vstack(elements),
+            )
+
+        else:
+            return Vertices(
+                vertices=np.vstack(vertices),
+            )
+
