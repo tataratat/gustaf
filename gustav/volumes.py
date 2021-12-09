@@ -41,11 +41,11 @@ class Volumes(Faces):
                 settings.INT_DTYPE,
             )
 
-        if volumes is not None or elements is not None:
-            if self.volumes.shape[1] == 4:
-                self.whatami = "tet"
-            elif self.volumes.shape[1] == 8:
-                self.whatami = "hexa"
+        #if volumes is not None or elements is not None:
+        #    if self.volumes.shape[1] == 4:
+        #        self.whatami = "tet"
+        #    elif self.volumes.shape[1] == 8:
+        #        self.whatami = "hexa"
 
     def process(
             self,
