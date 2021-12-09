@@ -157,7 +157,7 @@ class Faces(Edges):
         self.faces_unique_id = unique_stuff[1].astype(settings.INT_DTYPE)
         self.faces_unique_inverse = unique_stuff[2].astype(settings.INT_DTYPE)
         self.faces_unique_count = unique_stuff[3].astype(settings.INT_DTYPE)
-        self.surfaces = self.faces_unique_ids[self.faces_unique_count == 1]
+        self.surfaces = self.faces_unique_id[self.faces_unique_count == 1]
 
         return self.faces_unique
 
