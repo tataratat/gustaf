@@ -6,9 +6,9 @@ Vertices. Base of all "Mesh" geometries.
 from gustav import settings
 from gustav import utils
 from gustav import show
-from gustav._abstract_base import AB
+from gustav._base import GustavBase
 
-class Vertices(AB):
+class Vertices(GustavBase):
 
     kind = "vertex"
 
@@ -19,7 +19,7 @@ class Vertices(AB):
         "vertices_unique_inverse",
         "bounds",
         "centers",
-        "vis_dict"
+        "vis_dict",
     ]
 
     def __init__(
@@ -97,12 +97,12 @@ class Vertices(AB):
         Parameters
         -----------
         elements: (n, d) np.ndarray
-          Only updates if it is not None.
+          int. Only updates if it is not None.
 
         Returns
         --------
         elements: (n, d) np.ndarray
-          iff elements=None
+          int. iff elements=None
         """
         if hasattr(self, "volumes"):
             if elements is None:
@@ -131,21 +131,170 @@ class Vertices(AB):
         else:
             return None
 
-    def get_vertices_unique(self):
+    def get_vertices_unique(
+            self,
+            tolerance=settings.TOLERNACE,
+            referenced_only=True,
+            return_referenced=False,
+            workers=1,
+    ):
         """
-        jjcpp unique
-        """
-        pass
+        Finds unique vertices using KDTree from scipy.
+        TODO: use jjcpp unique
 
-    def get_vertices_unique_id(self):
-        """
-        """
-        pass
+        Parameters
+        -----------
+        tolerance: float
+          Default is settings.TOLERANCE.
+        referenced_only: bool
+          Only search for unique for referenced vertices. Default is True.
+        return_referenced: bool
+          Default is False.
+        workers: int
+          n_jobs for parallel processing. Default is 1.
+          -1 uses all processes.
 
-    def get_vertices_unique_inverse(self):
+        Returns
+        --------
+        vertices_unique: (n, d) np.ndarray
+          float.
+        referenced: (len(self.vertices),) np.ndarray
+          bool.
         """
+        from scipy.spatial import cKDTree as KDTree
+
+        # Get referenced vertices if it is not vertices and desired
+        # to avoid unnecessary computation
+        referenced = np.empty(len(self.vertices), dtype=bool)
+        if self.kind != "vertex" and referenced_only:
+            referenced[self.elements()] = True
+
+        else:
+            referenced[:] = True
+
+        # Build kdtree
+        kdt = KDTree(self.vertices[referenced])
+
+        # Ball point query, taking tolerance as radius
+        neighbors = kdt.query_ball_point(
+            self.vertices[referenced],
+            tolerance,
+            workers=workers,
+            #return_sorted=True # new in 1.6, but default is True, so pass.
+        )
+
+        # inverse based on original vertices.
+        o_inverse = np.array(
+            [n[0] for n in neighbors],
+            dtype=settings.INT_DTYPE,
+        )
+
+        # unique of o_inverse, and inverse based on that
+        (_, uniq_id, inv) = np.unique(
+            o_inverse,
+            return_index=True,
+            return_inverse=True,
+        )
+
+        # Save 
+        self.vertices_unique = self.vertices[uniq_id]
+        self.vertices_unique_id = uniq_id
+        self.vertices_unique_inverse = inv
+
+        if not return_referenced:
+            return self.vertices_unique
+
+        else:
+            return self.vertices_unique, referenced
+
+    def get_vertices_unique_id(
+            self,
+            tolerance=settings.TOLERNACE,
+            referenced_only=True,
+            return_referenced=False,
+            workers=1,
+    ):
         """
-        pass
+        Returns ids of unique vertices.
+
+        Parameters
+        -----------
+        tolerance: float
+          Default is settings.TOLERANCE.
+        referenced_only: bool
+          Only search for unique for referenced vertices. Default is True.
+        return_referenced: bool
+          Default is False.
+        workers: int
+          n_jobs for parallel processing. Default is 1.
+          -1 uses all processes.
+
+        Returns
+        --------
+        vertices_unique_id: (n,) np.ndarray
+          int
+        referenced: (len(self.vertices),) np.ndarray
+          bool. iff return_referenced==True
+        """
+        # last_item_is_ref maybe np.ndarray or tuple
+        # tuple, iff return_referenced==True
+        last_item_is_ref = self.get_vertices_unique(
+                tolerance=tolerance,
+                referenced_only=referenced_only,
+                return_referenced=return_referenced,
+                workers=workers,
+        )
+
+        if return_referenced:
+            return self.vertices_unique_id, last_item_is_ref[-1]
+
+        else:
+            return self.vertices_unique_id
+
+    def get_vertices_unique_inverse(
+            self,
+            tolerance=settings.TOLERANCE,
+            referenced_only=True,
+            return_referenced=False,
+            workers=1,
+    ):
+        """
+        Returns ids that can ber used to reconstruct vertices with unique
+        vertices.
+
+        Parameters
+        -----------
+        tolerance: float
+          Default is settings.TOLERANCE.
+        referenced_only: bool
+          Only search for unique for referenced vertices. Default is True.
+        return_referenced: bool
+          Default is False.
+        workers: int
+          n_jobs for parallel processing. Default is 1.
+          -1 uses all processes.
+
+        Returns
+        --------
+        vertices_unique_id: (n,) np.ndarray
+          int
+        referenced: (len(self.vertices),) np.ndarray
+          bool. iff return_referenced==True
+        """
+        # last_item_is_ref maybe np.ndarray or tuple
+        # tuple, iff return_referenced==True
+        last_item_is_ref = self.get_vertices_unique(
+                tolerance=tolerance,
+                referenced_only=referenced_only,
+                return_referenced=return_referenced,
+                workers=workers,
+        )
+
+        if return_referenced:
+            return self.vertices_unique_inverse, last_item_is_ref[-1]
+
+        else:
+            return self.vertices_unique_inverse
 
     def get_bounds(self):
         """
@@ -179,32 +328,22 @@ class Vertices(AB):
 
         return self.centers
 
-#    def clear(self):
-        """
-        Clear all properties.
-
-        Parameters
-        -----------
-        None
-
-        Returns
-        --------
-        None
-        """
-#        self._logd("clearning attributes")
-#        for s in self.__slots__:
-#            if hasattr(self, s):
-#                delattr(self, s)
-
-#        self._logd("all attributes are cleared!")
-
     def update_vertices(self, mask, inverse=None, inplace=True):
         """
         Update vertices with a mask.
+        In other words, keeps only masked vertices.
         Adapted from `github.com/mikedh/trimesh`.
 
         Parameters
         -----------
+        mask: (n,) bool or int
+        inverse: (len(self.vertices),) int
+        inplace: bool
+
+        Returns
+        --------
+        updated_self: type(self)
+          iff inplace==Ture
         """
         vertices = self.vertices.copy()
 
@@ -245,10 +384,8 @@ class Vertices(AB):
             self.vertices = vertices
             if elements is not None:
                 self.elements(elements)
-                return None
 
-            else:
-                return None
+            return None
 
         else:
             if element is None:
@@ -320,11 +457,51 @@ class Vertices(AB):
             inplace=inpalce,
         )
 
-    def merge_vertices(self):
+    def merge_vertices(
+            self,
+            tolerance=settings.TOLERANCE,
+            referenced_only=True,
+            inplace=True
+    ):
         """
-        implement for element cases with hasattr
+        Based on vertices unique, merge vertices if it is mergeable.
+
+        Parameters
+        -----------
+        tolerance: float
+          Default is settings.TOLERANCE
+        referenced_only: bool
+          Default is True.
+        inplace: bool
+          Default is True.
+
+        Returns
+        --------
+        merged_self: type(self)
+          iff inplace==True
         """
-        pass
+        inv, referenced = self.get_vertices_unique_inverse(
+            tolerance=tolerance,
+            referenced_only=referenced_only,
+            return_referenced=True,
+            workers=1,
+        )
+
+        # inverse mask for update
+        inverse = np.zeros(len(self.vertices), dtype=settings.DTYPE_INT)
+        inverse[referenced] = inv
+        # Turn bool mask into int mask and extract only required
+        mask = np.nonzero(referenced)[0][self.vertices_unique_id]
+
+        self._logd("number of vertices")
+        self._logd(f"  before merge: {len(self.vertices)}")
+        self._logd(f"  after merge: {len(mask)}")
+
+        return self.update_vertices(
+            mask=mask,
+            inverse=inverse,
+            inplace=inplace
+        )
 
     def showable(self, **kwargs):
         """
@@ -431,3 +608,16 @@ class Vertices(AB):
                 vertices=np.vstack(vertices),
             )
 
+    def __add__(self, to_add):
+        """
+        Concat in form of +.
+
+        Parameters
+        -----------
+        to_add: type(self)
+
+        Returns
+        --------
+        added: type(self)
+        """
+        return type(self).concat(self, to_add)
