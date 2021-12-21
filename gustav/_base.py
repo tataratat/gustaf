@@ -1,6 +1,7 @@
-"""gustav/gustav/mesh.py
+"""gustav/gustav/_base.py
 
-Mesh.
+Useful base class for gustav.
+Plus some useful decorators.
 """
 
 import abc
@@ -11,23 +12,23 @@ import numpy as np
 
 from gustav import utils
 
-class AB(abc.ABC):
+class GustavBase(abc.ABC):
     """
-    Abstract (but not really) base class for gustav, where logging is nicely
-    wrapped.
+    Base class for gustav, where logging is nicely wrapped, and some useful
+    methods are defined as classmethods..
 
-    All the classes are expected to have __slots__.
     In this version, the idea of setter, getter and cached is disregarded.
 
-    If some values are going to be used more than once, save it by yourself.
-
     Since attributes are predefined with __slots__, we can pre define
-    all the properties that could have been cached.
-    Although leading underscore indicates internal use, feel free to grab it
-    it you know that you have no inplace changes.
+    all the properties that could have been saved.
+    Adding `get_` in front of such properties are names for functions that
+    freshly compute and save the properties and their byproducts.
+
     One magic call `process` will make all these values available.
 
     Other more complex operations will be a separate function.
+
+    TODO: maybe add explicit `use_saved` switch to avoid recomputing
     """
 
     __slots__ = [
