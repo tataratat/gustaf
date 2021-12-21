@@ -213,7 +213,7 @@ class Edges(Vertices):
             return type(self)(
                 vertices=self.vertices,
                 elements=new_elements
-            ).remove_unreferrenced_vertices(inplace=True)
+            ).remove_unreferrenced_vertices(inplace=False)
 
     def update_edges(self, *args, **kwargs):
         """
