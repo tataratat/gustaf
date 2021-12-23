@@ -6,6 +6,7 @@ visualization and more.
 
 import math
 
+import numpy as np
 import splinelibpy
 
 from gustav import utils
@@ -56,7 +57,7 @@ def _edges(
         resolution=100,
         extract_dim=None,
         extract_knot=None,
-        all_knots=False.
+        all_knots=False,
 ):
     """
     Extract edges (lines) from a given spline.
@@ -562,7 +563,7 @@ def _show(
         return None
 
 
-class BSpline(splinelibpy.BSpline):
+class BSpline(splinelibpy.BSpline, GustavBase):
 
     def __init__(
             self,
