@@ -133,7 +133,7 @@ class Vertices(GustavBase):
 
     def get_vertices_unique(
             self,
-            tolerance=settings.TOLERNACE,
+            tolerance=settings.TOLERANCE,
             referenced_only=True,
             return_referenced=False,
             workers=1,
@@ -209,7 +209,7 @@ class Vertices(GustavBase):
 
     def get_vertices_unique_id(
             self,
-            tolerance=settings.TOLERNACE,
+            tolerance=settings.TOLERANCE,
             referenced_only=True,
             return_referenced=False,
             workers=1,
