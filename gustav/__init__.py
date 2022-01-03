@@ -8,6 +8,9 @@ from gustav import show
 from gustav import utils
 from gustav import create
 
+# import try/catch for spline
+# import try/catch for triangle and gustav-tetgen
+
 from gustav.vertices import Vertices
 from gustav.edges import Edges
 from gustav.faces import Faces
