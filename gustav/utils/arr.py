@@ -112,8 +112,8 @@ def bounds(arr):
     """
     return np.vstack(
         (
-            np.min(a, axis=0).reshape(1, -1),
-            np.max(a, axis=0).reshape(1, -1),
+            np.min(arr, axis=0).reshape(1, -1),
+            np.max(arr, axis=0).reshape(1, -1),
         )
     )
 
@@ -131,8 +131,8 @@ def bounds_diagonal(arr):
     --------
     bounds_diagonal: (n,) np.ndarray
     """
-    bounds = bounds(arr)
-    return bounds[1] - bounds[0]
+    b = bounds(arr)
+    return b[1] - b[0]
 
 
 def bounds_norm(arr):
