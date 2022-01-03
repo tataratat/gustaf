@@ -1,10 +1,14 @@
 """gustav/gustav/spline.py
 
 Spline classes that are inherited from `splinelibpy`, in order to support
-visualization and more.
+visualization and some operations.
+Spline operations are available as a function that takes spline and args.
+At the same time, BSpline and NURBS classes will have those operations
+available as member functions.
 """
 
-import math
+
+import itertools
 
 import numpy as np
 import splinelibpy
@@ -52,7 +56,7 @@ def _res_list(res, length):
             "Invalid resolutions input. It should be int, tuple, or list."
         )
 
-def _edges(
+def edges(
         spline,
         resolution=100,
         extract_dim=None,
@@ -122,7 +126,7 @@ def _edges(
 
                 for ekq in extract_knot_queries:
                     edgess.append(
-                        _edges(spline, resolution, i, ekq, False)
+                        edges(spline, resolution, i, ekq, False)
                     )
 
             return Edges.concat(edgess)
@@ -138,8 +142,8 @@ def _edges(
         not_ed.pop(extract_dim)
         queries[:, not_ed] = extract_knot
         queries[:, extract_dim] = np.linspace(
-            min(spline.knot_vectors(extract_dim),
-            max(spline.knot_vectors(extract_dim),
+            min(spline.knot_vectors(extract_dim)),
+            max(spline.knot_vectors(extract_dim)),
             resolution,
         )
 
@@ -152,7 +156,7 @@ def _edges(
         )
 
 
-def _faces(spline, resolutions,):
+def faces(spline, resolutions,):
     """
     Extract faces from spline.
     Valid iff (para_dim, dim) is on of the followings: (2, 2), (2, 3), (3, 3).
@@ -297,7 +301,7 @@ def _faces(spline, resolutions,):
         )
 
 
-def _volumes(spline, resolutions):
+def volumes(spline, resolutions):
     """
     Extract volumes from spline.
     Valid iff spline.para_dim == 3 and spline.dim == 3.
@@ -305,6 +309,7 @@ def _volumes(spline, resolutions):
     Parameters
     -----------
     spline: BSpline or NURBS
+    resolutions: 
 
     Returns
     --------
@@ -322,7 +327,7 @@ def _volumes(spline, resolutions):
     )
 
 
-def _control_edges(spline):
+def control_edges(spline):
     """
     Extract control edges (mesh).
     Valid iff (para_dim, dim) is one of the followings: (1, 2), (1, 3)
@@ -349,7 +354,7 @@ def _control_edges(spline):
     )
 
 
-def _control_faces(spline):
+def control_faces(spline):
     """
     Extract control face (mesh).
     Valid iff (para_dim, dim) is one of the followings: (2, 2), (2, 3).
@@ -374,7 +379,7 @@ def _control_faces(spline):
     )
 
 
-def _control_volumes(spline):
+def control_volumes(spline):
     """
     Extract control volumes (mesh).
     Valid iff (para_dim, dim) is (3, 3).
@@ -396,7 +401,7 @@ def _control_volumes(spline):
     )
 
 
-def _show(
+def show(
         spline,
         resolutions=100,
         control_points=True,
@@ -410,14 +415,39 @@ def _show(
         surface_alpha=1,
         lighting="glossy",
         control_point_ids=True,
+        solution_cps=None,
         solution_spline=None,
 ):
     """
     Shows splines with various options.
     They are excessively listed, so that it can be adjustable.
 
-    """
+    Parameters
+    -----------
+    spline: BSpline or NURBS
+    resolutions: int or (spline.para_dim,) array-like
+    control_points: bool
+    knots: bool
+    show_fitting_queries: bool
+    return_showables: bool
+    return_vedo_showables: bool
+      Only relevant iff visualization backend is `vedo`
+      and return_showable is True.
+    parametric_space: bool
+      Only relevant for `vedo` backend.
+    surface_alpha: float
+      Only relevant for `vedo` backend. Effective range [0, 1].
+    lighting: str
+      Only relevant for `vedo` backend.
+    control_point_ids: bool
+    solution_cps: (len(spline.control_points), d) np.ndarray
+    solution_spline: BSpline or NURBS
 
+    Returns
+    --------
+    things_to_show: dict
+      list of gustav objects that are showable.
+    """
     allowed_dim_combo = (
         (1, 2),
         (1, 3),
@@ -434,10 +464,10 @@ def _show(
 
     # spline itself
     if spline.para_dim == 1:
-        sp = _edges(spline, resolutions[0])
+        sp = edges(spline, resolutions[0])
         sp.vis_dict.update(c="black", lw=8)
     if spline.para_dim == 2 or spline.para_dim == 3:
-        sp = _faces(spline, resolutions)
+        sp = faces(spline, resolutions)
         sp.vis_dict.update(c="green")
 
     things_to_show.update(spline=sp)
@@ -445,11 +475,11 @@ def _show(
     # control_points. = control mesh + control_points
     if control_points:
         if spline.para_dim == 1:
-            control_mesh = _control_edges(spline)
+            control_mesh = control_edges(spline)
         elif spline.para_dim == 2:
-            control_mesh = _control_faces(spline).toedges(unique=True)
+            control_mesh = control_faces(spline).toedges(unique=True)
         elif spline.para_dim == 3:
-            control_mesh = _control_volumes(spline).toedges(unique=True)
+            control_mesh = control_volumes(spline).toedges(unique=True)
 
         # Set alpha to < 1, so that they don't "overshadow" spline
         control_mesh.vis_dict.update(c="red", lw=6, alpha=.8)
@@ -462,11 +492,11 @@ def _show(
 
     if knots:
         if spline.para_dim > 1:
-            knot_lines = _edges(spline, resolutions, all_knots=True)
+            knot_lines = edges(spline, resolutions, all_knots=True)
             knot_lines.vis_dict.update(c="black", lw=6)
             things_to_show.update(knots=knot_lines)
 
-    if show_queries and hasattr(spline, _fitting_queries):
+    if show_fitting_queries and hasattr(spline, _fitting_queries):
         fitting_queries = Vertices(spline._fitting_queries)
         fitting_queries.vis_dict.update(c="blue", r=10)
         things_to_show.update(fitting_queries=fitting_queries)
@@ -479,7 +509,7 @@ def _show(
             show.show(list(things_to_show.values()))
             return None
 
-    # iff backend if vedo, we provide fancier visualization
+    # iff backend is vedo, we provide fancier visualization
     elif settings.VISUALIZATION_BACKEND.startswith("vedo"):
         # showable, but not specifically vedo_showable, then return
         if return_showables and not return_vedo_showables:
@@ -516,7 +546,7 @@ def _show(
             from gustav.create.splines import knot_vector_bounded
 
             kv_spline = knot_vector_bounded(spline.knot_vectors)
-            kvs_showables = _show(
+            kvs_showables = show(
                 kv_spline,
                 control_points=False,
                 return_showables=True,
@@ -615,7 +645,7 @@ class BSpline(splinelibpy.BSpline, GustavBase):
         --------
         edges: Edges
         """
-        return _edges(self, resolution, extract_dim, extract_knot, all_knots)
+        return edges(self, resolution, extract_dim, extract_knot, all_knots)
 
     def faces(
             self,
@@ -638,8 +668,81 @@ class BSpline(splinelibpy.BSpline, GustavBase):
         --------
         faces: faces
         """
-        return _faces(self, resolutions)
+        return faces(self, resolutions)
 
+    def volumes(self, resolutions):
+        """
+        Extract volumes from spline.
+        Valid iff spline.para_dim == 3 and spline.dim == 3.
+
+        Parameters
+        -----------
+        spline: BSpline or NURBS
+
+        Returns
+        --------
+        volumes: Volumes
+        """
+        return volumes(self, resolutions)
+
+    def control_mesh(self,):
+        """
+        Calls control_edges, control_faces, control_volumes
+        based on current spline.
+
+        Parameters
+        -----------
+        None
+
+        Returns
+        --------
+        control_mesh: Edges or Faces or Volumes
+        """
+        if self.para_dim == 1:
+            self._logd("generating control edges")
+            return control_edges(self)
+        elif self.para_dim == 2:
+            self._logd("generating control faces")
+            return control_faces(self)
+        elif self.para_dim == 3:
+            self._logd("generating control volumes")
+            return control_volumes(self)
+        else:
+            raise ValueError(
+                "Invalid para_dim to extract control_mesh. "
+                "Supports 1 to 3."
+            )
+
+    def show(
+            self,
+            resolutions=100,
+            control_points=True,
+            knots=True,
+            show_fitting_queries=True,
+            return_showables=False,
+            return_vedo_showables=True,
+            # From here, | only relevant if "vedo" is backend.
+            #            V
+            parametric_space=False,
+            surface_alpha=1,
+            lighting="glossy",
+            control_point_ids=True,
+            field_name=None,
+    ):
+        return show(
+            spline=self,
+            resolutions=resolutions,
+            control_points=control_points,
+            knots=knots,
+            show_fitting_queries=show_fitting_queries,
+            return_showables=return_showables,
+            return_vedo_showables=return_vedo_showables,
+            parametric_space=parametric_space,
+            surface_alpha=surface_alpha,
+            lighting=lighting,
+            control_point_ids=control_point_ids,
+            field_name=field_name,
+        )
 
 class Spline(splinelibpy.Spline):
     def __init__(
