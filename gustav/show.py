@@ -35,11 +35,13 @@ def show(*gusobj, **kwargs):
         raise NotImplementedError
 
 
-def show_vedo(vedo_lists):
+def show_vedo(list_of_vedos):
     """
-    Thin vedo show wrapper to nicely 
+    `vedo.show` wrapper.
     """
-    pass
+    import vedo
+
+    vedo.show(list_of_vedos.values()).close()
 
 
 def _vedo_showable(obj, **kwargs):
@@ -56,7 +58,7 @@ def _vedo_showable(obj, **kwargs):
     """
     import vedo
 
-    utils.log._debug("making vedo-showable obj")
+    utils.log.debug("making vedo-showable obj")
     if obj.kind == "vertex":
         return vedo.Points(obj.vertices, **obj.vis_dict, **kwargs)
 
