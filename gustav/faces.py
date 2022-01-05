@@ -94,9 +94,9 @@ class Faces(Edges):
         --------
         None
         """
-        if self.kind == "faces":
+        if self.kind == "face":
             self.faces = utils.arr.make_c_contiguous(
-                self.edges,
+                self.faces,
                 settings.INT_DTYPE,
             )
 
