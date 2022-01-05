@@ -3,6 +3,10 @@
 Vertices. Base of all "Mesh" geometries.
 """
 
+import copy
+
+import numpy as np
+
 from gustav import settings
 from gustav import utils
 from gustav import show
@@ -13,6 +17,7 @@ class Vertices(GustavBase):
     kind = "vertex"
 
     __slots__ = [
+        "whatami",
         "vertices",
         "vertices_unique",
         "vertices_unique_id",
@@ -179,7 +184,7 @@ class Vertices(GustavBase):
         neighbors = kdt.query_ball_point(
             self.vertices[referenced],
             tolerance,
-            workers=workers,
+            #workers=workers,
             #return_sorted=True # new in 1.6, but default is True, so pass.
         )
 
@@ -354,12 +359,17 @@ class Vertices(GustavBase):
             (mask.dtype.name == "bool" and mask.all())
             or len(mask) == 0
         ):
-            # Nothing to do
-            return None
+            # Nothing to do if inplace
+            if inplace:
+                return None
+
+            # if not inplace, it is same as copy
+            else:
+                return self.copy()
 
         # create inverse mask if not passed
         if inverse is None:
-            inverse = np.zeros(len(vertices, dtype=settings.INT_DTYPE))
+            inverse = np.zeros(len(vertices), dtype=settings.INT_DTYPE)
             if mask.dtype.kind == "b":
                 inverse[mask] = np.arange(mask.sum())
             elif mask.dtype.kind == "i":
@@ -388,7 +398,7 @@ class Vertices(GustavBase):
             return None
 
         else:
-            if element is None:
+            if elements is None:
                 return type(self)(vertices=vertices)
 
             else:
@@ -445,7 +455,7 @@ class Vertices(GustavBase):
         if self.kind == "vertex":
             return self
 
-        referenced = np.zeros(len(self.vertices), dtype=settings.INT_DTYPE)
+        referenced = np.zeros(len(self.vertices), dtype=bool)
         referenced[self.elements()] = True
 
         inverse = np.zeros(len(self.vertices), dtype=settings.INT_DTYPE)
@@ -454,7 +464,7 @@ class Vertices(GustavBase):
         return self.update_vertices(
             mask=referenced,
             inverse=inverse,
-            inplace=inpalce,
+            inplace=inplace,
         )
 
     def merge_vertices(
@@ -488,7 +498,7 @@ class Vertices(GustavBase):
         )
 
         # inverse mask for update
-        inverse = np.zeros(len(self.vertices), dtype=settings.DTYPE_INT)
+        inverse = np.zeros(len(self.vertices), dtype=settings.INT_DTYPE)
         inverse[referenced] = inv
         # Turn bool mask into int mask and extract only required
         mask = np.nonzero(referenced)[0][self.vertices_unique_id]
@@ -533,6 +543,22 @@ class Vertices(GustavBase):
         """
         show.show(self, **kwargs)
 
+    def copy(self):
+        """
+        Returns deepcopy of self.
+
+        Parameters
+        -----------
+        None
+
+        Returns
+        --------
+        selfcopy: type(self)
+        """
+        # all attributes are deepcopy-able
+        return copy.deepcopy(self)
+
+
     @classmethod
     def concat(cls, *instances):
         """
@@ -547,11 +573,11 @@ class Vertices(GustavBase):
         --------
         one_instance: type(cls)
         """
-        def is_same_type(inst):
+        def is_concatable(inst):
             """
             Return true, if it is same as type(cls)
             """
-            if isinstance(inst, type(cls)):
+            if cls.__name__.startswith(inst.__class__.__name__):
                 return True
             else:
                 return False
@@ -560,21 +586,22 @@ class Vertices(GustavBase):
         # so that we will just iterate that.
         if (
             len(instances) == 1
-            and not isinstance(instance[0], str)
+            and not isinstance(instances[0], str)
             and hasattr(instances[0], "__iter__")
         ):
-            instances = intstances[0]
+            instances = instances[0]
 
         vertices = []
         haselem = cls.kind != "vertex"
         if haselem:
             elements = []
 
+        # check if everything is "concatable".
         for ins in instances:
-            if not is_same_type(ins):
+            if not is_concatable(ins):
                 raise TypeError(
                     "Can't concat. One of the instances is not "
-                    + f"{type(cls).__qualname__}."
+                    f"`{cls.__name__}`."
                 )
 
             # make sure each element index starts from 0 & end at len(vertices)
@@ -598,7 +625,7 @@ class Vertices(GustavBase):
                     e_offset = elements[-1].max() + 1
 
         if haselem:
-            return type(cls)(
+            return cls(
                 vertices=np.vstack(vertices),
                 elements=np.vstack(elements),
             )
