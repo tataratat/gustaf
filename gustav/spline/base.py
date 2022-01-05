@@ -5,6 +5,7 @@ Contains show and inherited classes from `spline`.
 """
 
 import splinepy
+import numpy as np
 
 from gustav import settings
 from gustav import show as showmodule
@@ -19,8 +20,8 @@ def show(
         control_points=True,
         knots=True,
         show_fitting_queries=True,
-        return_showables=False,
-        return_vedo_showables=True,
+        return_discrete=False,
+        return_showable=False,
         # From here, | only relevant if "vedo" is backend.
         #            V
         parametric_space=False,
@@ -41,10 +42,11 @@ def show(
     control_points: bool
     knots: bool
     show_fitting_queries: bool
-    return_showables: bool
-    return_vedo_showables: bool
-      Only relevant iff visualization backend is `vedo`
-      and return_showable is True.
+    return_discrete: bool
+      Return dict of gustav discrete objects, for example,
+      {Vertices, Edges, Faces}, instead of opening a window
+    return_showable: bool
+      Return dict of showable objects.
     parametric_space: bool
       Only relevant for `vedo` backend.
     surface_alpha: float
@@ -57,7 +59,8 @@ def show(
     Returns
     --------
     things_to_show: dict
-      list of gustav objects that are showable.
+      iff return_discrete==True, dict of gustav objects that are showable.
+      iff return_showable==True, dict of backend objects that are showable.
     """
     # Showing is only possible for following splines
     allowed_dim_combo = (
@@ -117,7 +120,14 @@ def show(
 
     # Return here, if backend is not vedo        
     if not settings.VISUALIZATION_BACKEND.startswith("vedo"):
-        if return_showables:
+        # turn everything into backend showables
+        if return_showable:
+            for key, gusobj in things_to_show.items():
+                things_to_show.update({key : showmodule.make_showable(gusobj)})
+
+            return things_to_show
+
+        elif return_discrete:
             return things_to_show
 
         else:
@@ -126,8 +136,9 @@ def show(
 
     # iff backend is vedo, we provide fancier visualization
     elif settings.VISUALIZATION_BACKEND.startswith("vedo"):
-        # showable, but not specifically vedo_showable, then return
-        if return_showables and not return_vedo_showables:
+        # return if showable is not desired
+        # -> From now on we will directly work on vedo objects.
+        if return_discrete and not return_showable:
             return things_to_show
 
         vedo_things = dict()
@@ -159,22 +170,26 @@ def show(
 
         if parametric_space and spline.para_dim > 1:
             from vedo.addons import Axes
-            from gustav.create.splines import knot_vector_bounded
+            from gustav.create.spline import parametric_view
+            from gustav.utils.arr import bounds
 
-            kv_spline = knot_vector_bounded(spline.knot_vectors)
-            kvs_showables = show(
+            kv_spline = parametric_view(spline)
+            para_showables = show(
                 kv_spline,
                 control_points=False,
-                return_showables=True,
-                return_vedo_showables=True,
+                return_showable=True,
                 lighting=lighting,
                 knots=knots,
+                parametric_space=False,
             )
             # Make lines a bit thicker
-            for l in naive_things[1:]: l.lw(3)
+            if knots:
+                para_showables["knots"].lw(3)
 
             # Trick to show begin/end value
-            bs = np.asarray(naive_things[0].bounds()).reshape(-1,2).T
+            bs = np.asarray(
+                bounds(para_showables["spline"].points())
+            ).reshape(-1,2).T
             bs_diff_001 = (bs[1] - bs[0]) * 0.001
             lowerb = bs[0] - bs_diff_001 
             upperb = bs[1] + bs_diff_001
@@ -191,22 +206,24 @@ def show(
                 yzGrid=False,
             )
 
-            if self._para_dim == 3:
+            if spline.para_dim == 3:
                 axes_config.update(ztitle="w")
                 axes_config.update(zrange=[lowerb[2], upperb[2]])
                 axes_config.update(zMinorTicks=3)
                 axes_config.update(zxGrid=False)
 
-            naive_things.append(Axes(naive_things[0], **axes_config))
+            para_showables.append(Axes(naive_things[0], **axes_config))
 
         # showable return
-        if return_vedo_showables and return_showables:
+        if return_showable:
+            vedo_things.update(parametric_spline=para_showables)
             return vedo_things
 
         # now, show
         showmodule.show_vedo(vedo_things)
 
         return None
+
 
 class BSpline(splinepy.BSpline, GustavBase):
 
@@ -269,4 +286,65 @@ class BSpline(splinepy.BSpline, GustavBase):
         return show(self, **kwargs)
 
 class NURBS(splinepy.NURBS, GustavBase):
-    pass
+    def __init__(
+            self,
+            degrees=None,
+            knot_vectors=None,
+            control_points=None,
+            weights=None,
+    ):
+        """
+        NURBS of gustav. Inherited from splinepy.NURBS.
+
+        Attributes
+        -----------
+        extract: _Extractor
+
+        Parameters
+        -----------
+        degrees: (para_dim,) list-like
+        knot_vectors: (para_dim,) list
+        control_points: (m, dim) list-like
+        weights: (m, 1) list-like
+
+        Returns
+        --------
+        None
+        """
+        super().__init__(
+            degrees=degrees,
+            knot_vectors=knot_vectors,
+            control_points=control_points,
+            weights=weights,
+        )
+
+        self._extractor = _Extractor(self)
+
+    @property
+    def extract(self):
+        """
+        Returns spline extracter.
+        Can directly perform extractions available at
+        `gustav/spline/extract.py`.
+        For more info, take a look at `gustav/spline/extract.py`: _Extracter.
+
+        Examples
+        ---------
+        >>> splinefaces = spline.extract.faces()
+
+        Parameters
+        -----------
+        None
+
+        Returns
+        --------
+        spline_extracter: _Extracter
+        """
+        return self._extractor
+
+    def show(self, **kwargs):
+        """
+        """
+        return show(self, **kwargs)
+
+

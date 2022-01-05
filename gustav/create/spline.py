@@ -5,8 +5,9 @@ Frequently used spline shapes generation.
 
 import numpy as np
 
+from gustav.settings import TOLERANCE
 from gustav.create.vertices import raster
-from gustav.spline import BSpline
+from gustav.spline.base import BSpline
 
 
 def with_bounds(
@@ -56,7 +57,7 @@ def with_bounds(
             "para_dim."
         )
 
-    cps = raster(physical_bounds, [2] * len(pl_bound))
+    cps = raster(physical_bounds, [2] * len(pl_bound)).vertices
     cps = np.repeat(cps, dim_diff + 1, axis=0)
 
     # Now, make spline
@@ -79,16 +80,18 @@ def with_bounds(
             continue
         # Elevate degree
         for _ in range(diff):
-            spl.elevate_degrees(i)
+            spl.elevate_degree(i)
 
     # Return is there's nothing to do
     if num_unique_knots is None:
-        return spl
+        return spl if not nurbs else spl.nurbs
 
     # Knots
     assert len(num_unique_knots) == len(l_bound),\
         "Length of num_unique_knots and parametric_bounds[0] does not match."
     for i, (nuk, lb, ub) in enumerate(zip(num_unique_knots, l_bound, u_bound)):
+        if nuk < .5:
+            continue
         new_knots = np.linspace(lb, ub, nuk)[1:-1]
         spl.insert_knots(i, new_knots)
 
@@ -102,15 +105,109 @@ def with_parametric_bounds(
         nurbs=False,
 ):
     """
+    Similar to with_bounds.
+    Creates spline that has same parametric and physical bounds.
+
+    Parameters
+    -----------
+    parametric_bounds: (2, n) array-like
+    degrees: (n,) array-like
+      (Optional) Default is 1 for each dimension.
+    num_unique_knots: (n,) array-like
+      (Optional) Default is 2 for each dimension.
+    nurbs: bool
+      (Optional) Default is False.
+
+    Returns
+    --------
+    spline: BSpline or NURBS
+      If `spline` is not availabe, will return dict of corresponding 
     """
-    pass
+    return with_bounds(
+        parametric_bounds=parametric_bounds,
+        physical_bounds=parametric_bounds,
+        degrees=degrees,
+        num_unique_knots=num_unique_knots,
+        nurbs=nurbs,
+    )
 
 def with_physical_bounds(
-
+        physical_bounds,
+        degrees=None,
+        num_unique_knots=None,
+        nurbs=None,
 ):
     """
+    Similar to with_bounds.
+    Creates spline that has same [0, 1]^3 parametric bounds.
+
+    Parameters
+    -----------
+    physical_bounds: (2, n) array-like
+    degrees: (n,) array-like
+      (Optional) Default is 1 for each dimension.
+    num_unique_knots: (n,) array-like
+      (Optional) Default is 2 for each dimension.
+    nurbs: bool
+      (Optional) Default is False.
+
+    Returns
+    --------
+    spline: BSpline or NURBS
+      If `spline` is not availabe, will return dict of corresponding 
     """
-    pass
+    dim = len(physical_bounds[0])
+
+    return with_bounds(
+        parametric_bounds=[
+            [0. for _ in range(dim)],
+            [1. for _ in range(dim)],
+        ],
+        physical_bounds=parametric_bounds,
+        num_unique_knots=num_unique_knots,
+        nurbs=nurbs,
+    )
+
+
+def parametric_view(spline):
+    """
+    Create parametric view of given spline.
+    Previously called `naive_spline()`
+
+
+    Parameters
+    -----------
+    spline: BSpline or NURBS
+
+    Returns
+    --------
+    para_spline: BSpline or NURBS 
+    """
+    para_spline = with_parametric_bounds(
+        parametric_bounds=spline.knot_vector_bounds,
+        degrees=spline.degrees,
+        num_unique_knots=None,
+        nurbs=True if hasattr(spline, "weights") else False, 
+    )
+
+    # loop through knot vectors and insert missing knots
+    for i, kv in enumerate(spline.knot_vectors):
+        tmp_kv = np.asarray(kv.copy())
+
+        # remove all the knots that para_spline also has
+        for pk in para_spline.knot_vectors[i]:
+            matches = np.where(abs(tmp_kv - pk) < TOLERANCE)[0]
+
+            # manipulate first one of the matches to mark "hit"
+            if len(matches) > 0:
+                tmp_kv[matches[0]] = -100.0
+
+        mask = tmp_kv < -1 # mask of matching knots
+        if mask.sum() != len(mask): # means there's "hit"
+            para_spline.insert_knots(i, tmp_kv[~mask])
+
+        return para_spline
+
 
 def with_dimension(
         parametric_dim,
