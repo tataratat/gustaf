@@ -17,6 +17,7 @@ from gustav.volumes import Volumes
 
 from gustav.spline._utils import to_res_list
 
+
 def edges(
         spline,
         resolution=100,
@@ -93,14 +94,14 @@ def edges(
         not_ed.pop(extract_dim)
         queries[:, not_ed] = extract_knot
         queries[:, extract_dim] = np.linspace(
-            min(spline.knot_vectors(extract_dim)),
-            max(spline.knot_vectors(extract_dim)),
+            min(spline.knot_vectors[extract_dim]),
+            max(spline.knot_vectors[extract_dim]),
             resolution,
         )
 
         return Edges(
             vertices=spline.evaluate(queries),
-            edges=utils.connec.ranges_to_edges(
+            edges=utils.connec.range_to_edges(
                 (0, resolution),
                 closed=False,
             )
@@ -234,10 +235,14 @@ def faces(spline, resolutions,):
 
             faces.append(tmp_faces + int(offset))
 
-        return Faces(
+        # make faces and merge vertices before returning
+        f = Faces(
             vertices=np.vstack(vertices),
             faces=np.vstack(faces)
-        ).merge_vertices(inplace=True)
+        )
+        f.merge_vertices(inplace=True)
+
+        return f
 
     else:
         raise ValueError(
@@ -314,7 +319,7 @@ def control_faces(spline):
 
     return Faces(
         vertices=spline.control_points,
-        faces=utils.connec.make_quad_makes(spline.control_net_resolutions),
+        faces=utils.connec.make_quad_faces(spline.control_mesh_resolutions),
     )
 
 
@@ -336,7 +341,7 @@ def control_volumes(spline):
 
     return Volumes(
         vertices=spline.control_points,
-        volumes=utils.connec.make_hexa_volumes(spline.control_net_resolutions),
+        volumes=utils.connec.make_hexa_volumes(spline.control_mesh_resolutions),
     )
 
 

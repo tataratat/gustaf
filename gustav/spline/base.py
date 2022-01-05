@@ -4,9 +4,10 @@ Base for splines.
 Contains show and inherited classes from `spline`.
 """
 
-import spline
+import splinepy
 
 from gustav import settings
+from gustav import show as showmodule
 from gustav._base import GustavBase
 from gustav.vertices import Vertices
 from gustav.spline.extract import _Extractor
@@ -94,7 +95,7 @@ def show(
             control_mesh = control_mesh.toedges(unique=True)
 
         # Set alpha to < 1, so that they don't "overshadow" spline
-        control_mesh.vis_dict.update(c="red", lw=6, alpha=.8)
+        control_mesh.vis_dict.update(c="red", lw=4, alpha=.8)
         things_to_show.update(control_mesh=control_mesh) # mesh itself
         # Add big vertices to emphasize cps.
         cps = control_mesh.tovertices()
@@ -105,11 +106,11 @@ def show(
         # Knot lines for non-curve splines.
         # Knot for curves are only added for vedo backend.
         if spline.para_dim > 1:
-            knot_lines = spline.extract.edges(resolutions, all_knots=True)
+            knot_lines = spline.extract.edges(resolutions[0], all_knots=True)
             knot_lines.vis_dict.update(c="black", lw=6)
             things_to_show.update(knots=knot_lines)
 
-    if show_fitting_queries and hasattr(spline, _fitting_queries):
+    if show_fitting_queries and hasattr(spline, "_fitting_queries"):
         fitting_queries = Vertices(spline._fitting_queries)
         fitting_queries.vis_dict.update(c="blue", r=10)
         things_to_show.update(fitting_queries=fitting_queries)
@@ -120,7 +121,7 @@ def show(
             return things_to_show
 
         else:
-            show.show(list(things_to_show.values()))
+            showmodule.show(list(things_to_show.values()))
             return None
 
     # iff backend is vedo, we provide fancier visualization
@@ -131,7 +132,7 @@ def show(
 
         vedo_things = dict()
         for key, gusobj in things_to_show.items():
-            vedo_things.update({key : show.make_showable(gusobj)})
+            vedo_things.update({key : showmodule.make_showable(gusobj)})
 
         if lighting is not None:
             vedo_things["spline"].lighting(lighting)
@@ -141,13 +142,13 @@ def show(
 
         if control_points and control_point_ids:
             vedo_things.update(
-                control_point_ids=vedo_things["control_points"].label("id")
+                control_point_ids=vedo_things["control_points"].labels("id")
             )
 
         # Add knots as "x" for curves
         if knots and spline.para_dim == 1:
             uks = spline.unique_knots[0]
-            phys_uks = show.make_showable(
+            phys_uks = showmodule.make_showable(
                 Vertices(spline.evaluate([[uk] for uk in uks]))
             )
             xs = ["x"] * len(uks)
@@ -199,15 +200,15 @@ def show(
             naive_things.append(Axes(naive_things[0], **axes_config))
 
         # showable return
-        if return_vedo_showable and return_showables:
+        if return_vedo_showables and return_showables:
             return vedo_things
 
         # now, show
-        
+        showmodule.show_vedo(vedo_things)
 
         return None
 
-class BSpline(spline.BSpline, GustavBase):
+class BSpline(splinepy.BSpline, GustavBase):
 
     def __init__(
             self,
@@ -216,7 +217,7 @@ class BSpline(spline.BSpline, GustavBase):
             control_points=None,
     ):
         """
-        BSpline of gustav. Inherited from splinelibpy.BSpline.
+        BSpline of gustav. Inherited from splinepy.BSpline.
 
         Attributes
         -----------
@@ -262,9 +263,10 @@ class BSpline(spline.BSpline, GustavBase):
         """
         return self._extractor
 
-    def show(self):
+    def show(self, **kwargs):
         """
-        
         """
+        return show(self, **kwargs)
 
-
+class NURBS(splinepy.NURBS, GustavBase):
+    pass
