@@ -5,6 +5,7 @@ Thin logging wrapper.
 
 import logging
 
+
 def configure(debug=False, logfile=None):
     """
     Logging configurator.
@@ -28,7 +29,8 @@ def configure(debug=False, logfile=None):
     if logfile is not None:
         file_logger_handler = logging.FileHandler(logfile)
 
-def _debug(*log):
+
+def debug(*log):
     """
     Debug logger.
 
@@ -40,10 +42,10 @@ def _debug(*log):
     --------
     None
     """
-    logs = [l for l in log]
-    logging.debug(" ".join(map(str, logs)))
+    logging.debug(" ".join(map(str, log)))
 
-def _info(*log):
+
+def info(*log):
     """
     Info logger.
 
@@ -55,10 +57,10 @@ def _info(*log):
     --------
     None
     """
-    logs = [l for l in log]
-    logging.info(" ".join(map(str, logs)))
+    logging.info(" ".join(map(str, log)))
 
-def _warning(*log):
+
+def warning(*log):
     """
     warning logger.
 
@@ -70,6 +72,4 @@ def _warning(*log):
     --------
     None
     """
-    logs = [l for l in log]
-    logging.warning(" ".join(map(str, logs)))
-
+    logging.warning(" ".join(map(str, log)))

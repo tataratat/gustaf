@@ -17,14 +17,10 @@ class GustavBase(abc.ABC):
     Base class for gustav, where logging is nicely wrapped, and some useful
     methods are defined as classmethods..
 
-    In this version, the idea of setter, getter and cached is disregarded.
-
     Since attributes are predefined with __slots__, we can pre define
     all the properties that could have been saved.
     Adding `get_` in front of such properties are names for functions that
     freshly compute and save the properties and their byproducts.
-
-    One magic call `process` will make all these values available.
 
     Other more complex operations will be a separate function.
 
@@ -32,7 +28,7 @@ class GustavBase(abc.ABC):
     """
 
     __slots__ = [
-        "whatami",
+    #    "whatami",
     ]
 
     def _logd(self, *log):
@@ -47,7 +43,7 @@ class GustavBase(abc.ABC):
         --------
         None
         """
-        utils.log._debug(type(self).__qualname__, "-", *log)
+        utils.log.debug(type(self).__qualname__, "-", *log)
 
     def _logi(self, *log):
         """
@@ -61,7 +57,7 @@ class GustavBase(abc.ABC):
         --------
         None
         """
-        utils.log._info(type(self).__qualname__, "-", *log)
+        utils.log.info(type(self).__qualname__, "-", *log)
 
     def _logw(self, *log):
         """
@@ -75,4 +71,4 @@ class GustavBase(abc.ABC):
         --------
         None
         """
-        utils.log._warning(type(self).__qualname__, "-", *log)
+        utils.log.warning(type(self).__qualname__, "-", *log)
