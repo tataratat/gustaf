@@ -4,29 +4,168 @@ Common imports/routines needed for testing.
 """
 
 import unittest
+from collections import namedtuple
 
 import numpy as np
 
 import gustav as gus
 
-TRI_MUSTERMANN = gus.Mesh(
-    vertices=None,
-    faces=None,
+#gus.utils.log.configure(debug=True)
+
+# Mesh Stuff
+V = np.array(
+    [
+        [0., 0., 0.],
+        [1., 0., 0.],
+        [0., 1., 0.],
+        [1., 1., 0.],
+        [0., 0., 1.],
+        [1., 0., 1.],
+        [0., 1., 1.],
+        [1., 1., 1.],
+    ],
+    dtype=np.float64,
 )
-TET_MUSTERMANN = gus.Mesh(
-    vertices=None,
-    elements=None,
+
+E = np.array(
+    [
+        [0, 1],
+        [0, 2],
+        [0, 4],
+        [1, 3],
+        [1, 5],
+        [2, 3],
+        [2, 6],
+        [3, 7],
+        [4, 5],
+        [4, 6],
+        [5, 7],
+        [6, 7]
+    ],
+    dtype=np.int32,
 )
-QUAD_MUSTERMANN = gus.Mesh(
-    vertices=None,
-    faces=None,
+
+TF = np.array(
+    [
+        [1, 0, 2],
+        [0, 1, 5],
+        [1, 3, 7],
+        [3, 2, 6],
+        [2, 0, 4],
+        [4, 5, 7],
+        [2, 3, 1],
+        [5, 4, 0],
+        [7, 5, 1],
+        [6, 7, 3],
+        [4, 6, 2],
+        [7, 6, 4]
+    ],
+    dtype=np.int32,
 )
-HEXA_MUSTERMANN = gus.Mesh(
-    vertices=None,
-    elements=None,
+
+QF = np.array(
+    [
+        [1, 0, 2, 3],
+        [0, 1, 5, 4],
+        [1, 3, 7, 5],
+        [3, 2, 6, 7],
+        [2, 0, 4, 6],
+        [4, 5, 7, 6]
+    ],
+    dtype=np.int32,
 )
-B1P2D_MUSTERMANN = gus.BSpline(
+
+TV = np.array(
+    [
+        [0, 2, 7, 3],
+        [0, 2, 6, 7],
+        [0, 6, 4, 7],
+        [5, 0, 4, 7],
+        [5, 0, 7, 1],
+        [7, 0, 3, 1]
+    ],
+    dtype=np.int32,
+)
+
+HV = np.array(
+    [[0, 1, 3, 2, 4, 5, 7, 6]],
+    dtype=np.int32
+)
+
+
+# class obj.
+VERT_MUSTER = gus.Vertices(
+    vertices=V
+)
+
+EDGE_MUSTER = gus.Edges(
+    vertices=V,
+    edges=E,
+)
+
+TRI_MUSTER = gus.Faces(
+    vertices=V,
+    faces=TF,
+)
+TET_MUSTER = gus.Volumes(
+    vertices=V,
+    volumes=TV,
+)
+QUAD_MUSTER = gus.Faces(
+    vertices=V,
+    faces=QF,
+)
+HEXA_MUSTER = gus.Volumes(
+    vertices=V,
+    volumes=HV,
+)
+
+
+# Spline Stuff
+B1P2D_MUSTER = gus.BSpline(
     degrees=None,
     knot_vectors=None,
     control_points=None,
+)
+
+# alias
+logconfig = gus.utils.log.configure
+
+COMMON = namedtuple(
+    "COMMON",
+    [
+        "ut",
+        "np",
+        "gus",
+        "v",
+        "e",
+        "tf",
+        "qf",
+        "tv",
+        "hv",
+        "vert",
+        "edge",
+        "tri",
+        "tet",
+        "quad",
+        "hexa",
+    ]
+)
+
+C = COMMON(
+    ut=unittest,
+    np=np,
+    gus=gus,
+    v=V,
+    e=E,
+    tf=TF,
+    qf=QF,
+    tv=TV,
+    hv=HV,
+    vert=VERT_MUSTER,
+    edge=EDGE_MUSTER,
+    tri=TRI_MUSTER,
+    tet=TET_MUSTER,
+    quad=QUAD_MUSTER,
+    hexa=HEXA_MUSTER,
 )
