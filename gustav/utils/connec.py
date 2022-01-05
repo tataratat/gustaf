@@ -220,7 +220,7 @@ def range_to_edges(range_, closed=False):
     """
     if isinstance(range_, int):
         indices = np.arange(range_)
-    elif isinstance(range_, (list or tuple)):
+    elif isinstance(range_, (list, tuple)):
         if len(range_) > 2:
             raise ValueError("Input range is too long")
 
@@ -282,7 +282,7 @@ def make_quad_faces(resolutions):
     --------
     faces: (n, 4) np.ndarray
     """
-    nnpd = np.asarray(number_of_nodes_per_dimension)
+    nnpd = np.asarray(resolutions) # number of nodes per dimension
     total_nodes = np.product(nnpd)
     total_faces = (nnpd[0] - 1) * (nnpd[1] - 1)
     node_indices = np.arange(total_nodes).reshape(nnpd[1], nnpd[0])
@@ -322,7 +322,7 @@ def make_hexa_volumes(resolutions):
     --------
     elements: (n, 8) np.ndarray
     """
-    nnpd = np.asarray(number_of_nodes_per_dimension)
+    nnpd = np.asarray(resolutions) # number of nodes per dimension
     total_nodes = np.product(nnpd)
     total_volumes = np.product(nnpd - 1)
     node_indices = np.arange(total_nodes, dtype=np.int32).reshape(nnpd[::-1])
