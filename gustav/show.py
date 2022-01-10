@@ -7,6 +7,7 @@ import numpy as np
 
 from gustav import settings
 from gustav import utils
+from gustav._base import GustavBase
 
 
 def show(*gusobj, **kwargs):
@@ -62,7 +63,25 @@ def show_vedo(*args):
         else:
             raise TypeError("For vedo_show, only list or dict is valid input")
 
-        if i == len(args) - 1:
+        # quickcheck if the list is gustav or non-gustav
+        # if gustav, make it vedo-showable.
+        # else, pass. Note that if given obj is not vedo, it will probably
+        # result in undesired behavior
+        for i, sl in enumerate(showlist):
+            if isinstance(sl, GustavBase):
+                showlist[i] = sl.showable(backend="vedo")
+        #WIPWIP
+        #WIPWIP
+        #WIPWIP
+        #WIPWIP
+        #WIPWIP
+        #WIPWIP
+        #WIPWIP
+        #WIPWIP
+
+
+        # set interactive to true at last element
+        if int(i + 1) == len(args):
             plt.show(showlist, at=i, interactive=True)
         else:
             plt.show(showlist, at=i, interactive=False)
