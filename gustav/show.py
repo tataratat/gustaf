@@ -25,8 +25,7 @@ def show(*gusobj, **kwargs):
     vis_b = settings.VISUALIZATION_BACKEND
 
     if vis_b.startswith("vedo"):
-        import vedo
-        vedo.show(showables).close()
+        show_vedo(showables)
     elif vis_b.startswith("trimesh"):
         pass
     elif vis_b.startswith("matplotlib"):
@@ -35,14 +34,40 @@ def show(*gusobj, **kwargs):
         raise NotImplementedError
 
 
-def show_vedo(list_of_vedos):
+def show_vedo(*args):
     """
     `vedo.show` wrapper.
+    Each args represent one section of window. In other words len(args) == N,
+    where N corresponds to the parameter for vedo.show().
+
+    Parameters
+    -----------
+    *args: *list or *dict
     """
     import vedo
 
-    vedo.show(list_of_vedos.values()).close()
+    # vedo parameter
+    N = len(args)
 
+    # get plotter
+    plt = vedo.Plotter(N=N, sharecam=False)
+
+    # loop and plot
+    for i, arg in enumerate(args):
+        # form valid input type.
+        if isinstance(arg, dict):
+            showlist = list(arg.values())
+        elif isinstance(arg, list):
+            showlist = arg
+        else:
+            raise TypeError("For vedo_show, only list or dict is valid input")
+
+        if i == len(args) - 1:
+            plt.show(showlist, at=i, interactive=True)
+        else:
+            plt.show(showlist, at=i, interactive=False)
+
+    plt.close()
 
 def _vedo_showable(obj, **kwargs):
     """
