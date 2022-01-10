@@ -206,7 +206,7 @@ def parametric_view(spline):
         if mask.sum() != len(mask): # means there's "hit"
             para_spline.insert_knots(i, tmp_kv[~mask])
 
-        return para_spline
+    return para_spline
 
 
 def with_dimension(
