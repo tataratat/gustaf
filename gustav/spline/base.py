@@ -124,12 +124,10 @@ def show(
         things_to_show.update(fitting_queries=fitting_queries)
 
     # Return here, if backend is not vedo        
-    #if not settings.VISUALIZATION_BACKEND.startswith("vedo"):
     if not backend.startswith("vedo"):
         # turn everything into backend showables
         if return_showable:
             for key, gusobj in things_to_show.items():
-                #things_to_show.update({key : showmodule.make_showable(gusobj)})
                 things_to_show.update({key : gusobj.showable(backend=backend)})
 
             return things_to_show
@@ -142,7 +140,6 @@ def show(
             return None
 
     # iff backend is vedo, we provide fancier visualization
-    #elif settings.VISUALIZATION_BACKEND.startswith("vedo"):
     elif backend.startswith("vedo"):
         # return if showable is not desired
         # -> From now on we will directly work on vedo objects.
@@ -152,7 +149,6 @@ def show(
         # turn all gus objects into gus objects.
         vedo_things = dict()
         for key, gusobj in things_to_show.items():
-            #vedo_things.update({key : showmodule.make_showable(gusobj)})
             vedo_things.update({key : gusobj.showable(backend=backend)})
 
         # apply lighting
@@ -376,4 +372,7 @@ class NURBS(splinepy.NURBS, GustavBase):
         """
         return show(self, **kwargs)
 
-
+    def showable(self, **kwargs):
+        """
+        """
+        return show(self, return_showable=True, **kwargs)
