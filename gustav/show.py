@@ -43,7 +43,7 @@ def show_vedo(*args):
 
     Parameters
     -----------
-    *args: *list or *dict
+    *args: *list or *dict or gustav_obj or vedo_obj
     """
     import vedo
 
@@ -61,24 +61,43 @@ def show_vedo(*args):
         elif isinstance(arg, list):
             showlist = arg
         else:
-            raise TypeError("For vedo_show, only list or dict is valid input")
+            #raise TypeError("For vedo_show, only list or dict is valid input")
+            utils.log.debug(
+                "one of args for show_vedo is neither `dict` nor",
+                "`list`. Putting it naively into a list."
+            )
+            showlist = [arg]
 
         # quickcheck if the list is gustav or non-gustav
         # if gustav, make it vedo-showable.
-        # else, pass. Note that if given obj is not vedo, it will probably
-        # result in undesired behavior
-        for i, sl in enumerate(showlist):
+        # if there's spline, we need to pop the element and
+        # extend showables to the list.
+        to_pop = []
+        to_extend = []
+        for j, sl in enumerate(showlist):
             if isinstance(sl, GustavBase):
-                showlist[i] = sl.showable(backend="vedo")
-        #WIPWIP
-        #WIPWIP
-        #WIPWIP
-        #WIPWIP
-        #WIPWIP
-        #WIPWIP
-        #WIPWIP
-        #WIPWIP
+                tmp_showable = sl.showable(backend="vedo")
+                # splines return dict
+                # - maybe it is time to do some typing..
+                if isinstance(tmp_showable, dict):
+                    # mark to pop later
+                    to_pop.append(j)
+                    # add to extend later
+                    to_extend.append(list(tmp_showable.values()))
 
+                else:
+                    # replace gustavobj with vedo_obj.
+                    showlist[j] = tmp_showable
+
+        # extend and pop
+        if len(to_pop) == len(to_extend) != 0:
+            for te in to_extend:
+                showlist.extend(te)
+
+            # pop bigger indices first
+            to_pop.sort()
+            for tp in to_pop[::-1]:
+                showlist.pop(tp)
 
         # set interactive to true at last element
         if int(i + 1) == len(args):
