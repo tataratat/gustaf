@@ -1,6 +1,8 @@
 """gustav/spline/__init__.py
 
-Interface for `spline` library and additional operations.
+Interface for `splinepy` library and additional operations.
+Everything related to `splinepy` is here, which includes its load function.
+However, since create.spline does not rely on `splinepy` and it is not here.
 """
 
 
