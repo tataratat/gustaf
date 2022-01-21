@@ -22,6 +22,7 @@ class Vertices(GustavBase):
         "vertices_unique",
         "vertices_unique_id",
         "vertices_unique_inverse",
+        "vertices_overlapping",
         "bounds",
         "centers",
         "vis_dict",
@@ -205,6 +206,7 @@ class Vertices(GustavBase):
         self.vertices_unique = self.vertices[uniq_id]
         self.vertices_unique_id = uniq_id
         self.vertices_unique_inverse = inv
+        self.vertices_overlapping = neighbors#.tolist() # array of lists.
 
         if not return_referenced:
             return self.vertices_unique
@@ -301,6 +303,47 @@ class Vertices(GustavBase):
         else:
             return self.vertices_unique_inverse
 
+    def get_vertices_overlapping(
+            self,
+            tolerance=settings.TOLERANCE,
+            referenced_only=True,
+            return_referenced=False,
+            workers=1,
+    ):
+        """
+        Returns list of ids that overlapps with current vertices.
+        Includes itself.
+
+        Parameters
+        -----------
+        tolerance: float
+          Default is settings.TOLERANCE.
+        referenced_only: bool
+          Only search for unique for referenced vertices. Default is True.
+        return_referenced: bool
+          Default is False.
+        workers: int
+          n_jobs for parallel processing. Default is 1.
+          -1 uses all processes.
+
+        Returns
+        --------
+        self.vertices_overlapping: (len(self.vertices)) np.ndarray
+          list 
+        """
+        last_item_is_ref = self.get_vertices_unique(
+                tolerance=tolerance,
+                referenced_only=referenced_only,
+                return_referenced=return_referenced,
+                workers=workers,
+        )
+
+        if return_referenced:
+            return self.vertices_overlapping, last_item_is_ref[-1]
+
+        else:
+            return self.vertices_overlapping
+
     def get_bounds(self):
         """
         Returns bounds of the vertices.
@@ -310,6 +353,7 @@ class Vertices(GustavBase):
         None
 
         Returns
+        --------
         bounds: (d,) np.ndarray
         """
         self.bounds = utils.arr.bounds(self.vertices)
