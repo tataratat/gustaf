@@ -77,7 +77,7 @@ class Faces(Edges):
         else:
             raise ValueError(
                 "I have invalid faces array shape. It should be (n, 3) or "
-                + "(n, 4), but I have: " + self.faces.shape
+                f"(n, 4), but I have: {self.faces.shape}"
             )
 
         return self.whatami
