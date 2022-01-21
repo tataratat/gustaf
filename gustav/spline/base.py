@@ -4,6 +4,8 @@ Base for splines.
 Contains show and inherited classes from `spline`.
 """
 
+import abc
+
 import splinepy
 import numpy as np
 
@@ -92,6 +94,7 @@ def show(
     if spline.para_dim == 2 or spline.para_dim == 3:
         sp = spline.extract.faces(resolutions)
         sp.vis_dict.update(c="green")
+        # If
 
     things_to_show.update(spline=sp)
 
@@ -115,7 +118,7 @@ def show(
         # Knot for curves are only added for vedo backend.
         if spline.para_dim > 1:
             knot_lines = spline.extract.edges(resolutions[0], all_knots=True)
-            knot_lines.vis_dict.update(c="black", lw=4)
+            knot_lines.vis_dict.update(c="black", lw=3)
             things_to_show.update(knots=knot_lines)
 
     if show_fitting_queries and hasattr(spline, "_fitting_queries"):
@@ -184,9 +187,9 @@ def show(
             from gustav.create.spline import parametric_view
             from gustav.utils.arr import bounds
 
-            kv_spline = parametric_view(spline)
+            para_spline = parametric_view(spline)
             para_showables = show(
-                kv_spline,
+                para_spline,
                 control_points=False,
                 return_showable=True,
                 lighting=lighting,
@@ -239,13 +242,63 @@ def show(
             para_showables.update(description="Parametric View")
             vedo_things.update(description="Physical View")
             showmodule.show_vedo(para_showables, vedo_things)
+
         else:
             showmodule.show_vedo(vedo_things)
 
         return None
 
 
-class BSpline(splinepy.BSpline, GustavBase):
+class GustavSpline(GustavBase):
+
+    @abc.abstractmethod
+    def __init__(self):
+        """
+        Contructor as abstractmethod.
+        """
+        pass
+
+    @property
+    def extract(self):
+        """
+        Returns spline extracter.
+        Can directly perform extractions available at
+        `gustav/spline/extract.py`.
+        For more info, take a look at `gustav/spline/extract.py`: _Extracter.
+
+        Examples
+        ---------
+        >>> splinefaces = spline.extract.faces()
+
+        Parameters
+        -----------
+        None
+
+        Returns
+        --------
+        spline_extracter: _Extracter
+        """
+        return self._extractor
+
+    def show(self, **kwargs):
+        """
+        Equivalent to `gustav.spline.base.show(**kwrags)`
+        """
+        return show(self, **kwargs)
+
+    def showable(self, **kwargs):
+        """
+        Equivalent to `gustav.spline.base.show(return_showable=True, **kwargs)`
+        """
+        return show(self, return_showable=True, **kwargs)
+
+    def copy(self):
+        """
+        """
+        return type(self)(**self.todict())
+
+
+class BSpline(splinepy.BSpline, GustavSpline):
 
     def __init__(
             self,
@@ -278,17 +331,12 @@ class BSpline(splinepy.BSpline, GustavBase):
 
         self._extractor = _Extractor(self)
 
-    @property
-    def extract(self):
-        """
-        Returns spline extracter.
-        Can directly perform extractions available at
-        `gustav/spline/extract.py`.
-        For more info, take a look at `gustav/spline/extract.py`: _Extracter.
 
-        Examples
-        ---------
-        >>> splinefaces = spline.extract.faces()
+    @property
+    def nurbs(self):
+        """
+        Returns same nurbs.
+        Overwrites one from splinepy to return correct type.
 
         Parameters
         -----------
@@ -296,21 +344,21 @@ class BSpline(splinepy.BSpline, GustavBase):
 
         Returns
         --------
-        spline_extracter: _Extracter
+        same_nurbs: NURBS
         """
-        return self._extractor
+        from copy import deepcopy
 
-    def show(self, **kwargs):
-        """
-        """
-        return show(self, **kwargs)
+        return NURBS(
+            degrees=deepcopy(self.degrees),
+            knot_vectors=deepcopy(self.knot_vectors),
+            control_points=deepcopy(self.control_points),
+            # fix dtype to match splinepy's dtype.
+            weights=np.ones(self.control_points.shape[0], dtype="float64")
+        )
 
-    def showable(self, **kwargs):
-        """
-        """
-        return show(self, return_showable=True, **kwargs)
 
-class NURBS(splinepy.NURBS, GustavBase):
+class NURBS(splinepy.NURBS, GustavSpline):
+
     def __init__(
             self,
             degrees=None,
@@ -344,35 +392,3 @@ class NURBS(splinepy.NURBS, GustavBase):
         )
 
         self._extractor = _Extractor(self)
-
-    @property
-    def extract(self):
-        """
-        Returns spline extracter.
-        Can directly perform extractions available at
-        `gustav/spline/extract.py`.
-        For more info, take a look at `gustav/spline/extract.py`: _Extracter.
-
-        Examples
-        ---------
-        >>> splinefaces = spline.extract.faces()
-
-        Parameters
-        -----------
-        None
-
-        Returns
-        --------
-        spline_extracter: _Extracter
-        """
-        return self._extractor
-
-    def show(self, **kwargs):
-        """
-        """
-        return show(self, **kwargs)
-
-    def showable(self, **kwargs):
-        """
-        """
-        return show(self, return_showable=True, **kwargs)
