@@ -14,6 +14,7 @@ from gustav import show as showmodule
 from gustav._base import GustavBase
 from gustav.vertices import Vertices
 from gustav.spline.extract import _Extractor
+from gustav.spline.proximity import _Proximity
 from gustav.spline._utils import to_res_list
 
 def show(
@@ -280,6 +281,33 @@ class GustavSpline(GustavBase):
         """
         return self._extractor
 
+    @property
+    def proximity(self):
+        """
+        Returns spline proximity helper.
+        Can directly perform proximity queries available at
+        `gustav/spline/proximity.py`.
+        For more info, take a look at `gustav/spline/proximity.py`: _Proximity
+
+        Examples
+        ---------
+        >>> closest_cp_ids = spline.proximity.closest_control_points(queries)
+        >>> closest_cp_ids, distances =\
+        ...    spline.proximity.closest_control_points(
+        ...       queries,
+        ...       return_distances=True
+        ...    )
+
+        Parameters
+        -----------
+        None
+
+        Returns
+        --------
+        spline_proximity: _Proximity
+        """
+        return self._proximity
+
     def show(self, **kwargs):
         """
         Equivalent to `gustav.spline.base.show(**kwrags)`
@@ -330,7 +358,7 @@ class BSpline(splinepy.BSpline, GustavSpline):
         )
 
         self._extractor = _Extractor(self)
-
+        self._proximity = _Proximity(self)
 
     @property
     def nurbs(self):
@@ -392,3 +420,4 @@ class NURBS(splinepy.NURBS, GustavSpline):
         )
 
         self._extractor = _Extractor(self)
+        self._proximity = _Proximity(self)
