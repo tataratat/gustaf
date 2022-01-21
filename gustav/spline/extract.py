@@ -276,6 +276,22 @@ def volumes(spline, resolutions):
     )
 
 
+def control_points(spline):
+    """
+    Extracts control points and return as vertices.
+    Same can be achieved by doing `gustav.Vertices(spline.control_points)`
+
+    Parameters
+    -----------
+    spline: BSpline or NURBS
+
+    Returns
+    --------
+    cps_as_Vertices: Vertices
+    """
+    return Vertices(spline.control_points)
+
+
 def control_edges(spline):
     """
     Extract control edges (mesh).
@@ -393,6 +409,9 @@ class _Extractor:
 
     def volumes(self, *args, **kwargs):
         return volumes(self.spline, *args, **kwargs)
+
+    def control_points(self):
+        return control_points(self.spline)
     
     def control_edges(self):
         return control_edges(self.spline)
@@ -405,3 +424,4 @@ class _Extractor:
     
     def control_mesh(self):
         return control_mesh(self.spline)
+
