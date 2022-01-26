@@ -29,6 +29,7 @@ def show(
         # From here, | only relevant if "vedo" is backend.
         #            V
         parametric_space=False,
+        color=None,
         surface_alpha=1,
         lighting="glossy",
         control_point_ids=True,
@@ -53,6 +54,8 @@ def show(
       Return dict of showable objects.
     parametric_space: bool
       Only relevant for `vedo` backend.
+    color: str
+      Default is None. Black for curves, else green.
     surface_alpha: float
       Only relevant for `vedo` backend. Effective range [0, 1].
     lighting: str
@@ -77,6 +80,11 @@ def show(
     if (spline.para_dim, spline.dim) not in allowed_dim_combo:
         raise ValueError("Sorry, can't show given spline.")
 
+    # During show process, spline won't change
+    original_skip_update = spline.skip_update
+    if not original_skip_update:
+        spline.skip_update = True
+
     # determine backend
     if backend is None:
         backend = settings.VISUALIZATION_BACKEND
@@ -90,11 +98,15 @@ def show(
     # (discretized) spline itself with basic color scheme.
     if spline.para_dim == 1:
         sp = spline.extract.edges(resolutions[0])
-        sp.vis_dict.update(c="black", lw=8)
+        if color is None:
+            color = "black"
+        sp.vis_dict.update(c=color, lw=8)
 
     if spline.para_dim == 2 or spline.para_dim == 3:
         sp = spline.extract.faces(resolutions)
-        sp.vis_dict.update(c="green")
+        if color is None:
+            color = "green"
+        sp.vis_dict.update(c=color)
         # If
 
     things_to_show.update(spline=sp)
@@ -129,6 +141,9 @@ def show(
 
     # Return here, if backend is not vedo        
     if not backend.startswith("vedo"):
+        # reset skip_update option
+        spline.skip_update = original_skip_update
+
         # turn everything into backend showables
         if return_showable:
             for key, gusobj in things_to_show.items():
@@ -231,6 +246,9 @@ def show(
             para_showables.update(
                 axes=Axes(para_showables["spline"], **axes_config)
             )
+
+        # reset skip_update option
+        spline.skip_update = original_skip_update
 
         # showable return
         if return_showable:

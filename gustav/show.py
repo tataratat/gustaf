@@ -35,7 +35,7 @@ def show(*gusobj, **kwargs):
         raise NotImplementedError
 
 
-def show_vedo(*args):
+def show_vedo(*args, **kwargs):
     """
     `vedo.show` wrapper.
     Each args represent one section of window. In other words len(args) == N,
@@ -51,7 +51,7 @@ def show_vedo(*args):
     N = len(args)
 
     # get plotter
-    plt = vedo.Plotter(N=N, sharecam=False)
+    #plt = vedo.Plotter(N=N, sharecam=False)
 
     # loop and plot
     for i, arg in enumerate(args):
@@ -100,12 +100,33 @@ def show_vedo(*args):
                 showlist.pop(tp)
 
         # set interactive to true at last element
+        offs = kwargs.get("offscreen", False)
+        interac = kwargs.get("interactive", True)
         if int(i + 1) == len(args):
-            plt.show(showlist, at=i, interactive=True)
-        else:
-            plt.show(showlist, at=i, interactive=False)
+            plt = vedo.show(
+                showlist,
+                sharecam=False,
+                at=i,
+                N=N,
+                interactive=interac,
+                offscreen=offs,
+            )
 
-    plt.close()
+        else:
+            vedo.show(
+                showlist,
+                sharecam=False,
+                at=i,
+                N=N,
+                interactive=False,
+                offscreen=offs,
+            )
+
+    if interac:
+        plt.close()
+
+    else:
+        return plt
 
 def _vedo_showable(obj, **kwargs):
     """
