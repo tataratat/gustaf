@@ -2,6 +2,7 @@
 
 Everything related to show/visualization.
 """
+from math import prod
 
 import numpy as np
 
@@ -26,7 +27,7 @@ def show(*gusobj, **kwargs):
     vis_b = settings.VISUALIZATION_BACKEND
 
     if vis_b.startswith("vedo"):
-        show_vedo(showables)
+        return show_vedo(showables, **kwargs)
     elif vis_b.startswith("trimesh"):
         pass
     elif vis_b.startswith("matplotlib"):
@@ -35,7 +36,7 @@ def show(*gusobj, **kwargs):
         raise NotImplementedError
 
 
-def show_vedo(*args, **kwargs):
+def show_vedo(*args, **kwargs,):
     """
     `vedo.show` wrapper.
     Each args represent one section of window. In other words len(args) == N,
@@ -47,11 +48,43 @@ def show_vedo(*args, **kwargs):
     """
     import vedo
 
-    # vedo parameter
+    # vedo plotter parameter
     N = len(args)
+    offs = kwargs.get("offscreen", False)
+    interac = kwargs.get("interactive", True)
+    plt = kwargs.get("vedoplot", None)
+    skip_clear = kwargs.get("skip_clear", False)
+    close = kwargs.get("close", None)
+
+    def clear_vedoplotter(plotter, numrenderers, skipcl=skip_clear):
+        """enough said."""
+        # for whatever reason it is desired
+        if skipcl:
+            return None
+
+        for i in range(numrenderers):
+            plotter.clear(at=i)
+
+        return None
 
     # get plotter
-    #plt = vedo.Plotter(N=N, sharecam=False)
+    if plt is None:
+        plt = vedo.Plotter(N=N, sharecam=False, offscreen=offs)
+
+    else:
+        # check if plt has enough Ns
+        trueN = prod(plt.shape)
+        clear_vedoplotter(plt, trueN) # always clear. 
+        if trueN != N:
+            utils.log.warning(
+                "Number of args exceed given vedo.Plotter's capacity.",
+                "Assigning a new one",
+            )
+            if close: # only if it is explicitly stated
+                plt.close() # Hope that this truely releases..
+            # assign a new one
+            plt = vedo.Plotter(N=N, sharecam=False, offscreen=offs)
+
 
     # loop and plot
     for i, arg in enumerate(args):
@@ -100,33 +133,32 @@ def show_vedo(*args, **kwargs):
                 showlist.pop(tp)
 
         # set interactive to true at last element
-        offs = kwargs.get("offscreen", False)
-        interac = kwargs.get("interactive", True)
         if int(i + 1) == len(args):
-            plt = vedo.show(
+            plt.show(
                 showlist,
-                sharecam=False,
                 at=i,
-                N=N,
                 interactive=interac,
-                offscreen=offs,
+                #offscreen=offs,
             )
 
         else:
-            vedo.show(
+            plt.show(
                 showlist,
-                sharecam=False,
                 at=i,
-                N=N,
                 interactive=False,
-                offscreen=offs,
+                #offscreen=offs,
             )
 
     if interac:
-        plt.close()
+        # only way to ensure memory is released
+        clear_vedoplotter(plt, prod(plt.shape))
 
-    else:
-        return plt
+        if close or close is None: # explicitly given or None.
+            # It seems to leak some memory, but here it goes.
+            plt.close() # if i close it, this cannot be reused...
+            return None
+
+    return plt
 
 def _vedo_showable(obj, **kwargs):
     """
