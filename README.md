@@ -8,16 +8,18 @@ pip install gustavgustav
 
 ## Manual Installation
 ### 0. Install Dependencies
-`numpy` is only strict dependency of `gustav`.
+`numpy` is only strict dependency of `gustav`.  
+
+Followings are optional library for more functionalities!
+
 Option 1: __`pip`__.
 ```
-pip install numpy scipy vedo matplotlib "meshio[all]" optimesh splinelibpy
+pip install vedo scipy splinepy
 ```
 Option 2: __`conda`__ & __`pip`__
 ```
 conda install -c anaconda numpy scipy
-conda install -c conda-forge vedo matplotlib meshio splinelibpy
-pip install optimeh
+conda install -c conda-forge vedo 
 ```
 
 _Note: `vtk` version > 9 tends to work better for our application cases._
