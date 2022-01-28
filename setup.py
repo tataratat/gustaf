@@ -11,7 +11,10 @@ setup(
     author_email="jlee@ilsb.tuwien.ac.at",
     packages=[
         "gustav",
-        "gustav.utils"
+        "gustav.utils",
+        "gustav.io",
+        "gustav.spline",
+        "gustav.create"
     ],
     install_requires=[
         "numpy",
