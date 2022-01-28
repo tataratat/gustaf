@@ -35,6 +35,7 @@ def show(
         control_point_ids=True,
         solution_cps=None,
         solution_spline=None,
+        **kwargs,
 ):
     """
     Shows splines with various options.
@@ -83,6 +84,8 @@ def show(
     # During show process, spline won't change
     original_skip_update = spline.skip_update
     if not original_skip_update:
+        # update one last time else, it won't sync.
+        spline._update_c() 
         spline.skip_update = True
 
     # determine backend
@@ -260,12 +263,12 @@ def show(
         if parametric_space:
             para_showables.update(description="Parametric View")
             vedo_things.update(description="Physical View")
-            showmodule.show_vedo(para_showables, vedo_things)
+            plt = showmodule.show_vedo(para_showables, vedo_things, **kwargs)
 
         else:
-            showmodule.show_vedo(vedo_things)
+            plt = showmodule.show_vedo(vedo_things, **kwargs)
 
-        return None
+        return plt
 
 
 class GustavSpline(GustavBase):
