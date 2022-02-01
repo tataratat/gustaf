@@ -36,6 +36,6 @@ def raster(
     points += "]"
 
     # Organize it nicely: 2D np.ndarray with shape (prod(resolutions), dim)
-    points = eval(points).reshape(len(resolutions), -1).T
+    points = eval(points).T.reshape(-1, len(resolutions))
 
     return Vertices(points)
