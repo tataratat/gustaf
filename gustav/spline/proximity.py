@@ -42,6 +42,15 @@ def closest_control_points(
         return ids
 
 
+def closest_parametric_coordinate(
+        spline,
+        query_points,
+):
+    """
+    Finds closest points using 
+    """
+    pass
+
 class _Proximity:
     """
     Helper class to allow direct proximity queries for spline obj (BSpline or
