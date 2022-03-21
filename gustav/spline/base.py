@@ -16,6 +16,8 @@ from gustav.vertices import Vertices
 from gustav.spline.extract import _Extractor
 from gustav.spline.proximity import _Proximity
 from gustav.spline._utils import to_res_list
+from gustav.create.vertices import raster
+
 
 def show(
         spline,
@@ -33,8 +35,8 @@ def show(
         surface_alpha=1,
         lighting="glossy",
         control_point_ids=True,
-        solution_cps=None,
-        solution_spline=None,
+        color_spline=None,
+        cmap=None, # only required 
         **kwargs,
 ):
     """
@@ -62,7 +64,9 @@ def show(
     lighting: str
       Only relevant for `vedo` backend.
     control_point_ids: bool
-    field_name: str
+    color_spline: str
+    cmap: str
+      Only relevant for `vedo` backend and color_spline is not None.
 
     Returns
     --------
@@ -277,6 +281,8 @@ class GustavSpline(GustavBase):
     def __init__(self):
         """
         Contructor as abstractmethod.
+        This needs to be inherited first to make sure duplicating functions
+        properly override splinepy.Spline 
         """
         pass
 
@@ -329,6 +335,60 @@ class GustavSpline(GustavBase):
         """
         return self._proximity
 
+    def evaluate(self, *args, **kwargs):
+        """
+        evaluate wrapper with n_threads default.
+        This takes 2 args with 1 required arg.
+        """
+        if len(args) != 2:
+            n_t = kwargs.get("n_threads")
+
+            if n_t is None:
+                kwargs.update(n_threads=settings.NTHREADS)
+
+        return super().evaluate(*args, **kwargs)
+
+    def derivative(self, *args, **kwargs):
+        """
+        derivative wrapper with n_threads default.
+        This takes 3 args with 2 required args
+        """
+        if len(args) != 3:
+            n_t = kwargs.get("n_threads")
+
+            if n_t is None:
+                kwargs.update(n_threads=settings.NTHREADS)
+
+        return super().derivative(*args, **kwargs)
+
+
+    def sample(self, query_resolutions, n_threads=None):
+        """
+        Overwrite sample function to offer equivalent, but with multithread
+        eval.
+
+        Parameters
+        -----------
+        query_resolutions: (n, m), array-like
+        n_thread: int
+
+        Returns
+        --------
+        results: (n*m, dim) np.ndarray
+        """
+        if n_threads is None:
+            n_threads = settings.NTHREADS
+
+        qr = to_res_list(query_resolutions, self.para_dim)
+
+        if n_threads == 1:
+            return super().sample(qr)
+
+        else:
+            q = raster(self.knot_vector_bounds, qr)
+            return self.evaluate(q.vertices, n_threads=n_threads)
+        
+
     def show(self, **kwargs):
         """
         Equivalent to `gustav.spline.base.show(**kwrags)`
@@ -347,7 +407,7 @@ class GustavSpline(GustavBase):
         return type(self)(**self.todict())
 
 
-class BSpline(splinepy.BSpline, GustavSpline):
+class BSpline(GustavSpline, splinepy.BSpline):
 
     def __init__(
             self,
@@ -356,7 +416,7 @@ class BSpline(splinepy.BSpline, GustavSpline):
             control_points=None,
     ):
         """
-        BSpline of gustav. Inherited from splinepy.BSpline.
+        BSpline of gustav. Inherited from splinepy.BSpline and GustavSpline.
 
         Attributes
         -----------
@@ -372,7 +432,7 @@ class BSpline(splinepy.BSpline, GustavSpline):
         --------
         None
         """
-        super().__init__(
+        super(splinepy.BSpline, self).__init__(
             degrees=degrees,
             knot_vectors=knot_vectors,
             control_points=control_points
@@ -406,7 +466,7 @@ class BSpline(splinepy.BSpline, GustavSpline):
         )
 
 
-class NURBS(splinepy.NURBS, GustavSpline):
+class NURBS(GustavSpline, splinepy.NURBS):
 
     def __init__(
             self,
@@ -433,7 +493,7 @@ class NURBS(splinepy.NURBS, GustavSpline):
         --------
         None
         """
-        super().__init__(
+        super(splinepy.NURBS, self).__init__(
             degrees=degrees,
             knot_vectors=knot_vectors,
             control_points=control_points,
@@ -442,3 +502,82 @@ class NURBS(splinepy.NURBS, GustavSpline):
 
         self._extractor = _Extractor(self)
         self._proximity = _Proximity(self)
+
+
+    @property
+    def _mfem_ids(self):
+        """
+        Returns mfem index mapping. For ease of use.
+
+        Parameters
+        -----------
+        None
+
+        Returns
+        --------
+        None
+        """
+        if self.para_dim != 2:
+            raise NotImplementedError(
+                "Sorry, only avilable for para_dim = 2 splines"
+            )
+
+        gustav2mfem, mfem2gustav = splinepy.io.mfem.mfem_index_mapping(
+            self.para_dim,
+            self.degrees,
+            self. knot_vectors,
+        )
+
+        return gustav2mfem, mfem2gustav
+
+
+def from_mfem(nurbs_dict):
+    """
+    Construct a gustav NURBS. Reorganizes control points and weights.
+
+
+    Parameters
+    -----------
+    nurbs_dict: dict
+
+    Returns
+    --------
+    nurbs: NURBS
+    """
+    _, m2gus = splinepy.io.mfem.mfem_index_mapping(
+        len(nurbs_dict["degrees"]),
+        nurbs_dict["degrees"],
+        nurbs_dict["knot_vectors"],
+    )
+
+    return NURBS(
+        degrees=nurbs_dict["degrees"],
+        knot_vectors=nurbs_dict["knot_vectors"],
+        control_points=nurbs_dict["control_points"][m2gus],
+        weights=nurbs_dict["weights"][m2gus],
+    )
+
+
+def load_splines(fname):
+    """
+    Loads and creates gustav NURBS.
+    Does not perform any check or tests.
+
+    Parameters
+    -----------
+    fname: str
+
+    Returns
+    --------
+    gussplines: list
+    """
+    splinepysplines = splinepy.load_splines(fname)
+
+    gussplines = list()
+    for sps in splinepysplines:
+        if hasattr(sps, "weights"):
+            gussplines.append(NURBS(**sps.todict()))
+        else:
+            gussplines.append(BSpline(**sps.todict()))
+
+    return gussplines
