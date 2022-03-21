@@ -20,3 +20,5 @@ VEDO_DEFAULT_OPTIONS = dict(
     volumes=dict(
     ),
 )
+
+NTHREADS = 1
