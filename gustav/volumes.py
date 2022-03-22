@@ -1,6 +1,8 @@
 """gustav/gustav/volumes.py
 """
 
+import numpy as np
+
 from gustav import utils
 from gustav import settings
 from gustav.faces import Faces
@@ -22,6 +24,7 @@ class Volumes(Faces):
 
         self.whatami = "volumes"
         self.vis_dict = dict()
+        self.vertexdata = dict()
 
         if vertices is not None:
             self.vertices = utils.arr.make_c_contiguous(
@@ -106,3 +109,46 @@ class Volumes(Faces):
             self.vertices,
             faces=self.get_faces_unique() if unique else self.get_faces()
         )
+
+    def shrink(self, ratio=.8):
+        """
+        Returns shrinked faces.
+
+        Parameters
+        -----------
+        ratio: float
+
+        Returns
+        --------
+        s_faces: Faces
+          shrinked faces
+        """
+        vs = np.vstack(self.vertices[self.get_faces()])
+        fs = np.arange(len(vs))
+
+        whatami = self.get_whatami()
+        reshape = 3 if whatami.startswith("tet") else 4
+        fs = fs.reshape(-1, reshape)
+
+        repeats = 4 if whatami.startswith("tet") else 6
+        mids = np.repeat(self.get_centers(), repeats * reshape, axis=0)
+
+        vs -= mids
+        vs *= ratio
+        vs += mids
+
+        return Faces(vs, fs)
+
+    def shrinked_data_mapping(self):
+        """
+        Provides data mapping to transfer vertexdata to shrinked faces.
+
+        Parameters
+        -----------
+        None
+
+        Returns
+        --------
+        shrinked_data_mapping: (n, m) np.ndarray
+        """
+        return self.get_faces().ravel()
