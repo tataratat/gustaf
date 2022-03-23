@@ -26,6 +26,7 @@ class Vertices(GustavBase):
         "bounds",
         "centers",
         "vis_dict",
+        "vertexdata",
     ]
 
     def __init__(
@@ -50,6 +51,7 @@ class Vertices(GustavBase):
             )
         self.whatami = "vertices"
         self.vis_dict = dict()
+        self.vertexdata = dict()
 
     def process(
             self,
@@ -482,6 +484,23 @@ class Vertices(GustavBase):
 
         return self.update_vertices(mask, inplace=inplace)
 
+    def referenced_vertices(self,):
+        """
+        Returns mask of referenced vertices.
+
+        Parameters
+        -----------
+        None
+
+        Returns
+        --------
+        referenced: (n,) np.ndarray
+        """
+        referenced = np.zeros(len(self.vertices, dtype=bool)
+        referenced[self.elements()] = True
+
+        return referenced
+
     def remove_unreferenced_vertices(self, inplace=True):
         """
         Remove unreferenced vertices.
@@ -499,8 +518,7 @@ class Vertices(GustavBase):
         if self.kind == "vertex":
             return self
 
-        referenced = np.zeros(len(self.vertices), dtype=bool)
-        referenced[self.elements()] = True
+        referenced = self.referenced_vertices()
 
         inverse = np.zeros(len(self.vertices), dtype=settings.INT_DTYPE)
         inverse[referenced] = np.arange(referenced.sum())
