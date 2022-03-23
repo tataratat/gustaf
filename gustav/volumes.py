@@ -76,7 +76,7 @@ class Volumes(Faces):
         else:
             raise ValueError(
                 "I have invalid volumes array shape. It should be (n, 4) or "
-                + "(n, 8), but I have: " + self.faces.shape
+                f"(n, 8), but I have: {self.faces.shape}"
             )
 
         return self.whatami
@@ -110,13 +110,16 @@ class Volumes(Faces):
             faces=self.get_faces_unique() if unique else self.get_faces()
         )
 
-    def shrink(self, ratio=.8):
+    def shrink(self, ratio=.8, map_vertexdata=True):
         """
         Returns shrinked faces.
 
         Parameters
         -----------
         ratio: float
+          Default is 0.8
+        map_vertexdata: bool
+          Default is True. Maps all vertexdata using `shrinked_data_mapping`.
 
         Returns
         --------
@@ -137,7 +140,17 @@ class Volumes(Faces):
         vs *= ratio
         vs += mids
 
-        return Faces(vs, fs)
+        s_faces = Faces(vs, fs)
+
+        if map_vertexdata:
+            faces_flat = self.faces.ravel()
+            for key, value in self.vertexdata.items():
+                s_faces.vertexdata[key] = value[faces_flat]
+
+            # probably wanna take visulation options too
+            s_faces.vis_dict = self.vis_dict
+
+        return s_faces
 
     def shrinked_data_mapping(self):
         """
