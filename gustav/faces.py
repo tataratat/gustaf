@@ -17,6 +17,7 @@ class Faces(Edges):
         "faces_unique_inverse",
         "faces_unique_count",
         "surfaces",
+        "BC",
     ]
 
     def __init__(
@@ -42,6 +43,8 @@ class Faces(Edges):
 
         self.whatami = "faces"
         self.vis_dict = dict()
+        self.vertexdata = dict()
+        self.BC = dict()
 
         self.process(process)
 
@@ -173,7 +176,7 @@ class Faces(Edges):
         --------
         faces_unique: (n,) np.ndarray
         """
-        _ = self.faces_unique()
+        _ = self.get_faces_unique()
 
         return self.faces_unique_id
 
@@ -189,7 +192,7 @@ class Faces(Edges):
         --------
         None
         """
-        _ = self.faces_unique()
+        _ = self.get_faces_unique()
 
         return self.faces_unique_inverse
 
@@ -206,7 +209,7 @@ class Faces(Edges):
         --------
         surfaces: (m,) np.ndarray
         """
-        _ = self.faces_unique()
+        _ = self.get_faces_unique()
 
         return self.surfaces
 
@@ -243,3 +246,17 @@ class Faces(Edges):
             self.vertices,
             edges=self.get_edges_unique() if unique else self.get_edges()
         )
+
+    #def show(self, BC=False):
+        """
+        Overwrite `show` to offer frequently used showing options
+
+        Parameters
+        -----------
+        BC: bool
+          Default is False.
+
+        Returns
+        --------
+        None
+        """
