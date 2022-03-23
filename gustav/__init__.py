@@ -7,6 +7,7 @@ from gustav import volumes
 from gustav import show
 from gustav import utils
 from gustav import create
+from gustav import io
 
 try:
     from gustav import spline
@@ -20,7 +21,6 @@ from gustav.vertices import Vertices
 from gustav.edges import Edges
 from gustav.faces import Faces
 from gustav.volumes import Volumes
-
 
 __version__ = _version.version
 
