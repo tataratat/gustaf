@@ -435,20 +435,44 @@ class Vertices(GustavBase):
         # apply mask
         vertices = vertices[mask]
 
+        def update_vertexdata(obj, m, vertex_data=None):
+            """
+            apply mask to vertex data if there's any.
+            """
+            newdata = dict()
+            if vertex_data is None:
+                vertex_data = obj.vertexdata
+
+            for key, values in vertex_data.items():
+                newdata[key] = values[m]
+
+            obj.vertexdata = newdata
+
+            return obj
+
+
         # update
         if inplace:
             self.vertices = vertices
             if elements is not None:
                 self.elements(elements)
 
+            update_vertexdata(self, mask)
+
             return None
 
         else:
             if elements is None:
-                return type(self)(vertices=vertices)
+                updated = type(self)(vertices=vertices)
+                update_vertexdata(updated, mask, self.vertexdata)
+
+                return updated
 
             else:
-                return type(self)(vertices=vertices, elements=elements)
+                updated = type(self)(vertices=vertices, elements=elements)
+                update_vertexdata(updated, mask, self.vertexdata)
+
+                return updated
 
     def select_vertices(self, ranges):
         """
@@ -496,7 +520,7 @@ class Vertices(GustavBase):
         --------
         referenced: (n,) np.ndarray
         """
-        referenced = np.zeros(len(self.vertices, dtype=bool)
+        referenced = np.zeros(len(self.vertices), dtype=bool)
         referenced[self.elements()] = True
 
         return referenced
