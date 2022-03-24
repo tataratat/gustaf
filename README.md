@@ -1,4 +1,4 @@
-# gustaf (alpha 0.0.0)
+# gustaf
 Loyal butler for numerical-analysis-geometry processing and visualization.
 
 ## Installation

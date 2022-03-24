@@ -9,7 +9,7 @@ with open("README.md", "r") as f:
 setup(
     name="gustaf",
     version=version,
-    description="Fast geometry prototyper.",
+    description="Process and visualize geometries.",
     long_description=readme,
     long_description_content_type="text/markdown",
     author="Jaewook Lee",
@@ -24,4 +24,16 @@ setup(
     install_requires=[
         "numpy",
     ],
+    classifiers=[
+        'Development Status :: 2 - Pre-Alpha',
+        'License :: OSI Approved :: MIT License',
+        'Programming Language :: Python',
+        'Programming Language :: Python :: 3.6',
+        'Programming Language :: Python :: 3.7',
+        'Programming Language :: Python :: 3.8',
+        'Programming Language :: Python :: 3.9',
+        'Natural Language :: English',
+        'Topic :: Scientific/Engineering'
+    ],
+    license="MIT",
 )
