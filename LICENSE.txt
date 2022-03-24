@@ -20,7 +20,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
-gustav/utils/arr.py:unique_rows
+gustaf/utils/arr.py:unique_rows
 
     Copyright (C) 2019, the scikit-image team
     All rights reserved.
@@ -51,8 +51,8 @@ gustav/utils/arr.py:unique_rows
     IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
     POSSIBILITY OF SUCH DAMAGE.
 
-gustav/veritces.py:update_vertices
-gustav/vertices.py:remove_unreferenced_vertices
+gustaf/veritces.py:update_vertices
+gustaf/vertices.py:remove_unreferenced_vertices
     The MIT License (MIT)
 
     Copyright (c) 2019 Michael Dawson-Haggerty

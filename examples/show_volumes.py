@@ -1,4 +1,4 @@
-import gustav as gus
+import gustaf as gus
 import numpy as np
 
 

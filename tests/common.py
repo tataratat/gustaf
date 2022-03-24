@@ -1,4 +1,4 @@
-"""gustav/test/common.py
+"""gustaf/test/common.py
 
 Common imports/routines needed for testing.
 """
@@ -8,7 +8,7 @@ from collections import namedtuple
 
 import numpy as np
 
-import gustav as gus
+import gustaf as gus
 
 #gus.utils.log.configure(debug=True)
 

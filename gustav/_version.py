@@ -1,5 +1,0 @@
-"""gustav/gustav/version.py
-
-Current version.
-"""
-version = "0.1.0"
