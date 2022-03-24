@@ -223,8 +223,35 @@ class Edges(Vertices):
 
     def subdivide(self):
         """
+        Subdivides elements.
+        Edges into 2, faces into 4.
+        Not an inplace operation.
+
+        Parameters
+        -----------
+        None
+
+        Returns
+        --------
+        subdivided: Edges or Faces
         """
-        pass
+        if self.kind != "face":
+            raise NotImplementedError
+
+        else:
+            whatami = self.get_whatami()
+            if whatami.startswith("tri"):
+                return type(self)(
+                    **(utils.connec.subdivide_tri(self, return_dict=True))
+                )
+
+            elif whatami.startswith("quad"):
+                return type(self)(
+                    **(utils.connec.subdivide_quad(self, return_dict=True))
+                )
+
+            else:
+                return None
 
     def tovertices(self):
         """
