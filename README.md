@@ -1,4 +1,4 @@
-# gustaf
+# gustaf (alpha 0.0.0)
 Loyal butler for numerical-analysis-geometry processing and visualization.
 
 ## Installation
@@ -6,7 +6,6 @@ Loyal butler for numerical-analysis-geometry processing and visualization.
 pip install gustaf
 ```
 
-## Manual Installation
 ### 0. Install Dependencies
 `numpy` is the only strict dependency of `gustaf`.  
 
