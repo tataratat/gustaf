@@ -28,3 +28,26 @@ def abs_fname(fname):
         fname = os.path.abspath(fname)
 
     return fname
+
+
+def check_and_makedirs(fname):
+    """
+    Checks if the directories of the path exists. If not, makedirs!
+
+    Parameters
+    -----------
+    fname: str
+
+    Returns
+    --------
+    None
+    """
+    dirs = os.path.dirname(fname)
+
+    if dirs == "":
+        return None
+
+    if not os.path.isdir(dirs):
+        os.makedirs(dirs)
+
+    return None
