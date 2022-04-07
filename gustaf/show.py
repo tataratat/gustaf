@@ -10,11 +10,12 @@ from gustaf import settings
 from gustaf import utils
 from gustaf._base import GustavBase
 
-# @linux there were issues with segmentation fault.
+# @linux it raises error if vedo is imported inside the function.
 try:
     import vedo
 except:
-    pass
+    vedo = "cannot import vedo"
+
 
 def show(*gusobj, **kwargs):
     """

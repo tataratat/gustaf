@@ -13,7 +13,7 @@ try:
     from gustaf import spline
     from gustaf.spline.base import BSpline, NURBS
 except:
-    utils.log.debug("can't import spline related modules.")
+    spline = "cannot import spline modules"
 
 # import try/catch for triangle and gustaf-tetgen
 
