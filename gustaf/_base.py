@@ -27,9 +27,7 @@ class GustavBase(abc.ABC):
     TODO: maybe add explicit `use_saved` switch to avoid recomputing
     """
 
-    __slots__ = [
-    #    "whatami",
-    ]
+    __slots__ = []
 
     def _logd(self, *log):
         """
