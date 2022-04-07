@@ -3,12 +3,15 @@
 io functions for mixd.
 """
 
+import os
+import struct
+
 import numpy as np
 
 from gustaf.vertices import Vertices
 from gustaf.faces import Faces
 from gustaf.volumes import Volumes
-from gustaf.io.ioutils import abs_fname
+from gustaf.io.ioutils import abs_fname, check_and_makedirs
 from gustaf.utils import log
 
 
@@ -55,11 +58,16 @@ def load(
 
     elif fname_input:
         absfname = abs_fname(fname)
-        base, ext = os.path.splitext(fname)
+        fbase, ext = os.path.splitext(fname)
 
-        mxyz = base + ".mxyz"
-        mien = base + ".mien"
-        mrng = base + ".mrng"
+        if os.path.basename(fbase) == "_":
+            fbase = fbase[:-1]
+        else:
+            fbase += "."
+
+        mxyz = fbase + "mxyz"
+        mien = fbase + "mien"
+        mrng = fbase + "mrng"
 
     # vertices
     vertices = np.fromfile(mxyz, dtype=">d").astype(np.float64)
@@ -102,3 +110,118 @@ def load(
         mesh.BC = bcs
 
     return mesh
+
+
+def export(mesh, fname, space_time=False):
+    """
+    Export in mixd format.
+    Supports triangle, quadrilateral, tetrahedron, and hexahedron
+    semi-discrete and (flat) space-time mesh output.
+
+    Parameters
+    -----------
+    mesh: Faces or Volumes
+    fname: str
+
+    Returns
+    --------
+    None
+    """
+    # did you give us an acceptable mesh?
+    acceptable_shapes = ["tri", "quad", "tet", "hexa"]
+    whatami = mesh.get_whatami()
+
+    if whatami not in acceptable_shapes:
+        raise NotImplementedError(
+            f"Sorry, we can't export {whatami}-shape in mixd format."
+        )
+
+    # prepare export location
+    fname = abs_fname(fname)
+    check_and_makedirs(fname)
+
+    # basic infos
+    dim = mesh.vertices.shape[1]
+    big_endian_int = ">i"
+    big_endian_double = ">d"
+
+    # prep files
+    fbase, ext = os.path.splitext(fname)
+
+    if ext.startswith(".xns"):
+        # frequently used case in practice. no base export 
+        if os.path.basename(fbase) == "_":
+            fdir = os.path.dirname(fbase)
+            vert_file = os.path.join(fdir, "mxyz")
+            connec_file = os.path.join(fdir, "mien")
+            bc_file = os.path.join(fdir, "mrng")
+            info_file = os.path.join(fdir, "minf")
+
+        else:
+            fbase += "."
+            vert_file = fbase + "mxyz"
+            connec_file = fbase + "mien"
+            bc_file = fbase + "mrng"
+            info_file = fbase + "minf"
+
+    else:
+        raise NotImplementedError("`mixd` format only supports xns.")
+
+    # write v
+    with open(vert_file, "wb") as vf:
+        for v in mesh.vertices.ravel():
+            vf.write(struct.pack(big_endian_double, v))
+
+        if space_time:
+            for v in mesh.vertices.ravel():
+                vf.write(struct.pack(big_endian_double, v))
+
+    # write connec
+    with open(connec_file, "wb") as cf:
+        for c in (mesh.elements().ravel() + 1):
+            cf.write(struct.pack(big_endian_int, c))
+
+    # write bc
+    with open(bc_file, "wb") as bf:
+        nbelem = 3
+
+        if whatami.startswith("quad") or whatami.startswith("tet"):
+            nbelem += 1
+        elif whatami.startswith("hexa"):
+            nbelem += 3
+
+        # init boundaries with -1, as it is the value for non-boundary.
+        # alternatively, they could be (-1 * neighbor_elem_id).
+        # But they aren't.
+        boundaries = np.empty(mesh.elements().shape[0] * nbelem, dtype=int)
+        boundaries[:] = -1
+
+        for i, belem_ids in enumerate(mesh.BC.values()):
+            boundaries[belem_ids] = i + 1 # bid starts at 1
+
+        for b in boundaries:
+            bf.write(struct.pack(big_endian_int, b))
+
+    # write info
+    with open(info_file, "w") as infof: # if and inf... just can't
+        infof.write(f"# dim: {dim}\n")
+        infof.write(f"# mesh type: {whatami}\n\n")
+
+        st_factor = 2 if space_time else 1
+        infof.write(f"nn {int(mesh.vertices.shape[0] * st_factor)}\n")
+        infof.write(f"ne {int(mesh.elements().shape[0])}\n")
+        infof.write(f"nsd {dim}\n")
+        infof.write(f"nen {int(mesh.elements().shape[1] * st_factor)}\n")
+
+        if space_time:
+            infof.write("space-time on\n\n\n")
+        else:
+            infof.write("semi-discrete on\n\n\n")
+
+        # BC guide
+        infof.write("# boundary name : referenced number.\n")
+        for i, bname in enumerate(mesh.BC.keys()):
+            infof.write(f"# {bname} : {i + 1}\n")
+
+        # signature
+        infof.write("\n\n\n# MIXD generated using `gustaf`.\n")
