@@ -10,6 +10,11 @@ from gustaf import settings
 from gustaf import utils
 from gustaf._base import GustavBase
 
+# @linux there were issues with segmentation fault.
+try:
+    import vedo
+except:
+    pass
 
 def show(*gusobj, **kwargs):
     """
@@ -46,7 +51,7 @@ def show_vedo(*args, **kwargs,):
     -----------
     *args: *list or *dict or gustaf_obj or vedo_obj
     """
-    import vedo
+    #import vedo
 
     # vedo plotter parameter
     N = len(args)
@@ -55,6 +60,7 @@ def show_vedo(*args, **kwargs,):
     plt = kwargs.get("vedoplot", None)
     skip_clear = kwargs.get("skip_clear", False)
     close = kwargs.get("close", None)
+    size = kwargs.get("size", "auto")
 
     def clear_vedoplotter(plotter, numrenderers, skipcl=skip_clear):
         """enough said."""
@@ -69,7 +75,7 @@ def show_vedo(*args, **kwargs,):
 
     # get plotter
     if plt is None:
-        plt = vedo.Plotter(N=N, sharecam=False, offscreen=offs)
+        plt = vedo.Plotter(N=N, sharecam=False, offscreen=offs, size=size)
 
     else:
         # check if plt has enough Ns
@@ -83,7 +89,7 @@ def show_vedo(*args, **kwargs,):
             if close: # only if it is explicitly stated
                 plt.close() # Hope that this truely releases..
             # assign a new one
-            plt = vedo.Plotter(N=N, sharecam=False, offscreen=offs)
+            plt = vedo.Plotter(N=N, sharecam=False, offscreen=offs, size=size)
 
 
     # loop and plot
@@ -172,7 +178,7 @@ def _vedo_showable(obj, **kwargs):
     --------
     vedo_obj: vedo obj
     """
-    import vedo
+    #import vedo
 
     # parse from vis_dict
     basic_options = dict(
