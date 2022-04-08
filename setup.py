@@ -14,6 +14,7 @@ setup(
     long_description_content_type="text/markdown",
     author="Jaewook Lee",
     author_email="jlee@ilsb.tuwien.ac.at",
+    url="https://github.com/tataratat/gustaf",
     packages=[
         "gustaf",
         "gustaf.utils",
