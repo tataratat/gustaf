@@ -141,7 +141,12 @@ def faces(spline, resolutions,):
         vertices = []
         faces = []
         offset = 0
-        kvs = spline.knot_vectors
+        # accomodate bezier Splines
+        if spline.whatami.startswith("Bezier"):
+            kvs = [[0., 1.]] * 3
+        else:
+            kvs = spline.knot_vectors
+
         for i in range(spline.para_dim):
             extract = i
             # Get extracting dimension
