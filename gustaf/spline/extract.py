@@ -93,9 +93,16 @@ def edges(
         not_ed = np.arange(spline.para_dim).tolist()
         not_ed.pop(extract_dim)
         queries[:, not_ed] = extract_knot
+        if spline.whatami.startswith("Bezier"):
+            min_knot_position = 0.
+            max_knot_position = 1.
+        else:
+            min_knot_position = min(spline.knot_vectors[extract_dim])
+            max_knot_position = max(spline.knot_vectors[extract_dim])
+            
         queries[:, extract_dim] = np.linspace(
-            min(spline.knot_vectors[extract_dim]),
-            max(spline.knot_vectors[extract_dim]),
+            min_knot_position,
+            max_knot_position,
             resolution,
         )
 
