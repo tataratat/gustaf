@@ -8,6 +8,7 @@ import numpy as np
 
 from gustaf import settings
 
+
 def make_c_contiguous(array, dtype=None):
     """
     Make given array like object a c contiguous np.ndarray.
@@ -52,7 +53,7 @@ def unique_rows(
         return_index=True,
         return_inverse=True,
         return_counts=True,
-        dtype_name=settings.INT_DTYPE,
+        dtype_name=None,
 ):
     """
     Find unique rows using np.unique, but apply tricks. Adapted from
@@ -73,6 +74,9 @@ def unique_rows(
     unique_ind: (w,) np.ndarray
     unique_inv: (t,) np.ndarray
     """
+    if dtype_name is None:
+        dtype_name = settings.INT_DTYPE
+
     in_arr = make_c_contiguous(in_arr, dtype_name)
 
     if len(in_arr.shape) != 2:
@@ -97,6 +101,7 @@ def unique_rows(
         unique_stuff.pop(1)
 
     return unique_stuff
+
 
 def bounds(arr):
     """
@@ -149,6 +154,7 @@ def bounds_norm(arr):
     """
     return np.linalg.norm(bounds_diagonal(arr))
 
+
 def bounds_mean(arr):
     """
     Returns mean of the bounds
@@ -162,6 +168,7 @@ def bounds_mean(arr):
     bounds_mean: (n,) array-like
     """
     return np.mean(bounds(arr), axis=0)
+
 
 def select_with_ranges(arr, ranges):
     """
@@ -203,3 +210,77 @@ def select_with_ranges(arr, ranges):
         mask = masks[0]
 
     return np.arange(arr.shape[0])[mask]
+
+
+def rotation_matrix(rotation, degree=True):
+    '''
+    Compute rotation matrix.
+    Works for both 2D and 3D point sets.
+    In 2D, it can rotate along the (virtual) z-axis.
+    In 3D, it can rotate along [x, y, z]-axis.
+    Uses `scipy.spatial.transform.Rotation`.
+
+    Parameters
+    -----------
+    rotation: list or float
+      Amount of rotation along [x,y,z] axis. Default is in degrees.
+      In 2D, it can be float.
+    degree: bool
+      (Optional) rotation given in degrees.
+      Default is `True`. If `False`, in radian.
+
+    Returns
+    --------
+    rotation_matrix: np.ndarray (3,3)
+    '''
+    from scipy.spatial.transform import Rotation as R
+
+    rotation = np.asarray(rotation).flatten()
+
+    if degree == True:
+        rotation = np.radians(rotation)
+
+    # 2D
+    if len(rotation) == 1:
+        return R.from_rotvec([0, 0, rotation]).as_matrix()[:2, :2]
+
+    # 3D
+    elif len(rotation) == 3:
+        return R.from_rotvec(rotation).as_matrix()
+
+
+def rotate(arr, rotation, rotation_axis=None, degree=True):
+    """
+    Rotates given arrays.
+    Arrays shape[1] should equal to either 2 or 3
+    For more information, see `rotation_matrix()`.
+
+    Parameters
+    -----------
+    arr: (n, (2 or 3)) list-like
+    rotation: list or float
+    rotation_axis: (n, (2 or 3)) list-like
+
+    Returns
+    --------
+    rotated_points: (n, d) np.ndarray
+    """
+    arr = make_c_contiguous(arr, settings.FLOAT_DTYPE)
+    if rotation_axis is not None:
+        rotation_axis = make_c_contiguous(
+            rotation_axis,
+            settings.FLOAT_DTYPE
+        ).ravel()
+
+    if rotation_axis is None:
+        return np.matmul(
+            arr,
+            rotation_matrix(rotation, degree)
+        )
+
+    else:
+        rarr = arr - rotation_axis
+        rarr = np.matmul(rarr, rotation_matrix(rotation, degree))
+        rarr += rotation_axis
+
+        return rarr

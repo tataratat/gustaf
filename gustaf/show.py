@@ -62,6 +62,7 @@ def show_vedo(*args, **kwargs,):
     skip_clear = kwargs.get("skip_clear", False)
     close = kwargs.get("close", None)
     size = kwargs.get("size", "auto")
+    cam = kwargs.get("cam", None)
 
     def clear_vedoplotter(plotter, numrenderers, skipcl=skip_clear):
         """enough said."""
@@ -74,9 +75,20 @@ def show_vedo(*args, **kwargs,):
 
         return None
 
+    def cam_tuple_to_list(dictcam):
+        """if entity is tuple, turns it into list"""
+        if dictcam is None:
+            return None
+
+        for key, value in dictcam.items():
+            if isinstance(value, tuple):
+                dictcam[key] = list(value)
+
+        return dictcam
+
     # get plotter
     if plt is None:
-        plt = vedo.Plotter(N=N, sharecam=False, offscreen=offs, size=size)
+        plt = vedo.Plotter(N=N, sharecam=False, offscreen=offs, size=size,)
 
     else:
         # check if plt has enough Ns
@@ -91,7 +103,6 @@ def show_vedo(*args, **kwargs,):
                 plt.close() # Hope that this truely releases..
             # assign a new one
             plt = vedo.Plotter(N=N, sharecam=False, offscreen=offs, size=size)
-
 
     # loop and plot
     for i, arg in enumerate(args):
@@ -145,6 +156,7 @@ def show_vedo(*args, **kwargs,):
                 showlist,
                 at=i,
                 interactive=interac,
+                camera=cam_tuple_to_list(cam),
                 #offscreen=offs,
             )
 
@@ -153,6 +165,7 @@ def show_vedo(*args, **kwargs,):
                 showlist,
                 at=i,
                 interactive=False,
+                camera=cam_tuple_to_list(cam),
                 #offscreen=offs,
             )
 
@@ -349,3 +362,121 @@ def make_showable(obj, backend=settings.VISUALIZATION_BACKEND, **kwargs):
         return _matplotlib_showable(obj, **kwargs)
     else:
         raise NotImplementedError
+
+
+# possibly relocate
+def interpolate_vedo_dictcam(cameras, resolutions, spline_degree=1):
+    """
+    Interpolate between vedo dict cameras.
+
+    Parameters
+    ------------
+    cameras: list or tuple
+    resolutions: int
+    spline_degree: int
+      if > 1 and splinepy is available and there are more than two cameras,
+      we interpolate all the entries using spline.
+
+    Returns
+    --------
+    interpolated_cams: list
+    """
+    try:
+        import splinepy
+        spp = True
+
+    except:
+        spp = False
+
+    # quick type check loop
+    camkeys = ["pos", "focalPoint", "viewup", "distance", "clippingRange"]
+    for cam in cameras:
+        if not isinstance(cam, dict):
+            raise TypeError("Only `dict` description of vedo cam is allowed.")
+        else:
+            for key in camkeys:
+                if cam[key] is None:
+                    raise ValueError(
+                        f"One of the camera does not contain `{key}` info"
+                    )
+
+    interpolated_cams = []
+    total_cams = int(resolutions) * (len(cameras) - 1)
+
+    if spp and spline_degree > 1 and len(cameras) > 2:
+        if spline_degree > len(cameras):
+            raise ValueError(
+                "Not enough camera to interpolate with "
+                f"spline degree {spline_degree}"
+            )
+
+        ps = []
+        fs = []
+        vs = []
+        ds = []
+        cs = []
+        for cam in cameras:
+            ps.append(list(cam[camkeys[0]]))
+            fs.append(list(cam[camkeys[1]]))
+            vs.append(list(cam[camkeys[2]]))
+            ds.append([float(cam[camkeys[3]])])
+            cs.append(list(cam[camkeys[4]]))
+
+        interpolated = dict()
+        for i, prop in enumerate([ps, fs, vs, ds, cs]):
+            ispline = splinepy.BSpline()
+            ispline.interpolate_curve(
+                query_points=prop,
+                degree=spline_degree,
+                save_query=False,
+            )
+            interpolated[camkeys[i]] = ispline.sample([total_cams])
+
+        for i in range(total_cams):
+            interpolated_cams.append(
+                {
+                    camkeys[0] : interpolated[camkeys[0]][i].tolist(),
+                    camkeys[1] : interpolated[camkeys[1]][i].tolist(),
+                    camkeys[2] : interpolated[camkeys[2]][i].tolist(),
+                    camkeys[3] : interpolated[camkeys[3]][i][0], # float?
+                    camkeys[4] : interpolated[camkeys[4]][i].tolist(),
+                }
+            )
+
+    else:
+        i = 0
+        for startcam, endcam in zip(cameras[:-1], cameras[1:]):
+            if i == 0:
+                interpolated = [
+                    np.linspace(
+                        startcam[ckeys],
+                        endcam[ckeys],
+                        resolutions,
+                    ).tolist()
+                    for ckeys in camkeys
+                ]
+
+            else:
+                interpolated = [
+                    np.linspace(
+                        startcam[ckeys],
+                        endcam[ckeys],
+                        int(resolutions + 1),
+                    )[1:].tolist()
+                    for ckeys in camkeys
+                ]
+
+            i += 1
+
+            for j in range(resolutions):
+                interpolated_cams.append(
+                    {
+                        camkeys[0] : interpolated[0][j],
+                        camkeys[1] : interpolated[1][j],
+                        camkeys[2] : interpolated[2][j],
+                        camkeys[3] : interpolated[3][j], # float?
+                        camkeys[4] : interpolated[4][j],
+                    }
+                )
+
+    return interpolated_cams
