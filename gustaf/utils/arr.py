@@ -283,4 +283,4 @@ def rotate(arr, rotation, rotation_axis=None, degree=True):
         rarr = np.matmul(rarr, rotation_matrix(rotation, degree))
         rarr += rotation_axis
 
-        return arr
+        return rarr
