@@ -33,6 +33,7 @@ def show(
         parametric_space=False,
         color=None,
         surface_alpha=1,
+        control_points_alpha=.8,
         lighting="glossy",
         control_point_ids=True,
         color_spline=None,
@@ -126,11 +127,11 @@ def show(
             control_mesh = control_mesh.toedges(unique=True)
 
         # Set alpha to < 1, so that they don't "overshadow" spline
-        control_mesh.vis_dict.update(c="red", lw=4, alpha=.8)
+        control_mesh.vis_dict.update(c="red", lw=4, alpha=control_points_alpha)
         things_to_show.update(control_mesh=control_mesh) # mesh itself
         # Add big vertices to emphasize cps.
         cps = control_mesh.tovertices()
-        cps.vis_dict.update(c="red", r=10, alpha=.8)
+        cps.vis_dict.update(c="red", r=10, alpha=control_points_alpha)
         things_to_show.update(control_points=cps) # only points
 
     if knots:
