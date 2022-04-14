@@ -172,8 +172,9 @@ def with_physical_bounds(
 def parametric_view(spline):
     """
     Create parametric view of given spline.
-    Previously called `naive_spline()`
-
+    Previously called `naive_spline()`.
+    Degrees are always 1 and knot multiplicity is not preserved.
+    Returns BSpline, as BSpline and NURBS should look the same
 
     Parameters
     -----------
@@ -181,30 +182,18 @@ def parametric_view(spline):
 
     Returns
     --------
-    para_spline: BSpline or NURBS 
+    para_spline: BSpline
     """
     para_spline = with_parametric_bounds(
         parametric_bounds=spline.knot_vector_bounds,
-        degrees=spline.degrees,
+        degrees=[1] * spline.para_dim,
         num_unique_knots=None,
-        nurbs=True if hasattr(spline, "weights") else False, 
+        nurbs=False, 
     )
 
     # loop through knot vectors and insert missing knots
-    for i, kv in enumerate(spline.knot_vectors):
-        tmp_kv = np.asarray(kv.copy())
-
-        # remove all the knots that para_spline also has
-        for pk in para_spline.knot_vectors[i]:
-            matches = np.where(abs(tmp_kv - pk) < TOLERANCE)[0]
-
-            # manipulate first one of the matches to mark "hit"
-            if len(matches) > 0:
-                tmp_kv[matches[0]] = -100.0
-
-        mask = tmp_kv < -1 # mask of matching knots
-        if mask.sum() != len(mask): # means there's "hit"
-            para_spline.insert_knots(i, tmp_kv[~mask])
+    for i, kv in enumerate(spline.unique_knots):
+        para_spline.insert_knots(i, kv[1:-1])
 
     return para_spline
 
