@@ -83,15 +83,17 @@ def load(
     bcs = dict()
     try:
         bcs_in = np.fromfile(mrng, dtype=">i").astype(np.int32) # flattened
-        for i in range(bcs_in.max()):
-            if i < 1: # ignore bc numbers below 0
-                continue
+        uniq_bcs_in = np.unique(bcs_in)
+        uniq_bcs_in = uniq_bcs_in[uniq_bcs_in > 0] # keep only natural nums
+        subelemids = np.arange(bcs_in.size)
 
-            globinds = np.where(bcs == i)[0] # returns tuple
-            bcs.update({str(i) : globinds})
+        for ubci in uniq_bcs_in:
+            bcs.update(
+                {str(ubci) : subelemids[bcs_in == ubci]}
+            )
             
     except:
-        log.debug(f"mien file, `{mien}`, does not exist. Skipping.")
+        log.debug(f"mrng file, `{mrng}`, does not exist. Skipping.")
 
     # reshape vertices
     vertices = vertices.reshape(-1, 3) if volume else vertices.reshape(-1, 2)
