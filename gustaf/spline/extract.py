@@ -93,12 +93,11 @@ def edges(
         not_ed = np.arange(spline.para_dim).tolist()
         not_ed.pop(extract_dim)
         queries[:, not_ed] = extract_knot
-        if spline.whatami.startswith("Bezier"):
-            min_knot_position = 0.
-            max_knot_position = 1.
-        else:
-            min_knot_position = min(spline.knot_vectors[extract_dim])
-            max_knot_position = max(spline.knot_vectors[extract_dim])
+
+        # get knot extrema
+        uniq_knots = spline.unique_knots[extract_dim]
+        min_knot_position = min(uniq_knots)
+        max_knot_position = max(uniq_knots)
             
         queries[:, extract_dim] = np.linspace(
             min_knot_position,
@@ -149,10 +148,7 @@ def faces(spline, resolutions,):
         faces = []
         offset = 0
         # accomodate bezier Splines
-        if spline.whatami.startswith("Bezier"):
-            kvs = [[0., 1.]] * 3
-        else:
-            kvs = spline.knot_vectors
+        ukvs = spline.unique_knots
 
         for i in range(spline.para_dim):
             extract = i
@@ -163,18 +159,18 @@ def faces(spline, resolutions,):
             # Extract range
             extract_range = [
                 [
-                    min(kvs[extract_along[0]]),
-                    max(kvs[extract_along[0]]),
+                    min(ukvs[extract_along[0]]),
+                    max(ukvs[extract_along[0]]),
                 ],
                 [
-                    min(kvs[extract_along[1]]),
-                    max(kvs[extract_along[1]]),
+                    min(ukvs[extract_along[1]]),
+                    max(ukvs[extract_along[1]]),
                 ],
             ]
 
             extract_list = [
-                min(kvs[extract]),
-                max(kvs[extract]),
+                min(ukvs[extract]),
+                max(ukvs[extract]),
             ]
 
             # surface point queries (spq)

@@ -441,8 +441,6 @@ class Bezier(GustavSpline, splinepy.Bezier):
         self._proximity = _Proximity(self)
 
 
-
-
 class BSpline(GustavSpline, splinepy.BSpline):
 
     def __init__(
