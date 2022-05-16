@@ -93,9 +93,15 @@ def edges(
         not_ed = np.arange(spline.para_dim).tolist()
         not_ed.pop(extract_dim)
         queries[:, not_ed] = extract_knot
+
+        # get knot extrema
+        uniq_knots = spline.unique_knots[extract_dim]
+        min_knot_position = min(uniq_knots)
+        max_knot_position = max(uniq_knots)
+            
         queries[:, extract_dim] = np.linspace(
-            min(spline.knot_vectors[extract_dim]),
-            max(spline.knot_vectors[extract_dim]),
+            min_knot_position,
+            max_knot_position,
             resolution,
         )
 
@@ -141,7 +147,9 @@ def faces(spline, resolutions,):
         vertices = []
         faces = []
         offset = 0
-        kvs = spline.knot_vectors
+        # accomodate bezier Splines
+        ukvs = spline.unique_knots
+
         for i in range(spline.para_dim):
             extract = i
             # Get extracting dimension
@@ -151,18 +159,18 @@ def faces(spline, resolutions,):
             # Extract range
             extract_range = [
                 [
-                    min(kvs[extract_along[0]]),
-                    max(kvs[extract_along[0]]),
+                    min(ukvs[extract_along[0]]),
+                    max(ukvs[extract_along[0]]),
                 ],
                 [
-                    min(kvs[extract_along[1]]),
-                    max(kvs[extract_along[1]]),
+                    min(ukvs[extract_along[1]]),
+                    max(ukvs[extract_along[1]]),
                 ],
             ]
 
             extract_list = [
-                min(kvs[extract]),
-                max(kvs[extract]),
+                min(ukvs[extract]),
+                max(ukvs[extract]),
             ]
 
             # surface point queries (spq)

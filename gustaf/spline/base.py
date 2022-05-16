@@ -408,6 +408,39 @@ class GustavSpline(GustavBase):
         return type(self)(**self.todict())
 
 
+class Bezier(GustavSpline, splinepy.Bezier):
+
+    def __init__(
+            self,
+            degrees=None,
+            control_points=None,
+    ):
+        """
+        BSpline of gustaf. Inherited from splinepy.BSpline and GustavSpline.
+
+        Attributes
+        -----------
+        extract: _Extractor
+
+        Parameters
+        -----------
+        degrees: (para_dim,) list-like
+        knot_vectors: (para_dim, ...) list
+        control_points: (m, dim) list-like
+
+        Returns
+        --------
+        None
+        """
+        super(splinepy.Bezier, self).__init__(
+            degrees=degrees,
+            control_points=control_points
+        )
+
+        self._extractor = _Extractor(self)
+        self._proximity = _Proximity(self)
+
+
 class BSpline(GustavSpline, splinepy.BSpline):
 
     def __init__(
