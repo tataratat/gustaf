@@ -169,7 +169,7 @@ def show_vedo(*args, **kwargs,):
                 #offscreen=offs,
             )
 
-    if interac:
+    if interac and not off:
         # only way to ensure memory is released
         clear_vedoplotter(plt, prod(plt.shape))
 
