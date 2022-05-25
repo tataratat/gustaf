@@ -203,9 +203,9 @@ class Edges(Vertices):
         new_self: type(self)
           iff inplace=False
         """
-        new_elements = new_elements[mask]
+        new_elements = self.elements()[mask]
         if inplace:
-            self.elements(new_elements).remove_unreferrenced_vertices(
+            self.elements(new_elements).remove_unreferenced_vertices(
                 inplace=True
             )
             return None
@@ -214,7 +214,7 @@ class Edges(Vertices):
             return type(self)(
                 vertices=self.vertices,
                 elements=new_elements
-            ).remove_unreferrenced_vertices(inplace=False)
+            ).remove_unreferenced_vertices(inplace=False)
 
     def update_edges(self, *args, **kwargs):
         """

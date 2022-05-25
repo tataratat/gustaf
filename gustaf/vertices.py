@@ -115,20 +115,26 @@ class Vertices(GustavBase):
         if hasattr(self, "volumes"):
             if elements is None:
                 return self.volumes
+
             else:
                 self.volumes = elements
+                return self
 
         elif hasattr(self, "faces"):
             if elements is None:
                 return self.faces
+
             else:
                 self.faces = elements
+                return self
 
         elif hasattr(self, "edges"):
             if elements is None:
                 return self.edges
+
             else:
                 self.edges = elements
+                return self
 
         elif hasattr(self, "vertices"):
             return np.arange(
