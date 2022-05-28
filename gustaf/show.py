@@ -192,8 +192,6 @@ def _vedo_showable(obj, **kwargs):
     --------
     vedo_obj: vedo obj
     """
-    #import vedo
-
     # parse from vis_dict
     basic_options = dict(
         c = obj.vis_dict.get("c", None),
@@ -203,7 +201,9 @@ def _vedo_showable(obj, **kwargs):
         #shrink = obj.vis_dict.get("shrink", None),
         cmap = obj.vis_dict.get("cmap", None),
         dataname = obj.vis_dict.get("dataname", None),
-        arrows = obj.vis_dict.get("arrows", None), # only for edge
+        arrows = obj.vis_dict.get("arrows", None), # only for edges
+        #> only for edges and internally treated same as `lw`
+        thickness = obj.vis_dict.get("thickness", None),
     )
     # loop once more to extract basics from kwargs
     # done after vis_dict, so that this overpowers
@@ -241,9 +241,15 @@ def _vedo_showable(obj, **kwargs):
                 **local_options,
                 **kwargs
             )
+
         else:
-            # turn lw into thickness
-            if local_options.get("lw", False):
+            if basic_options.get("thickness", False):
+                local_options.update(
+                    {"thickness" : basic_options["thickness"]}
+                )
+
+            # turn lw into thickness if there's no thickness
+            elif local_options.get("lw", False):
                 thickness = local_options.pop("lw")
                 local_options.update({"thickness" : thickness})
 
