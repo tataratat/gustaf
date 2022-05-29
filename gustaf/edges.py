@@ -254,7 +254,7 @@ class Edges(Vertices):
             else:
                 return None
 
-    def dashed(self, spacing):
+    def dashed(self, spacing=None):
         """
         Turn edges into dashed edges(=lines).
         Given spacing, it will try to chop edges as close to it as possible.
@@ -266,6 +266,7 @@ class Edges(Vertices):
         Parameters
         -----------
         spacing: float
+          Default is None and it will use self.get_bounds_diagonal_norm() / 50
 
         Returns
         --------
@@ -273,6 +274,10 @@ class Edges(Vertices):
         """
         if self.kind != "edge":
             raise NotImplementedError
+
+        if spacing is None:
+            # apply "automatic" spacing
+            spacing = self.get_bounds_diagonal_norm() / 50
 
         v0s = self.vertices[self.edges[:,0]]
         v1s = self.vertices[self.edges[:,1]]

@@ -355,6 +355,7 @@ class Vertices(GustavBase):
     def get_bounds(self):
         """
         Returns bounds of the vertices.
+        Bounds means AABB of the geometry.
 
         Parameters
         -----------
@@ -367,6 +368,39 @@ class Vertices(GustavBase):
         self.bounds = utils.arr.bounds(self.vertices)
 
         return self.bounds
+
+    def get_bounds_diagonal(self):
+        """
+        Returns diagonal vector of the bounding box.
+
+        Parameters
+        -----------
+        None
+
+        Returns
+        --------
+        bounds_digonal: (d,) np.ndarray
+          same as `bounds[1] - bounds[0]`
+        """
+        _ = self.get_bounds()
+
+        return self.bounds[1] - self.bounds[0]
+
+    def get_bounds_diagonal_norm(self):
+        """
+        Returns norm of bounds diagonal.
+
+        Parameters
+        -----------
+        None
+
+        Returns
+        --------
+        bounds_diagonal_norm: float
+        """
+        _ = self.get_bounds()
+
+        return float(sum(self.get_bounds_diagonal() ** 2) ** .5)
 
     def get_centers(self):
         """
