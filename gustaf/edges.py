@@ -254,6 +254,57 @@ class Edges(Vertices):
             else:
                 return None
 
+    def dashed(self, spacing=None):
+        """
+        Turn edges into dashed edges(=lines).
+        Given spacing, it will try to chop edges as close to it as possible.
+        Pattern should look:
+           o--------o    o--------o    o--------o
+           |<------>|             |<-->|
+              (chop length)         (chop length / 2)
+
+        Parameters
+        -----------
+        spacing: float
+          Default is None and it will use self.get_bounds_diagonal_norm() / 50
+
+        Returns
+        --------
+        dashing_edges: Edges
+        """
+        if self.kind != "edge":
+            raise NotImplementedError
+
+        if spacing is None:
+            # apply "automatic" spacing
+            spacing = self.get_bounds_diagonal_norm() / 50
+
+        v0s = self.vertices[self.edges[:,0]]
+        v1s = self.vertices[self.edges[:,1]]
+
+        distances = np.linalg.norm(v0s - v1s, axis=1)
+        linspaces = (((distances // (spacing * 1.5)) + 1) * 3).astype(np.int32)
+
+        # chop vertices!
+        new_vs = []
+        for v0, v1, lins in zip(v0s, v1s, linspaces):
+            new_vs.append(np.linspace(v0, v1, lins))
+
+        # we need all choped vertices.
+        # there might be duplicating vertices. you can use merge_vertices
+        new_vs = np.vstack(new_vs)
+        # all mid points are explicitly defined, but they aren't required
+        # so, rm. 
+        mask = np.ones(len(new_vs), dtype=bool)
+        mask[1::3] = False
+        new_vs = new_vs[mask]
+
+        # prepare edges
+        tmp_es = utils.connec.range_to_edges((0, len(new_vs)), closed=False)
+        new_es = tmp_es[::2]
+
+        return Edges(vertices=new_vs, edges=new_es)
+
     def tovertices(self):
         """
         Returns Vertices obj.
