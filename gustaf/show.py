@@ -193,16 +193,23 @@ def _vedo_showable(obj, **kwargs):
     vedo_obj: vedo obj
     """
     # parse from vis_dict
+    # NOTE: maybe we can make a helper class to organize this nicely
     basic_options = dict(
         c = obj.vis_dict.get("c", None),
         r = obj.vis_dict.get("r", None),
         lw = obj.vis_dict.get("lw", None),
         alpha = obj.vis_dict.get("alpha", None),
-        #shrink = obj.vis_dict.get("shrink", None),
         cmap = obj.vis_dict.get("cmap", None),
+        #> followings are cmap options
+        vmin = obj.vis_dict.get("vmin", None),
+        vmax = obj.vis_dict.get("vmax", None),
+        cmapalpha = obj.vis_dict.get("cmapalpha", 1),
+        #> takes scalarbar options as dict.
+        scalarbar = obj.vis_dict.get("scalarbar", None), 
         dataname = obj.vis_dict.get("dataname", None),
+        #<
         arrows = obj.vis_dict.get("arrows", None), # only for edges
-        #> only for edges and internally treated same as `lw`
+        #> only for edges. internally treated same as `lw`, but higher priority
         thickness = obj.vis_dict.get("thickness", None),
     )
     # loop once more to extract basics from kwargs
@@ -286,19 +293,6 @@ def _vedo_showable(obj, **kwargs):
         else:
             return None # get_whatami should've rasied error.. 
 
-        ## shrink should be done at gustaf level, since it is available now!
-        # shrink? save here to allocate values accordingly
-        #shrink = basic_options["shrink"]
-        #if shrink is None:
-        #    shrink = kwargs.get("shrink", True) # maybe False?
-
-        #if shrink:
-        #    vobj = vobj.tomesh(shrink=.8)
-        #    if basic_options["c"] is None:
-        #        vobj.color("hotpink")
-        #    else:
-        #        vobj.color(basic_options["c"])
-
         if basic_options["dataname"]:
             from gustaf.faces import Faces
 
@@ -337,8 +331,20 @@ def _vedo_showable(obj, **kwargs):
             basic_options["cmap"] = "jet"
 
         # register cmap and data
-        vobj.cmap(basic_options["cmap"], dname)
+        vobj.cmap(
+            basic_options["cmap"],
+            input_array=dname,
+            on="points", # hardcoded since yet, we don't have cell field
+            vmin=basic_options["vmin"],
+            vmax=basic_options["vmax"],
+            alpha=basic_options["cmapalpha"],
+        )
 
+        # scalarbar?
+        scalarbar_dict = basic_options["scalarbar"]
+        if scalarbar_dict is not None:
+            # if horizontal==True, size doesnt really matter
+            vobj.addScalarBar(**scalarbar_dict)
 
     return vobj
 
