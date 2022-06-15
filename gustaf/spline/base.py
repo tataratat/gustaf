@@ -138,7 +138,7 @@ def show(
         # Knot lines for non-curve splines.
         # Knot for curves are only added for vedo backend.
         if spline.para_dim > 1:
-            knot_lines = spline.extract.edges(resolutions[0], all_knots=True)
+            knot_lines = spline.extract.edges(resolutions, all_knots=True)
             knot_lines.vis_dict.update(c="black", lw=3)
             things_to_show.update(knots=knot_lines)
 
@@ -605,13 +605,20 @@ def load_splines(fname):
     --------
     gussplines: list
     """
-    splinepysplines = splinepy.load_splines(fname)
+    # first get dict_splines using splinepy
+    dictsplines = splinepy.load_splines(fname, as_dict=True)
 
+    # try to initialize with correct spline type
     gussplines = list()
-    for sps in splinepysplines:
-        if hasattr(sps, "weights"):
-            gussplines.append(NURBS(**sps.todict()))
+    for dics in dictsplines:
+        is_bspline = "knot_vectors" in dics
+        is_nurbs = "weights" in dics
+
+        if is_nurbs:
+            gussplines.append(NURBS(**dics))
+        elif is_bspline:
+            gussplines.append(BSpline(**dics))
         else:
-            gussplines.append(BSpline(**sps.todict()))
+            gussplines.append(Bezier(**dics))
 
     return gussplines
