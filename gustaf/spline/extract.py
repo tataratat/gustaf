@@ -44,7 +44,8 @@ def edges(
     --------
     edges: Edges
     """
-    resolution = int(resolution)
+    if not all_knots:
+        resolution = int(resolution)
 
     if spline.para_dim == 1:
         return Edges(
@@ -78,7 +79,7 @@ def edges(
 
                 for ekq in extract_knot_queries:
                     edgess.append(
-                        edges(spline, resolution, i, ekq, False)
+                        edges(spline, resolution[i], i, ekq, False)
                     )
 
             return Edges.concat(edgess)
