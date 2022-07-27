@@ -195,11 +195,13 @@ def export(mesh, fname, space_time=False):
         # init boundaries with -1, as it is the value for non-boundary.
         # alternatively, they could be (-1 * neighbor_elem_id).
         # But they aren't.
-        boundaries = np.empty(mesh.elements().shape[0] * nbelem, dtype=int)
-        boundaries[:] = -1
 
-        for i, belem_ids in enumerate(mesh.BC.values()):
-            boundaries[belem_ids] = i + 1 # bid starts at 1
+        boundaries = as_mrng(nbelem,mesh)
+#        boundaries = np.empty(mesh.elements().shape[0] * nbelem, dtype=int)
+#        boundaries[:] = -1
+#
+#        for i, belem_ids in enumerate(mesh.BC.values()):
+#            boundaries[belem_ids] = i + 1 # bid starts at 1
 
         for b in boundaries:
             bf.write(struct.pack(big_endian_int, b))
@@ -227,3 +229,27 @@ def export(mesh, fname, space_time=False):
 
         # signature
         infof.write("\n\n\n# MIXD generated using `gustaf`.\n")
+
+def as_mrng(nbelem,mesh):
+    """
+    Returns the mrng as np.array.
+    Supports triangle, (quadrilateral), tetrahedron, and (hexahedron).
+    Only tested for tri and tet.
+
+    Parameters
+    -----------
+    mesh: Faces or Volumes
+    nbelem: int
+      Number of participating elements
+
+    Returns
+    --------
+    boundaries : ndarray
+      The mrng-array.
+    """
+    boundaries = np.empty(mesh.elements().shape[0] * nbelem, dtype=int)
+    boundaries[:] = -1
+
+    for i, belem_ids in enumerate(mesh.BC.values()):
+        boundaries[belem_ids] = i + 1 # bid starts at 1
+    return boundaries
