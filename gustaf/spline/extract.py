@@ -395,6 +395,25 @@ def control_mesh(spline,):
             "Supports 1 to 3."
         )
 
+def beziers(spline):
+  """
+  Extracts Bezier-type objects of any spline-type object
+
+  Parameters
+  ----------
+  spline : Gustaf-Spline
+    """
+  if "Bezier" in spline.whatami:
+      return spline
+  elif "BSpline" in spline.whatami:
+      return [Bezier(**s.todict()) 
+          for s in super(type(spline), spline).extract_bezier_patches()]
+  elif "Nurbs" in spline.whatami:
+      return [RationalBezier(**s.todict()) 
+          for s in super(type(spline), spline).extract_bezier_patches()]
+  else:
+      raise ValueError("Unknown Spline-Type.")
+
 
 class _Extractor:
     """
@@ -433,4 +452,7 @@ class _Extractor:
     
     def control_mesh(self):
         return control_mesh(self.spline)
+
+    def beziers(self):
+        return beziers(self.spline)
 
