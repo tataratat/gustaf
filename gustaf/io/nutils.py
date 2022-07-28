@@ -15,6 +15,15 @@ from gustaf.utils import log
 from gustaf.io import mixd
 
 def load(fname):
+    """
+    nutils load.
+    Loads a nutils (np.savez) file and returns a Gustaf Mesh.
+
+    Parameters
+    -----------
+    fname: str
+      The npz file needs the following keys: nodes, cnodes, coords, tags, btags, ptags.
+    """
     npzfile = np.load(fname, allow_pickle=True)
     nodes = npzfile['nodes']
     cnodes = npzfile['cnodes']
@@ -23,37 +32,85 @@ def load(fname):
     btags = npzfile['btags'].item()
     ptags = npzfile['ptags'].item()
 
+    vertices = coords
 
+    # connec
+    simplex = True
+    connec = None
+    volume = True  #adaption nec
 
-    print(btags)
+    try:
+        connec = nodes
+    except:
+        log.debug("Error")
 
-#    return mesh
+    # reshape connec
+    if connec is not None:
+        ncol = int(3) if simplex and not volume else int(4)
+        ncol = int(8) if ncol == int(4) and volume and not simplex else ncol
+
+        connec = connec.reshape(-1, ncol)
+
+        mesh = Volumes(vertices, connec) if volume else Faces(vertices, connec)
+
+    mesh.BC = btags
+    return mesh
 
 def export(fname, mesh):
+    """
+    Export in Nutils format. Files are saved as np.savez().
+    Supports triangle,and tetrahedron Meshes.
+
+    Parameters
+    -----------
+    mesh: Faces or Volumes
+    fname: str
+
+    Returns
+    --------
+    None
+    """
+
     dic = to_nutils_simplex(mesh)
 
     # prepare export location
     fname = abs_fname(fname)
     check_and_makedirs(fname)
 
-    np.savez(fname, nodes = dic['nodes'], cnodes = dic['cnodes'], coords = dic['coords'], tags = dic['tags'] , btags = dic['btags'], ptags = dic['ptags'])
+    np.savez(fname, **dic)
+
 
 
 def to_nutils_simplex(mesh):
+    """
+    Converts a Gustaf_Mesh to a Dictionary, which can be interpreted by nutils.mesh.simplex(**to_nutils_simplex(mesh)). Only work for Triangles and Tetrahedrons!
+
+    Parameters
+    -----------
+    mesh: Faces or Volumes
+
+    Returns
+    --------
+    dic_to_nutils: dict
+    """
+
     dic_to_nutils = dict()
-    dimension = 2
-    permutation = [1,2,0]
 
     vertices = mesh.get_vertices_unique()
     faces = mesh.get_faces()			
-    elements = faces
     whatami = mesh.get_whatami()
-    
-    if whatami.startswith("tet"):
+
+    if whatami.startswith("tri"):
+        dimension = 2
+        permutation = [1,2,0]
+        elements = faces
+    elif whatami.startswith("tet"):
         dimension = 3
         permutation = [2,3,1,0]
         volumes = mesh.volumes				
-        elements = volumes
+        elements = volumes     
+    else:
+        raise TypeError('Only Triangle and Tetrahedrons are accepted.') 
     
     #Sort the Node IDs for each Element. In 2D, element = face. In 3D, element = volume.
     elements_sorted = np.zeros(elements.shape)
@@ -68,7 +125,7 @@ def to_nutils_simplex(mesh):
     #Let`s get the Boundaries
     bcs = dict()
     bcs_in = mixd.as_mrng(dimension + 1,mesh)	
-    bcs_in = np.ndarray.reshape(bcs_in,(int(len(bcs_in)/(dimension + 1)),(dimension + 1)))			#this is the mrng file
+    bcs_in = np.ndarray.reshape(bcs_in,(int(len(bcs_in)/(dimension + 1)),(dimension + 1)))
 
     bound_id = np.unique(bcs_in)
     bound_id = bound_id[bound_id > 0]
