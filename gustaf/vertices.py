@@ -78,14 +78,14 @@ class Vertices(GustafBase):
         )
 
         if (
-            vertices_unqiue
+            vetices_unique
             or vertices_unique_id
             or vertices_unique_inverse
             or everything
         ):
             self.vertices_unique()
 
-        if bounbds or everything:
+        if bounds or everything:
             self.bounds()
 
         if centers or everything:
