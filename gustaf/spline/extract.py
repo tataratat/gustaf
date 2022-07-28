@@ -403,12 +403,13 @@ def beziers(spline):
   ----------
   spline : Gustaf-Spline
     """
+  from gustaf.spline.base import Bezier, RationalBezier
   if "Bezier" in spline.whatami:
       return spline
   elif "BSpline" in spline.whatami:
       return [Bezier(**s.todict()) 
           for s in super(type(spline), spline).extract_bezier_patches()]
-  elif "Nurbs" in spline.whatami:
+  elif "NURBS" in spline.whatami:
       return [RationalBezier(**s.todict()) 
           for s in super(type(spline), spline).extract_bezier_patches()]
   else:
