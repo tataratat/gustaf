@@ -8,6 +8,7 @@ from gustaf import show
 from gustaf import utils
 from gustaf import create
 from gustaf import io
+from gustaf import ffd
 
 try:
     from gustaf import spline
