@@ -55,7 +55,7 @@ class Vertices(GustafBase):
 
     def process(
             self,
-            vertices_unique=False,
+            vetices_unique=False,
             vertices_unique_id=False,
             vertices_unique_inverse=False,
             bounds=False,
