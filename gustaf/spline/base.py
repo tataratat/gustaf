@@ -594,7 +594,7 @@ class BSpline(GustafSpline, splinepy.BSpline):
             weights=np.ones(self.control_points.shape[0], dtype="float64")
         )
 
-    def extrac_bezier_patches(self):
+    def extract_bezier_patches(self):
       """
       Overwrites splinepy-parent's function to ensure the conversion of Splines
       into a usable gustaf format
@@ -678,7 +678,7 @@ class NURBS(GustafSpline, splinepy.NURBS):
 
         return gustaf2mfem, mfem2gustaf
 
-    def extrac_bezier_patches(self):
+    def extract_bezier_patches(self):
       """
       Overwrites splinepy-parent's function to ensure the conversion of Splines
       into a usable gustaf format
