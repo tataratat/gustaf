@@ -129,8 +129,10 @@ class Edges(Vertices):
         )
 
         # unpack
-        self.edges_unique = unique_stuff[0]
+        #   set edges_unique with `edges`.
+        #   otherwise it'd be based on edges_sorted and it changes orientation
         self.edges_unique_id = unique_stuff[1].astype(settings.INT_DTYPE)
+        self.edges_unique = self.edges[self.edges_unique_id]
         self.edges_unique_inverse = unique_stuff[2].astype(settings.INT_DTYPE)
         self.edges_unique_count = unique_stuff[3].astype(settings.INT_DTYPE)
         self.outlines = self.edges_unique_id[self.edges_unique_count == 1]

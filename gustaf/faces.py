@@ -156,13 +156,14 @@ class Faces(Edges):
         )
 
         # unpack
-        self.faces_unique = unique_stuff[0]
+        #  set faces_unique with `faces` to avoid orientation change
         self.faces_unique_id = unique_stuff[1].astype(settings.INT_DTYPE)
+        self.faces_unique = self.faces[self.faces_unique_id]
         self.faces_unique_inverse = unique_stuff[2].astype(settings.INT_DTYPE)
         self.faces_unique_count = unique_stuff[3].astype(settings.INT_DTYPE)
         self.surfaces = self.faces_unique_id[self.faces_unique_count == 1]
 
-        return self.faces_unique
+        return self.faces[self.faces_unique_id]
 
     def get_faces_unique_id(self):
         """
