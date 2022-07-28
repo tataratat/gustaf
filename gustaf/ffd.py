@@ -7,9 +7,8 @@ Freeform Deformation!
 Adaptation of previous implementation in internal python package gustav by
 Jaewook Lee. 
 """
-from typing import List, Union
+from typing import List, Optional, Union
 import numpy as np
-from gustaf import utils
 from gustaf.edges import Edges
 
 from gustaf.faces import Faces
@@ -17,14 +16,17 @@ from gustaf.spline.base import NURBS, BSpline, Bezier
 from gustaf.vertices import Vertices
 from gustaf.volumes import Volumes
 from gustaf._base import GustavBase
+from gustaf.show import show_vedo
 
+SPLINE_TYPES = Union[Bezier, BSpline, NURBS]
+MESH_TYPES = Union[Vertices, Edges, Faces, Volumes]
 
 class FFD (GustavBase):
 
     def __init__(
         self,
-        mesh: Union[Edges, Faces, Volumes],
-        spline: Union[Bezier, BSpline, NURBS],
+        mesh: MESH_TYPES,
+        spline: SPLINE_TYPES,
         # is_partial: bool=False,
     ):
         """
@@ -35,21 +37,21 @@ class FFD (GustavBase):
 
         Parameters
         ----------
-        mesh (Union[Edges, Faces, Volumes]): Base mesh of the FFD
-        spline (Union[Bezier, BSpline, NURBS]): Original Spline of the FFD
-        is_partial (bool): True if mesh is only partialy deformed (currently 
-            not supported)
+        mesh: MESH_TYPES
+            Base mesh of the FFD
+        spline: SPLINE_TYPE
+            Original Spline of the FFD
+        is_partial: bool
+            True if mesh is only partially deformed (currently not supported)
 
         Attributes
         ----------
-        _mesh: Mesh
-        _original_mesh: Mesh
-        _q_vertices: np.ndarray
-        _spline: BSpline or NURBS
-        _naive_spline: BSpline or NURBS
-        _offset : (dim,) np.ndarray
-        _scale : (dim,) np.ndarray
+        _spline: SPLINE_TYPES
+        _mesh: MESH_TYPES
+        _original_spline_ranges: List[List[float]]
+        _q_vertices: np.ndarray (n, dim)
         _is_partial: bool
+        calculated: bool
 
         Returns
         -------
@@ -58,40 +60,68 @@ class FFD (GustavBase):
         # Use property definitions to store the values
         self._spline = None
         self._mesh = None
-        self._spline_range = None
-        self._spline_offset = None
-        self._mesh_offset = None
-        self._mesh_scale = None
+        self._original_spline_ranges = None
         self._q_vertices = None
         self._is_partial = False
+        self.calculated = False
 
-        self.calucated = False
         self.mesh = mesh
-        print(f"Spline is as follows: {spline.degrees} {spline.knot_vectors} {spline.control_points}")
         self.spline = spline
         self.is_partial = False
-        
 
-        # functionality
+        self._check_dimensions()
 
-        self._scale_mesh()
+    
+    def _check_dimensions(self):
+        """Checks dimensions and ranges critical for a correct FFD calculation
+
+        The following things are checked:
+        is_partial:
+
+            Currently nothing since not implemented
+
+        else:
+            parametric dimension of spline is equal to geometric dimension of 
+            spline
+
+            geometric dimension of spline is the same as mesh dimension
+
+            # can currently not be checked
+            geometric range of spline is same as geometric range of mesh
+        """
+        if self._is_partial:
+            pass
+        else:
+            if not self._spline.para_dim == self._spline.dim:
+                self._logw("The parametric and geometric dimensions of the "
+                           "spline are not the same.")
+            if not self._spline.dim == self._mesh.vertices.shape[1]:
+                self._logw("The geometric dimensions of the spline and the "
+                           "dimension of the mesh are not the same.")
+            # No easy way to compare the bounds of the spline and mesh
+            # since the spline could already be deformed when initializing
+
+
+            # if not self._spline.control_point_bounds == self._mesh.bounds:
+            #     self._logw("The bounds of the control "
+            #                "spline are not the same.")
 
 
     @property
-    def mesh(self,) -> Union[Edges, Faces, Volumes]:
+    def mesh(self,) -> MESH_TYPES:
         """Returns copy of current mesh. Before copying, it applies 
         deformation.
 
         Returns
         -------
-        Union[Edges, Faces, Volumes]
+        MESH_TYPES
             Current Mesh with the deformation according to the current spline.
         """        
         self._deform()
         return self._mesh.copy()
 
     @mesh.setter
-    def mesh(self, mesh: Union[Edges, Faces, Volumes]):
+    def mesh(self, mesh: MESH_TYPES):
         """
         Sets mesh. If it is first time, the copy of it will be saved as 
         original mesh. If spline is already defined and in transformed status, 
@@ -99,39 +129,35 @@ class FFD (GustavBase):
 
         Parameters
         -----------
-        mesh (Union[Edges, Faces, Volumes]): Mesh used for the FFD
+        mesh: MESH_TYPES
+            Mesh used for the FFD
 
         Returns
         --------
         None
         """
-        needs_recalulating: bool = False
         if self._mesh is not None:
             self._logw("Resetting original Mesh, this is not intended "
-            "behaviour. Please create a new FFD object when replacing the mesh"
+            "behavior. Please create a new FFD object when replacing the mesh"
             ".")
-            needs_recalulating = True
 
         self._logi("Setting mesh.")
         self._logi("Mesh Info:")
         self._logi(
-            "  Veritces: {v}.".format(v=mesh.vertices.shape)
+            "  Vertices: {v}.".format(v=mesh.vertices.shape)
         )
         self._logi(
             "  Bounds: {b}.".format(b=mesh.get_bounds())
         )
         self._mesh = mesh.copy() # copy to make sure given mesh stays untouched
-        self._original_mesh = self._mesh.copy()
-        self._logd("Saved a copy of mesh for book-keeping.")
 
-        if needs_recalulating:
-            self._mesh_into_spline()
-        self.calucated = False
+        self._scale_mesh_vertices()
+        self.calculated = False
 
     @property
     def spline(self):
         """
-        Returns a copy of current spline. This is to prevent unncessary
+        Returns a copy of current spline. This is to prevent unnecessary
         tangling
 
         Parameters
@@ -146,36 +172,26 @@ class FFD (GustavBase):
         return self._spline.copy() if self._spline is not None else None
 
     @spline.setter
-    def spline(self, spline: Union[Bezier, BSpline, NURBS]):
+    def spline(self, spline: SPLINE_TYPES):
         """
         Sets spline after doing some tests to determine what kind of situation
         we are currently facing. Checks if spline is naive by comparing control
         points after re-creating naive version of given spline. Here, naive
-        means undeformed from box stage.
+        means un-deformed from box stage.
 
         Parameters
         -----------
-        spline: Spline
+        spline: SPLINE_TYPES
+            New Spline for the next deformation
 
         Returns
         --------
         None
         """
-        # needs recalculating only applies if the mesh needs to be rescaled 
-        # due to changes in parametric dimension ranges of the spline
-        # this does trigger a calculation of the FFD
-        needs_recalulating: bool = False
-
-        self._spline = spline.copy()
-
-        if self._spline is None:
-            self._calculate_spline_parametric_range()
-        elif self._check_spline_ranges_changed(spline):
-            # parametric dimension ranges have changed
-            self._logw("Parametric dimensions has changed. Rescaling "
-                       "the mesh.")
-            self._calculate_spline_parametric_range()
-            needs_recalulating = True
+        # This is also False if no spline was given before
+        if self._is_parametric_range_changed_vs_original_spline(spline):
+            self._spline = spline.copy()
+            self._scale_parametric_dimension_to_hypercube()
 
         self._logi("Setting Spline.")
         self._logi("Spline Info:")
@@ -183,16 +199,10 @@ class FFD (GustavBase):
             f"  Parametric dimensions: {spline.para_dim}."
         )
         self._logi(
-            f"  Parametric dimension offsets: {self._spline_offset}."
+            f"  Parametric dimension before scaling:"
+            f" {self._original_spline_ranges}."
         )
-        self._logi(
-            f"  Parametric dimension bounds with offset:"
-            f" {self._spline_range}."
-        )
-
-        if needs_recalulating:
-            self._mesh_into_spline()
-        self.calucated = False
+        self.calculated = False
 
     @property
     def is_partial(self):
@@ -237,81 +247,82 @@ class FFD (GustavBase):
         # else:
         #     self._logd("  Non-partial!")
 
-    def _calculate_spline_parametric_range(self):
-        """Calculates the parametric range and needed offset for the given 
-        spline.
 
-        For the BSpline and NURBS the parametric dimension is defined by the 
-        knot_vectors. For Bezier the parametric dimension is a unit hypercube.
-
-        Parameters
-        ----------
-        spline : Union[Bezier, BSpline, NURBS]
-            Spline for which the parametric dimension is to be calculated.
-        """                
-        self._spline_offset = list()
-        self._spline_range = list()
-        if type(self._spline) is Bezier:
-            for _ in range(self._spline.para_dim):
-                self._spline_offset.append(0)
-                self._spline_range.append((0,1))
+    def _scale_parametric_dimension_to_hypercube(self):
+        """Scales all knot_vectors of the spline to a range of [0,1]
+        """
+        self._original_spline_ranges = list()
+        if self._is_parametric_room_hypercube(self._spline):
+            for _ in range(self.spline.para_dim):
+                self._original_spline_ranges.append((0,1))
         else:
+            knv = []
             for knot_vector in self._spline.knot_vectors:
-                # check if minimum value of the knot_vector is negativ, if yes
-                # define offset so that the minimum value is zero
-                self._spline_offset.append(np.max([knot_vector[0]*-1,0, 0]))
-                # calculate the spline range in this dimension 
-                self._spline_range.append(
-                    list(map(knot_vector.__getitem__,[0,-1]))
-                    +self._spline_offset[-1]
-                )
-            self._scale_spline()
-        print(self._spline.knot_vectors, self._spline._knot_vectors)
+                self._original_spline_ranges.append(
+                    (knot_vector[0],knot_vector[-1]))
+                knot_vector = [kv_v - knot_vector[0] for kv_v in knot_vector]
+                knot_vector = [kv_v / knot_vector[-1] for kv_v in knot_vector]
+                knv.append(knot_vector)
+            self._spline.knot_vectors = knv
 
-    def _check_spline_ranges_changed(
+
+    def _is_parametric_room_hypercube(
             self,
-            spline: Union[Bezier,BSpline, NURBS]
+            spline: SPLINE_TYPES
         ) -> bool:
-        """Checks if the parametric range of the spline has changed.
+        """Checks if the parametric range of the spline is a hypercube.
 
         Parameters
         ----------
-        spline : Union[Bezier,BSpline, NURBS]
-            New spline for which to check the previously calculated ranges 
-            against.
+        spline : SPLINE_TYPES
+            New spline for which to check for hypercubeness
 
         Returns
         -------
         bool
-            Whether or not the ranges have changed. True if ranges have 
-            changed or check could not be completed.
+            True if parametric room is hypercube, else False
         """
-        if self._spline_range is None or self._spline_range is None:
-            self._logw("No previously calculated spline parametric ranges.")
-            return True
-        if not len(self._spline_offset) == spline.para_dim:
-            self._logw("Dimension of the spline has changed.")
-            return True
-        # if spline is Bezier the parametric dimensions can not change
-        if type(spline) is Bezier:
-            return False
-        
-        for knot_vector, offset, range in zip(
-                                        spline.knot_vectors,
-                                        self._spline_offset,
-                                        self._spline_range):
-            # check if offset is the same
-            # check if the spline range is the same
-            if not (
-                np.max(knot_vector[0]*-1,0) == offset and 
-                np.isclose(np.subtract(range[::-1]),
-                           np.subtract(*knot_vector[[-1,0]]+offset))
-               ):
-                break
-        else:
-            # Ranges for all parametric dimensions are the same
-            return False
+        if not type(spline) is Bezier:
+            for knot_vector in spline.knot_vectors:
+                # check if knot_vectors fist element is 0 and last element is 1
+                if not (knot_vector[0] == 0 and knot_vector[-1] == 1):
+                    return False
         return True
+
+    def _is_parametric_range_changed_vs_original_spline(
+            self,
+            spline: SPLINE_TYPES
+        ) -> bool:
+        """Checks if the parametric range of the spline has a different 
+        range in the parametric dimension as the original spline used for this 
+        FFD.
+
+        Parameters
+        ----------
+        spline : SPLINE_TYPES
+            New spline for which to check for changes in the parametric 
+            dimension
+
+        Returns
+        -------
+        bool
+            True if parametric room is changed or these have not been 
+            calculated yet, else False
+        """
+        if self._original_spline_ranges is None:
+            return True
+        if not type(spline) is Bezier:
+            for knot_vector, orig_parametric_range in zip(
+                                            spline.knot_vectors,
+                                            self._original_spline_ranges):
+                # check if knot_vectors fist element is 0 and last element is 1
+                if not (
+                    knot_vector[0] == orig_parametric_range[0] and
+                    knot_vector[-1] == orig_parametric_range[-1]
+                ):
+                    return True
+        return False
+               
             
     def _is_mesh_dimension_same_as_spline_parametric_dimension(self) -> bool:
         """Checks if the mesh and parametric dimension of the spline are the 
@@ -326,57 +337,49 @@ class FFD (GustavBase):
             True
         False
 
-    def _scale_mesh(self):
+    def _scale_mesh_vertices(self):
         """
-        Scales the mesh into the spline's parametric dimension
-        """
-        if self._mesh is None or self._spline is None:
-            self._logw("Either spline or the mesh are not yet correctly "
-            "defined, please do this before preceeding.")
-            return
-        
-        # check if the parameteric dimension of the spline is the same as the 
-        # dimension of the mesh
-        if self._is_mesh_dimension_same_as_spline_parametric_dimension():
-            self._logw("The dimensions of the spline and mesh differ. Can not "
-            "transform the mesh into the parameteric room of the spline.")
-            return
-
-        # scale mesh so that it fits into the spline's parametric dimension
-        self._mesh_into_spline()
-
-    def _scale_spline(self):
-        """Translates the parametric dimension of the spline into a positiv 
-        range.
-
-        Sould only ever called on a BSpline or NURBS.
+        Scales the mesh vertices into the dimension of a hypercube and save 
+        them in self._q_vertices.
         """        
-        for knot_vector_idx in range(self._spline.para_dim):
-            # if lowest value of knot vector is negativ translate vector such
-            # that he lowest value is zero
-            if self._spline.knot_vectors[knot_vector_idx][0] < 0:    
-                self._spline.knot_vectors[knot_vector_idx] = \
-                    list(map(self._spline_offset[knot_vector_idx].__add__, 
-                         self._spline.knot_vectors[knot_vector_idx]))
+        self._logd("Fitting mesh into spline's parametric space.")
+        if self._is_partial:
+            # currently not supported
+            # should add functionality here for it
+            # define the q_vertices here
+            pass
+        else:
+            self._q_vertices = self._mesh.vertices.copy()
         
+        original_mesh_bounds = self._mesh.get_bounds()
+        self._mesh_offset = list()
+        self._mesh_scale = list()
+        for mesh_bound  in original_mesh_bounds.T:
+            self._mesh_offset.append(-mesh_bound[0])
+            self._mesh_scale.append(1/(mesh_bound[-1]-mesh_bound[0]))
 
+        # transform vertices
+        self._q_vertices += self._mesh_offset
+        # scale vertices
+        scale_matrix = np.eye(len(self._mesh_scale))*self._mesh_scale
+        self._q_vertices = self._q_vertices @ scale_matrix
+        self._logd("Successfully scaled and transformed mesh vertices!")
 
-    def _deform(self, reverse_scale_and_offset=True):
+    def _deform(self):
         """
         Deform mesh. Partially deform mesh if `is_partial` is True. Meant for
         internal use.
 
         Parameters
         -----------
-        reverse_scale_and_offset: bool
-          (Optional) Default is True. For visualization, 
+        None
 
         Returns
         --------
         None
         """
         # no changes since last evaluation/deformation
-        if self.calucated:
+        if self.calculated:
             return
 
         if self._mesh is None or self._spline is None:
@@ -438,389 +441,149 @@ class FFD (GustavBase):
             return
 
         self._logd("Applying FFD...")
-
-        # Here, we take q_vertice, due to possible scale/offset.
-        print("directly before", self._spline.knot_vectors, self._spline._knot_vectors)
-        evaluated_vertices = self._spline.evaluate(
+        # Here, we take _q_vertices, due to possible scale/offset.
+        self._mesh.vertices = self._spline.evaluate(
             self._q_vertices
         )
         self._logd("FFD successful.")
+        self.calculated = True
+    
 
-        if reverse_scale_and_offset:
-            descale_matrix = (np.eye(len(self._mesh_scale))/self._mesh_scale)
-            evaluated_vertices -= self._mesh_offset
-            self._mesh.vertices = (evaluated_vertices @ descale_matrix)
+    @property
+    def control_points(self):
+        """
+        Returns current spline's control points. Can't and don't use this to
+        directly manipulate control points: it won't update
 
-        self.calucated = True
-        
+        Returns
+        --------
+        self._spline.control_points: np.ndarray
+        """
+        return self._spline.control_points
 
+    @control_points.setter
+    def control_points(self,
+                       control_points: Union[List[List[float]], np.ndarray]
+                       ):
+        """
+        Sets control points and deforms mesh.
 
+        Parameters
+        -----------
+        control_points: np.ndarray
 
-#     @property
-#     def control_points(self):
-#         """
-#         Returns current spline's control points. Can't and don't use this to
-#         directly manipulate control points: it won't update
+        Returns
+        --------
+        None
+        """
+        assert self._spline.control_points.shape == control_points.shape,\
+            "Given control points' shape does not match current ones!"
 
-#         Parameters
-#         -----------
-#         None
+        self._spline.control_points = control_points.copy()
+        self._logd("Set new control points.")
 
-#         Returns
-#         --------
-#         self._spline.control_points: np.ndarray
-#         """
-#         return self._spline.control_points
+    def deform_for_given_cp(self, values: np.ndarray, mask=None) -> MESH_TYPES:
+        """
+        Set the new control_point values according to the mask and returns the 
+        deformed mesh.
 
-#     @control_points.setter
-#     def control_points(self, control_points):
-#         """
-#         Sets control points and deforms mesh.
+        #TODO I am not sure if this works since CPs might not always be ndarray
 
-#         Parameters
-#         -----------
-#         control_points: np.ndarray
+        Parameters
+        -----------
+        values: np.ndarray
+          Values to translate. If it is 1D array, it is applied to all masked
+          control points.
+        mask: list-like
+          (Optional) Default is None. If None, it will be applied to all.
+          It can be bool or int.
 
-#         Returns
-#         --------
-#         None
-#         """
-#         assert self._spline.control_points.shape == control_points.shape,\
-#             "Given control points' shape does not match current ones!"
+        Returns
+        --------
+        deformed_mesh: MESH_TYPES
+        """
+        if mask is None:
+            self.control_points += values
+        else:
+            self.control_points[mask] += values
 
-#         self._spline.control_points = control_points.copy()
-#         self._logd("Set new control points.")
+        return self.mesh
 
-#     def translate(self, values, mask=None):
-#         """
-#         Translates control points of given mask.
+    def elevate_degree(self, *args, **kwargs):
+        """
+        Wrapper for Spline.elevate_degree
 
-#         Parameters
-#         -----------
-#         values: np.ndarray
-#           Values to translate. If it is 1D array, it is applied to all masked
-#           control points.
-#         mask: list-like
-#           (Optional) Default is None. If None, it will be applied to all.
-#           It can be bool or int.
+        Parameters
+        -----------
+        *args:
+        **kwargs:
 
-#         Returns
-#         --------
-#         deformed_mesh: Mesh
-#         """
-#         if mask is None:
-#             self.control_points += values
-#         else:
-#             self.control_points[mask] += values
-
-#         return self.mesh
-
-#     def elevate_degree(self, *args, **kwargs):
-#         """
-#         Wrapper for Spline.elevate_degree
-
-#         Parameters
-#         -----------
-#         *args:
-#         **kwrags:
-
-#         Returns
-#         --------
-#         None
-#         """
-#         self._spline.elevate_degree(*args, **kwargs)
+        Returns
+        --------
+        None
+        """
+        self._spline.elevate_degree(*args, **kwargs)
 #         self._naive_spline.elevate_degree(*args, **kwargs)
 
-#     def insert_knots(self, *args, **kwargs):
-#         """
-#         Wrapper for Spline.insert_knots
+    def insert_knots(self, *args, **kwargs):
+        """
+        Wrapper for Spline.insert_knots
 
-#         Parameters
-#         -----------
-#         *args:
-#         **kwargs:
+        Parameters
+        -----------
+        *args:
+        **kwargs:
 
-#         Returns
-#         --------
-#         None
-#         """
-#         self._spline.insert_knots(*args, **kwargs)
+        Returns
+        --------
+        None
+        """
+        self._spline.insert_knots(*args, **kwargs)
 #         self._naive_spline.insert_knots(*args, **kwargs)
 
-#     def remove_knots(self, *args, **kwargs):
-#         """
-#         Wrapper for Spline.remove_knots
+    def remove_knots(self, *args, **kwargs):
+        """
+        Wrapper for Spline.remove_knots
 
-#         Parameters
-#         -----------
-#         *args:
-#         **kwargs:
+        Parameters
+        -----------
+        *args:
+        **kwargs:
 
-#         Returns
-#         --------
-#         None
-#         """
-#         self._spline.remove_knots(*args, **kwargs)
+        Returns
+        --------
+        None
+        """
+        self._spline.remove_knots(*args, **kwargs)
 #         self._naive_spline.remove_knots(*args, **kwargs)
 
-#     def reduce_degree(self, *args, **kwargs):
-#         """
-#         Wrapper for Spline.reduce_degree
+    def reduce_degree(self, *args, **kwargs):
+        """
+        Wrapper for Spline.reduce_degree
 
-#         Parameters
-#         -----------
-#         *args:
-#         **kwargs:
+        Parameters
+        -----------
+        *args:
+        **kwargs:
 
-#         Returns
-#         --------
-#         None
-#         """
-#         self._spline.reduce_degree(*args, **kwargs)
+        Returns
+        --------
+        None
+        """
+        self._spline.reduce_degree(*args, **kwargs)
 #         self._naive_spline.reduce_degree(*args, **kwargs)
 
-    def _mesh_into_spline(self):
+        
+    def show(self):
         """
-        Scales and transforms the vertices of the original mesh, into the
-        parametric dimension of the spline.
-        """        
-        self._logd("Fitting mesh into spline's parametric space.")
-        if self._is_partial:
-            # currently not supported
-            # shoudl add functionality here for it
-            # define the q_vertices here
-            pass
-        else:
-            self._q_vertices = self._original_mesh.vertices.copy()
-        
-        original_mesh_bounds = self._original_mesh.get_bounds()
-        self._mesh_offset = list()
-        self._mesh_scale = list()
-        for mesh_bound, spline_range  in zip(original_mesh_bounds.T,
-                                             self._spline_range):
-            self._mesh_offset.append(spline_range[0]-mesh_bound[0])
-            self._mesh_scale.append(
-                np.subtract(*spline_range[::-1])/
-                np.subtract(*mesh_bound[::-1]))
-        
-        # scale vertices
-        scale_matrix = np.eye(len(self._mesh_scale))*self._mesh_scale
-        self._q_vertices = self._q_vertices @ scale_matrix
-        # transform vertices
-        self._q_vertices += self._mesh_offset
-        self._logd("Successfully scaled and transformed mesh vertices!")
+        Visualize. Shows the deformed mesh and the current spline.
 
+        Parameters
+        ----------
+        None
 
-    # def _make_mesh_positive_definite(self):
-    #     """
-    #     Checks if mesh vertices are positive definite. If not, apply offset
-    #     to make them positive definite. Meant for internal use.
-
-    #     Parameters that are changed: _scale, _offset, _q_vertices
-
-    #     Parameters
-    #     -----------
-    #     None
-
-    #     Returns
-    #     --------
-    #     None
-    #     """
-    #     # TODO: is this fine?
-    #     self._scale = None
-
-    #     if self._original_mesh.vertices.min() >= 0.0:
-    #         self._logd("Vertices of mesh is positive definite.")
-    #         self._offset = None
-    #         self._q_vertices = self._mesh.vertices.copy()
-    #         return
-
-    #     self._logd("Vertices of mesh is not positive definite.")
-
-    #     self._offset = self._mesh.vertices.min(axis=0)
-    #     self._q_vertices = self._mesh.vertices.copy() - self._offset
-
-    #     self._logd("  Applied offset to query vertices.")
-
-#     def _reverse_scale_and_offset(self):
-#         """
-#         Reverse scale and offset, if they exist.
-
-#         Parameters
-#         -----------
-#         None
-
-#         Returns
-#         --------
-#         None
-#         """
-#         if self._scale is None and self._offset is None:
-#             return
-
-#         self._logd("Reversing scale and offset.")
-
-#         if self._scale is not None:
-#             # Get current mesh bounds before any manipulation
-#             c_bounds = self._mesh.bounds
-
-#             tmp_offset = self._mesh.vertices.min(axis=0)
-#             self._mesh.vertices -= tmp_offset
-#             self._mesh.vertices /= self._mesh.vertices.max(axis=0)
-
-#             # To allow any kind of scale, we need scale difference of current
-#             # /original mesh. Otherwise, mesh will always be 
-#             # scaled into the initial bounding box.
-#             o_bounds = utils.bounds(self._q_vertices)
-
-
-#             ob_diff = o_bounds[1] - o_bounds[0]
-#             cb_diff = c_bounds[1] - c_bounds[0]
-
-#             # In case spline maps to higher degree, add some zeros.
-#             s_dim_diff = int(
-#                 self._spline.physical_dim - self._spline.parametric_dim
-#             )
-#             if s_dim_diff < 0:
-#                 ob_diff = ob_diff.tolist()
-#                 for _ in range(s_dim_diff):
-#                     ob_diff.append(0)
-#                 ob_diff = np.asarray(ob_diff.tolist() + [0]) 
-
-#             spline_scale_factor = cb_diff / ob_diff
-
-#             # Sometimes this scale factor can have inf or 0.
-#             # inf:
-#             #  spline maps to higher dim. There's 0 in o_bounds difference.
-#             #  -> replace inf with c_bounds diff
-#             # 0:
-#             #  spline maps to a somewhere co-planar
-#             #  -> replace 0 with 1
-#             tolerance = 1e-10
-#             zero_mask = abs(cb_diff) < tolerance
-#             if zero_mask.any():
-#                 spline_scale_factor[zero_mask] = 1.0
-
-#             inf_mask = abs(ob_diff) < tolerance
-#             if inf_mask.any():
-#                 spline_scale_factor[inf_mask] = cb_diff[inf_mask]
-
-#             # If spline maps to higher dim.
-#             if self._spline.physical_dim > self._spline.parametric_dim:
-#                 scale = np.asarray(self._scale.tolist() + [1.0])
-
-#             else: 
-#                 scale = self._scale
-
-#             self._mesh.vertices *= scale * spline_scale_factor
-#             self._mesh.vertices += tmp_offset
-
-#         if self._offset is not None:
-#             # If spline maps to higher dim.
-#             if self._spline.physical_dim > self._spline.parametric_dim:
-#                 offset = np.asarray(self._offset.tolist() + [0.0])
-
-#             else: 
-#                 offset = self._offset
-
-#             self._mesh.vertices += offset
-        
-    # def show(self):
-    #     """
-    #     Visualize. Shows naive state and current state, based on params.
-
-    #     Parameters
-    #     ----------
-    #     None
-
-    #     Returns
-    #     -------
-    #     None
-    #     """
-    #     import vedo
-
-    #     # Same style as `Spline.show()`
-
-    #     # We always need naive as it is
-    #     things_to_show_naive = []
-    #     spline_obj_n = self._spline.show(offscreen=True)
-    #     spline_obj_n. # wanna see through the spline.
-    #     things_to_show_naive.extend(spline_obj_n)
-
-    #     mesh_obj_n = self._original_mesh.vedo_mesh # vedo.Mesh or vedo.UGrid
-    #     if self._q_vertices is not None:
-    #         qv = self._q_vertices.copy()
-
-    #         if self._q_vertices.shape[1] < 3:
-    #             qv = np.hstack(
-    #                 (qv, np.zeros((len(qv), int(3 - qv.shape[1]))))
-    #             )
-                
-    #         mesh_obj_n.points(qv)
-
-    #     if self._mesh.elements is not None: # In this case, it is vedo.UGrid
-    #         mesh_obj_n = mesh_obj_n.tomesh(shrink=0.8).color("hotpink")
-    #     else:
-    #         mesh_obj_n.wireframe(True)
-    #     things_to_show_naive.append(mesh_obj_n)
-
-    #     if (self._scale is None and self._offset is None) or self.is_partial:
-    #         things_to_show_current = []
-
-    #         spline_obj_c = self._spline.show(offscreen=True)
-    #         spline_obj_c[0].alpha(.5) # wanna see through the spline.
-    #         things_to_show_current.extend(spline_obj_c)
-    
-    #         mesh_obj = self.mesh.vedo_mesh # either vedo.Mesh or vedo.UGrid
-    #         if self._mesh.elements is not None: # In this case, it is vedo.UGrid
-    #             mesh_obj = mesh_obj.tomesh(shrink=0.9).color("hotpink")
-
-    #         else:
-    #             mesh_obj.wireframe(True)
-
-    #         things_to_show_current.append(mesh_obj)
-
-    #         plt = vedo.Plotter(N=2, sharecam=False)
-    #         plt.show(things_to_show_naive, "Naive State", at=0)
-    #         plt.show(
-    #             things_to_show_current,
-    #             "Current State",
-    #             at=1,
-    #             interactive=True
-    #         ).close()
-
-    #     else: # scale or offset and not partial
-    #         om = self._original_mesh.vedo_mesh
-    #         cm = self.mesh.vedo_mesh
-
-    #         things_to_show_current_no_reverse = []
-    #         spline_obj_cnr = self._spline.show(offscreen=True)
-    #         spline_obj_cnr[0].alpha(.5)
-    #         things_to_show_current_no_reverse.extend(spline_obj_cnr)
-    #         # Deform again, but don't reverse
-    #         # TODO: ^ more efficiently
-    #         self._deform(reverse_scale_and_offset=False)
-    #         cnrm = self._mesh.vedo_mesh
-
-    #         # If it is volume mesh, shrink it
-    #         if self._original_mesh.elements is not None:
-    #             om = om.tomesh(shrink=0.9).color("hotpink")
-    #             cm = cm.tomesh(shrink=0.9).color("hotpink")
-    #             cnrm = cnrm.tomesh(shrink=0.9).color("hotpink")
-
-    #         else:
-    #             om.wireframe()
-    #             cm.wireframe()
-    #             cnrm.wireframe()
-
-    #         things_to_show_current_no_reverse.append(cnrm)
-            
-    #         plt = vedo.Plotter(N=4, sharecam=False)
-    #         plt.show(om, "Original Mesh", at=0)
-    #         plt.show(cm, "Current Mesh", at=1)
-    #         plt.show(things_to_show_naive, "Naive Spline Bounds", at=2)
-    #         plt.show(
-    #             things_to_show_current_no_reverse,
-    #             "Current Spline Bounds",
-    #             at=3,
-    #             interactive=True
-    #         ).close()
+        Returns
+        -------
+        None
+        """
+        show_vedo(self._spline.showable(surface_alpha=0.5), self.mesh)
