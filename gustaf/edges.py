@@ -307,6 +307,47 @@ class Edges(Vertices):
 
         return Edges(vertices=new_vs, edges=new_es)
 
+    def shrink(self, ratio=.8, map_vertexdata=True):
+        """
+        Returns shrunk elements.
+
+        Parameters
+        -----------
+        ratio: float
+          Default is 0.8
+        map_vertexdata: bool
+          Default is True. Maps all vertexdata.
+
+        Returns
+        --------
+        s_elements: Elements
+          shrunk elements
+        """
+        elements = self.elements()
+        vs = np.vstack(self.vertices[elements])
+        es = np.arange(len(vs))
+
+        nodes_per_element = elements.shape[1]
+        es = es.reshape(-1, nodes_per_element)
+
+        mids = np.repeat(self.get_centers(), nodes_per_element, axis=0)
+
+        vs -= mids
+        vs *= ratio
+        vs += mids
+
+        s_elements = type(self)(vertices=vs, elements=es)
+
+        if map_vertexdata:
+            elements_flat = elements.ravel()
+            for key, value in self.vertexdata.items():
+                s_elements.vertexdata[key] = value[elements_flat]
+
+            # probably wanna take visulation options too
+            s_elements.vis_dict = self.vis_dict
+
+        return s_elements
+
     def tovertices(self):
         """
         Returns Vertices obj.
