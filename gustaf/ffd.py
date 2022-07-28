@@ -106,6 +106,7 @@ class FFD (GustafBase):
                            "dimension of the mesh are not the same.")
             # No easy way to compare the bounds of the spline and mesh
             # since the spline could already be deformed when initializing
+            
             # if not self._spline.control_point_bounds == self._mesh.bounds:
             #     self._logw("The bounds of the control "
             #                "spline are not the same.")
