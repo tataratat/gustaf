@@ -15,7 +15,6 @@ from gustaf.spline.base import Bezier
 from gustaf.show import show_vedo
 from gustaf._typing import SPLINE_TYPES, MESH_TYPES
 from gustaf.create.spline import with_bounds
-
 class FFD (GustavBase):
 
     def __init__(
@@ -105,8 +104,6 @@ class FFD (GustavBase):
                            "dimension of the mesh are not the same.")
             # No easy way to compare the bounds of the spline and mesh
             # since the spline could already be deformed when initializing
-
-
             # if not self._spline.control_point_bounds == self._mesh.bounds:
             #     self._logw("The bounds of the control "
             #                "spline are not the same.")
