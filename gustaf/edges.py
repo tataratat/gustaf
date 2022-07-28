@@ -157,11 +157,11 @@ class Edges(Vertices):
 
     def get_edges_unique_inverse(self):
         """
-        Returns ids that can be used to reconstruct sorted edges with unique
+        Returns ids that can be used to reconstruct edges with unique
         edges.
 
         Good to know:
-          mesh.edges_sorted == mesh.unique_edges[mesh.edges_unique_inverse]
+          mesh.edges == mesh.unique_edges[mesh.edges_unique_inverse]
 
         Parameters
         -----------
