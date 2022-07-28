@@ -55,7 +55,7 @@ class Vertices(GustafBase):
 
     def process(
             self,
-            vetices_unique=False,
+            vertices_unique=False,
             vertices_unique_id=False,
             vertices_unique_inverse=False,
             bounds=False,
@@ -78,7 +78,7 @@ class Vertices(GustafBase):
         )
 
         if (
-            vetices_unique
+            vertices_unique
             or vertices_unique_id
             or vertices_unique_inverse
             or everything
