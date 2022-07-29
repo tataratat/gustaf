@@ -37,7 +37,11 @@ def load(fname):
     # connec
     simplex = True
     connec = None
-    volume = True  #adaption nec
+
+    if vertices.shape[1]==2:
+        volume = False 
+    else:
+        volume = True
 
     try:
         connec = nodes
@@ -47,10 +51,7 @@ def load(fname):
     # reshape connec
     if connec is not None:
         ncol = int(3) if simplex and not volume else int(4)
-        ncol = int(8) if ncol == int(4) and volume and not simplex else ncol
-
         connec = connec.reshape(-1, ncol)
-
         mesh = Volumes(vertices, connec) if volume else Faces(vertices, connec)
 
     mesh.BC = btags
@@ -100,6 +101,7 @@ def to_nutils_simplex(mesh):
     faces = mesh.get_faces()			
     whatami = mesh.get_whatami()
 
+    #In 2D, element = face. In 3D, element = volume.
     if whatami.startswith("tri"):
         dimension = 2
         permutation = [1,2,0]
@@ -112,7 +114,7 @@ def to_nutils_simplex(mesh):
     else:
         raise TypeError('Only Triangle and Tetrahedrons are accepted.') 
     
-    #Sort the Node IDs for each Element. In 2D, element = face. In 3D, element = volume.
+    #Sort the Node IDs for each Element. 
     elements_sorted = np.zeros(elements.shape)
     sort_array = np.zeros(elements.shape)
     
@@ -130,10 +132,10 @@ def to_nutils_simplex(mesh):
     bound_id = np.unique(bcs_in)
     bound_id = bound_id[bound_id > 0]
 
-    #Reorder the mrng according to nutils permutation --> important: does not work if mien file is rotated.
-    bcs_in[:,:] = bcs_in[:,permutation]	#swap collumns
+    #Reorder the mrng according to nutils permutation: swap collumns
+    bcs_in[:,:] = bcs_in[:,permutation]	
         
-    #Let's reorder the mrng file with the sort_array
+    #Let's reorder the bcs file with the sort_array
     bcs_sorted = np.zeros(bcs_in.shape)	
     for index, sorts in enumerate(sort_array, start = 0):
         bcs_sorted[index] = bcs_in[index][sorts]
