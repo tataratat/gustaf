@@ -9,24 +9,19 @@ Jaewook Lee.
 """
 from typing import List, Optional, Union
 import numpy as np
-from gustaf.edges import Edges
-
-from gustaf.faces import Faces
-from gustaf.spline.base import NURBS, BSpline, Bezier
-from gustaf.vertices import Vertices
-from gustaf.volumes import Volumes
 from gustaf._base import GustavBase
+from gustaf.faces import Faces
+from gustaf.spline.base import Bezier
 from gustaf.show import show_vedo
-
-SPLINE_TYPES = Union[Bezier, BSpline, NURBS]
-MESH_TYPES = Union[Vertices, Edges, Faces, Volumes]
+from gustaf._typing import SPLINE_TYPES, MESH_TYPES
+from gustaf.create.spline import with_bounds
 
 class FFD (GustavBase):
 
     def __init__(
         self,
         mesh: MESH_TYPES,
-        spline: SPLINE_TYPES,
+        spline: Optional[SPLINE_TYPES],
         # is_partial: bool=False,
     ):
         """
@@ -59,15 +54,25 @@ class FFD (GustavBase):
         """
         # Use property definitions to store the values
         self._spline = None
-        self._mesh = None
+        self._mesh: MESH_TYPES = None
         self._original_spline_ranges = None
         self._q_vertices = None
         self._is_partial = False
         self.calculated = False
 
         self.mesh = mesh
-        self.spline = spline
+        if spline is None:
+            # if no spline is given create a very naive spline with physical
+            # bounds defined bny the mesh and parametric bounds defined by a 
+            # hypercube
+            self.spline = with_bounds(
+                [[0]*self._q_vertices.shape[1],[1]*self._q_vertices.shape[1]],
+                 self._mesh.bounds)
+        else:
+            self.spline = spline
         self.is_partial = False
+
+
 
         self._check_dimensions()
 
@@ -586,4 +591,37 @@ class FFD (GustavBase):
         -------
         None
         """
-        show_vedo(self._spline.showable(surface_alpha=0.5), self.mesh)
+
+        original_mesh = self._mesh.copy()
+        original_mesh.vertices = self._q_vertices
+        if original_mesh.kind is "volume":
+            orig_mesh_outer_faces = Faces(
+                            original_mesh.vertices,
+                            original_mesh.get_faces()[
+                                original_mesh.get_surfaces()]
+                            )
+            mesh_outer_faces = Faces(
+                            self.mesh.vertices,
+                            self.mesh.get_faces()[
+                                self.mesh.get_surfaces()]
+                            )
+            show_vedo(
+                ["Original Mesh",
+                original_mesh,
+                orig_mesh_outer_faces.toedges(unique=True)],
+                ["Deformed Mesh with Spline",
+                #  self.mesh.showable(),
+                mesh_outer_faces.toedges(unique=True),
+                *self._spline.showable().values()],
+                )
+        else:
+
+            show_vedo(
+                ["Original Mesh",
+                original_mesh,
+                original_mesh.toedges(unique=True)],
+                ["Deformed Mesh with Spline",
+                #  self.mesh.showable(),
+                self.mesh.toedges(unique=True),
+                *self._spline.showable().values()],
+                )
