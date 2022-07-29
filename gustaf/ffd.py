@@ -15,6 +15,8 @@ from gustaf.spline.base import Bezier
 from gustaf.show import show_vedo
 from gustaf._typing import SPLINE_TYPES, MESH_TYPES
 from gustaf.create.spline import with_bounds
+
+
 class FFD (GustavBase):
 
     def __init__(
