@@ -197,11 +197,6 @@ def export(mesh, fname, space_time=False):
         # But they aren't.
 
         boundaries = as_mrng(nbelem,mesh)
-#        boundaries = np.empty(mesh.elements().shape[0] * nbelem, dtype=int)
-#        boundaries[:] = -1
-#
-#        for i, belem_ids in enumerate(mesh.BC.values()):
-#            boundaries[belem_ids] = i + 1 # bid starts at 1
 
         for b in boundaries:
             bf.write(struct.pack(big_endian_int, b))
@@ -252,4 +247,5 @@ def as_mrng(nbelem,mesh):
 
     for i, belem_ids in enumerate(mesh.BC.values()):
         boundaries[belem_ids] = i + 1 # bid starts at 1
+
     return boundaries
