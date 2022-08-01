@@ -8,7 +8,7 @@ import numpy as np
 
 from gustaf import settings
 from gustaf import utils
-from gustaf._base import GustavBase
+from gustaf._base import GustafBase
 
 # @linux it raises error if vedo is imported inside the function.
 try:
@@ -126,7 +126,7 @@ def show_vedo(*args, **kwargs,):
         to_pop = []
         to_extend = []
         for j, sl in enumerate(showlist):
-            if isinstance(sl, GustavBase):
+            if isinstance(sl, GustafBase):
                 tmp_showable = sl.showable(backend="vedo")
                 # splines return dict
                 # - maybe it is time to do some typing..

@@ -11,7 +11,7 @@ from gustaf import io
 
 try:
     from gustaf import spline
-    from gustaf.spline.base import BSpline, NURBS, Bezier
+    from gustaf.spline.base import BSpline, NURBS, Bezier, RationalBezier
 except:
     spline = "cannot import spline modules"
 

@@ -12,7 +12,7 @@ import numpy as np
 
 from gustaf import utils
 
-class GustavBase(abc.ABC):
+class GustafBase(abc.ABC):
     """
     Base class for gustaf, where logging is nicely wrapped, and some useful
     methods are defined as classmethods..

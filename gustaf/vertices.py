@@ -10,9 +10,9 @@ import numpy as np
 from gustaf import settings
 from gustaf import utils
 from gustaf import show
-from gustaf._base import GustavBase
+from gustaf._base import GustafBase
 
-class Vertices(GustavBase):
+class Vertices(GustafBase):
 
     kind = "vertex"
 
