@@ -55,7 +55,7 @@ class Vertices(GustavBase):
 
     def process(
             self,
-            vetices_unique=False,
+            vertices_unique=False,
             vertices_unique_id=False,
             vertices_unique_inverse=False,
             bounds=False,
@@ -78,14 +78,14 @@ class Vertices(GustavBase):
         )
 
         if (
-            vertices_unqiue
+            vertices_unique
             or vertices_unique_id
             or vertices_unique_inverse
             or everything
         ):
             self.vertices_unique()
 
-        if bounbds or everything:
+        if bounds or everything:
             self.bounds()
 
         if centers or everything:
