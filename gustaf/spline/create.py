@@ -166,7 +166,6 @@ def revolve(spline, axis=None, center=None, angle=None, n_knot_spans=None):
         arguments["knot_vectors"] = spline.knot_vectors + [
             kv + [n_knot_spans+1] * 3
         ]
-        print(kv)
     if "weights" in spline._required_properties:
         mid_weights = spline.weights * weight
         arguments["weights"] = spline.weights
