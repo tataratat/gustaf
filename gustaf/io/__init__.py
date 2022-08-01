@@ -10,3 +10,4 @@ from gustaf.io import ioutils
 from gustaf.io import mfem
 from gustaf.io import meshio
 from gustaf.io import mixd
+from gustaf.io import nutils
