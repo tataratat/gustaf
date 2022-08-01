@@ -184,7 +184,7 @@ def revolve(spline, axis=None, center=None, angle=None, n_knot_spans=None):
 
     if center is not None:
         spline.control_points += center
-        arguments.control_points += center
+        arguments["control_points"] += center
 
     return type(spline)(**arguments)
 
