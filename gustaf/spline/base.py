@@ -494,7 +494,7 @@ class Bezier(GustafSpline, splinepy.Bezier):
         return RationalBezier(
             degrees=self.degrees,
             control_points=self.control_points,
-            weights=np.ones(control_points.shape[0])
+            weights=np.ones(self.control_points.shape[0])
         )
 
     @property

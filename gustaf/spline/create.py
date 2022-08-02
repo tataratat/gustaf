@@ -55,7 +55,23 @@ def extrude(spline, axis=None):
 
 def revolve(spline, axis=None, center=None, angle=None, n_knot_spans=None):
     """
-    Revolve spline around an axis
+    Revolve spline around an axis and extend its parametric dimension
+
+    Parameters
+    ----------
+    spline : GustafSpline
+      Basis-Spline to be revolved
+    axis : np.ndarray
+      Axis of revolution
+    center : np.ndarray
+      Center of revolution
+    angle : float
+    n_knot_spans : int
+      number of non-zero knot-elements for result-spline (if applicable)
+
+    Returns
+    -------
+    spline : spline-type          
     """
     from gustaf.spline.base import GustafSpline
 
@@ -72,16 +88,18 @@ def revolve(spline, axis=None, center=None, angle=None, n_knot_spans=None):
 
     # Check axis
     if axis is not None:
-        axis = np.asarray(axis)
-        # Check Axis dimension
-        if not (spline.control_points.shape[1] == axis.shape[0]):
-            raise ValueError(
-                "Dimension Mismatch between extrusion axis and spline."
-            )
-        if spline.control_points.shape[1] == 2:
-            logging.warning("Axis argument for 2D rotation will be ignored")
-        # Make sure axis is normalized
-        axis = axis / np.linalg.norm(axis)
+        if spline.dim == 2:
+            logging.warning("For 2D revolutions axis will be ignored")
+            axis=None
+        else:
+            axis = np.asarray(axis)
+            # Check Axis dimension
+            if not (spline.control_points.shape[1] == axis.shape[0]):
+                raise ValueError(
+                    "Dimension Mismatch between extrusion axis and spline."
+                )
+            # Make sure axis is normalized
+            axis = axis / np.linalg.norm(axis)
     else:
         if spline.control_points.shape[1] == 3:
             raise ValueError("No rotation axis given")
@@ -152,8 +170,11 @@ def revolve(spline, axis=None, center=None, angle=None, n_knot_spans=None):
         mid_points = np.matmul(end_points, rotation_matrix)
         end_points = np.matmul(mid_points, rotation_matrix)
         # Move away from axis using dot-product tricks
-        mid_point_scale = axis * np.dot(mid_points, axis).reshape(-1,1)
-        mid_points = (mid_points - mid_point_scale) * factor + mid_point_scale
+        if spline.dim == 3:
+            mp_scale = axis * np.dot(mid_points, axis).reshape(-1,1)
+            mid_points = (mid_points - mp_scale) * factor + mp_scale
+        else:
+            mid_points *= factor
         arguments["control_points"] = np.concatenate((
             arguments["control_points"],
             mid_points,
