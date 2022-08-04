@@ -5,10 +5,10 @@ Contains show and inherited classes from `spline`.
 """
 
 import abc
+import logging
 
 import splinepy
 import numpy as np
-import logging
 
 from gustaf import settings
 from gustaf import show as showmodule
@@ -693,7 +693,7 @@ class NURBS(GustafSpline, splinepy.NURBS):
       """
       logging.warning(
           "Functionality not supported, please use:\n"
-          "<Nurbs>.extract.beziers()"
+          "<NURBS>.extract.beziers()"
       )
       return None
 
