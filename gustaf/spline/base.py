@@ -5,13 +5,14 @@ Contains show and inherited classes from `spline`.
 """
 
 import abc
+import logging
 
 import splinepy
 import numpy as np
 
 from gustaf import settings
 from gustaf import show as showmodule
-from gustaf._base import GustavBase
+from gustaf._base import GustafBase
 from gustaf.vertices import Vertices
 from gustaf.spline.extract import _Extractor
 from gustaf.spline.proximity import _Proximity
@@ -276,7 +277,7 @@ def show(
         return plt
 
 
-class GustavSpline(GustavBase):
+class GustafSpline(GustafBase):
 
     @abc.abstractmethod
     def __init__(self):
@@ -408,7 +409,7 @@ class GustavSpline(GustavBase):
         return type(self)(**self.todict())
 
 
-class Bezier(GustavSpline, splinepy.Bezier):
+class Bezier(GustafSpline, splinepy.Bezier):
 
     def __init__(
             self,
@@ -416,7 +417,7 @@ class Bezier(GustavSpline, splinepy.Bezier):
             control_points=None,
     ):
         """
-        BSpline of gustaf. Inherited from splinepy.BSpline and GustavSpline.
+        Bezier of gustaf. Inherited from splinepy.Bezier and GustafSpline.
 
         Attributes
         -----------
@@ -425,7 +426,6 @@ class Bezier(GustavSpline, splinepy.Bezier):
         Parameters
         -----------
         degrees: (para_dim,) list-like
-        knot_vectors: (para_dim, ...) list
         control_points: (m, dim) list-like
 
         Returns
@@ -440,8 +440,103 @@ class Bezier(GustavSpline, splinepy.Bezier):
         self._extractor = _Extractor(self)
         self._proximity = _Proximity(self)
 
+    @property
+    def bspline(self):
+        """
+        Returns same parametric representation as BSpline.
 
-class BSpline(GustavSpline, splinepy.BSpline):
+        Parameters
+        -----------
+        None
+
+        Returns
+        --------
+        same_bspline : BSpline
+        """
+        return BSpline(
+            degrees=self.degrees,
+            control_points=self.control_points,
+            knot_vectors=[
+              [0] * (self.degrees[i] + 1) + [1] * (self.degrees[i] + 1)
+              for i in range(self.para_dim)]
+          )
+    
+    @property
+    def nurbs(self):
+        """
+        Returns same parametric representation as nurbs.
+
+        Parameters
+        -----------
+        None
+
+        Returns
+        --------
+        same_nurbs: NURBS
+        """
+        return self.bspline.nurbs
+
+
+
+class RationalBezier(GustafSpline, splinepy.RationalBezier):
+
+    def __init__(
+            self,
+            degrees=None,
+            control_points=None,
+            weights=None,
+    ):
+        """
+        Rational Bezier of gustaf. Inherited from splinepy.RationalBezier and
+        GustafSpline.
+
+        Attributes
+        -----------
+        extract: _Extractor
+
+        Parameters
+        -----------
+        degrees: (para_dim,) list-like
+        control_points: (m, dim) list-like
+        weights : (m) list-like
+
+        Returns
+        --------
+        None
+        """
+        super(splinepy.RationalBezier, self).__init__(
+            degrees=degrees,
+            control_points=control_points,
+            weights=weights
+        )
+
+        self._extractor = _Extractor(self)
+        self._proximity = _Proximity(self)
+
+    @property
+    def nurbs(self):
+        """
+        Returns same parametric representation as nurbs.
+
+        Parameters
+        -----------
+        None
+
+        Returns
+        --------
+        same_nurbs: NURBS
+        """
+        return BSpline(
+            degrees=self.degrees,
+            control_points=self.control_points,
+            knot_vectors=[
+              [0] * (self.degrees[i] + 1) + [1] * (self.degrees[i] + 1)
+              for i in range(self.para_dim)],
+            weights=self.weights
+          )
+
+
+class BSpline(GustafSpline, splinepy.BSpline):
 
     def __init__(
             self,
@@ -450,7 +545,7 @@ class BSpline(GustavSpline, splinepy.BSpline):
             control_points=None,
     ):
         """
-        BSpline of gustaf. Inherited from splinepy.BSpline and GustavSpline.
+        BSpline of gustaf. Inherited from splinepy.BSpline and GustafSpline.
 
         Attributes
         -----------
@@ -499,8 +594,27 @@ class BSpline(GustavSpline, splinepy.BSpline):
             weights=np.ones(self.control_points.shape[0], dtype="float64")
         )
 
+    def extract_bezier_patches(self):
+      """
+      Overwrites splinepy-parent's function to ensure the conversion of Splines
+      into a usable gustaf format
+      
+      Parameters
+      ----------
+      None
 
-class NURBS(GustavSpline, splinepy.NURBS):
+      Returns
+      -------
+      None
+      """
+      logging.warning(
+          "Functionality not supported, please use:\n"
+          "<BSpline>.extract.beziers()"
+      )
+      return None
+
+
+class NURBS(GustafSpline, splinepy.NURBS):
 
     def __init__(
             self,
@@ -563,6 +677,25 @@ class NURBS(GustavSpline, splinepy.NURBS):
         )
 
         return gustaf2mfem, mfem2gustaf
+
+    def extract_bezier_patches(self):
+      """
+      Overwrites splinepy-parent's function to ensure the conversion of Splines
+      into a usable gustaf format
+      
+      Parameters
+      ----------
+      None
+
+      Returns
+      -------
+      None
+      """
+      logging.warning(
+          "Functionality not supported, please use:\n"
+          "<NURBS>.extract.beziers()"
+      )
+      return None
 
 
 def from_mfem(nurbs_dict):
