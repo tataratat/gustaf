@@ -1,6 +1,4 @@
 import gustaf as gus
-from gustaf.create.spline import with_bounds
-import numpy as np
 
 
 
@@ -13,16 +11,32 @@ if __name__ == "__main__":
             mxyz="geometry_files/mxyz.space",
             mien="geometry_files/mien")
     except FileNotFoundError as err:
-        print("Please make sure the geometry files are accessible.")
-    else:
-        spline_2d = gus.BSpline(
-            [2,2],
-            [[-1,-1,-1,4,4,4],[2,2,2,3,3,3]],
-            [[0,0],[0.5,-0.2],[1,0],[0,0.2],
-            [0.5,0.2],[1,0.2],[0,0.4],[0.5,0.4],[1,0.4]])
-        
-        ffd_2d = gus.ffd.FFD(mesh_2d, spline_2d)
-        ffd_2d.show()
+        print("Geometry files not accessible creating stand in mesh.")
+        temp_spline = gus.BSpline(
+            [2,2], 
+            [
+                [0,0,0,0.33,0.66,1,1,1],
+                [0,0,0,1,1,1]
+            ],
+            [
+                [0,0],[0.25,0],[0.5,0.05],[0.75,0.1],[1,0.1],
+                [0,0.2],[0.25,0.2],[0.5,0.2],[0.75,0.2],[1,0.2],
+                [0,0.4],[0.25,0.4],[0.5,0.35],[0.75,0.3],[1,0.3]
+            ])
+        d2_resolution = [50, 25]
+        sampled_2d = temp_spline.sample(d2_resolution)
+        connec_2d = gus.utils.connec.make_quad_faces(d2_resolution)
+        mesh_2d = gus.Faces(sampled_2d, connec_2d)
+
+
+    spline_2d = gus.BSpline(
+        [2,2],
+        [[-1,-1,-1,4,4,4],[2,2,2,3,3,3]],
+        [[0,0],[0.5,-0.2],[1,0],[0,0.2],
+        [0.5,0.2],[1,0.2],[0,0.4],[0.5,0.4],[1,0.4]])
+    
+    ffd_2d = gus.ffd.FFD(mesh_2d, spline_2d)
+    ffd_2d.show()
 
 
 
@@ -58,18 +72,12 @@ if __name__ == "__main__":
 
     # RationalBezier in 2D
 
-    try:
-        mesh_2d = gus.io.mixd.load(
-            mxyz="geometry_files/mxyz.space",
-            mien="geometry_files/mien")
-    except FileNotFoundError as err:
-        print("Please make sure the geometry files are accessible.")
-    else:
-        spline_2d = gus.RationalBezier(
-            [2,2],
-            [[0,0],[0.5,-0.2],[1,0],[0,0.2],
-            [0.5,0.2],[1,0.2],[0,0.4],[0.5,0.4],[1,0.4]],
-            [1,1,1,1,1,1,1,1,1])
+    spline_2d_bez = gus.RationalBezier(
+        [2,2],
+        [[0,0],[0.5,-0.2],[1,0],[0,0.2],
+        [0.5,0.2],[1,0.2],[0,0.4],[0.5,0.4],[1,0.4]],
+        [1,1,1,1,1,1,1,1,1])
         
-        ffd_2d = gus.ffd.FFD(mesh_2d, spline_2d)
-        ffd_2d.show()
+
+    spline_2d_bez = gus.ffd.FFD(mesh_2d, spline_2d)
+    spline_2d_bez.show()
