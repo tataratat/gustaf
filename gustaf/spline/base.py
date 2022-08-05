@@ -91,7 +91,7 @@ def show(
     original_skip_update = spline.skip_update
     if not original_skip_update:
         # update one last time else, it won't sync.
-        spline._update_c() 
+        spline._check_and_update_c() 
         spline.skip_update = True
 
     # determine backend
