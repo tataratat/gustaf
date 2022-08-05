@@ -85,6 +85,20 @@ class Faces(Edges):
 
         return self.whatami
 
+    def get_number_of_faces(self):
+        """
+        Returns number of non-unique faces in the mesh.
+
+        Parameters
+        -----------
+        None
+
+        Returns
+        --------
+        number_of_faces: int
+        """
+        return self.faces.shape[0]
+
     def get_faces(self,):
         """
         Generates edges based on faces and returns.

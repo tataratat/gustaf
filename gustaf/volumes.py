@@ -80,6 +80,31 @@ class Volumes(Faces):
 
         return self.whatami
 
+    def get_number_of_faces(self):
+        """
+        Returns number of non-unique faces in the mesh.
+
+        Parameters
+        -----------
+        None
+
+        Returns
+        --------
+        number_of_faces: int
+        """
+        faces_per_volume = 0
+        if self.volumes.shape[1] == 4:
+            faces_per_volume = 4
+        elif self.volumes.shape[1] == 8:
+            faces_per_volume = 6
+        else:
+            raise ValueError(
+                "I have invalid volumes array shape. It should be (n, 4) or "
+                f"(n, 8), but I have: {self.faces.shape}"
+            )
+
+        return faces_per_volume * self.volumes.shape[0]
+
     def update_faces(self):
         """
         """
