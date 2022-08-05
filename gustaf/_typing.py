@@ -2,11 +2,11 @@ from typing import Union
 
 from gustaf.edges import Edges
 from gustaf.faces import Faces
-from gustaf.spline.base import NURBS, BSpline, Bezier
+from gustaf.spline.base import NURBS, BSpline, Bezier, RationalBezier
 from gustaf.vertices import Vertices
 from gustaf.volumes import Volumes
 
 
 
-SPLINE_TYPES = Union[Bezier, BSpline, NURBS]
+SPLINE_TYPES = Union[Bezier, RationalBezier, BSpline, NURBS]
 MESH_TYPES = Union[Vertices, Edges, Faces, Volumes]

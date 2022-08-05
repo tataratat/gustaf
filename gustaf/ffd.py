@@ -11,7 +11,7 @@ from typing import List, Optional, Union
 import numpy as np
 from gustaf._base import GustafBase
 from gustaf.faces import Faces
-from gustaf.spline.base import Bezier
+from gustaf.spline.base import Bezier, RationalBezier
 from gustaf.show import show_vedo
 from gustaf._typing import SPLINE_TYPES, MESH_TYPES
 from gustaf.create.spline import with_bounds
@@ -287,7 +287,7 @@ class FFD (GustafBase):
         bool
             True if parametric room is hypercube, else False
         """
-        if not type(spline) is Bezier:
+        if "Bezier" not in spline.whatami:
             for knot_vector in spline.knot_vectors:
                 # check if knot_vectors fist element is 0 and last element is 1
                 if not (knot_vector[0] == 0 and knot_vector[-1] == 1):

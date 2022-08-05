@@ -42,8 +42,9 @@ if __name__ == "__main__":
                 control_points.append([i*0.5,j*0.5,k*0.5])
 
     # change a control point so that there is a deformation
-    control_points[16] = [0.5, .75, .5]
-    control_points[14] = [0.5, .5, 1.5]
+    # control_points[16] = [0.5, .75, .5]
+    control_points[22] = [1.5, .5, .5]
+    control_points[2] = [0.25, .25, .75]
 
     spline_3d = gus.BSpline(
             [2,2,2],
@@ -53,3 +54,22 @@ if __name__ == "__main__":
     ffd_3d = gus.ffd.FFD(volume_3d, spline_3d)
 
     ffd_3d.show()
+
+
+    # RationalBezier in 2D
+
+    try:
+        mesh_2d = gus.io.mixd.load(
+            mxyz="geometry_files/mxyz.space",
+            mien="geometry_files/mien")
+    except FileNotFoundError as err:
+        print("Please make sure the geometry files are accessible.")
+    else:
+        spline_2d = gus.RationalBezier(
+            [2,2],
+            [[0,0],[0.5,-0.2],[1,0],[0,0.2],
+            [0.5,0.2],[1,0.2],[0,0.4],[0.5,0.4],[1,0.4]],
+            [1,1,1,1,1,1,1,1,1])
+        
+        ffd_2d = gus.ffd.FFD(mesh_2d, spline_2d)
+        ffd_2d.show()
