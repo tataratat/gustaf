@@ -9,7 +9,7 @@ Jaewook Lee.
 """
 from typing import List, Optional, Union
 import numpy as np
-from gustaf._base import GustavBase
+from gustaf._base import GustafBase
 from gustaf.faces import Faces
 from gustaf.spline.base import Bezier
 from gustaf.show import show_vedo
@@ -17,7 +17,7 @@ from gustaf._typing import SPLINE_TYPES, MESH_TYPES
 from gustaf.create.spline import with_bounds
 
 
-class FFD (GustavBase):
+class FFD (GustafBase):
 
     def __init__(
         self,
