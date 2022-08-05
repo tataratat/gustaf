@@ -27,6 +27,7 @@ class Vertices(GustafBase):
         "centers",
         "vis_dict",
         "vertexdata",
+        "vertex_groups",
     ]
 
     def __init__(
@@ -52,6 +53,7 @@ class Vertices(GustafBase):
         self.whatami = "vertices"
         self.vis_dict = dict()
         self.vertexdata = dict()
+        self.vertex_groups = utils.groups.VertexGroupCollection(self)
 
     def process(
             self,
@@ -144,6 +146,23 @@ class Vertices(GustafBase):
 
         else:
             return None
+
+    def extract_vertex_group(
+            self,
+            group_name
+    ):
+        """
+        Extracts a vertex group into an independent Vertices instance.
+
+        Parameters
+        -----------
+        group_name: string
+
+        Returns
+        --------
+        group_vertices: Vertices
+        """
+        return Vertices(vertices=self.vertices[self.vertex_groups[group_name]])
 
     def get_vertices_unique(
             self,

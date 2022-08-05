@@ -30,6 +30,8 @@ class Volumes(Faces):
         self.whatami = "volumes"
         self.vis_dict = dict()
         self.vertexdata = dict()
+        self.vertex_groups = utils.groups.VertexGroupCollection(self)
+        self.face_groups = utils.groups.FaceGroupCollection(self)
 
         if vertices is not None:
             self.vertices = utils.arr.make_c_contiguous(

@@ -47,6 +47,7 @@ class Edges(Vertices):
         self.whatami = "edges"
         self.vis_dict = dict()
         self.vertexdata = dict()
+        self.vertex_groups = utils.groups.VertexGroupCollection(self)
 
         self.process(everything=process)
 

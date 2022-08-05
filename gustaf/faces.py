@@ -1,5 +1,6 @@
 """gustaf/gustaf/faces.py
 """
+import numpy as np
 
 from gustaf import settings
 from gustaf import utils
@@ -17,6 +18,7 @@ class Faces(Edges):
         "faces_unique_inverse",
         "faces_unique_count",
         "surfaces",
+        "face_groups",
         "BC",
     ]
 
@@ -44,6 +46,8 @@ class Faces(Edges):
         self.whatami = "faces"
         self.vis_dict = dict()
         self.vertexdata = dict()
+        self.vertex_groups = utils.groups.VertexGroupCollection(self)
+        self.face_groups = utils.groups.FaceGroupCollection(self)
         self.BC = dict()
 
         self.process(process)
@@ -261,6 +265,29 @@ class Faces(Edges):
             self.vertices,
             edges=self.get_edges_unique() if unique else self.get_edges()
         )
+
+    def extract_face_group(self, group_name):
+        """
+        Extracts a group of faces into an independent Faces instance.
+
+        Parameters
+        -----------
+        group_name: string
+
+        Returns
+        --------
+        faces: Faces
+        """
+        face_group = self.face_groups[group_name]
+        group_global_faces = self.get_faces()[face_group]
+        group_global_vertex_ids, group_faces_flat = np.unique(
+                group_global_faces,
+                return_inverse=True)
+        group_vertices = self.vertices[group_global_vertex_ids]
+        group_faces = group_faces_flat.reshape(group_global_faces.shape)
+
+        return Faces(faces=group_faces, vertices=group_vertices)
+
 
     #def show(self, BC=False):
         """
