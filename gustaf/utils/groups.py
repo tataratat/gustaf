@@ -100,10 +100,10 @@ class FaceGroupCollection(dict):
         Convert a vertex group to a face group.
 
         This takes the vertex group specified by `group_name` from the mesh and
-        create a face group that contains all faces whose vertices are in the
+        creates a face group that contains all faces whose vertices are in the
         group.
 
-        Note that this operation is not always unique defined. In contiguous
+        Note that this operation is not always uniquely defined. In contiguous
         surfaces, individual faces could be left out even when all vertices are
         used. This implementation uses a greedy approach that adds all possible
         faces.
