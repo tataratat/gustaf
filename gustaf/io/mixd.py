@@ -110,6 +110,9 @@ def load(
     # bc
     if len(bcs) != 0:
         mesh.BC = bcs
+        for rng, face_ids in bcs.items():
+            # not using the update() method because that circumvents the checks
+            mesh.face_groups[rng] = face_ids
 
     return mesh
 
