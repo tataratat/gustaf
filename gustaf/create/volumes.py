@@ -61,30 +61,27 @@ def extrude_tri_to_tet(tri, thickness = 1., layers = 1, randomize = False):
     # we need a mapping from nodes to elements
     node_elements = dict()
     for vertex_id in range(number_of_2d_nodes):
-        node_elements[vertex_id] = set()
+        node_elements[vertex_id] = list()
     for face_index, face in enumerate(tri.faces):
         for vertex_id in face:
-            node_elements[vertex_id] |= {face_index}
+            node_elements[vertex_id].append(face_index)
 
     volume_iterator = 0
     # loop over 2D (flat) nodes
-    vertex_range = list(range(number_of_2d_nodes))
+    vertex_range = np.arange(number_of_2d_nodes)
     for layer in range(layers):
         if randomize:
-            random.shuffle(vertex_range)
+            np.random.shuffle(vertex_range)
         #for flat_vertex_id, face_ids in node_elements.items():
         for flat_vertex_id in vertex_range:
             face_ids = node_elements[flat_vertex_id]
-            anchors = {top_nodes[flat_vertex_id], number_of_2d_nodes +
-                    top_nodes[flat_vertex_id]}
+            anchors = np.array([top_nodes[flat_vertex_id], number_of_2d_nodes +
+                    top_nodes[flat_vertex_id]])
             # loop over node's 2D elements
             for face_id in face_ids:
-                # remove anchor
-                remaining_nodes = set(tri.faces[face_id]).difference({flat_vertex_id})
-                # add top nodes
-                new_element_nodes = anchors | set(top_nodes[list(remaining_nodes)])
                 # create element
-                volumes_3d[volume_iterator] = list(new_element_nodes)
+                volumes_3d[volume_iterator] = np.union1d(anchors,
+                        top_nodes[tri.faces[face_id]])
                 volume_iterator += 1
 
             # lift last node
@@ -93,3 +90,4 @@ def extrude_tri_to_tet(tri, thickness = 1., layers = 1, randomize = False):
     tet = Volumes(vertices=vertices_3d, volumes=volumes_3d)
 
     return tet
+
