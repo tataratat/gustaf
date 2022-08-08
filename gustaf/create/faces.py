@@ -59,21 +59,28 @@ def quad_to_tri(quad, backslash=False, alternate=True):
         split_fav = split_backslash if backslash else split_slash
         split_alt = split_slash if backslash else split_backslash
 
-        split_fav_intersections = list(set(split_fav[0]).intersection(split_fav[1]))
+        split_fav_intersections = np.intersect1d(split_fav[0], split_fav[1],
+                assume_unique=True)
 
-        intersection_vertices = set()
+        intersection_vertices = np.full(quad.vertices.shape[0], False)
         for quad_index, quad_face in enumerate(quad_faces):
-            element_intersection_vertices = intersection_vertices & set(quad_face)
-            if not element_intersection_vertices:
+            element_intersection_vertices =\
+                    quad_face[intersection_vertices[quad_face]]
+            if not len(element_intersection_vertices):
                 split = split_fav
             else:
-                split = split_fav if not\
-                set(quad_face[split_fav_intersections]).isdisjoint(element_intersection_vertices)\
+                split = split_fav if np.isin(
+                        element_intersection_vertices,
+                        quad_face[split_fav_intersections],
+                        assume_unique=True).any() \
                 else split_alt
 
             # would be more efficient here to work with a pre-calculated
             # intersection of split[0] and split[1]
-            intersection_vertices |= set(quad_face[split[0]]) & set(quad_face[split[1]])
+            new_intersection_vertices =\
+                    quad_face[np.intersect1d(split[0], split[1],
+                    assume_unique=True)]
+            intersection_vertices[new_intersection_vertices] = True
 
             tri_faces[quad_index] = quad_face[split[0]]
             tri_faces[quad_index + tf_half] = quad_face[split[1]]
