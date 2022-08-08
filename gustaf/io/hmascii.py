@@ -2,6 +2,19 @@
 
 Read a mesh and boundaries from a HyperMesh .hmascii file.
 Output is not supported.
+
+This implementation requires a certain structure of the model. It only imports
+volume elements of a single type, which is either tetrahedra or hexahedra. They
+all must be in a single component (default name: 'volume').
+
+Boundaries can be imported as vertex groups, which can be converted to face
+groups. To enable the creation of a vertex group, a component must be created in
+HyperMesh. This component must contain surface elements of the current
+subelement type. They must use the same node IDs as the volume elements and not
+just share their coordinates.
+
+An initial surface component can be created in HyperMesh using:
+tools -> faces
 """
 
 import numpy as np
