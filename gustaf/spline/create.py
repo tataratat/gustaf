@@ -36,17 +36,18 @@ def extrude(spline, axis=None):
     # formulate correct cps
     if spline.dim == axis.shape[0]:
         cps = spline.control_points
-    elif int(spline.dim + 1) == axis.shape[0]:
+    elif spline.dim > axis.shape[0]:
+        expansion_dimension = axis.shape - spline.dim
         # one smaller dim is allowed
         # warn that we assume new dim is all zero
         utils.log.warning(
-            "Given axis is one dimension bigger than spline's dim.",
-            "Assuming 0.0 entries for new dimension."
+            "Given axis is f{expansion_dimension} dimension bigger than "
+            "spline's dim. Assuming 0.0 entries for new dimension.",
         )
         cps = np.hstack(
             (
                 spline.control_points,
-                np.ones((len(spline.control_points), 1)
+                np.zeros((len(spline.control_points), expansion_dimension))
             )
         )
     else:
