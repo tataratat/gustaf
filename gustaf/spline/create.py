@@ -6,35 +6,50 @@ Create operations for spline geometries
 
 import itertools
 import logging
+
 import numpy as np
 
 
 def extrude(spline, axis=None):
     """
-    Extrudes Splines ype objects of any spline-type object
+    Extrudes Splines
 
     Parameters
     ----------
-    spline : Gustaf-Spline
-    axis : Extrusion axis
+    spline: GustafSpline
+    axis: np.ndarray
     """
     from gustaf.spline.base import GustafSpline
-
+    
     # Check input type
-    from gustaf.spline.base import GustafSpline
     if not issubclass(type(spline), GustafSpline):
         raise NotImplementedError("Extrude only works for splines")
 
     # Check axis
     if axis is not None:
-        axis = np.asarray(axis)
-        if len(axis.shape) == 0:
-            axis = np.asarray([axis])
+        # make flat axis
+        axis = np.asarray(axis).ravel()
     else:
         raise ValueError("No extrusion Axis given")
 
     # Check Axis dimension
-    if not (spline.control_points.shape[1] == axis.shape[0]):
+    # formulate correct cps
+    if spline.dim == axis.shape[0]:
+        cps = spline.control_points
+    elif int(spline.dim + 1) == axis.shape[0]:
+        # one smaller dim is allowed
+        # warn that we assume new dim is all zero
+        utils.log.warning(
+            "Given axis is one dimension bigger than spline's dim.",
+            "Assuming 0.0 entries for new dimension."
+        )
+        cps = np.hstack(
+            (
+                spline.control_points,
+                np.ones((len(spline.control_points), 1)
+            )
+        )
+    else:
         raise ValueError(
             "Dimension Mismatch between extrusion axis and spline."
         )
@@ -43,15 +58,14 @@ def extrude(spline, axis=None):
     arguments = {}
 
     arguments["degrees"] = np.concatenate((spline.degrees, [1]))
-    arguments["control_points"] = np.concatenate((
-        spline.control_points,
-        spline.control_points + axis))
+    arguments["control_points"] = np.vstack((cps, cps + axis))
     if "knot_vectors" in spline._required_properties:
         arguments["knot_vectors"] = spline.knot_vectors + [[0,0,1,1]]
     if "weights" in spline._required_properties:
         arguments["weights"] = np.concatenate((spline.weights, spline.weights))
 
     return type(spline)(**arguments)
+
 
 def revolve(spline, axis=None, center=None, angle=None, n_knot_spans=None):
     """
@@ -71,7 +85,7 @@ def revolve(spline, axis=None, center=None, angle=None, n_knot_spans=None):
 
     Returns
     -------
-    spline : spline-type          
+    spline : GustafSpline         
     """
     from gustaf.spline.base import GustafSpline
 
@@ -83,7 +97,8 @@ def revolve(spline, axis=None, center=None, angle=None, n_knot_spans=None):
     # rotation-matrix is only implemented for 2D and 3D problems
     if not (spline.dim == 2 or spline.dim == 3):
         raise NotImplementedError(
-            "Revolutions only implemented for 2D and 3D geometries"
+            "Sorry,"
+            "revolutions only implemented for 2D and 3D splines"
         )
 
     # Check axis
