@@ -175,7 +175,7 @@ class HMModel:
 def load(
         fname,
         element_type = '',
-        create_vertex_groups = True,
+        create_face_groups = True,
         main_component_name = 'volume'
 ):
     """
@@ -252,20 +252,30 @@ def load(
 
     mesh = Volumes(vertices=vertices, volumes=volumes)
 
-    if create_vertex_groups:
+    if create_face_groups:
         # determine subelement type
         subelement_type = HMComponent.element_types[element_type].subelement
+        # get all faces in volume
+        faces = mesh.get_faces()
+        # transform to 1D tuple array
+        tuple_dtype = ",".join(["i"] * faces.shape[1])
+        faces_tuples = np.sort(faces).view(dtype=tuple_dtype).copy()
 
-        # go through boundary components to import vertex groups
+        # go through boundary components to import face groups
         for component in hm_model.components:
             # check if subelement type is contained
             if subelement_type in component.elements:
-                vertex_group = np.unique(
-                        np.array(component.elements[subelement_type],
-                        dtype=np.int32).flatten())
-                for vertex_index, hm_vertex_id in enumerate(vertex_group):
-                    vertex_group[vertex_index] = node_perm[hm_vertex_id]
-                mesh.vertex_groups[component.name] = vertex_group
+                group_faces = np.array(component.elements[subelement_type],
+                        dtype=np.int32)
+                for hm_vertex_ids in group_faces:
+                    for index, hm_vertex_id in enumerate(hm_vertex_ids):
+                        hm_vertex_ids[index] = node_perm[hm_vertex_id]
+                group_faces_sorted = np.sort(group_faces)
+                group_faces_tuples =\
+                        group_faces_sorted.view(dtype=tuple_dtype)
+                face_indices = np.intersect1d(faces_tuples, group_faces_tuples,
+                        return_indices=True)[1]
+                mesh.face_groups[component.name] = face_indices
             elif component != main_component:
                 log.warning(f"Component '{component.name}' does not "\
                         f"contain any elements of type '{subelement_type}'.")
