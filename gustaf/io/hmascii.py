@@ -23,6 +23,8 @@ from gustaf.volumes import Volumes
 from gustaf.utils import log
 
 class HMLine:
+    __slots__ = ["name", "values"]
+
     def __init__(self, line):
         """
         Parse a line from an HMASCII file.
@@ -46,6 +48,8 @@ class HMLine:
                         parts[1][:-2].split(',')]
 
 class HMElementType:
+    __slots__ = ["number_of_nodes", "subelement"]
+
     def __init__(self, number_of_nodes, subelement = ''):
         """
         Store HyperMesh element type information.
@@ -65,6 +69,8 @@ class HMElementType:
         self.subelement = str(subelement)
 
 class HMComponent:
+    __slots__ = ["name", "elements"]
+
     element_types = {
             'tetra4': HMElementType(4, 'tria3'),
             'hexa8': HMElementType(8, 'quad4'),
@@ -109,6 +115,8 @@ class HMComponent:
         return str(vars(self))
 
 class HMModel:
+    __slots__ = ["node_ids", "node_coordinates", "components"]
+
     def __init__(self, filename):
         """
         Create a representation of a HyperMesh model from the HMASCII file
