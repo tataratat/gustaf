@@ -88,12 +88,21 @@ def simplexify(quad, backslash=False, alternate=True):
                     assume_unique=True)]
             intersection_vertices[new_intersection_vertices] = True
 
-            tri_faces[quad_index] = quad_face[split[0]]
-            tri_faces[quad_index + tf_half] = quad_face[split[1]]
+            tri_faces[2 * quad_index] = quad_face[split[0]]
+            tri_faces[2 * quad_index + 1] = quad_face[split[1]]
 
     tri = Faces(
         vertices=quad.vertices.copy(),
         faces=tri_faces,
     )
+
+    # since the vertices are identical, copy vertex groups
+    for group_name, group_vertex_ids in quad.vertex_groups.items():
+        tri.vertex_groups[group_name] = group_vertex_ids
+
+    # create matching face groups
+    tri_face_ids = np.arange(tri_faces.shape[0]).reshape(-1, 2)
+    for group_name, group_face_ids in quad.face_groups.items():
+        tri.face_groups[group_name] = tri_face_ids[group_face_ids].flatten()
 
     return tri
