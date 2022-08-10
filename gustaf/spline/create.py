@@ -59,16 +59,16 @@ def extrude(spline, extrusion_vector=None):
         )
 
     # Start Extrusion
-    arguments = {}
+    spline_dict = dict()
 
-    arguments["degrees"] = np.concatenate((spline.degrees, [1]))
-    arguments["control_points"] = np.vstack((cps, cps + extrusion_vector))
+    spline_dict["degrees"] = np.concatenate((spline.degrees, [1]))
+    spline_dict["control_points"] = np.vstack((cps, cps + extrusion_vector))
     if "knot_vectors" in _RequiredProperties.of(spline):
-        arguments["knot_vectors"] = spline.knot_vectors + [[0, 0, 1, 1]]
+        spline_dict["knot_vectors"] = spline.knot_vectors + [[0, 0, 1, 1]]
     if "weights" in _RequiredProperties.of(spline):
-        arguments["weights"] = np.concatenate((spline.weights, spline.weights))
+        spline_dict["weights"] = np.concatenate((spline.weights, spline.weights))
 
-    return type(spline)(**arguments)
+    return type(spline)(**spline_dict)
 
 
 def revolve(spline, axis=None, center=None, angle=None, n_knot_spans=None):
@@ -188,11 +188,11 @@ def revolve(spline, axis=None, center=None, angle=None, n_knot_spans=None):
         ).T
 
     # Start Extrusion
-    arguments = {}
+    spline_dict = dict()
 
-    arguments["degrees"] = np.concatenate((spline.degrees, [2]))
+    spline_dict["degrees"] = np.concatenate((spline.degrees, [2]))
 
-    arguments["control_points"] = cps
+    spline_dict["control_points"] = cps
     end_points = cps
     for i_segment in range(n_knot_spans):
         # Rotate around axis
@@ -204,8 +204,8 @@ def revolve(spline, axis=None, center=None, angle=None, n_knot_spans=None):
             mid_points = (mid_points - mp_scale) * factor + mp_scale
         else:
             mid_points *= factor
-        arguments["control_points"] = np.concatenate((
-            arguments["control_points"],
+        spline_dict["control_points"] = np.concatenate((
+            spline_dict["control_points"],
             mid_points,
             end_points
         ))
@@ -213,15 +213,15 @@ def revolve(spline, axis=None, center=None, angle=None, n_knot_spans=None):
     if "knot_vectors" in _RequiredProperties.of(spline):
         kv = [0, 0, 0]
         [kv.extend([i + 1, i + 1]) for i in range(n_knot_spans - 1)]
-        arguments["knot_vectors"] = spline.knot_vectors + [
+        spline_dict["knot_vectors"] = spline.knot_vectors + [
             kv + [n_knot_spans+1] * 3
         ]
     if "weights" in _RequiredProperties.of(spline):
         mid_weights = spline.weights * weight
-        arguments["weights"] = spline.weights
+        spline_dict["weights"] = spline.weights
         for i_segment in range(n_knot_spans):
-            arguments["weights"] = np.concatenate((
-                arguments["weights"],
+            spline_dict["weights"] = np.concatenate((
+                spline_dict["weights"],
                 mid_weights,
                 spline.weights
             ))
@@ -232,9 +232,9 @@ def revolve(spline, axis=None, center=None, angle=None, n_knot_spans=None):
         )
 
     if center is not None:
-        arguments["control_points"] += center
+        spline_dict["control_points"] += center
 
-    return type(spline)(**arguments)
+    return type(spline)(**spline_dict)
 
 
 class _Creator:
