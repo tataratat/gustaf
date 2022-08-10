@@ -10,17 +10,17 @@ if __name__ == "__main__":
 
     quad = gus.Faces(vertices.vertices, connec)
 
-    tri = gus.create.faces.quad_to_tri(quad)
+    tri = gus.create.faces.simplexify(quad)
 
     # show
     quad.shrink().show()
 
-    gus.create.faces.quad_to_tri(quad, alternate=False).shrink().show()
-    gus.create.faces.quad_to_tri(quad, backslash=True, alternate=False).shrink().show()
-    gus.create.faces.quad_to_tri(quad).shrink().show()
-    gus.create.faces.quad_to_tri(quad, backslash=True).shrink().show()
+    gus.create.faces.simplexify(quad, alternate=False).shrink().show()
+    gus.create.faces.simplexify(quad, backslash=True, alternate=False).shrink().show()
+    gus.create.faces.simplexify(quad).shrink().show()
+    gus.create.faces.simplexify(quad, backslash=True).shrink().show()
 
-    tri = gus.create.faces.quad_to_tri(quad)
+    tri = gus.create.faces.simplexify(quad)
     e = tri.shrink(ratio=0.7).toedges(False)
     e.vis_dict["arrows"] = True
     e.show()

@@ -6,9 +6,11 @@ Routines to create faces.
 import numpy as np
 
 from gustaf.faces import Faces
+from gustaf.utils import log
+from gustaf import settings
 
 
-def quad_to_tri(quad, backslash=False, alternate=True):
+def simplexify(quad, backslash=False, alternate=True):
     """
     Given quad faces, diagonalize them to turn them into triangles.
     If quad is CCW, triangle will also be CCW and vice versa.
@@ -38,9 +40,14 @@ def quad_to_tri(quad, backslash=False, alternate=True):
     """
     if quad.get_whatami() != "quad":
         raise ValueError(
-            "Input to quad_to_tri needs to be a quad mesh, but it's "
+            "Input to simplexify needs to be a quad mesh, but it's "
             + quad.get_whatami()
         )
+
+    if alternate == True:
+        log.warning("Be aware that even though `alternate=True` was set, "
+                "the diagonals might not alternate direction as expected, "
+                "depending on mesh structure and element order.")
 
     # split variants
     split_slash = [[0, 1, 2], [2, 3, 0]]
@@ -48,7 +55,7 @@ def quad_to_tri(quad, backslash=False, alternate=True):
 
     quad_faces = quad.faces
     tf_half = int(quad_faces.shape[0])
-    tri_faces = np.ones((tf_half * 2, 3), dtype=np.int32) * -1
+    tri_faces = np.full((tf_half * 2, 3), -1, dtype=settings.INT_DTYPE)
 
     if not alternate:
         split = split_backslash if backslash else split_slash
@@ -64,21 +71,20 @@ def quad_to_tri(quad, backslash=False, alternate=True):
 
         intersection_vertices = np.full(quad.vertices.shape[0], False)
         for quad_index, quad_face in enumerate(quad_faces):
-            element_intersection_vertices =\
-                    quad_face[intersection_vertices[quad_face]]
+            element_intersection_vertices = quad_face[
+                    intersection_vertices[quad_face]]
             if not len(element_intersection_vertices):
                 split = split_fav
             else:
                 split = split_fav if np.isin(
                         element_intersection_vertices,
                         quad_face[split_fav_intersections],
-                        assume_unique=True).any() \
-                else split_alt
+                        assume_unique=True).any() else split_alt
 
             # would be more efficient here to work with a pre-calculated
             # intersection of split[0] and split[1]
-            new_intersection_vertices =\
-                    quad_face[np.intersect1d(split[0], split[1],
+            new_intersection_vertices = quad_face[
+                    np.intersect1d(split[0], split[1],
                     assume_unique=True)]
             intersection_vertices[new_intersection_vertices] = True
 
