@@ -258,8 +258,10 @@ def load(
         # get all faces in volume
         faces = mesh.get_faces()
         # transform to 1D tuple array
+        # (we want to use the intersect1d function later, so we cannot keep the
+        # rows)
         tuple_dtype = ",".join(["i"] * faces.shape[1])
-        faces_tuples = np.sort(faces).view(dtype=tuple_dtype).copy()
+        faces_tuples = np.sort(faces).view(dtype=tuple_dtype)
 
         # go through boundary components to import face groups
         for component in hm_model.components:
