@@ -8,10 +8,11 @@ Adaptation of previous implementation in internal python package gustav by
 Jaewook Lee. 
 """
 from typing import List, Optional, Union
+from xml.dom.pulldom import parseString
 import numpy as np
 from gustaf._base import GustafBase
 from gustaf.faces import Faces
-from gustaf.spline.base import Bezier, RationalBezier
+from gustaf.spline.base import Bezier
 from gustaf.show import show_vedo
 from gustaf._typing import SPLINE_TYPES, MESH_TYPES
 from gustaf.create.spline import with_bounds
@@ -44,7 +45,6 @@ class FFD (GustafBase):
         ----------
         _spline: SPLINE_TYPES
         _mesh: MESH_TYPES
-        _original_spline_ranges: List[List[float]]
         _q_vertices: np.ndarray (n, dim)
         _is_partial: bool
         calculated: bool
@@ -56,7 +56,6 @@ class FFD (GustafBase):
         # Use property definitions to store the values
         self._spline = None
         self._mesh: MESH_TYPES = None
-        self._original_spline_ranges = None
         self._q_vertices = None
         self._is_partial = False
         self.calculated = False
@@ -179,10 +178,8 @@ class FFD (GustafBase):
     @spline.setter
     def spline(self, spline: SPLINE_TYPES):
         """
-        Sets spline after doing some tests to determine what kind of situation
-        we are currently facing. Checks if spline is naive by comparing control
-        points after re-creating naive version of given spline. Here, naive
-        means un-deformed from box stage.
+        Sets spline. The spline parametric range bounds will be converted 
+        into the bounds [0,1]^para_dim.
 
         Parameters
         -----------
@@ -193,19 +190,13 @@ class FFD (GustafBase):
         --------
         None
         """
-        # This is also False if no spline was given before
-        if self._is_parametric_range_changed_vs_original_spline(spline):
-            self._spline = spline.copy()
-            self._scale_parametric_dimension_to_hypercube()
+        self._spline = spline.copy()
+        self._scale_parametric_dimension_to_hypercube()
 
         self._logi("Setting Spline.")
         self._logi("Spline Info:")
         self._logi(
             f"  Parametric dimensions: {spline.para_dim}."
-        )
-        self._logi(
-            f"  Parametric dimension before scaling:"
-            f" {self._original_spline_ranges}."
         )
         self.calculated = False
 
@@ -256,15 +247,11 @@ class FFD (GustafBase):
     def _scale_parametric_dimension_to_hypercube(self):
         """Scales all knot_vectors of the spline to a range of [0,1]
         """
-        self._original_spline_ranges = list()
         if self._is_parametric_room_hypercube(self._spline):
-            for _ in range(self.spline.para_dim):
-                self._original_spline_ranges.append((0,1))
+            pass
         else:
             knv = []
             for knot_vector in self._spline.knot_vectors:
-                self._original_spline_ranges.append(
-                    (knot_vector[0],knot_vector[-1]))
                 knot_vector = [kv_v - knot_vector[0] for kv_v in knot_vector]
                 knot_vector = [kv_v / knot_vector[-1] for kv_v in knot_vector]
                 knv.append(knot_vector)
@@ -293,42 +280,7 @@ class FFD (GustafBase):
                 if not (knot_vector[0] == 0 and knot_vector[-1] == 1):
                     return False
         return True
-
-    def _is_parametric_range_changed_vs_original_spline(
-            self,
-            spline: SPLINE_TYPES
-        ) -> bool:
-        """Checks if the parametric range of the spline has a different 
-        range in the parametric dimension as the original spline used for this 
-        FFD.
-
-        Parameters
-        ----------
-        spline : SPLINE_TYPES
-            New spline for which to check for changes in the parametric 
-            dimension
-
-        Returns
-        -------
-        bool
-            True if parametric room is changed or these have not been 
-            calculated yet, else False
-        """
-        if self._original_spline_ranges is None:
-            return True
-        if not type(spline) is Bezier:
-            for knot_vector, orig_parametric_range in zip(
-                                            spline.knot_vectors,
-                                            self._original_spline_ranges):
-                # check if knot_vectors fist element is 0 and last element is 1
-                if not (
-                    knot_vector[0] == orig_parametric_range[0] and
-                    knot_vector[-1] == orig_parametric_range[-1]
-                ):
-                    return True
-        return False
                
-            
     def _is_mesh_dimension_same_as_spline_parametric_dimension(self) -> bool:
         """Checks if the mesh and parametric dimension of the spline are the 
         same.
