@@ -266,7 +266,10 @@ def sequence_to_edges(seq, closed=False):
     return edges
 
 
-def make_quad_faces(resolutions):
+def make_quad_faces(
+        resolutions,
+        create_vertex_groups=False
+        ):
     """
     Given number of nodes per each dimension, returns connectivity information 
     of a structured mesh.
@@ -280,6 +283,8 @@ def make_quad_faces(resolutions):
     Parameters
     -----------
     resolutions: list
+    create_vertex_groups: bool
+        Create and return vertex groups for all sides. (Default: False)
 
     Returns
     --------
@@ -299,7 +304,16 @@ def make_quad_faces(resolutions):
     if faces.all() == -1:
         raise ValueError("Something went wrong during `make_quad_faces`.")
 
-    return faces.astype(np.int32)
+    if create_vertex_groups:
+        vertex_groups = dict()
+        vertex_groups["low_x"] = node_indices[:,0].flatten()
+        vertex_groups["high_x"] = node_indices[:,-1].flatten()
+        vertex_groups["low_y"] = node_indices[0,:].flatten()
+        vertex_groups["high_y"] = node_indices[-1,:].flatten()
+
+        return faces.astype(settings.INT_DTYPE), vertex_groups
+    else:
+        return faces.astype(settings.INT_DTYPE)
 
 
 def make_hexa_volumes(
