@@ -13,37 +13,37 @@ if __name__ == "__main__":
             step=2)
     #quad.face_groups["odd_faces"] = quad.get_surfaces()[::2]
 
-    show_list_1 = []
+    extrusion_plots = []
 
     # show
-    show_list_1 += [["quad", quad.shrink()]]
+    extrusion_plots += [["quad", quad.shrink()]]
 
     # 1 layer
     tet1 = gus.create.volumes.extrude_to_tet(quad, thickness = .2,
             layers = 1, randomize = True)
-    show_list_1 += [["1 layer", tet1]]
+    extrusion_plots += [["1 layer", tet1]]
 
     # 3 layers
     tet3 = gus.create.volumes.extrude_to_tet(quad, thickness = .2,
             layers = 3, randomize = True)
-    show_list_1 += [["3 layers", tet3.shrink()]]
+    extrusion_plots += [["3 layers", tet3.shrink()]]
 
-    show_list_2 = []
+    group_plots = []
     for vertex_group in quad.vertex_groups:
-        show_list_2 += [
+        group_plots += [
                 [vertex_group, quad.extract_vertex_group(vertex_group)],
                 [vertex_group, tet3.extract_vertex_group(vertex_group)]
                 ]
     for face_group in tet3.face_groups:
-        show_list_2 += [[face_group,
+        group_plots += [[face_group,
             tet3.extract_face_group(face_group).shrink()]]
 
     try:
         import vedo
-        gus.show.show_vedo(*show_list_1)
-        gus.show.show_vedo(*show_list_2)
+        gus.show.show_vedo(*extrusion_plots)
+        gus.show.show_vedo(*group_plots)
     except:
-        for item in show_list_1 + show_list_2:
+        for item in extrusion_plots + group_plots:
             print(f"Showing {item[0]}.")
             item[1].show()
 
