@@ -142,6 +142,9 @@ class ProximityTest(c.unittest.TestCase):
         # Expect Failure - axis wrong format
         with self.assertRaises(ValueError):
             bspline.create.revolve(axis=[1])
+        # Expect Failure - axis too small
+        with self.assertRaises(ValueError):
+            bspline.create.revolve(axis=[0, 0, 1e-18])
 
         # Revolve always around z-axis
         # init rotation matrix
@@ -197,8 +200,7 @@ class ProximityTest(c.unittest.TestCase):
                     spline_g.control_points - r_center,
                     R2.T
                 ) + r_center
-            ),
-                f"{spline_g.whatami} failed revolution around center")
+            ), f"{spline_g.whatami} failed revolution around center")
 
 
 if __name__ == "__main__":

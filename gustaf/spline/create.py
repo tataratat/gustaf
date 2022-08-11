@@ -12,6 +12,7 @@ from splinepy._spline import _RequiredProperties
 from gustaf import utils
 from gustaf import settings
 
+
 def extrude(spline, extrusion_vector=None):
     """
     Extrudes Splines
@@ -43,7 +44,7 @@ def extrude(spline, extrusion_vector=None):
         # one smaller dim is allowed
         # warn that we assume new dim is all zero
         utils.log.warning(
-            "Given extrusion vector is f{expansion_dimension} dimension bigger than "
+            f"Given extrusion vector is {expansion_dimension} dimension bigger than "
             "spline's dim. Assuming 0.0 entries for new dimension.",
         )
         cps = np.hstack(
@@ -65,7 +66,8 @@ def extrude(spline, extrusion_vector=None):
     if "knot_vectors" in _RequiredProperties.of(spline):
         spline_dict["knot_vectors"] = spline.knot_vectors + [[0, 0, 1, 1]]
     if "weights" in _RequiredProperties.of(spline):
-        spline_dict["weights"] = np.concatenate((spline.weights, spline.weights))
+        spline_dict["weights"] = np.concatenate(
+            (spline.weights, spline.weights))
 
     return type(spline)(**spline_dict)
 
@@ -121,7 +123,12 @@ def revolve(spline, axis=None, center=None, angle=None, n_knot_spans=None):
             cps = np.copy(spline.control_points)
 
         # Make sure axis is normalized
-        axis = axis / np.linalg.norm(axis)
+
+        axis_norm = np.linalg.norm(axis)
+        if not np.isclose(axis_norm, 0, atol=settings.TOLERANCE):
+            axis = axis / axis_norm
+        else:
+            raise ValueError("Axis-norm is too close to zero.")
     else:
         cps = np.copy(spline.control_points)
         if spline.control_points.shape[1] == 3:
