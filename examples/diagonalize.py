@@ -4,16 +4,15 @@ import numpy as np
 
 if __name__ == "__main__":
     # create 4x5 element test mesh
-    v_res = [5, 6]
-    vertices = gus.create.vertices.raster(bounds=[[0, 0], [1, 1]], resolutions=v_res)
-    connec = gus.utils.connec.make_quad_faces(v_res)
-
-    quad = gus.Faces(vertices.vertices, connec)
+    quad = gus.create.faces.quad_block_mesh(
+            bounds = [[0, 0], [1, 1]],
+            resolutions = [5, 6]
+            )
 
     # we create vertex and face groups for testing purposes
-    quad.vertex_groups["odd_vertices"] = np.arange(vertices.vertices.shape[0],
+    quad.vertex_groups["odd_vertices"] = np.arange(quad.vertices.shape[0],
             step=2)
-    quad.face_groups["odd_faces"] = np.arange(connec.shape[0], step=2)
+    quad.face_groups["odd_faces"] = np.arange(quad.faces.shape[0], step=2)
 
     # show
     quad.shrink().show()
