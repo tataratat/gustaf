@@ -2,27 +2,27 @@ import gustaf as gus
 import numpy as np
 
 if __name__ == "__main__":
-    # create 2x3x4 test hexa element
-    v_res = [2, 3, 4]
-    vertices = gus.create.vertices.raster(
+    v = gus.create.volumes.hexa_block_mesh(
         bounds=[[0, 0, 0], [1, 1, 1]],
-        resolutions=v_res
-    )
-    connec = gus.utils.connec.make_hexa_volumes(v_res)
-    v = gus.Volumes(vertices.vertices, connec)
+        resolutions=[4, 5, 6]
+        )
 
     plots = []
 
     # show original mesh
     plots.append(["v", v.shrink()])
 
-    # create a face group
-    v.face_groups["odd_faces"] = v.get_surfaces()[::2]
-    plots.append(["odd_faces", v.extract_face_group("odd_faces").shrink()])
+    # show face groups
+    for face_group in v.face_groups:
+        plots.append([face_group, v.extract_face_group(face_group).shrink()])
 
-    # create vertex group
-    v.face_groups.export_all_vertex_groups()
-    plots.append(["odd_faces", v.extract_vertex_group("odd_faces")])
+    # create volume groups
+    v.volume_groups["odd_elements"] = np.arange(v.volumes.shape[0], step=2)
+
+    # show volume groups
+    for volume_group in v.volume_groups:
+        plots.append([volume_group,
+            v.extract_volume_group(volume_group).shrink()])
 
     try:
         import vedo
