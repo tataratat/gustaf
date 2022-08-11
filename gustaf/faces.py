@@ -46,11 +46,19 @@ class Faces(Edges):
         self.whatami = "faces"
         self.vis_dict = dict()
         self.vertexdata = dict()
-        self.vertex_groups = utils.groups.VertexGroupCollection(self)
-        self.face_groups = utils.groups.FaceGroupCollection(self)
         self.BC = dict()
 
+        self.init_groups()
         self.process(process)
+
+    def init_groups(self):
+        """
+        Initialize all group collections.
+
+        This has to be called by all child class constructors.
+        """
+        self.face_groups = utils.groups.FaceGroupCollection(self)
+        Edges.init_groups(self)
 
     def process(
             self,
@@ -88,6 +96,33 @@ class Faces(Edges):
             )
 
         return self.whatami
+
+    def get_number_of_edges(self):
+        """
+        Returns number of non-unique edges in the mesh.
+
+        Parameters
+        -----------
+        None
+
+        Returns
+        --------
+        number_of_edges: int
+        """
+        edges_per_face = 0
+        if self.faces.shape[1] == 3:
+            # triangle
+            edges_per_face = 3
+        elif self.faces.shape[1] == 4:
+            # quadrangle
+            edges_per_face = 4
+        else:
+            raise ValueError(
+                "I have invalid faces array shape. It should be (n, 3) or "
+                f"(n, 4), but I have: {self.volumes.shape}"
+            )
+
+        return edges_per_face * self.faces.shape[0]
 
     def get_number_of_faces(self):
         """

@@ -53,6 +53,15 @@ class Vertices(GustafBase):
         self.whatami = "vertices"
         self.vis_dict = dict()
         self.vertexdata = dict()
+
+        self.init_groups()
+
+    def init_groups(self):
+        """
+        Initialize all group collections.
+
+        This has to be called by all child class constructors.
+        """
         self.vertex_groups = utils.groups.VertexGroupCollection(self)
 
     def process(

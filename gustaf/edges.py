@@ -20,7 +20,8 @@ class Edges(Vertices):
         "edges_unique_id",
         "edges_unique_inverse",
         "edges_unique_count",
-        "outlines"
+        "outlines",
+        "edge_groups",
     ]
 
     def __init__(
@@ -47,9 +48,18 @@ class Edges(Vertices):
         self.whatami = "edges"
         self.vis_dict = dict()
         self.vertexdata = dict()
-        self.vertex_groups = utils.groups.VertexGroupCollection(self)
 
+        self.init_groups()
         self.process(everything=process)
+
+    def init_groups(self):
+        """
+        Initialize all group collections.
+
+        This has to be called by all child class constructors.
+        """
+        self.edge_groups = utils.groups.EdgeGroupCollection(self)
+        Vertices.init_groups(self)
 
     def process(
             self,
@@ -192,6 +202,20 @@ class Edges(Vertices):
         _ = self.get_edges_unique()
 
         return self.outlines
+
+    def get_number_of_edges(self):
+        """
+        Returns number of non-unique edges in the mesh.
+
+        Parameters
+        -----------
+        None
+
+        Returns
+        --------
+        number_of_edges: int
+        """
+        return self.edges.shape[0]
 
     def update_elements(self, mask, inplace=True):
         """

@@ -18,6 +18,7 @@ class Volumes(Faces):
         "volumes_unique_id",
         "volumes_unique_inverse",
         "volumes_unique_count",
+        "volume_groups",
     ]
 
     def __init__(
@@ -30,8 +31,8 @@ class Volumes(Faces):
         self.whatami = "volumes"
         self.vis_dict = dict()
         self.vertexdata = dict()
-        self.vertex_groups = utils.groups.VertexGroupCollection(self)
-        self.face_groups = utils.groups.FaceGroupCollection(self)
+
+        self.init_groups()
 
         if vertices is not None:
             self.vertices = utils.arr.make_c_contiguous(
@@ -50,6 +51,15 @@ class Volumes(Faces):
                 elements,
                 settings.INT_DTYPE,
             )
+
+    def init_groups(self):
+        """
+        Initialize all group collections.
+
+        This has to be called by all child class constructors.
+        """
+        self.volume_groups = utils.groups.VolumeGroupCollection(self)
+        Faces.init_groups(self)
 
     def process(
             self,
@@ -82,6 +92,33 @@ class Volumes(Faces):
 
         return self.whatami
 
+    def get_number_of_edges(self):
+        """
+        Returns number of non-unique edges in the mesh.
+
+        Parameters
+        -----------
+        None
+
+        Returns
+        --------
+        number_of_edges: int
+        """
+        edges_per_volume = 0
+        if self.volumes.shape[1] == 4:
+            # tetrahedron (4 triangles)
+            edges_per_volume = 12
+        elif self.volumes.shape[1] == 8:
+            # hexahedron (6 quadrangles)
+            edges_per_volume = 24
+        else:
+            raise ValueError(
+                "I have invalid volumes array shape. It should be (n, 4) or "
+                f"(n, 8), but I have: {self.volumes.shape}"
+            )
+
+        return edges_per_volume * self.volumes.shape[0]
+
     def get_number_of_faces(self):
         """
         Returns number of non-unique faces in the mesh.
@@ -96,13 +133,15 @@ class Volumes(Faces):
         """
         faces_per_volume = 0
         if self.volumes.shape[1] == 4:
+            # tetrahedron
             faces_per_volume = 4
         elif self.volumes.shape[1] == 8:
+            # hexahedron
             faces_per_volume = 6
         else:
             raise ValueError(
                 "I have invalid volumes array shape. It should be (n, 4) or "
-                f"(n, 8), but I have: {self.faces.shape}"
+                f"(n, 8), but I have: {self.volumes.shape}"
             )
 
         return faces_per_volume * self.volumes.shape[0]
