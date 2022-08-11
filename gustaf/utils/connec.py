@@ -302,7 +302,10 @@ def make_quad_faces(resolutions):
     return faces.astype(np.int32)
 
 
-def make_hexa_volumes(resolutions):
+def make_hexa_volumes(
+        resolutions,
+        create_vertex_groups=False
+        ):
     """
     Given number of nodes per each dimension, returns connectivity information 
     of structured hexahedron elements.
@@ -320,6 +323,8 @@ def make_hexa_volumes(resolutions):
     Parameters
     -----------
     resolutions: list
+    create_vertex_groups: bool
+        Create and return vertex groups for all sides. (Default: False)
 
     Returns
     --------
@@ -375,7 +380,18 @@ def make_hexa_volumes(resolutions):
     if (volumes == -1).any():
         raise ValueError("Something went wrong during `make_hexa_volumes`.")
 
-    return volumes.astype(settings.INT_DTYPE)
+    if create_vertex_groups:
+        vertex_groups = dict()
+        vertex_groups["low_x"] = node_indices[:,:,0].flatten()
+        vertex_groups["high_x"] = node_indices[:,:,-1].flatten()
+        vertex_groups["low_y"] = node_indices[:,0,:].flatten()
+        vertex_groups["high_y"] = node_indices[:,-1,:].flatten()
+        vertex_groups["low_z"] = node_indices[0,:,:].flatten()
+        vertex_groups["high_z"] = node_indices[-1,:,:].flatten()
+
+        return volumes.astype(settings.INT_DTYPE), vertex_groups
+    else:
+        return volumes.astype(settings.INT_DTYPE)
 
 
 def subdivide_edges(edges):
