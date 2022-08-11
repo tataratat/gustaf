@@ -10,7 +10,14 @@ from gustaf.volumes import Volumes
 from gustaf.utils import log
 from gustaf import create
 
-def extrude_to_tet(source, thickness = 1., layers = 1, randomize = False):
+def extrude_to_tet(
+        source,
+        thickness = 1.,
+        layers = 1,
+        randomize = False,
+        bottom_group = "bottom",
+        top_group = "top"
+        ):
     """
     Given triangular or quadrangular faces, create three-dimensional tetrahedral
     volumes.
@@ -31,13 +38,17 @@ def extrude_to_tet(source, thickness = 1., layers = 1, randomize = False):
     thickness: float
     layers: int
     randomize: bool
+    bottom_group: str
+        Name of face and vertex group created at the bottom
+    top_group: str
+        Name of face and vertex group created at the top
 
     Returns
     --------
     tet: Volumes
     """
     if layers < 1:
-        raise ValueError("The number of layers must be >1.")
+        raise ValueError("The number of layers must be >=1.")
 
     if not source.get_whatami() in ["tri", "quad"]:
         raise ValueError(
@@ -96,6 +107,21 @@ def extrude_to_tet(source, thickness = 1., layers = 1, randomize = False):
             top_nodes[flat_vertex_id] += number_of_2d_nodes
 
     tet = Volumes(vertices=vertices_3d, volumes=volumes_3d)
+
+    # vertex groups are also extruded
+    for vertex_group, vertex_ids in source.vertex_groups.items():
+        tet.vertex_groups[vertex_group] = (vertex_ids.repeat(layers + 1) +
+                np.tile(np.arange(layers + 1) * number_of_2d_nodes,
+                        vertex_ids.shape[0]))
+    # two additional vertex groups are added at the bottom and top
+    tet.vertex_groups[bottom_group] = np.arange(number_of_2d_nodes)
+    tet.vertex_groups[top_group] = (np.arange(number_of_2d_nodes) + 
+            layers * number_of_2d_nodes)
+
+    # face groups are kept on the boundaries
+    # two additional face groups are added at the bottom and top
+    tet.face_groups.import_vertex_group(bottom_group)
+    tet.face_groups.import_vertex_group(top_group)
 
     return tet
 
