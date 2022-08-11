@@ -7,8 +7,60 @@ import numpy as np
 import random
 
 from gustaf.volumes import Volumes
-from gustaf.utils import log
+from gustaf import utils
 from gustaf import create
+
+def hexa_block_mesh(
+        bounds = [[0, 0, 0], [1, 1, 1]],
+        resolutions = [2, 2, 2],
+        create_vertex_groups = True,
+        create_face_groups = True
+        ):
+    """
+    Create structured hexahedron block mesh.
+
+    Parameters
+    -----------
+    bounds: (2, 3) array
+        Minimum and maximum coordinates.
+    resolutions: (3) array
+        Vertex count in each dimension.
+    create_vertex_groups: bool
+    create_face_groups: bool
+
+    Returns
+    --------
+    volume_mesh: Volumes
+    """
+    assert np.array(bounds).shape == (2, 3), \
+            "bounds array must have 2x3 entries."
+    assert len(resolutions) == 3, \
+            "resolutions array must have three entries."
+    assert np.greater(resolutions, 1).all(), \
+            "All resolutions must be at least 2."
+
+    vertex_mesh = create.vertices.raster(bounds, resolutions)
+
+    if not create_vertex_groups and not create_face_groups:
+        connectivity = utils.connec.make_hexa_volumes(
+                resolutions, create_vertex_groups=False)
+        volume_mesh = Volumes(vertex_mesh.vertices, connectivity)
+    else:
+        connectivity, vertex_groups = utils.connec.make_hexa_volumes(
+                resolutions, create_vertex_groups=True)
+        volume_mesh = Volumes(vertex_mesh.vertices, connectivity)
+
+        if create_vertex_groups:
+            for group_name, vertex_ids in vertex_groups.items():
+                volume_mesh.vertex_groups[group_name] = vertex_ids
+        if create_face_groups:
+            face_connectivity = volume_mesh.get_faces()
+            for group_name, vertex_ids in vertex_groups.items():
+                volume_mesh.face_groups[group_name] = (
+                utils.groups.vertex_to_element_group(face_connectivity,
+                        vertex_ids))
+
+    return volume_mesh
 
 def extrude_to_tet(
         source,
@@ -57,8 +109,8 @@ def extrude_to_tet(
         )
 
     if source.get_whatami() == "quad":
-        log.info("Quadrangle mesh provided to `extrude_to_tet`. Creating "
-                "triangles to continue.")
+        utils.log.info("Quadrangle mesh provided to `extrude_to_tet`. "
+                "Creating triangles to continue.")
         source = create.faces.simplexify(source)
 
     # nodes
