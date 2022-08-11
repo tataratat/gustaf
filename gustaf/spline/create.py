@@ -7,11 +7,10 @@ Create operations for spline geometries
 import itertools
 
 import numpy as np
-
 from splinepy._spline import _RequiredProperties
 
 from gustaf import utils
-
+from gustaf import settings
 
 def extrude(spline, extrusion_vector=None):
     """

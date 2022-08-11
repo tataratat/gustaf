@@ -173,7 +173,8 @@ class ProximityTest(c.unittest.TestCase):
                         R.T
                     )
                 ),
-                f"{spline_g.whatami} failed revolution")
+                f"{spline_g.whatami} failed revolution"
+            )
 
         # Test 2D Revolutions of lines
         for spline_g in (bezier_line, nurbs_line):
