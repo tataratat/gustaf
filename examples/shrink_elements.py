@@ -3,13 +3,10 @@ import numpy as np
 
 if __name__ == "__main__":
     # create 2x3x4 test hexa element
-    v_res = [2, 3, 4]
-    vertices = gus.create.vertices.raster(
+    v = gus.create.volumes.hexa_block_mesh(
         bounds=[[0, 0, 0], [1, 1, 1]],
-        resolutions=v_res
-    )
-    connec = gus.utils.connec.make_hexa_volumes(v_res)
-    v = gus.Volumes(vertices.vertices, connec)
+        resolutions=[2, 3, 4]
+        )
 
     try:
         import vedo # if nothing's raised, following should be usable
