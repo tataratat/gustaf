@@ -254,3 +254,21 @@ class Volumes(Faces):
             self.vertices,
             faces=self.get_faces_unique() if unique else self.get_faces()
         )
+
+    def extract_volume_group(self, group_name):
+        """
+        Extracts a group of volumes into an independent Volumes instance.
+
+        Parameters
+        -----------
+        group_name: string
+
+        Returns
+        --------
+        volumes: Volumes
+        """
+        volume_group = self.volume_groups[group_name]
+        group_volumes, group_vertices = utils.groups.extract_element_group(
+                self.volumes, self.vertices, volume_group)
+        return Volumes(volumes=group_volumes, vertices=group_vertices)
+

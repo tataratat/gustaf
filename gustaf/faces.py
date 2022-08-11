@@ -314,13 +314,8 @@ class Faces(Edges):
         faces: Faces
         """
         face_group = self.face_groups[group_name]
-        group_global_faces = self.get_faces()[face_group]
-        group_global_vertex_ids, group_faces_flat = np.unique(
-                group_global_faces,
-                return_inverse=True)
-        group_vertices = self.vertices[group_global_vertex_ids]
-        group_faces = group_faces_flat.reshape(group_global_faces.shape)
-
+        group_faces, group_vertices = utils.groups.extract_element_group(
+                self.get_faces(), self.vertices, face_group)
         return Faces(faces=group_faces, vertices=group_vertices)
 
 

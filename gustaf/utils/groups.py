@@ -48,6 +48,38 @@ def vertex_to_element_group(element_connectivity, vertex_ids):
     element_ids = element_in_group.nonzero()[0]
     return element_ids
 
+def extract_element_group(
+        global_connectivity,
+        global_vertices,
+        global_element_ids
+        ):
+    """
+    Extract a group of elements from a larger group.
+
+    Takes a given global connectivity and vertex arrays and creates reduced
+    local variants for the group defined by `global_element_ids`.
+
+    Parameters
+    -----------
+    global_connectivity: (neg, nn) np.ndarray
+    global_vertices: (nvg, nsd) np.ndarray
+    global_element_ids: (n) np.ndarray
+
+    Returns
+    --------
+    local_connectivity: (nel, nn) np.ndarray
+    local_vertices: (nvl, nsd) np.ndarray
+    """
+    global_connectivity_subset = global_connectivity[global_element_ids]
+    global_vertex_ids_subset, local_connectivity_flat = np.unique(
+            global_connectivity_subset,
+            return_inverse=True)
+    local_vertices = global_vertices[global_vertex_ids_subset]
+    local_connectivity = local_connectivity_flat.reshape(
+            global_connectivity_subset.shape)
+
+    return local_connectivity, local_vertices
+
 class VertexGroupCollection(dict):
     def __init__(self, mesh):
         """
