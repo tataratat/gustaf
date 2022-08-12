@@ -6,7 +6,7 @@ except:
     import common as c
 
 
-class ProximityTest(c.unittest.TestCase):
+class CreatorTest(c.unittest.TestCase):
 
     # Test Extrusion routines
     def test_create_extrude(self):
