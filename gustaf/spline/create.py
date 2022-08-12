@@ -198,7 +198,7 @@ def revolve(spline,
         axis=axis,
         rotation=rot_a,
         degree=False
-                      ).T
+    ).T
 
     # Start Extrusion
     spline_dict = dict()
