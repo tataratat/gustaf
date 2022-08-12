@@ -386,3 +386,20 @@ class Edges(Vertices):
         vertices: Vertices
         """
         return Vertices(self.vertices)
+
+    def extract_edge_group(self, group_name):
+        """
+        Extracts a group of edges into an independent Edges instance.
+
+        Parameters
+        -----------
+        group_name: string
+
+        Returns
+        --------
+        edges: Edges
+        """
+        edge_group = self.edge_groups[group_name]
+        group_edges, group_vertices = utils.groups.extract_element_group(
+                self.get_edges(), self.vertices, edge_group)
+        return Edges(edges=group_edges, vertices=group_vertices)
