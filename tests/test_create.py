@@ -166,7 +166,8 @@ class ProximityTest(c.unittest.TestCase):
                     spline_g.create.revolve(
                         axis=[0, 0, 1],
                         center=[0, 0, 0],
-                        angle=r_angle
+                        angle=r_angle,
+                        degree=False
                     ).control_points[-10:, :],
                     np.matmul(
                         np.hstack((
@@ -182,7 +183,10 @@ class ProximityTest(c.unittest.TestCase):
         # Test 2D Revolutions of lines
         for spline_g in (bezier_line, nurbs_line):
             self.assertTrue(np.allclose(
-                spline_g.create.revolve(angle=r_angle).control_points[-2:, :],
+                spline_g.create.revolve(
+                    angle=r_angle,
+                    degree=False
+                ).control_points[-2:, :],
                 np.matmul(
                     spline_g.control_points,
                     R2.T
@@ -194,7 +198,8 @@ class ProximityTest(c.unittest.TestCase):
             self.assertTrue(np.allclose(
                 spline_g.create.revolve(
                     angle=r_angle,
-                    center=r_center
+                    center=r_center,
+                    degree=False
                 ).control_points[-2:, :],
                 np.matmul(
                     spline_g.control_points - r_center,

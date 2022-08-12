@@ -92,7 +92,7 @@ def unique_rows(
         return_inverse=return_inverse,
         return_counts=return_counts,
     )
-    unique_stuff = list(unique_stuff) # list, to allow item assignment
+    unique_stuff = list(unique_stuff)  # list, to allow item assignment
 
     # switch view to original
     unique_stuff[0] = in_arr[unique_stuff[1]]
@@ -259,7 +259,9 @@ def rotate(arr, rotation, rotation_axis=None, degree=True):
     -----------
     arr: (n, (2 or 3)) list-like
     rotation: list or float
-    rotation_axis: (n, (2 or 3)) list-like
+      angle of rotation (around each axis)
+    rotation_axis: (n, (2 or 3)) list-like 
+      center of rotation
 
     Returns
     --------
@@ -284,3 +286,69 @@ def rotate(arr, rotation, rotation_axis=None, degree=True):
         rarr += rotation_axis
 
         return rarr
+
+
+def rotation_matrix_around_axis(
+        axis=None,
+        rotation=None,
+        degree=True):
+    """
+    Compute rotation matrix given the axis of rotation.
+    Works for both 2D and 3D
+    Uses Rodrigues' formula.
+
+    If axis is not specified, 2D rotation matrix is assumed.
+
+    Parameters
+    -----------
+    axis: list or np.ndarray
+      Axis of rotation in 3D
+    rotation: float
+      angle of rotation in either radiant or degrees
+    degree: bool
+      (Optional) rotation given in degrees.
+      Default is `True`. If `False`, in radian.
+
+    Returns
+    --------
+    rotation_matrix: np.ndarray (3,3) of np.ndarray (2,2)
+    """
+    # Assure angle is specified
+    if rotation is None:
+        raise ValueError("No rotation angle specified.")
+    else:
+        if degree:
+            rotation = np.radians(rotation)
+
+    # Check Problem dimensions
+    if axis is None:
+        problem_dimension = 2
+    else:
+        axis = np.asarray(axis).ravel()
+        if axis.shape[0] != 3:
+            raise ValueError("Axis dimension must be 3D")
+        problem_dimension = 3
+
+    # Assemble rotation matrix
+    if problem_dimension == 2:
+        rotation_matrix = np.array([
+            [np.cos(rotation), -np.sin(rotation)],
+            [np.sin(rotation), np.cos(rotation)]
+        ])
+    else:
+        # See Rodrigues' formula
+        rotation_matrix = np.array(
+            [[0, -axis[2], axis[1]],
+             [axis[2], 0, -axis[0]],
+             [axis[1], axis[0], 0]]
+        )
+        rotation_matrix = (
+            np.eye(3)
+            + np.sin(rotation) * rotation_matrix
+            + (
+                (1 - np.cos(rotation))
+                * np.matmul(rotation_matrix, rotation_matrix)
+            )
+        )
+
+    return rotation_matrix

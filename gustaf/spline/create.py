@@ -72,7 +72,13 @@ def extrude(spline, extrusion_vector=None):
     return type(spline)(**spline_dict)
 
 
-def revolve(spline, axis=None, center=None, angle=None, n_knot_spans=None):
+def revolve(spline,
+            axis=None,
+            center=None,
+            angle=None,
+            n_knot_spans=None,
+            degree=True
+            ):
     """
     Revolve spline around an axis and extend its parametric dimension
 
@@ -87,6 +93,8 @@ def revolve(spline, axis=None, center=None, angle=None, n_knot_spans=None):
     angle : float
     n_knot_spans : int
       number of non-zero knot-elements for result-spline (if applicable)
+    degree : bool
+      use degrees instead of radiant
 
     Returns
     -------
@@ -137,6 +145,14 @@ def revolve(spline, axis=None, center=None, angle=None, n_knot_spans=None):
     # Set Problem dimension
     problem_dimension = cps.shape[1]
 
+    # Make sure axis is ignored for 2D
+    if problem_dimension == 2:
+        axis = None
+
+    # Update angle
+    if degree:
+        angle = np.radians(angle)
+
     # Init center
     if center is not None:
         center = np.asarray(center).ravel()
@@ -176,22 +192,12 @@ def revolve(spline, axis=None, center=None, angle=None, n_knot_spans=None):
     weight = np.sin(half_counter_angle)
     factor = 1 / weight
 
-    # Assemble rotation matrix
-    if problem_dimension == 2:
-        rotation_matrix = np.array([
-            [np.cos(rot_a), -np.sin(rot_a)],
-            [np.sin(rot_a), np.cos(rot_a)]
-        ]).T
-    else:
-        # See Rodrigues' formula
-        rotation_matrix = np.array(
-            [[0, -axis[2], axis[1]],
-             [axis[2], 0, -axis[0]],
-             [axis[1], axis[0], 0]]
-        )
-        rotation_matrix = (np.eye(3) + np.sin(rot_a) * rotation_matrix + (
-            (1 - np.cos(rot_a)) * np.matmul(rotation_matrix, rotation_matrix))
-        ).T
+    # Determine rotation matrix
+    rotation_matrix = utils.arr.rotation_matrix_around_axis(
+                          axis=axis,
+                          rotation=rot_a,
+                          degree=False
+                      ).T
 
     # Start Extrusion
     spline_dict = dict()
