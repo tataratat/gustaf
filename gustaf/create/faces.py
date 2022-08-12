@@ -182,7 +182,7 @@ def simplexify(quad, backslash=False, alternate=True):
         matches = np.argwhere(np.equal(group_tri_edges, group_edges).all(
             axis=2).reshape(-1, number_of_tri_edges))
         # get tri edge IDs
-        tri.edge_groups[group_name] = group_tri_face_ids.flatten()[
-                matches[:,0]] * number_of_tri_edges + matches[:,1]
+        tri.edge_groups[group_name] = group_tri_face_ids[
+                matches[:, 0]] * number_of_tri_edges + matches[:, 1]
 
     return tri
