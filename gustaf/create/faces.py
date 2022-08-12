@@ -156,4 +156,33 @@ def simplexify(quad, backslash=False, alternate=True):
     for group_name, group_face_ids in quad.face_groups.items():
         tri.face_groups[group_name] = tri_face_ids[group_face_ids].flatten()
 
+    # preserve edge groups
+    number_of_quad_edges = 4
+    number_of_tri_edges = 3
+    number_of_edge_nodes = 2
+    # we need the quad face/edge connectivity in a way that allows us to find it
+    # by global quad edge ID
+    quad_edges = quad.get_edges_sorted()
+    # we need the tri face/edge connectivity in a way that allows us to find it
+    # by tri face ID
+    tri_edges = tri.get_edges_sorted().reshape(-1,
+            number_of_tri_edges, number_of_edge_nodes)
+    for group_name, group_edge_ids in quad.edge_groups.items():
+        group_quad_face_ids = group_edge_ids // number_of_quad_edges
+        group_tri_face_ids = tri_face_ids[group_quad_face_ids].flatten()
+        # tri face/edge connectivity
+        group_tri_edges = tri_edges[group_tri_face_ids].reshape(-1,
+                2 * number_of_tri_edges, number_of_edge_nodes)
+        # group edge connectivity
+        # (the shape needs to sort of match that of the tri connectivity)
+        group_edges = quad_edges[group_edge_ids].reshape(-1, 1,
+                number_of_edge_nodes)
+        # find tri edges that match the quad edges
+        # (matches[:,0] are tri indices, matches[:,1] are local edge IDs)
+        matches = np.argwhere(np.equal(group_tri_edges, group_edges).all(
+            axis=2).reshape(-1, number_of_tri_edges))
+        # get tri edge IDs
+        tri.edge_groups[group_name] = group_tri_face_ids.flatten()[
+                matches[:,0]] * number_of_tri_edges + matches[:,1]
+
     return tri
