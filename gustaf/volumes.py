@@ -310,3 +310,14 @@ class Volumes(Faces):
                 self.volumes, self.vertices, volume_group)
         return Volumes(volumes=group_volumes, vertices=group_vertices)
 
+    def extract_all_volume_groups(self):
+        """
+        Extracts all volume groups into independent Volumes instances.
+
+        Returns
+        --------
+        meshes: list of Volumes
+        """
+        return [self.extract_volume_group(group_name)
+                for group_name in self.volume_groups]
+

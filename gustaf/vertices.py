@@ -173,6 +173,17 @@ class Vertices(GustafBase):
         """
         return Vertices(vertices=self.vertices[self.vertex_groups[group_name]])
 
+    def extract_all_vertex_groups(self):
+        """
+        Extracts all vertex groups into independent Vertices instances.
+
+        Returns
+        --------
+        meshes: list of Vertices
+        """
+        return [self.extract_vertex_group(group_name)
+                for group_name in self.vertex_groups]
+
     def get_vertices_unique(
             self,
             tolerance=settings.TOLERANCE,

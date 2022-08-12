@@ -7,34 +7,23 @@ if __name__ == "__main__":
         resolutions=[4, 5, 6]
         )
 
-    plots = []
-
-    # show original mesh
-    plots.append(["v", v.shrink()])
-
-    # show face groups
-    #for face_group in v.face_groups:
-    #    plots.append([face_group, v.extract_face_group(face_group).shrink()])
-    for element_group in v.get_subelement_groups():
-        plots.append([element_group,
-            v.extract_subelement_group(element_group).shrink()])
+    # show boundaries
+    boundary_plot = gus.show.group_plot(v.extract_all_subelement_groups(),
+            shrink=0.98)
 
     # create volume groups
     v.volume_groups["odd_elements"] = np.arange(v.volumes.shape[0], step=2)
+    v.volume_groups["even_elements"] = np.arange(start=1,
+            stop=v.volumes.shape[0], step=2)
 
     # show volume groups
-    for element_group in v.get_element_groups():
-        plots.append([element_group,
-            v.extract_element_group(element_group).shrink()])
-    #for volume_group in v.volume_groups:
-    #    plots.append([volume_group,
-    #        v.extract_volume_group(volume_group).shrink()])
+    group_plot = gus.show.group_plot(v.extract_all_element_groups(),
+            shrink=0.8)
 
     try:
         import vedo
-        gus.show.show_vedo(*plots)
+        gus.show.show_vedo(boundary_plot, group_plot)
     except:
-        for item in plots:
-            print(f"Showing {item[0]}.")
-            item[1].show()
+        for item in boundary_plot + group_plot:
+            item.show()
 

@@ -3,6 +3,7 @@
 Everything related to show/visualization.
 """
 from math import prod
+import random
 
 import numpy as np
 
@@ -509,3 +510,46 @@ def interpolate_vedo_dictcam(cameras, resolutions, spline_degree=1):
                 )
 
     return interpolated_cams
+
+def _vedo_make_multicolor(meshes):
+    """
+    Assign alternating colors to meshes for Vedo display.
+
+    Parameters
+    -----------
+    meshes: list of Vertices, Edges, ...
+    """
+    # get color list (omitting 'gray')
+    color_list = [color + str(number)
+            for number in [5] for color in
+            ["blue", "indigo", "purple", "pink", "red", "orange", "yellow",
+                "green", "teal", "cyan"]]
+    random.seed(12)
+    random.shuffle(color_list)
+    random.seed()
+
+    # apply colors
+    for index, mesh in enumerate(meshes):
+        mesh.vis_dict["c"] = color_list[index % len(color_list)]
+
+def group_plot(meshes, shrink=None, multicolor=True):
+    """
+    Plot a group of meshes in the same plot.
+
+    Optionally shrink all elements and colorize different meshes.
+    This only makes adjustments and returns the group for plotting.
+
+    Parameters
+    -----------
+    meshes: list of meshes
+    shrink: float or None
+    multicolor: bool
+    """
+    if shrink:
+        meshes = [mesh.shrink(shrink) for mesh in meshes]
+    if multicolor:
+        _vedo_make_multicolor(meshes)
+
+    return meshes
+
+

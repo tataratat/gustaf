@@ -9,9 +9,9 @@ if __name__ == "__main__":
             )
 
     # we create vertex and face groups for testing purposes
-    #quad.vertex_groups["odd_vertices"] = np.arange(vertices.vertices.shape[0],
-    #        step=2)
     quad.face_groups["odd_faces"] = np.arange(quad.faces.shape[0], step=2)
+    quad.face_groups["even_faces"] = np.arange(start=1,
+            stop=quad.faces.shape[0], step=2)
 
     extrusion_plots = []
 
@@ -28,40 +28,35 @@ if __name__ == "__main__":
             layers = 3, randomize = True)
     extrusion_plots += [["3 layers", tet3.shrink()]]
 
-    vertex_group_plots = []
-    for vertex_group in quad.vertex_groups:
-        vertex_group_plots += [
-                [f"quad.{vertex_group}",
-                    quad.extract_vertex_group(vertex_group)],
-                [f"tet3.{vertex_group}",
-                    tet3.extract_vertex_group(vertex_group)]
-                ]
+    quad_vertex_plot = gus.show.group_plot(quad.extract_all_vertex_groups())
+    tet_vertex_plot = gus.show.group_plot(tet3.extract_all_vertex_groups())
 
-    face_group_plots = []
-    for edge_group in quad.edge_groups:
-        face_group_plots += [[f"quad.{edge_group}",
-            quad.extract_edge_group(edge_group).shrink()]]
-    for face_group in tet3.face_groups:
-        face_group_plots += [[f"tet3.{face_group}",
-            tet3.extract_face_group(face_group).shrink()]]
+    quad_boundary_plot = gus.show.group_plot(
+            quad.extract_all_subelement_groups(),
+            shrink=0.98)
+    tet_boundary_plot = gus.show.group_plot(
+            tet3.extract_all_subelement_groups(),
+            shrink=0.98)
 
-    volume_group_plots = []
-    for face_group in quad.face_groups:
-        volume_group_plots += [[f"quad.{face_group}",
-            quad.extract_face_group(face_group).shrink()]]
-    for volume_group in tet3.volume_groups:
-        volume_group_plots += [[f"tet3.{volume_group}",
-            tet3.extract_volume_group(volume_group).shrink()]]
+    quad_element_plot = gus.show.group_plot(
+            quad.extract_all_element_groups(),
+            shrink=0.8)
+    tet_element_plot = gus.show.group_plot(
+            tet3.extract_all_element_groups(),
+            shrink=0.8)
 
     try:
         import vedo
         gus.show.show_vedo(*extrusion_plots)
-        gus.show.show_vedo(*vertex_group_plots)
-        gus.show.show_vedo(*face_group_plots)
-        gus.show.show_vedo(*volume_group_plots)
+        gus.show.show_vedo(quad_vertex_plot, tet_vertex_plot)
+        gus.show.show_vedo(quad_boundary_plot, tet_boundary_plot)
+        gus.show.show_vedo(quad_element_plot, tet_element_plot)
     except:
-        for item in (extrusion_plots + vertex_group_plots + face_group_plots
-                + volume_group_plots):
+        for item in extrusion_plots:
             print(f"Showing {item[0]}.")
             item[1].show()
+        for item in (quad_vertex_plot + tet_vertex_plot
+                + quad_boundary_plot + tet_boundary_plot
+                + quad_element_plot + tet_element_plot):
+            item.show()
 

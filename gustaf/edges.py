@@ -416,6 +416,17 @@ class Edges(Vertices):
                 self.get_edges(), self.vertices, edge_group)
         return Edges(edges=group_edges, vertices=group_vertices)
 
+    def extract_all_edge_groups(self):
+        """
+        Extracts all edge groups into independent Edges instances.
+
+        Returns
+        --------
+        meshes: list of Edges
+        """
+        return [self.extract_edge_group(group_name)
+                for group_name in self.edge_groups]
+
     def extract_element_group(self, group_name):
         """
         Extracts a group of elements into an independent mesh instance.
@@ -432,3 +443,16 @@ class Edges(Vertices):
         group_elements, group_vertices = utils.groups.extract_element_group(
                 self.elements(), self.vertices, element_ids)
         return type(self)(elements=group_elements, vertices=group_vertices)
+
+    def extract_all_element_groups(self):
+        """
+        Extracts all element groups into independent mesh instances.
+
+        Returns
+        --------
+        meshes: list of meshes
+        """
+        element_groups = self.get_element_groups()
+        return [self.extract_element_group(group_name)
+                for group_name in element_groups]
+

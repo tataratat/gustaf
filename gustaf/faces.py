@@ -356,6 +356,17 @@ class Faces(Edges):
                 self.get_faces(), self.vertices, face_group)
         return Faces(faces=group_faces, vertices=group_vertices)
 
+    def extract_all_face_groups(self):
+        """
+        Extracts all face groups into independent Faces instances.
+
+        Returns
+        --------
+        meshes: list of Faces
+        """
+        return [self.extract_face_group(group_name)
+                for group_name in self.face_groups]
+
     def extract_subelement_group(self, group_name):
         """
         Extracts a group of subelements into an independent mesh instance.
@@ -374,6 +385,18 @@ class Faces(Edges):
         # create instance of parent class
         return type(self).__mro__[1](elements=group_elements,
                 vertices=group_vertices)
+
+    def extract_all_subelement_groups(self):
+        """
+        Extracts all subelement groups into independent mesh instances.
+
+        Returns
+        --------
+        meshes: list of meshes
+        """
+        subelement_groups = self.get_subelement_groups()
+        return [self.extract_subelement_group(group_name)
+                for group_name in subelement_groups]
 
 
     #def show(self, BC=False):
