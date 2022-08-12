@@ -3,29 +3,41 @@ import numpy as np
 
 if __name__ == "__main__":
 
-    # hexahedron mesh
     hex_mesh = gus.io.hmascii.load("input/hypermesh_hex.hmascii")
-
-    hex_mesh.shrink().show()
-    hex_mesh.tofaces().shrink().show()
-
-    # demonstrate face group display
-    for face_group in hex_mesh.face_groups:
-        hex_mesh.extract_face_group(face_group).show()
-
-    # demonstrate face group to vertex group conversion
-    hex_mesh.face_groups.export_all_vertex_groups()
-    for vertex_group in hex_mesh.vertex_groups:
-        hex_mesh.extract_vertex_group(vertex_group).show()
-
-    # demonstrate vertex group to face group conversion
-    del hex_mesh.face_groups["hull"]
-    hex_mesh.face_groups.import_vertex_group("hull")
-    hex_mesh.extract_face_group("hull").show()
-
-    # tetrahedron mesh
     tet_mesh = gus.io.hmascii.load("input/hypermesh_tet.hmascii")
-    tet_mesh.shrink().show()
 
-    tet_mesh.extract_face_group("hull").show()
+    # display volumes
+    plots = [
+            ["hex", hex_mesh.shrink()],
+            ["tet", tet_mesh.shrink()]
+            ]
+
+    # display vertex groups
+    hex_mesh.face_groups.export_all_vertex_groups()
+    hex_vertex_plot = gus.show.group_plot(
+            hex_mesh.extract_all_vertex_groups())
+    tet_mesh.face_groups.export_all_vertex_groups()
+    tet_vertex_plot = gus.show.group_plot(
+            tet_mesh.extract_all_vertex_groups())
+
+    # display bondaries
+    hex_boundary_plot = gus.show.group_plot(
+            hex_mesh.extract_all_subelement_groups(),
+            shrink=0.98)
+    tet_boundary_plot = gus.show.group_plot(
+            tet_mesh.extract_all_subelement_groups(),
+            shrink=0.98)
+
+    try:
+        import vedo
+        gus.show.show_vedo(*plots)
+        gus.show.show_vedo(hex_vertex_plot, tet_vertex_plot)
+        gus.show.show_vedo(hex_boundary_plot, tet_boundary_plot)
+    except:
+        for item in plots:
+            print(f"Showing {item[0]}.")
+            item[1].show()
+        for item in (hex_vertex_plot + tet_vertex_plot
+                + hex_boundary_plot + tet_boundary_plot):
+            item.show()
 
