@@ -175,7 +175,8 @@ def revolve(spline,
     # Rotation is always performed in half steps
     PI = np.pi
     minimum_n_knot_spans = int(
-        np.ceil(np.abs((angle + settings.TOLERANCE) / PI)))
+        np.ceil(np.abs((angle + settings.TOLERANCE) / PI))
+    )
     if (n_knot_spans) is None or (n_knot_spans < minimum_n_knot_spans):
         n_knot_spans = minimum_n_knot_spans
 
