@@ -237,6 +237,44 @@ class Volumes(Faces):
 
         return self.volumes_unique_inverse
 
+    def get_element_groups(self):
+        """
+        Returns the element group collection.
+
+        In this case, it returns the volume groups.
+
+        Returns
+        --------
+        volume_groups: VolumeGroupCollection
+        """
+        return self.volume_groups
+
+    def get_subelement_groups(self):
+        """
+        Returns the subelement group collection.
+
+        Along with vertex groups, this is the most logical place for boundary
+        information in arbitrary dimensions.
+        In this case, it returns the face groups.
+
+        Returns
+        --------
+        face_groups: FaceGroupCollection
+        """
+        return self.face_groups
+
+    def subelements(self):
+        """
+        Returns the subelement connectivity.
+
+        In this case, it returns the faces.
+
+        Returns
+        --------
+        faces: (nf, nfn) np.ndarray
+        """
+        return self.get_faces()
+
     def tofaces(self, unique=True):
         """
         Returns Faces obj.

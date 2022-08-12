@@ -13,16 +13,22 @@ if __name__ == "__main__":
     plots.append(["v", v.shrink()])
 
     # show face groups
-    for face_group in v.face_groups:
-        plots.append([face_group, v.extract_face_group(face_group).shrink()])
+    #for face_group in v.face_groups:
+    #    plots.append([face_group, v.extract_face_group(face_group).shrink()])
+    for element_group in v.get_subelement_groups():
+        plots.append([element_group,
+            v.extract_subelement_group(element_group).shrink()])
 
     # create volume groups
     v.volume_groups["odd_elements"] = np.arange(v.volumes.shape[0], step=2)
 
     # show volume groups
-    for volume_group in v.volume_groups:
-        plots.append([volume_group,
-            v.extract_volume_group(volume_group).shrink()])
+    for element_group in v.get_element_groups():
+        plots.append([element_group,
+            v.extract_element_group(element_group).shrink()])
+    #for volume_group in v.volume_groups:
+    #    plots.append([volume_group,
+    #        v.extract_volume_group(volume_group).shrink()])
 
     try:
         import vedo

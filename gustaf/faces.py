@@ -267,6 +267,44 @@ class Faces(Edges):
 
         return self.surfaces
 
+    def get_element_groups(self):
+        """
+        Returns the element group collection.
+
+        In this case, it returns the face groups.
+
+        Returns
+        --------
+        face_groups: FaceGroupCollection
+        """
+        return self.face_groups
+
+    def get_subelement_groups(self):
+        """
+        Returns the subelement group collection.
+
+        Along with vertex groups, this is the most logical place for boundary
+        information in arbitrary dimensions.
+        In this case, it returns the edge groups.
+
+        Returns
+        --------
+        edge_groups: EdgeGroupCollection
+        """
+        return self.edge_groups
+
+    def subelements(self):
+        """
+        Returns the subelement connectivity.
+
+        In this case, it returns the edges.
+
+        Returns
+        --------
+        edges: (ne, nen) np.ndarray
+        """
+        return self.get_edges()
+
     def update_edges(self):
         """
         Just to decouple inherited alias
@@ -317,6 +355,25 @@ class Faces(Edges):
         group_faces, group_vertices = utils.groups.extract_element_group(
                 self.get_faces(), self.vertices, face_group)
         return Faces(faces=group_faces, vertices=group_vertices)
+
+    def extract_subelement_group(self, group_name):
+        """
+        Extracts a group of subelements into an independent mesh instance.
+
+        Parameters
+        -----------
+        group_name: string
+
+        Returns
+        --------
+        elements: super
+        """
+        element_ids = self.get_subelement_groups()[group_name]
+        group_elements, group_vertices = utils.groups.extract_element_group(
+                self.subelements(), self.vertices, element_ids)
+        # create instance of parent class
+        return type(self).__mro__[1](elements=group_elements,
+                vertices=group_vertices)
 
 
     #def show(self, BC=False):

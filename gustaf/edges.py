@@ -217,6 +217,18 @@ class Edges(Vertices):
         """
         return self.edges.shape[0]
 
+    def get_element_groups(self):
+        """
+        Returns the element group collection.
+
+        In this case, it returns the edge groups.
+
+        Returns
+        --------
+        edge_groups: EdgeGroupCollection
+        """
+        return self.edge_groups
+
     def update_elements(self, mask, inplace=True):
         """
         Similar to update_vertices, but for elements.
@@ -403,3 +415,20 @@ class Edges(Vertices):
         group_edges, group_vertices = utils.groups.extract_element_group(
                 self.get_edges(), self.vertices, edge_group)
         return Edges(edges=group_edges, vertices=group_vertices)
+
+    def extract_element_group(self, group_name):
+        """
+        Extracts a group of elements into an independent mesh instance.
+
+        Parameters
+        -----------
+        group_name: string
+
+        Returns
+        --------
+        elements: type(self)
+        """
+        element_ids = self.get_element_groups()[group_name]
+        group_elements, group_vertices = utils.groups.extract_element_group(
+                self.elements(), self.vertices, element_ids)
+        return type(self)(elements=group_elements, vertices=group_vertices)
