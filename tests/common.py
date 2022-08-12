@@ -10,7 +10,7 @@ import numpy as np
 
 import gustaf as gus
 
-#gus.utils.log.configure(debug=True)
+# gus.utils.log.configure(debug=True)
 
 # Mesh Stuff
 V = np.array(
@@ -128,6 +128,44 @@ B1P2D_MUSTER = gus.BSpline(
     control_points=None,
 )
 
+CTPS_2D = np.array(
+    [
+        [0, 0],
+        [1, 0],
+        [2, 0],
+        [3, 0],
+        [4, 0],
+        [0, 1],
+        [1, 2],
+        [2, 1],
+        [3, 2],
+        [4, 1]
+    ],
+    dtype=np.float64,
+)
+
+KV_2D = [[0, 0, 0, .3, .7, 1, 1, 1], [0, 0, 1, 1]]
+
+DEGREES_2D_NU = [2, 1]
+DEGREES_2D_U = [4, 1]
+
+WEIGHTS_2D = np.array(
+    [
+        [1.0],
+        [0.8],
+        [1.0],
+        [0.8],
+        [1.0],
+        [1.0],
+        [0.8],
+        [1.0],
+        [0.8],
+        [1.0]
+    ],
+    dtype=np.float64,
+)
+
+
 # alias
 logconfig = gus.utils.log.configure
 
@@ -149,6 +187,11 @@ COMMON = namedtuple(
         "tet",
         "quad",
         "hexa",
+        "ctps2d",
+        "kv2d",
+        "degrees2dnu",
+        "degrees2du",
+        "weights2s"
     ]
 )
 
@@ -168,4 +211,9 @@ C = COMMON(
     tet=TET_MUSTER,
     quad=QUAD_MUSTER,
     hexa=HEXA_MUSTER,
+    ctps2d=CTPS_2D,
+    kv2d=KV_2D,
+    degrees2dnu=DEGREES_2D_NU,
+    degrees2du=DEGREES_2D_U,
+    weights2s=WEIGHTS_2D
 )

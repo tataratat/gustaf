@@ -14,6 +14,7 @@ from gustaf import settings
 from gustaf import show as showmodule
 from gustaf._base import GustafBase
 from gustaf.vertices import Vertices
+from gustaf.spline.create import _Creator
 from gustaf.spline.extract import _Extractor
 from gustaf.spline.proximity import _Proximity
 from gustaf.spline._utils import to_res_list
@@ -311,6 +312,25 @@ class GustafSpline(GustafBase):
         return self._extractor
 
     @property
+    def create(self):
+      """
+      Returns spline creator
+      Can be used to create new splines using geometric relations
+
+      Examples
+      --------
+      >>> prism = spline.create.extrude(axis=[1,4,1])
+
+      Parameters
+      ----------
+      None
+
+      Returns
+      spline._Creator
+      """
+      return self._creator
+
+    @property
     def proximity(self):
         """
         Returns spline proximity helper.
@@ -422,6 +442,8 @@ class Bezier(GustafSpline, splinepy.Bezier):
         Attributes
         -----------
         extract: _Extractor
+        create: _Creator
+        proximity: _Proximity
 
         Parameters
         -----------
@@ -439,6 +461,41 @@ class Bezier(GustafSpline, splinepy.Bezier):
 
         self._extractor = _Extractor(self)
         self._proximity = _Proximity(self)
+        self._creator = _Creator(self)
+
+    @property
+    def bezier(self):
+        """
+        Returns same parametric representation as Bezier Spline
+
+        Parameters
+        ----------
+        None
+
+        Returns
+        -------
+        same : Bezier
+        """
+        return self.copy()
+
+    @property
+    def rationalbezier(self):
+        """
+        Returns same parametric representation as Rational Bezier Spline
+
+        Parameters
+        ----------
+        None
+
+        Returns
+        -------
+        same : RationalBezier
+        """
+        return RationalBezier(
+            degrees=self.degrees,
+            control_points=self.control_points,
+            weights=np.ones(self.control_points.shape[0])
+        )
 
     @property
     def bspline(self):
@@ -493,6 +550,8 @@ class RationalBezier(GustafSpline, splinepy.RationalBezier):
         Attributes
         -----------
         extract: _Extractor
+        create: _Creator
+        proximity: _Proximity
 
         Parameters
         -----------
@@ -512,6 +571,22 @@ class RationalBezier(GustafSpline, splinepy.RationalBezier):
 
         self._extractor = _Extractor(self)
         self._proximity = _Proximity(self)
+        self._creator = _Creator(self)
+        
+    @property
+    def rationalbezier(self):
+        """
+        Returns same parametric representation as Rational Bezier Spline
+
+        Parameters
+        ----------
+        None
+
+        Returns
+        -------
+        same : RationalBezier
+        """
+        return self.copy()
 
     @property
     def nurbs(self):
@@ -550,6 +625,8 @@ class BSpline(GustafSpline, splinepy.BSpline):
         Attributes
         -----------
         extract: _Extractor
+        create: _Creator
+        proximity: _Proximity
 
         Parameters
         -----------
@@ -569,6 +646,22 @@ class BSpline(GustafSpline, splinepy.BSpline):
 
         self._extractor = _Extractor(self)
         self._proximity = _Proximity(self)
+        self._creator = _Creator(self)
+
+    @property
+    def bspline(self):
+        """
+        Returns same parametric representation as BSpline.
+
+        Parameters
+        -----------
+        None
+
+        Returns
+        --------
+        same_bspline : BSpline
+        """
+        return self.copy()
 
     @property
     def nurbs(self):
@@ -629,6 +722,8 @@ class NURBS(GustafSpline, splinepy.NURBS):
         Attributes
         -----------
         extract: _Extractor
+        create: _Creator
+        proximity: _Proximity
 
         Parameters
         -----------
@@ -650,6 +745,7 @@ class NURBS(GustafSpline, splinepy.NURBS):
 
         self._extractor = _Extractor(self)
         self._proximity = _Proximity(self)
+        self._creator = _Creator(self)
 
 
     @property
@@ -696,6 +792,21 @@ class NURBS(GustafSpline, splinepy.NURBS):
           "<NURBS>.extract.beziers()"
       )
       return None
+    
+    @property
+    def nurbs(self):
+        """
+        Returns same parametric representation as nurbs.
+
+        Parameters
+        -----------
+        None
+
+        Returns
+        --------
+        same_nurbs: NURBS
+        """
+        return self.copy()
 
 
 def from_mfem(nurbs_dict):
