@@ -36,7 +36,7 @@ if __name__ == "__main__":
         [0.5,0.2],[1,0.2],[0,0.4],[0.5,0.4],[1,0.4]])
     
     ffd_2d = gus.ffd.FFD(mesh_2d, spline_2d)
-    ffd_2d.show()
+    ffd_2d.show(title="2D FFD - BSpline")
 
 
 
@@ -67,7 +67,7 @@ if __name__ == "__main__":
 
     ffd_3d = gus.ffd.FFD(volume_3d, spline_3d)
 
-    ffd_3d.show()
+    ffd_3d.show(title="3D FFD - BSpline")
 
 
     # RationalBezier in 2D
@@ -80,4 +80,4 @@ if __name__ == "__main__":
         
 
     spline_2d_bez = gus.ffd.FFD(mesh_2d, spline_2d)
-    spline_2d_bez.show()
+    spline_2d_bez.show(title="Bezier Spline based FFD")

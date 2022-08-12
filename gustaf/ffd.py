@@ -8,14 +8,14 @@ Adaptation of previous implementation in internal python package gustav by
 Jaewook Lee. 
 """
 from typing import List, Optional, Union
-from xml.dom.pulldom import parseString
 import numpy as np
 from gustaf._base import GustafBase
 from gustaf.faces import Faces
-from gustaf.spline.base import Bezier
 from gustaf.show import show_vedo
 from gustaf._typing import SPLINE_TYPES, MESH_TYPES
 from gustaf.create.spline import with_bounds
+from gustaf import settings
+from .utils.arr import bounds
 
 
 class FFD (GustafBase):
@@ -277,22 +277,13 @@ class FFD (GustafBase):
         if "Bezier" not in spline.whatami:
             for knot_vector in spline.knot_vectors:
                 # check if knot_vectors fist element is 0 and last element is 1
-                if not (knot_vector[0] == 0 and knot_vector[-1] == 1):
+                if not (
+                        np.isclose(knot_vector[0], 0, atol=settings.TOLERANCE) 
+                        and 
+                        np.isclose(knot_vector[-1], 1, atol=settings.TOLERANCE)
+                        ):
                     return False
         return True
-               
-    def _is_mesh_dimension_same_as_spline_parametric_dimension(self) -> bool:
-        """Checks if the mesh and parametric dimension of the spline are the 
-        same.
-
-        Returns
-        -------
-        bool
-            True if the dimensions are the same, else False.
-        """   
-        if self._mesh.vertices.shape[1] == len(self._spline_offset):
-            True
-        False
 
     def _scale_mesh_vertices(self):
         """
@@ -309,17 +300,16 @@ class FFD (GustafBase):
             self._q_vertices = self._mesh.vertices.copy()
         
         original_mesh_bounds = self._mesh.get_bounds()
-        self._mesh_offset = list()
-        self._mesh_scale = list()
-        for mesh_bound  in original_mesh_bounds.T:
-            self._mesh_offset.append(-mesh_bound[0])
-            self._mesh_scale.append(1/(mesh_bound[-1]-mesh_bound[0]))
 
-        # transform vertices
-        self._q_vertices += self._mesh_offset
-        # scale vertices
-        scale_matrix = np.eye(len(self._mesh_scale))*self._mesh_scale
-        self._q_vertices = self._q_vertices @ scale_matrix
+        # save mesh offset and scale for reasons
+        self._mesh_offset = original_mesh_bounds[0]
+        self._mesh_scale = 1/(original_mesh_bounds[1]-
+                              original_mesh_bounds[0])
+        
+        # scale and offset vertices coordinates
+        self._q_vertices -= self._mesh_offset
+        self._q_vertices *= self._mesh_scale
+
         self._logd("Successfully scaled and transformed mesh vertices!")
 
     def _deform(self):
@@ -531,7 +521,7 @@ class FFD (GustafBase):
 #         self._naive_spline.reduce_degree(*args, **kwargs)
 
         
-    def show(self):
+    def show(self, title: str = "Gustaf - FFD"):
         """
         Visualize. Shows the deformed mesh and the current spline.
 
@@ -565,6 +555,7 @@ class FFD (GustafBase):
                 #  self.mesh.showable(),
                 mesh_outer_faces.toedges(unique=True),
                 *self._spline.showable().values()],
+                title=title,
                 )
         else:
 
@@ -576,4 +567,5 @@ class FFD (GustafBase):
                 #  self.mesh.showable(),
                 self.mesh.toedges(unique=True),
                 *self._spline.showable().values()],
+                title=title,
                 )
