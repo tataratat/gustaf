@@ -260,7 +260,7 @@ def rotate(arr, rotation, rotation_axis=None, degree=True):
     arr: (n, (2 or 3)) list-like
     rotation: list or float
       angle of rotation (around each axis)
-    rotation_axis: (n, (2 or 3)) list-like 
+    rotation_axis: (n, (2 or 3)) or (2 or 3) list-like 
       center of rotation
 
     Returns
