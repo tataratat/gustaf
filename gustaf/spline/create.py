@@ -195,9 +195,9 @@ def revolve(spline,
 
     # Determine rotation matrix
     rotation_matrix = utils.arr.rotation_matrix_around_axis(
-                          axis=axis,
-                          rotation=rot_a,
-                          degree=False
+        axis=axis,
+        rotation=rot_a,
+        degree=False
                       ).T
 
     # Start Extrusion
