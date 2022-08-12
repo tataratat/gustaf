@@ -63,6 +63,7 @@ def show_vedo(*args, **kwargs,):
     close = kwargs.get("close", None)
     size = kwargs.get("size", "auto")
     cam = kwargs.get("cam", None)
+    title = kwargs.get("title", "Gustaf renderer")
 
     def clear_vedoplotter(plotter, numrenderers, skipcl=skip_clear):
         """enough said."""
@@ -88,7 +89,8 @@ def show_vedo(*args, **kwargs,):
 
     # get plotter
     if plt is None:
-        plt = vedo.Plotter(N=N, sharecam=False, offscreen=offs, size=size,)
+        plt = vedo.Plotter(
+            N=N, sharecam=False, offscreen=offs, size=size, title=title)
 
     else:
         # check if plt has enough Ns
@@ -99,10 +101,12 @@ def show_vedo(*args, **kwargs,):
                 "Number of args exceed given vedo.Plotter's capacity.",
                 "Assigning a new one",
             )
-            if close:  # only if it is explicitly stated
-                plt.close()  # Hope that this truely releases..
+            title = plt.title
+            if close: # only if it is explicitly stated
+                plt.close() # Hope that this truely releases..
             # assign a new one
-            plt = vedo.Plotter(N=N, sharecam=False, offscreen=offs, size=size)
+            plt = vedo.Plotter(
+                N=N, sharecam=False, offscreen=offs, size=size, title=title)
 
     # loop and plot
     for i, arg in enumerate(args):
