@@ -137,6 +137,11 @@ def extrude_to_tet(
         for vertex_id in face:
             node_elements[vertex_id].append(face_index)
 
+    # prepare element map
+    # (maps from flat element ID to extruded element IDs)
+    element_map_counts = np.full((number_of_2d_faces, layers), 0)
+    element_map = np.full((number_of_2d_faces, layers, 3), -1)
+
     volume_iterator = 0
     # loop over 2D (flat) nodes
     vertex_range = np.arange(number_of_2d_nodes)
@@ -153,6 +158,12 @@ def extrude_to_tet(
                 # create element
                 volumes_3d[volume_iterator] = np.union1d(anchors,
                         top_nodes[source.faces[face_id]])
+
+                # update element map
+                element_map[face_id, layer,
+                        element_map_counts[face_id, layer]] = volume_iterator
+                element_map_counts[face_id, layer] += 1
+
                 volume_iterator += 1
 
             # lift last node
@@ -160,20 +171,70 @@ def extrude_to_tet(
 
     tet = Volumes(vertices=vertices_3d, volumes=volumes_3d)
 
+    # create vertex map
+    # (map from flat vertex ID to extruded vertex IDs)
+    vertex_map = np.arange(number_of_3d_nodes).reshape(
+            (number_of_2d_nodes, -1), order='F')
+
     # vertex groups are also extruded
     for vertex_group, vertex_ids in source.vertex_groups.items():
-        tet.vertex_groups[vertex_group] = (vertex_ids.repeat(layers + 1) +
-                np.tile(np.arange(layers + 1) * number_of_2d_nodes,
-                        vertex_ids.shape[0]))
+        tet.vertex_groups[vertex_group] = vertex_map[vertex_ids].flatten()
     # two additional vertex groups are added at the bottom and top
     tet.vertex_groups[bottom_group] = np.arange(number_of_2d_nodes)
     tet.vertex_groups[top_group] = (np.arange(number_of_2d_nodes) + 
             layers * number_of_2d_nodes)
 
-    # face groups are kept on the boundaries
     # two additional face groups are added at the bottom and top
     tet.face_groups.import_vertex_group(bottom_group)
     tet.face_groups.import_vertex_group(top_group)
+
+    # face groups are converted into volume groups
+    for group_name, face_ids in source.face_groups.items():
+        tet.volume_groups[group_name] = element_map[face_ids, :,
+                :].flatten()
+
+    # create map from extruded volume IDs to extruded face connectivity given as
+    # flat node IDs
+    # (shape is number of volumes, number of faces per volume,
+    # number of nodes per face)
+    volume_face_connectivity = tet.get_faces().reshape(number_of_3d_volumes,
+            4, 3) % number_of_2d_nodes
+    volume_face_connectivity.sort()
+
+    # edge groups are converted into face groups
+    number_of_tet_faces = 4
+    number_of_tri_edges = 3
+    number_of_tet_face_nodes = 3
+    number_of_tri_edge_nodes = 2
+    number_of_tets_per_tri = 3 * layers
+    # we need the tri face/edge connectivity in a way that allows us to find it
+    # by the global tri edge ID
+    tri_edges = source.get_edges_sorted()
+    # we need the tet volume/face connectivity in a way that allows us to find
+    # it by the tet volume ID
+    # (we need to find the original node IDs for the tet nodes)
+    tet_faces = np.sort(tet.get_faces() % number_of_2d_nodes).reshape(-1,
+            number_of_tet_faces, number_of_tet_face_nodes)
+
+    for group_name, group_edge_ids in source.edge_groups.items():
+        group_tri_face_ids = group_edge_ids // number_of_tri_edges
+        group_tet_volume_ids = element_map[group_tri_face_ids, :, :].flatten()
+        # tet volume/face connectivity
+        group_tet_faces = tet_faces[group_tet_volume_ids].reshape(-1,
+                number_of_tets_per_tri * number_of_tet_faces, 1,
+                number_of_tet_face_nodes)
+        # group edge connectivity
+        group_edges = tri_edges[group_edge_ids].reshape(-1, 1,
+                number_of_tri_edge_nodes)
+        # we need to create possible faces from edges
+        group_faces = group_edges[:, :, [[0, 0, 1], [0, 1, 1]]]
+        # find tet faces that match the possible faces
+        # (matches[:,0] are tet indices, matches[:,1] are local face IDs)
+        matches = np.argwhere(np.equal(group_tet_faces,
+            group_faces).all(axis=3).any(axis=2).reshape(-1,
+                number_of_tet_faces))
+        tet.face_groups[group_name] = group_tet_volume_ids[
+                matches[:, 0]] * number_of_tet_faces + matches[:, 1]
 
     return tet
 
