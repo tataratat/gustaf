@@ -67,8 +67,8 @@ def extrude_to_tet(
         thickness = 1.,
         layers = 1,
         randomize = False,
-        bottom_group = "bottom",
-        top_group = "top"
+        bottom_group = "low_z",
+        top_group = "high_z"
         ):
     """
     Given triangular or quadrangular faces, create three-dimensional tetrahedral
