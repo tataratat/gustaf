@@ -81,10 +81,11 @@ def export(fname, mesh):
     np.savez(fname, **dic)
 
 
-
 def to_nutils_simplex(mesh):
     """
-    Converts a Gustaf_Mesh to a Dictionary, which can be interpreted by nutils.mesh.simplex(**to_nutils_simplex(mesh)). Only work for Triangles and Tetrahedrons!
+    Converts a Gustaf_Mesh to a Dictionary, which can be interpreted by 
+    nutils.mesh.simplex(**to_nutils_simplex(mesh)). Only work for 
+    Triangles and Tetrahedrons!
 
     Parameters
     -----------
@@ -95,10 +96,8 @@ def to_nutils_simplex(mesh):
     dic_to_nutils: dict
     """
 
-    dic_to_nutils = dict()
-
-    vertices = mesh.get_vertices_unique()
-    faces = mesh.get_faces()			
+    vertices = mesh.vertices
+    faces = mesh.get_faces()		
     whatami = mesh.get_whatami()
 
     #In 2D, element = face. In 3D, element = volume.
@@ -113,12 +112,14 @@ def to_nutils_simplex(mesh):
         elements = volumes     
     else:
         raise TypeError('Only Triangle and Tetrahedrons are accepted.') 
+
+    dic_to_nutils = dict()
     
     #Sort the Node IDs for each Element. 
     elements_sorted = np.zeros(elements.shape)
     sort_array = np.zeros(elements.shape)
     
-    for index, row in enumerate(elements, start = 0):
+    for index, row in enumerate(elements):
         elements_sorted[index] = np.sort(row)	
         sort_array[index] = np.argsort(row)
     elements_sorted = elements_sorted.astype(int)	
@@ -126,7 +127,7 @@ def to_nutils_simplex(mesh):
 
     #Let`s get the Boundaries
     bcs = dict()
-    bcs_in = mixd.as_mrng(dimension + 1,mesh)	
+    bcs_in = mixd.make_mrng(mesh)	
     bcs_in = np.ndarray.reshape(bcs_in,(int(len(bcs_in)/(dimension + 1)),(dimension + 1)))
 
     bound_id = np.unique(bcs_in)
@@ -137,14 +138,14 @@ def to_nutils_simplex(mesh):
         
     #Let's reorder the bcs file with the sort_array
     bcs_sorted = np.zeros(bcs_in.shape)	
-    for index, sorts in enumerate(sort_array, start = 0):
+    for index, sorts in enumerate(sort_array):
         bcs_sorted[index] = bcs_in[index][sorts]
     bcs_sorted = bcs_sorted.astype(int)
         
     for bi in bound_id:
         temp = []
-        for elid, el in enumerate(bcs_sorted, start = 0):
-            for index, edge in enumerate(el, start = 0):
+        for elid, el in enumerate(bcs_sorted):
+            for index, edge in enumerate(el):
                 if bi == edge:
                     temp.append([elid,index])
         bcs.update(

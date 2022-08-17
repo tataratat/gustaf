@@ -185,18 +185,11 @@ def export(mesh, fname, space_time=False):
 
     # write bc
     with open(bc_file, "wb") as bf:
-        nbelem = 3
-
-        if whatami.startswith("quad") or whatami.startswith("tet"):
-            nbelem += 1
-        elif whatami.startswith("hexa"):
-            nbelem += 3
-
         # init boundaries with -1, as it is the value for non-boundary.
         # alternatively, they could be (-1 * neighbor_elem_id).
         # But they aren't.
 
-        boundaries = as_mrng(nbelem,mesh)
+        boundaries = make_mrng(mesh)
 
         for b in boundaries:
             bf.write(struct.pack(big_endian_int, b))
@@ -225,16 +218,14 @@ def export(mesh, fname, space_time=False):
         # signature
         infof.write("\n\n\n# MIXD generated using `gustaf`.\n")
 
-def as_mrng(nbelem,mesh):
+def make_mrng(mesh):
     """
-    Returns the mrng as np.array.
-    Supports triangle, (quadrilateral), tetrahedron, and (hexahedron).
-    Only tested for tri and tet.
+    Builds and return mrng array based on `mesh.BC`
+    Supports `Faces` and `Volumes`.
 
     Parameters
     -----------
     mesh: Faces or Volumes
-    nbelem: int
       Number of participating elements
 
     Returns
@@ -242,6 +233,16 @@ def as_mrng(nbelem,mesh):
     boundaries : ndarray
       The mrng-array.
     """
+
+    # determine number of subelements
+    whatami = mesh.get_whatami()
+    nbelem = 3
+
+    if whatami.startswith("quad") or whatami.startswith("tet"):
+        nbelem += 1
+    elif whatami.startswith("hexa"):
+        nbelem += 3
+
     boundaries = np.empty(mesh.elements().shape[0] * nbelem, dtype=int)
     boundaries[:] = -1
 
