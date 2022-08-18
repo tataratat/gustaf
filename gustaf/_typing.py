@@ -7,6 +7,5 @@ from gustaf.vertices import Vertices
 from gustaf.volumes import Volumes
 
 
-
 SPLINE_TYPES = Union[Bezier, RationalBezier, BSpline, NURBS]
 MESH_TYPES = Union[Vertices, Edges, Faces, Volumes]

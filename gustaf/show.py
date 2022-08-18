@@ -102,8 +102,8 @@ def show_vedo(*args, **kwargs,):
                 "Assigning a new one",
             )
             title = plt.title
-            if close: # only if it is explicitly stated
-                plt.close() # Hope that this truely releases..
+            if close:  # only if it is explicitly stated
+                plt.close()  # Hope that this truely releases..
             # assign a new one
             plt = vedo.Plotter(
                 N=N, sharecam=False, offscreen=offs, size=size, title=title)

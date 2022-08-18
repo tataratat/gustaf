@@ -27,27 +27,41 @@ class FFD (GustafBase):
         # is_partial: bool=False,
     ):
         """
-        FreeFormDeformation. Here, spline is always the boss. Meaning, once
-        spline is defined using setter, we always fit mesh into the spline.
-        For partial FFD, no one needs to be the boss. If no spline is defined,
-        a simple spline wraps given mesh as default.
+        Free-form deformation is a method used to deform an object by a 
+        deformation function. In our case the object is given via a mesh, the 
+        currently supported mesh-types are given by the variable 
+        :py:const:`gustaf._typing.MESH_TYPES`, and the deformations function 
+        by a spline, supported splines are given by the variable
+        :py:const.:`gustaf._typing.SPLINE_TYPES`. The splines parametric 
+        dimension will be scaled in to a unit-hypercube as well as the 
+        original meshes dimensions. The scale of the resulting mesh is given 
+        by the geometric dimension bounds of the spline. 
+
+        To update the spline, please use any of the provided function. You can 
+        either completely overwrite the spline or just update the 
+        control_points or knot_vector. To get the deformed mesh according to 
+        the latest spline just get the mesh attribute.
+
+        A previously available partial FFD is currently not implemented. It is 
+        also not yet planned when it will be readded.
 
         Parameters
         ----------
         mesh: MESH_TYPES
-            Base mesh of the FFD
+            Mesh used in the FFD
         spline: SPLINE_TYPE
-            Original Spline of the FFD
-        is_partial: bool
-            True if mesh is only partially deformed (currently not supported)
+            Spline used in the FFD.
 
-        Attributes
-        ----------
+        Class Attributes
+        ----------------
         _spline: SPLINE_TYPES
+            Internal current spline
         _mesh: MESH_TYPES
+            unscaled base mesh
         _q_vertices: np.ndarray (n, dim)
+            Scaled vertices of the base mesh
         _is_partial: bool
-        calculated: bool
+            Currently not used, NotImplemented
 
         Returns
         -------
@@ -58,41 +72,26 @@ class FFD (GustafBase):
         self._mesh: MESH_TYPES = None
         self._q_vertices = None
         self._is_partial = False
-        self.calculated = False
 
         self.mesh = mesh
         if spline is None:
             # if no spline is given create a very naive spline with physical
-            # bounds defined bny the mesh and parametric bounds defined by a 
+            # bounds defined bny the mesh and parametric bounds defined by a
             # hypercube
             self.spline = with_bounds(
-                [[0]*self._q_vertices.shape[1],[1]*self._q_vertices.shape[1]],
-                 self._mesh.bounds)
+                [[0]*self._q_vertices.shape[1], [1]*self._q_vertices.shape[1]],
+                self._mesh.bounds)
         else:
             self.spline = spline
         self.is_partial = False
 
-
-
         self._check_dimensions()
 
-    
     def _check_dimensions(self):
-        """Checks dimensions and ranges critical for a correct FFD calculation
+        """
+        Checks dimensions and ranges critical for a correct FFD calculation
 
-        The following things are checked:
-        is_partial:
-
-            Currently nothing since not implemented
-
-        else:
-            parametric dimension of spline is equal to geometric dimension of 
-            spline
-
-            geometric dimension of spline is the same as mesh dimension
-
-            # can currently not be checked
-            geometric range of spline is same as geometric range of mesh
+        TODO: range of spline is same as geometric range of mesh
         """
         if self._is_partial:
             pass
@@ -103,13 +102,6 @@ class FFD (GustafBase):
             if not self._spline.dim == self._mesh.vertices.shape[1]:
                 self._logw("The geometric dimensions of the spline and the "
                            "dimension of the mesh are not the same.")
-            # No easy way to compare the bounds of the spline and mesh
-            # since the spline could already be deformed when initializing
-            
-            # if not self._spline.control_point_bounds == self._mesh.bounds:
-            #     self._logw("The bounds of the control "
-            #                "spline are not the same.")
-
 
     @property
     def mesh(self,) -> MESH_TYPES:
@@ -120,7 +112,7 @@ class FFD (GustafBase):
         -------
         MESH_TYPES
             Current Mesh with the deformation according to the current spline.
-        """        
+        """
         self._deform()
         return self._mesh.copy()
 
@@ -142,8 +134,8 @@ class FFD (GustafBase):
         """
         if self._mesh is not None:
             self._logw("Resetting original Mesh, this is not intended "
-            "behavior. Please create a new FFD object when replacing the mesh"
-            ".")
+                       "behavior. Please create a new FFD object when "
+                       "replacing the mesh.")
 
         self._logi("Setting mesh.")
         self._logi("Mesh Info:")
@@ -156,13 +148,12 @@ class FFD (GustafBase):
         self._mesh = mesh.copy() # copy to make sure given mesh stays untouched
 
         self._scale_mesh_vertices()
-        self.calculated = False
 
     @property
     def spline(self):
         """
-        Returns a copy of current spline. This is to prevent unnecessary
-        tangling
+        Returns a copy of the spline. Please use the setter to explicitly make
+        changes to the spline.
 
         Parameters
         -----------
@@ -198,7 +189,6 @@ class FFD (GustafBase):
         self._logi(
             f"  Parametric dimensions: {spline.para_dim}."
         )
-        self.calculated = False
 
     @property
     def is_partial(self):
@@ -214,7 +204,10 @@ class FFD (GustafBase):
         self._is_partial: bool
         """
         if self._is_partial:
-            self._logw("Partial FFD is currently not supported.")
+            raise NotImplementedError(
+                "Partial FFD is currently not implemented, if you need it "
+                "please contact us to show us the interest for this "
+                "functionality")
         return self._is_partial
 
     @is_partial.setter
@@ -231,25 +224,15 @@ class FFD (GustafBase):
         None
         """
         if is_partial:
-            self._logw("Partial FFD is currently not supported.")
-        # self._is_partial = is_partial
-        # self._logd("This FFD will be:")
-        # if is_partial:
-        #     self._logw("  Partial!")
-        #     self._logw("  Be careful! Else, mesh might tangle!")
-        #     self._offset = None
-        #     self._scale = None
-
-        # else:
-        #     self._logd("  Non-partial!")
-
+            raise NotImplementedError(
+                "Partial FFD is currently not implemented, if you need it "
+                "please contact us to show us the interest for this "
+                "functionality")
 
     def _scale_parametric_dimension_to_hypercube(self):
         """Scales all knot_vectors of the spline to a range of [0,1]
         """
-        if self._is_parametric_room_hypercube(self._spline):
-            pass
-        else:
+        if not self._is_parametric_room_hypercube(self._spline):
             knv = []
             for knot_vector in self._spline.knot_vectors:
                 knot_vector = [kv_v - knot_vector[0] for kv_v in knot_vector]
@@ -257,11 +240,10 @@ class FFD (GustafBase):
                 knv.append(knot_vector)
             self._spline.knot_vectors = knv
 
-
     def _is_parametric_room_hypercube(
-            self,
-            spline: SPLINE_TYPES
-        ) -> bool:
+        self,
+        spline: SPLINE_TYPES
+    ) -> bool:
         """Checks if the parametric range of the spline is a hypercube.
 
         Parameters
@@ -274,14 +256,14 @@ class FFD (GustafBase):
         bool
             True if parametric room is hypercube, else False
         """
-        if "Bezier" not in spline.whatami:
+        if "knot_vectors" in spline.required_properties:
             for knot_vector in spline.knot_vectors:
                 # check if knot_vectors fist element is 0 and last element is 1
                 if not (
-                        np.isclose(knot_vector[0], 0, atol=settings.TOLERANCE) 
-                        and 
+                        np.isclose(knot_vector[0], 0, atol=settings.TOLERANCE)
+                        and
                         np.isclose(knot_vector[-1], 1, atol=settings.TOLERANCE)
-                        ):
+                ):
                     return False
         return True
 
@@ -289,23 +271,18 @@ class FFD (GustafBase):
         """
         Scales the mesh vertices into the dimension of a hypercube and save 
         them in self._q_vertices.
-        """        
+        """
         self._logd("Fitting mesh into spline's parametric space.")
-        if self._is_partial:
-            # currently not supported
-            # should add functionality here for it
-            # define the q_vertices here
-            pass
-        else:
+        if not self.is_partial:
             self._q_vertices = self._mesh.vertices.copy()
-        
+
         original_mesh_bounds = self._mesh.get_bounds()
 
         # save mesh offset and scale for reasons
         self._mesh_offset = original_mesh_bounds[0]
-        self._mesh_scale = 1/(original_mesh_bounds[1]-
+        self._mesh_scale = 1/(original_mesh_bounds[1] -
                               original_mesh_bounds[0])
-        
+
         # scale and offset vertices coordinates
         self._q_vertices -= self._mesh_offset
         self._q_vertices *= self._mesh_scale
@@ -325,76 +302,22 @@ class FFD (GustafBase):
         --------
         None
         """
-        # no changes since last evaluation/deformation
-        if self.calculated:
-            return
-
         if self._mesh is None or self._spline is None:
             raise RuntimeError(
                 "Either `mesh` or `spline` is not defined for FFD."
             )
 
-        # One thing to keep in mind is that in this case, user needs to make
-        # sure that part of the mesh that they want to deform is positive
-        # definite.
-        if self.is_partial:
-            self._logw("The partial FFD is currently not available.")
-            # self._logd("Applying partial FFD...")
-
-            # # Instead of checking for "collision", just try to select vertices.
-            # # Note: range is (), not []!
-            # v_ind = self._original_mesh.select_vertices(
-            #     "xyz_range",
-            #     criteria=utils.bounds_to_ranges(
-            #         self._naive_spline.knot_vectors_bounds
-            #     ),
-            # )
-
-            # if len(v_ind) > 0:
-            #     self._logd(
-            #         "  There are {v}/{vt} vertices to deform.".format(
-            #             v=len(v_ind),
-            #             vt=len(self._mesh.vertices),
-            #         )
-            #     )
-
-            #     # Add new axis if current spline maps to higher dim
-            #     if (
-            #         self._spline.physical_dim != self._mesh.vertices.shape[1]
-            #         and self._spline.physical_dim > self._spline.parametric_dim
-            #     ):
-            #         for _ in range(
-            #             self.spline.physical_dim 
-            #             - self.spline.parametric_dim
-            #         ):
-            #             self._mesh.vertices = np.hstack(
-            #                 (
-            #                     self._original_mesh.vertices,
-            #                     np.zeros((self._mesh.vertices.shape[0], 1)),
-            #                 )
-            #             )
-
-            #     # Here, no need to use q_vertices, since we don't deform
-            #     # original
-            #     self._mesh.vertices[v_ind] = self._spline.evaluate(
-            #         self._original_mesh.vertices[v_ind]
-            #     )
-            #     self._logd("partial FFD successful.")
-            # else:
-            #    self._logw(
-            #         "Spline does not contain any mesh. Nothing to deform."
-            #     )
-
-            return
-
-        self._logd("Applying FFD...")
+        self._logd("Applying FFD: Transforming vertices")
         # Here, we take _q_vertices, due to possible scale/offset.
+
+
+        print(self.spline.knot_vector_bounds)
+        print(self._q_vertices)
+
         self._mesh.vertices = self._spline.evaluate(
             self._q_vertices
         )
         self._logd("FFD successful.")
-        self.calculated = True
-    
 
     @property
     def control_points(self):
@@ -470,7 +393,6 @@ class FFD (GustafBase):
         None
         """
         self._spline.elevate_degree(*args, **kwargs)
-#         self._naive_spline.elevate_degree(*args, **kwargs)
 
     def insert_knots(self, *args, **kwargs):
         """
@@ -486,7 +408,6 @@ class FFD (GustafBase):
         None
         """
         self._spline.insert_knots(*args, **kwargs)
-#         self._naive_spline.insert_knots(*args, **kwargs)
 
     def remove_knots(self, *args, **kwargs):
         """
@@ -502,7 +423,6 @@ class FFD (GustafBase):
         None
         """
         self._spline.remove_knots(*args, **kwargs)
-#         self._naive_spline.remove_knots(*args, **kwargs)
 
     def reduce_degree(self, *args, **kwargs):
         """
@@ -518,9 +438,7 @@ class FFD (GustafBase):
         None
         """
         self._spline.reduce_degree(*args, **kwargs)
-#         self._naive_spline.reduce_degree(*args, **kwargs)
 
-        
     def show(self, title: str = "Gustaf - FFD"):
         """
         Visualize. Shows the deformed mesh and the current spline.
@@ -536,36 +454,35 @@ class FFD (GustafBase):
 
         original_mesh = self._mesh.copy()
         original_mesh.vertices = self._q_vertices
-        if original_mesh.kind is "volume":
+        if original_mesh.kind == "volume":
             orig_mesh_outer_faces = Faces(
-                            original_mesh.vertices,
-                            original_mesh.get_faces()[
-                                original_mesh.get_surfaces()]
-                            )
+                original_mesh.vertices,
+                original_mesh.get_faces()[
+                    original_mesh.get_surfaces()]
+            )
             mesh_outer_faces = Faces(
-                            self.mesh.vertices,
-                            self.mesh.get_faces()[
-                                self.mesh.get_surfaces()]
-                            )
+                self.mesh.vertices,
+                self.mesh.get_faces()[
+                    self.mesh.get_surfaces()]
+            )
             show_vedo(
                 ["Original Mesh",
-                original_mesh,
-                orig_mesh_outer_faces.toedges(unique=True)],
+                 original_mesh,
+                 orig_mesh_outer_faces.toedges(unique=True)],
                 ["Deformed Mesh with Spline",
-                #  self.mesh.showable(),
-                mesh_outer_faces.toedges(unique=True),
-                *self._spline.showable().values()],
+                 #  self.mesh.showable(),
+                 mesh_outer_faces.toedges(unique=True),
+                 *self._spline.showable().values()],
                 title=title,
-                )
+            )
         else:
-
             show_vedo(
                 ["Original Mesh",
-                original_mesh,
-                original_mesh.toedges(unique=True)],
+                 original_mesh,
+                 original_mesh.toedges(unique=True)],
                 ["Deformed Mesh with Spline",
-                #  self.mesh.showable(),
-                self.mesh.toedges(unique=True),
-                *self._spline.showable().values()],
+                 #  self.mesh.showable(),
+                 self.mesh.toedges(unique=True),
+                 *self._spline.showable().values()],
                 title=title,
-                )
+            )
