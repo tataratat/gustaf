@@ -15,7 +15,6 @@ from gustaf.show import show_vedo
 from gustaf._typing import SPLINE_TYPES, MESH_TYPES
 from gustaf.create.spline import with_bounds
 from gustaf import settings
-from .utils.arr import bounds
 
 
 class FFD (GustafBase):
@@ -60,6 +59,8 @@ class FFD (GustafBase):
             unscaled base mesh
         _q_vertices: np.ndarray (n, dim)
             Scaled vertices of the base mesh
+        _calculated: bool 
+            Attribute tracking if changes are present since last calculation
         _is_partial: bool
             Currently not used, NotImplemented
 
@@ -68,10 +69,11 @@ class FFD (GustafBase):
         None
         """
         # Use property definitions to store the values
-        self._spline = None
+        self._spline: SPLINE_TYPES = None
         self._mesh: MESH_TYPES = None
-        self._q_vertices = None
-        self._is_partial = False
+        self._q_vertices: np.ndarray = None
+        self._is_partial: bool = False
+        self._calculated: bool = False
 
         self.mesh = mesh
         if spline is None:
@@ -86,6 +88,7 @@ class FFD (GustafBase):
         self.is_partial = False
 
         self._check_dimensions()
+        self._calculated = False
 
     def _check_dimensions(self):
         """
@@ -148,6 +151,7 @@ class FFD (GustafBase):
         self._mesh = mesh.copy() # copy to make sure given mesh stays untouched
 
         self._scale_mesh_vertices()
+        self._calculated = False
 
     @property
     def spline(self):
@@ -189,6 +193,7 @@ class FFD (GustafBase):
         self._logi(
             f"  Parametric dimensions: {spline.para_dim}."
         )
+        self._calculated = False
 
     @property
     def is_partial(self):
@@ -291,8 +296,8 @@ class FFD (GustafBase):
 
     def _deform(self):
         """
-        Deform mesh. Partially deform mesh if `is_partial` is True. Meant for
-        internal use.
+        Deforms mesh if spline or mesh changes were detected since last 
+        calculation. Meant for internal use.
 
         Parameters
         -----------
@@ -302,6 +307,9 @@ class FFD (GustafBase):
         --------
         None
         """
+        if self._calculated:
+            return
+
         if self._mesh is None or self._spline is None:
             raise RuntimeError(
                 "Either `mesh` or `spline` is not defined for FFD."
@@ -319,6 +327,8 @@ class FFD (GustafBase):
         )
         self._logd("FFD successful.")
 
+        self._calculated = True
+
     @property
     def control_points(self):
         """
@@ -329,7 +339,7 @@ class FFD (GustafBase):
         --------
         self._spline.control_points: np.ndarray
         """
-        return self._spline.control_points
+        return self._spline.control_points.copy()
 
     @control_points.setter
     def control_points(self,
@@ -351,6 +361,7 @@ class FFD (GustafBase):
 
         self._spline.control_points = control_points.copy()
         self._logd("Set new control points.")
+        self._calculated = False
 
     def deform_for_given_cp(self, values: np.ndarray, mask=None) -> MESH_TYPES:
         """
@@ -375,8 +386,11 @@ class FFD (GustafBase):
         if mask is None:
             self.control_points += values
         else:
-            self.control_points[mask] += values
-
+            cp = self.control_points
+            cp[mask] += values
+            self.control_points = cp
+        
+        self._calculated = False  # should already be set, but to be safe
         return self.mesh
 
     def elevate_degree(self, *args, **kwargs):
@@ -423,6 +437,7 @@ class FFD (GustafBase):
         None
         """
         self._spline.remove_knots(*args, **kwargs)
+        self._calculated = False
 
     def reduce_degree(self, *args, **kwargs):
         """
@@ -438,8 +453,9 @@ class FFD (GustafBase):
         None
         """
         self._spline.reduce_degree(*args, **kwargs)
+        self._calculated = False
 
-    def show(self, title: str = "Gustaf - FFD"):
+    def show(self, title: str = "Gustaf - FFD", **kwargs):
         """
         Visualize. Shows the deformed mesh and the current spline.
 
@@ -473,7 +489,7 @@ class FFD (GustafBase):
                  #  self.mesh.showable(),
                  mesh_outer_faces.toedges(unique=True),
                  *self._spline.showable().values()],
-                title=title,
+                title=title, **kwargs
             )
         else:
             show_vedo(
@@ -484,5 +500,5 @@ class FFD (GustafBase):
                  #  self.mesh.showable(),
                  self.mesh.toedges(unique=True),
                  *self._spline.showable().values()],
-                title=title,
+                title=title, **kwargs
             )
