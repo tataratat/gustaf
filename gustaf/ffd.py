@@ -34,7 +34,7 @@ class FFD (GustafBase):
         :py:const.:`gustaf._typing.SPLINE_TYPES`. The splines parametric 
         dimension will be scaled in to a unit-hypercube as well as the 
         original meshes vertices. The outline of the resulting mesh is given 
-        by the physical space the spline. 
+        by the physical space of the spline. 
 
         The FFD class provides functions to modify the spline in various ways,
         either by completely overwriting the spline or by updating specific parts 
@@ -58,7 +58,7 @@ class FFD (GustafBase):
             unscaled base mesh
         _q_vertices: np.ndarray (n, dim)
             Scaled vertices of the base mesh
-        _calculated: bool 
+        _is_calculated: bool 
             Attribute tracking if changes are present since last calculation
         _is_partial: bool
             Currently not used, NotImplemented
@@ -72,7 +72,7 @@ class FFD (GustafBase):
         self._mesh: MESH_TYPES = None
         self._q_vertices: np.ndarray = None
         self._is_partial: bool = False
-        self._calculated: bool = False
+        self._is_calculated: bool = False
 
         self.mesh = mesh
         if spline is None:
@@ -87,7 +87,7 @@ class FFD (GustafBase):
         self.is_partial = False
 
         self._check_dimensions()
-        self._calculated = False
+        self._is_calculated = False
 
     def _check_dimensions(self):
         """
@@ -150,7 +150,7 @@ class FFD (GustafBase):
         self._mesh = mesh.copy() # copy to make sure given mesh stays untouched
 
         self._scale_mesh_vertices()
-        self._calculated = False
+        self._is_calculated = False
 
     @property
     def spline(self):
@@ -192,7 +192,7 @@ class FFD (GustafBase):
         self._logi(
             f"  Parametric dimensions: {spline.para_dim}."
         )
-        self._calculated = False
+        self._is_calculated = False
 
     @property
     def is_partial(self):
@@ -306,7 +306,7 @@ class FFD (GustafBase):
         --------
         None
         """
-        if self._calculated:
+        if self._is_calculated:
             return
 
         if self._mesh is None or self._spline is None:
@@ -326,7 +326,7 @@ class FFD (GustafBase):
         )
         self._logd("FFD successful.")
 
-        self._calculated = True
+        self._is_calculated = True
 
     @property
     def control_points(self):
@@ -360,7 +360,7 @@ class FFD (GustafBase):
 
         self._spline.control_points = control_points.copy()
         self._logd("Set new control points.")
-        self._calculated = False
+        self._is_calculated = False
 
     def deform_for_given_cp(self, values: np.ndarray, mask=None) -> MESH_TYPES:
         """
@@ -389,7 +389,7 @@ class FFD (GustafBase):
             cp[mask] += values
             self.control_points = cp
         
-        self._calculated = False  # should already be set, but to be safe
+        self._is_calculated = False  # should already be set, but to be safe
         return self.mesh
 
     def elevate_degree(self, *args, **kwargs):
@@ -436,7 +436,7 @@ class FFD (GustafBase):
         None
         """
         self._spline.remove_knots(*args, **kwargs)
-        self._calculated = False
+        self._is_calculated = False
 
     def reduce_degree(self, *args, **kwargs):
         """
@@ -452,7 +452,7 @@ class FFD (GustafBase):
         None
         """
         self._spline.reduce_degree(*args, **kwargs)
-        self._calculated = False
+        self._is_calculated = False
 
     def show(self, title: str = "Gustaf - FFD", **kwargs):
         """
