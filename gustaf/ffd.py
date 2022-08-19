@@ -33,16 +33,15 @@ class FFD (GustafBase):
         by a spline, supported splines are given by the variable
         :py:const.:`gustaf._typing.SPLINE_TYPES`. The splines parametric 
         dimension will be scaled in to a unit-hypercube as well as the 
-        original meshes dimensions. The scale of the resulting mesh is given 
-        by the geometric dimension bounds of the spline. 
+        original meshes vertices. The outline of the resulting mesh is given 
+        by the physical space the spline. 
 
-        To update the spline, please use any of the provided function. You can 
-        either completely overwrite the spline or just update the 
-        control_points or knot_vector. To get the deformed mesh according to 
-        the latest spline just get the mesh attribute.
+        The FFD class provides functions to modify the spline in various ways,
+        either by completely overwriting the spline or by updating specific parts 
+        like control_points or knot_vectors. To obtain the deformed mesh 
+        mapped into the latest spline, retrieve the mesh attribute.
 
-        A previously available partial FFD is currently not implemented. It is 
-        also not yet planned when it will be readded.
+        A previously available partial FFD is currently not implemented.
 
         Parameters
         ----------
