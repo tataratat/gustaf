@@ -13,7 +13,7 @@ from gustaf import utils
 from gustaf import settings
 
 
-def extrude(spline, extrusion_vector=None):
+def extruded(spline, extrusion_vector=None):
     """
     Extrudes Splines
 
@@ -72,13 +72,14 @@ def extrude(spline, extrusion_vector=None):
     return type(spline)(**spline_dict)
 
 
-def revolve(spline,
-            axis=None,
-            center=None,
-            angle=None,
-            n_knot_spans=None,
-            degree=True
-            ):
+def revolved(
+        spline,
+        axis=None,
+        center=None,
+        angle=None,
+        n_knot_spans=None,
+        degree=True
+):
     """
     Revolve spline around an axis and extend its parametric dimension
 
@@ -263,8 +264,8 @@ class _Creator:
     def __init__(self, spl):
         self.spline = spl
 
-    def extrude(self, *args, **kwargs):
-        return extrude(self.spline, *args, **kwargs)
+    def extruded(self, *args, **kwargs):
+        return extruded(self.spline, *args, **kwargs)
 
-    def revolve(self, *args, **kwargs):
-        return revolve(self.spline, *args, **kwargs)
+    def revolved(self, *args, **kwargs):
+        return revolved(self.spline, *args, **kwargs)
