@@ -22,7 +22,7 @@ class FFD (GustafBase):
     def __init__(
         self,
         mesh: MESH_TYPES,
-        spline: Optional[SPLINE_TYPES],
+        spline: Optional[SPLINE_TYPES] = None,
         # is_partial: bool=False,
     ):
         """
