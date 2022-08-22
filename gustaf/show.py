@@ -127,7 +127,7 @@ def show_vedo(*args, **kwargs,):
         to_extend = []
         for j, sl in enumerate(showlist):
             if isinstance(sl, GustafBase):
-                tmp_showable = sl.showable(backend="vedo")
+                tmp_showable = sl.showable(backend="vedo", **kwargs)
                 # splines return dict
                 # - maybe it is time to do some typing..
                 if isinstance(tmp_showable, dict):
