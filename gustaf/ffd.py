@@ -33,12 +33,12 @@ class FFD (GustafBase):
         :py:const.:`gustaf._typing.SPLINE_TYPES`. The splines parametric 
         dimension will be scaled in to a unit-hypercube as well as the 
         original meshes vertices. The outline of the resulting mesh is given 
-        by the physical space of the spline. 
+        by the physical space of the spline.
 
-        The FFD class provides functions to modify the spline in various ways,
-        either by completely overwriting the spline or by updating specific 
-        parts like control_points or knot_vectors. To obtain the deformed mesh 
-        mapped into the latest spline, retrieve the mesh attribute.
+        The FFD class provides functions to modify the spline by completely 
+        overwriting the spline whole spline or parts of it. To obtain the 
+        deformed mesh mapped into the latest spline, retrieve the mesh 
+        attribute.
 
         Please not that even though an object of the class can be initiated 
         without a mesh, it is not possible to compute the deformation without 
