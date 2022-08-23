@@ -13,7 +13,7 @@ from gustaf._base import GustafBase
 # @linux it raises error if vedo is imported inside the function.
 try:
     import vedo
-except:
+except ImportError:
     vedo = "cannot import vedo"
 
 
@@ -23,7 +23,7 @@ def show(*gusobj, **kwargs):
 
     Parameters
     -----------
-    *gusobj: gustaf objects 
+    *gusobj: gustaf objects
 
     Returns
     --------
@@ -52,8 +52,6 @@ def show_vedo(*args, **kwargs,):
     -----------
     *args: *list or *dict or gustaf_obj or vedo_obj
     """
-    #import vedo
-
     # vedo plotter parameter
     N = len(args)
     offs = kwargs.get("offscreen", False)
@@ -116,7 +114,8 @@ def show_vedo(*args, **kwargs,):
         elif isinstance(arg, list):
             showlist = arg.copy()
         else:
-            #raise TypeError("For vedo_show, only list or dict is valid input")
+            # raise TypeError(
+            #     "For vedo_show, only list or dict is valid input")
             utils.log.debug(
                 "one of args for show_vedo is neither `dict` nor",
                 "`list`. Putting it naively into a list."
@@ -214,7 +213,7 @@ def _vedo_showable(obj, **kwargs):
         dataname=obj.vis_dict.get("dataname", None),
         # <
         arrows=obj.vis_dict.get("arrows", None),  # only for edges
-        # > only for edges. internally treated same as `lw`, but higher priority
+        # > only for edges internally treated same as `lw`, but higher priority
         thickness=obj.vis_dict.get("thickness", None),
     )
     # loop once more to extract basics from kwargs
@@ -386,7 +385,7 @@ def make_showable(obj, backend=settings.VISUALIZATION_BACKEND, **kwargs):
     Returns
     --------
     showalbe_objs: list
-      List of showable objects. 
+      List of showable objects.
     """
     if backend.startswith("vedo"):
         return _vedo_showable(obj, **kwargs)
@@ -419,7 +418,7 @@ def interpolate_vedo_dictcam(cameras, resolutions, spline_degree=1):
         import splinepy
         spp = True
 
-    except:
+    except ImportError:
         spp = False
 
     # quick type check loop

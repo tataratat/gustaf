@@ -338,7 +338,7 @@ class Vertices(GustafBase):
         Returns
         --------
         self.vertices_overlapping: (len(self.vertices)) np.ndarray
-          list 
+          list
         """
         last_item_is_ref = self.get_vertices_unique(
             tolerance=tolerance,
@@ -665,7 +665,7 @@ class Vertices(GustafBase):
 
         Returns
         --------
-        None          
+        None
         """
         return show.show(self, **kwargs)
 

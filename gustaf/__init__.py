@@ -1,3 +1,4 @@
+from ast import Import
 from gustaf import _version
 from gustaf import settings
 from gustaf import vertices
@@ -13,7 +14,7 @@ from gustaf import ffd
 try:
     from gustaf import spline
     from gustaf.spline.base import BSpline, NURBS, Bezier, RationalBezier
-except:
+except ImportError:
     spline = "cannot import spline modules"
 
 # import try/catch for triangle and gustaf-tetgen
