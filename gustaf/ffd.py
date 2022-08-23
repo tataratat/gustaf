@@ -5,7 +5,7 @@ Freeform Deformation!
 
 
 Adaptation of previous implementation in internal python package gustav by
-Jaewook Lee. 
+Jaewook Lee.
 """
 from typing import List, Optional, Union
 import numpy as np
@@ -25,25 +25,25 @@ class FFD (GustafBase):
         spline: Optional[SPLINE_TYPES] = None
     ):
         """
-        Free-form deformation is a method used to deform an object by a 
-        deformation function. In our case the object is given via a mesh, the 
-        currently supported mesh-types are given by the variable 
-        :py:const:`gustaf._typing.MESH_TYPES`, and the deformations function 
+        Free-form deformation is a method used to deform an object by a
+        deformation function. In our case the object is given via a mesh, the
+        currently supported mesh-types are given by the variable
+        :py:const:`gustaf._typing.MESH_TYPES`, and the deformations function
         by a spline, supported splines are given by the variable
-        :py:const.:`gustaf._typing.SPLINE_TYPES`. The splines parametric 
-        dimension will be scaled in to a unit-hypercube as well as the 
-        original meshes vertices. The outline of the resulting mesh is given 
+        :py:const.:`gustaf._typing.SPLINE_TYPES`. The splines parametric
+        dimension will be scaled in to a unit-hypercube as well as the
+        original meshes vertices. The outline of the resulting mesh is given
         by the physical space of the spline.
 
-        The FFD class provides functions to modify the spline by completely 
-        overwriting the spline whole spline or parts of it. To obtain the 
-        deformed mesh mapped into the latest spline, retrieve the mesh 
+        The FFD class provides functions to modify the spline by completely
+        overwriting the spline whole spline or parts of it. To obtain the
+        deformed mesh mapped into the latest spline, retrieve the mesh
         attribute.
 
-        Please not that even though an object of the class can be initiated 
-        without a mesh, it is not possible to compute the deformation without 
-        one. Please ensure that at least a mesh is defined before retrieving 
-        the (deformed) mesh. If only a mesh is provided a default spline where 
+        Please not that even though an object of the class can be initiated
+        without a mesh, it is not possible to compute the deformation without
+        one. Please ensure that at least a mesh is defined before retrieving
+        the (deformed) mesh. If only a mesh is provided a default spline where
         the geometric dimensions have the bounds of the mesh is defined.
 
         A previously available partial FFD is currently not implemented, and
@@ -64,7 +64,7 @@ class FFD (GustafBase):
             unscaled base mesh
         _q_vertices: np.ndarray (n, dim)
             Scaled vertices of the base mesh
-        _is_calculated: bool 
+        _is_calculated: bool
             Attribute tracking if changes are present since last calculation
 
         Returns
@@ -99,7 +99,7 @@ class FFD (GustafBase):
 
     @property
     def mesh(self,) -> MESH_TYPES:
-        """Returns copy of current mesh. Before copying, it applies 
+        """Returns copy of current mesh. Before copying, it applies
         deformation.
 
         Returns
@@ -113,8 +113,8 @@ class FFD (GustafBase):
     @mesh.setter
     def mesh(self, mesh: MESH_TYPES):
         """
-        Sets mesh. If it is first time, the copy of it will be saved as 
-        original mesh. If spline is already defined and in transformed status, 
+        Sets mesh. If it is first time, the copy of it will be saved as
+        original mesh. If spline is already defined and in transformed status,
         it applies transformation directly.
 
         Parameters
@@ -141,7 +141,7 @@ class FFD (GustafBase):
         self._logi(
             "  Bounds: {b}.".format(b=mesh.get_bounds())
         )
-        self._mesh = mesh.copy()  # copy to make sure given mesh stays untouched
+        self._mesh = mesh.copy()  # copy to make sure given mesh stay untouched
         self._check_dimensions()
         self._scale_mesh_vertices()
         self._is_calculated = False
@@ -158,7 +158,7 @@ class FFD (GustafBase):
 
         Returns
         --------
-        self._spline: Spline 
+        self._spline: Spline
         """
         self._logd("Returning copy of current spline.")
         return self._spline.copy() if self._spline is not None else None
@@ -166,7 +166,7 @@ class FFD (GustafBase):
     @spline.setter
     def spline(self, spline: SPLINE_TYPES):
         """
-        Sets spline. The spline parametric range bounds will be converted 
+        Sets spline. The spline parametric range bounds will be converted
         into the bounds [0,1]^para_dim.
 
         Parameters
@@ -192,12 +192,7 @@ class FFD (GustafBase):
         """Scales all knot_vectors of the spline to a range of [0,1]
         """
         if not self._is_parametric_room_hypercube(self._spline):
-            knv = []
-            for knot_vector in self._spline.knot_vectors:
-                knot_vector = [kv_v - knot_vector[0] for kv_v in knot_vector]
-                knot_vector = [kv_v / knot_vector[-1] for kv_v in knot_vector]
-                knv.append(knot_vector)
-            self._spline.knot_vectors = knv
+            self._spline.normalize_knot_vectors()
 
     def _is_parametric_room_hypercube(
         self,
@@ -228,7 +223,7 @@ class FFD (GustafBase):
 
     def _scale_mesh_vertices(self):
         """
-        Scales the mesh vertices into the dimension of a hypercube and save 
+        Scales the mesh vertices into the dimension of a hypercube and save
         them in self._q_vertices.
         """
         self._logd("Fitting mesh into spline's parametric space.")
@@ -250,7 +245,7 @@ class FFD (GustafBase):
 
     def _deform(self):
         """
-        Deforms mesh if spline or mesh changes were detected since last 
+        Deforms mesh if spline or mesh changes were detected since last
         calculation. Meant for internal use.
 
         Parameters
@@ -316,7 +311,7 @@ class FFD (GustafBase):
 
     def deform_for_given_cp(self, values: np.ndarray, mask=None) -> MESH_TYPES:
         """
-        Set the new control_point values according to the mask and returns the 
+        Set the new control_point values according to the mask and returns the
         deformed mesh.
 
         #TODO I am not sure if this works since CPs might not always be ndarray
