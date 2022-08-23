@@ -75,3 +75,25 @@ if __name__ == "__main__":
 
     spline_2d_bez = gus.ffd.FFD(mesh_2d, spline_2d)
     spline_2d_bez.show(title="Bezier Spline based FFD")
+
+    # Only provide mesh
+    ffd_with_out_spline = gus.ffd.FFD(volume_3d)
+
+    ffd_with_out_spline.show(title="Spline with out defined spline."
+                                   " Projected into dimension of the given "
+                                   "mesh.")
+
+    # Only provide mesh after initialization
+    ffd_with_out_spline_and_mesh = gus.ffd.FFD()
+    ffd_with_out_spline_and_mesh.mesh = volume_3d
+    ffd_with_out_spline_and_mesh.show(title="Spline with out defined spline."
+                                      " Projected into dimension of the given "
+                                      "mesh.")
+
+    # Only provide spline and then mesh after initialization
+    ffd_with_out_mesh = gus.ffd.FFD()
+    ffd_with_out_mesh.spline = spline_3d
+    ffd_with_out_mesh.mesh = volume_3d
+    ffd_with_out_mesh.show(title="Spline with out defined mesh at "
+                           "initialization. Projected into dimension "
+                           "of the given mesh.")
