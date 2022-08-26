@@ -2,6 +2,7 @@
 
 Collection classes for mesh entity groups.
 """
+import copy
 import numpy as np
 
 def element_to_vertex_group(element_connectivity, element_ids):
@@ -80,7 +81,30 @@ def extract_element_group(
 
     return local_connectivity, local_vertices
 
-class VertexGroupCollection(dict):
+class GroupCollectionBase(dict):
+    def __deepcopy__(self, memo):
+        """
+        Create a deepcopy and circumvent checks.
+
+        This makes sure the __setitem__ routine is not called during a deepcopy
+        operation. Otherwise, the checks might fail depending on the copy order.
+
+        Parameters
+        -----------
+        memo : dict(...)
+
+        Returns
+        --------
+        result : type(self)
+        """
+        result = type(self)(self.mesh)
+        for key, value in self.items():
+            result.update({copy.deepcopy(key, memo):
+                copy.deepcopy(value, memo)})
+
+        return result
+
+class VertexGroupCollection(GroupCollectionBase):
     def __init__(self, mesh):
         """
         Constructs vertex group object.
@@ -124,7 +148,7 @@ class VertexGroupCollection(dict):
                 f"Invalid vertex index in vertex group '{group_name}'."
         dict.__setitem__(self, group_name, vertex_ids)
 
-class EdgeGroupCollection(dict):
+class EdgeGroupCollection(GroupCollectionBase):
     def __init__(self, mesh):
         """
         Construct edge group object.
@@ -251,7 +275,7 @@ class EdgeGroupCollection(dict):
             self.mesh.vertex_groups[group_name] = element_to_vertex_group(
                     all_edges, edge_ids)
 
-class FaceGroupCollection(dict):
+class FaceGroupCollection(GroupCollectionBase):
     def __init__(self, mesh):
         """
         Construct face group object.
@@ -378,7 +402,7 @@ class FaceGroupCollection(dict):
             self.mesh.vertex_groups[group_name] = element_to_vertex_group(
                     all_faces, face_ids)
 
-class VolumeGroupCollection(dict):
+class VolumeGroupCollection(GroupCollectionBase):
     def __init__(self, mesh):
         """
         Construct volume group object.
