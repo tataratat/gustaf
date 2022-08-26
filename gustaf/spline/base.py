@@ -39,7 +39,7 @@ def show(
         lighting="glossy",
         control_point_ids=True,
         color_spline=None,
-        cmap=None, # only required 
+        cmap=None,  # only required
         **kwargs,
 ):
     """
@@ -92,7 +92,7 @@ def show(
     original_skip_update = spline.skip_update
     if not original_skip_update:
         # update one last time else, it won't sync.
-        spline._check_and_update_c() 
+        spline._check_and_update_c()
         spline.skip_update = True
 
     # determine backend
@@ -130,11 +130,11 @@ def show(
 
         # Set alpha to < 1, so that they don't "overshadow" spline
         control_mesh.vis_dict.update(c="red", lw=4, alpha=control_points_alpha)
-        things_to_show.update(control_mesh=control_mesh) # mesh itself
+        things_to_show.update(control_mesh=control_mesh)  # mesh itself
         # Add big vertices to emphasize cps.
         cps = control_mesh.tovertices()
         cps.vis_dict.update(c="red", r=10, alpha=control_points_alpha)
-        things_to_show.update(control_points=cps) # only points
+        things_to_show.update(control_points=cps)  # only points
 
     if knots:
         # Knot lines for non-curve splines.
@@ -149,7 +149,7 @@ def show(
         fitting_queries.vis_dict.update(c="blue", r=10)
         things_to_show.update(fitting_queries=fitting_queries)
 
-    # Return here, if backend is not vedo        
+    # Return here, if backend is not vedo
     if not backend.startswith("vedo"):
         # reset skip_update option
         spline.skip_update = original_skip_update
@@ -157,7 +157,7 @@ def show(
         # turn everything into backend showables
         if return_showable:
             for key, gusobj in things_to_show.items():
-                things_to_show.update({key : gusobj.showable(backend=backend)})
+                things_to_show.update({key: gusobj.showable(backend=backend)})
 
             return things_to_show
 
@@ -178,7 +178,7 @@ def show(
         # turn all gus objects into gus objects.
         vedo_things = dict()
         for key, gusobj in things_to_show.items():
-            vedo_things.update({key : gusobj.showable(backend=backend)})
+            vedo_things.update({key: gusobj.showable(backend=backend)})
 
         # apply lighting
         if lighting is not None:
@@ -232,7 +232,7 @@ def show(
                 bounds(para_showables["spline"].points())
             )
             bs_diff_001 = (bs[1] - bs[0]) * 0.001
-            lowerb = bs[0] - bs_diff_001 
+            lowerb = bs[0] - bs_diff_001
             upperb = bs[1] + bs_diff_001
 
             axes_config = dict(
@@ -313,22 +313,22 @@ class GustafSpline(GustafBase):
 
     @property
     def create(self):
-      """
-      Returns spline creator
-      Can be used to create new splines using geometric relations
+        """
+        Returns spline creator
+        Can be used to create new splines using geometric relations
 
-      Examples
-      --------
-      >>> prism = spline.create.extrude(axis=[1,4,1])
+        Examples
+        --------
+        >>> prism = spline.create.extrude(axis=[1,4,1])
 
-      Parameters
-      ----------
-      None
+        Parameters
+        ----------
+        None
 
-      Returns
-      spline._Creator
-      """
-      return self._creator
+        Returns
+        spline._Creator
+        """
+        return self._creator
 
     @property
     def proximity(self):
@@ -383,7 +383,6 @@ class GustafSpline(GustafBase):
 
         return super().derivative(*args, **kwargs)
 
-
     def sample(self, query_resolutions, n_threads=None):
         """
         Overwrite sample function to offer equivalent, but with multithread
@@ -409,7 +408,6 @@ class GustafSpline(GustafBase):
         else:
             q = raster(self.knot_vector_bounds, qr)
             return self.evaluate(q.vertices, n_threads=n_threads)
-        
 
     def show(self, **kwargs):
         """
@@ -419,7 +417,8 @@ class GustafSpline(GustafBase):
 
     def showable(self, **kwargs):
         """
-        Equivalent to `gustaf.spline.base.show(return_showable=True, **kwargs)`
+        Equivalent to 
+        `gustaf.spline.base.show(return_showable=True, **kwargs)`
         """
         return show(self, return_showable=True, **kwargs)
 
@@ -514,10 +513,10 @@ class Bezier(GustafSpline, splinepy.Bezier):
             degrees=self.degrees,
             control_points=self.control_points,
             knot_vectors=[
-              [0] * (self.degrees[i] + 1) + [1] * (self.degrees[i] + 1)
-              for i in range(self.para_dim)]
-          )
-    
+                [0] * (self.degrees[i] + 1) + [1] * (self.degrees[i] + 1)
+                for i in range(self.para_dim)]
+        )
+
     @property
     def nurbs(self):
         """
@@ -532,7 +531,6 @@ class Bezier(GustafSpline, splinepy.Bezier):
         same_nurbs: NURBS
         """
         return self.bspline.nurbs
-
 
 
 class RationalBezier(GustafSpline, splinepy.RationalBezier):
@@ -572,7 +570,7 @@ class RationalBezier(GustafSpline, splinepy.RationalBezier):
         self._extractor = _Extractor(self)
         self._proximity = _Proximity(self)
         self._creator = _Creator(self)
-        
+
     @property
     def rationalbezier(self):
         """
@@ -601,14 +599,14 @@ class RationalBezier(GustafSpline, splinepy.RationalBezier):
         --------
         same_nurbs: NURBS
         """
-        return BSpline(
+        return NURBS(
             degrees=self.degrees,
             control_points=self.control_points,
             knot_vectors=[
-              [0] * (self.degrees[i] + 1) + [1] * (self.degrees[i] + 1)
-              for i in range(self.para_dim)],
+                [0] * (self.degrees[i] + 1) + [1] * (self.degrees[i] + 1)
+                for i in range(self.para_dim)],
             weights=self.weights
-          )
+        )
 
 
 class BSpline(GustafSpline, splinepy.BSpline):
@@ -688,23 +686,23 @@ class BSpline(GustafSpline, splinepy.BSpline):
         )
 
     def extract_bezier_patches(self):
-      """
-      Overwrites splinepy-parent's function to ensure the conversion of Splines
-      into a usable gustaf format
-      
-      Parameters
-      ----------
-      None
+        """
+        Overwrites splinepy-parent's function to ensure the conversion of
+        Splines into a usable gustaf format
 
-      Returns
-      -------
-      None
-      """
-      logging.warning(
-          "Functionality not supported, please use:\n"
-          "<BSpline>.extract.beziers()"
-      )
-      return None
+        Parameters
+        ----------
+        None
+
+        Returns
+        -------
+        None
+        """
+        logging.warning(
+            "Functionality not supported, please use:\n"
+            "<BSpline>.extract.beziers()"
+        )
+        return None
 
 
 class NURBS(GustafSpline, splinepy.NURBS):
@@ -747,7 +745,6 @@ class NURBS(GustafSpline, splinepy.NURBS):
         self._proximity = _Proximity(self)
         self._creator = _Creator(self)
 
-
     @property
     def _mfem_ids(self):
         """
@@ -775,24 +772,24 @@ class NURBS(GustafSpline, splinepy.NURBS):
         return gustaf2mfem, mfem2gustaf
 
     def extract_bezier_patches(self):
-      """
-      Overwrites splinepy-parent's function to ensure the conversion of Splines
-      into a usable gustaf format
-      
-      Parameters
-      ----------
-      None
+        """
+        Overwrites splinepy-parent's function to ensure the conversion of
+        Splines into a usable gustaf format
 
-      Returns
-      -------
-      None
-      """
-      logging.warning(
-          "Functionality not supported, please use:\n"
-          "<NURBS>.extract.beziers()"
-      )
-      return None
-    
+        Parameters
+        ----------
+        None
+
+        Returns
+        -------
+        None
+        """
+        logging.warning(
+            "Functionality not supported, please use:\n"
+            "<NURBS>.extract.beziers()"
+        )
+        return None
+
     @property
     def nurbs(self):
         """
