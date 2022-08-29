@@ -7,7 +7,7 @@ Freeform Deformation!
 Adaptation of previous implementation in internal python package gustav by
 Jaewook Lee.
 """
-from typing import List, Optional, Union
+from typing import Any, List, Optional, Union
 import numpy as np
 from gustaf._base import GustafBase
 from gustaf.faces import Faces
@@ -66,6 +66,14 @@ class FFD (GustafBase):
             Scaled vertices of the base mesh
         _is_calculated: bool
             Attribute tracking if changes are present since last calculation
+        _is_calculated_trackable: bool
+            Getter for cp was called. Cps can be changed without knowledge
+            need to recalculate every time. 
+        _orig_para_dim_bounds: np.ndarray:
+            Original spline parametric dimension boundaries, used in
+            knot_insertion to scale the knots to be inserted into the same
+            scale as the internal spline (which has a hypercubic parametric
+            dimensional space) 
 
         Returns
         -------
@@ -76,6 +84,8 @@ class FFD (GustafBase):
         self._mesh: MESH_TYPES = None
         self._q_vertices: np.ndarray = None
         self._is_calculated: bool = False
+        self._is_calculated_trackable: bool = True
+        self._orig_para_dim_bounds: np.ndarray = None
 
         if spline is not None:
             self.spline = spline
@@ -83,19 +93,6 @@ class FFD (GustafBase):
             self.mesh = mesh
 
         self._is_calculated = False
-
-    def _check_dimensions(self):
-        """
-        Checks dimensions and ranges critical for a correct FFD calculation
-
-        TODO: range of spline is same as geometric range of mesh
-        """
-        if not self._spline.para_dim == self._spline.dim:
-            self._logw("The parametric and geometric dimensions of the "
-                       "spline are not the same.")
-        if not self._spline.dim == self._mesh.vertices.shape[1]:
-            self._logw("The geometric dimensions of the spline and the "
-                       "dimension of the mesh are not the same.")
 
     @property
     def mesh(self,) -> MESH_TYPES:
@@ -142,7 +139,17 @@ class FFD (GustafBase):
             "  Bounds: {b}.".format(b=mesh.get_bounds())
         )
         self._mesh = mesh.copy()  # copy to make sure given mesh stay untouched
-        self._check_dimensions()
+        
+        """
+        Checks dimensions and ranges critical for a correct FFD calculation
+        """
+        if not self._spline.para_dim == self._spline.dim:
+            self._logw("The parametric and geometric dimensions of the "
+                       "spline are not the same.")
+        if not self._spline.dim == self._mesh.vertices.shape[1]:
+            self._logw("The geometric dimensions of the spline and the "
+                       "dimension of the mesh are not the same.")
+        
         self._scale_mesh_vertices()
         self._is_calculated = False
 
@@ -179,7 +186,11 @@ class FFD (GustafBase):
         None
         """
         self._spline = spline.copy()
-        self._scale_parametric_dimension_to_hypercube()
+        if "knot_vectors" in spline.required_properties:
+            self._orig_para_dim_bounds = spline.knot_vector_bounds.T
+            self._spline.normalize_knot_vectors()
+        else:
+            self._orig_para_dim_bounds = [[0,1]]*spline.para_dim
 
         self._logi("Setting Spline.")
         self._logi("Spline Info:")
@@ -187,39 +198,6 @@ class FFD (GustafBase):
             f"  Parametric dimensions: {spline.para_dim}."
         )
         self._is_calculated = False
-
-    def _scale_parametric_dimension_to_hypercube(self):
-        """Scales all knot_vectors of the spline to a range of [0,1]
-        """
-        if not self._is_parametric_room_hypercube(self._spline):
-            self._spline.normalize_knot_vectors()
-
-    def _is_parametric_room_hypercube(
-        self,
-        spline: SPLINE_TYPES
-    ) -> bool:
-        """Checks if the parametric range of the spline is a hypercube.
-
-        Parameters
-        ----------
-        spline : SPLINE_TYPES
-            New spline for which to check for hypercubeness
-
-        Returns
-        -------
-        bool
-            True if parametric room is hypercube, else False
-        """
-        if "knot_vectors" in spline.required_properties:
-            for knot_vector in spline.knot_vectors:
-                # check if knot_vectors fist element is 0 and last element is 1
-                if not (
-                        np.isclose(knot_vector[0], 0, atol=settings.TOLERANCE)
-                        and
-                        np.isclose(knot_vector[-1], 1, atol=settings.TOLERANCE)
-                ):
-                    return False
-        return True
 
     def _scale_mesh_vertices(self):
         """
@@ -262,7 +240,7 @@ class FFD (GustafBase):
                 "spline and/or the mesh are not yet defined. Please define "
                 "both a spline and mesh before deforming the mesh.")
             return
-        if self._is_calculated:
+        if self._is_calculated and self._is_calculated_trackable:
             return
 
         self._logd("Applying FFD: Transforming vertices")
@@ -278,14 +256,17 @@ class FFD (GustafBase):
     @property
     def control_points(self):
         """
-        Returns current spline's control points. Can't and don't use this to
-        directly manipulate control points: it won't update
+        Returns current spline's control points. The control points can be 
+        directly updated with this. Please use carefully! After calling this 
+        'self._is_calculated' is not trackable anymore so deformation 
+        calculation is performed every time.
 
         Returns
         --------
         self._spline.control_points: np.ndarray
         """
-        return self._spline.control_points.copy()
+        self._is_calculated_trackable = False
+        return self._spline.control_points
 
     @control_points.setter
     def control_points(self,
@@ -309,36 +290,6 @@ class FFD (GustafBase):
         self._logd("Set new control points.")
         self._is_calculated = False
 
-    def deform_for_given_cp(self, values: np.ndarray, mask=None) -> MESH_TYPES:
-        """
-        Set the new control_point values according to the mask and returns the
-        deformed mesh.
-
-        #TODO I am not sure if this works since CPs might not always be ndarray
-
-        Parameters
-        -----------
-        values: np.ndarray
-          Values to translate. If it is 1D array, it is applied to all masked
-          control points.
-        mask: list-like
-          (Optional) Default is None. If None, it will be applied to all.
-          It can be bool or int.
-
-        Returns
-        --------
-        deformed_mesh: MESH_TYPES
-        """
-        if mask is None:
-            self.control_points += values
-        else:
-            cp = self.control_points
-            cp[mask] += values
-            self.control_points = cp
-
-        self._is_calculated = False  # should already be set, but to be safe
-        return self.mesh
-
     def elevate_degree(self, *args, **kwargs):
         """
         Wrapper for Spline.elevate_degree
@@ -354,7 +305,7 @@ class FFD (GustafBase):
         """
         self._spline.elevate_degree(*args, **kwargs)
 
-    def insert_knots(self, *args, **kwargs):
+    def insert_knots(self, parametric_dimension, knots):
         """
         Wrapper for Spline.insert_knots
 
@@ -367,9 +318,16 @@ class FFD (GustafBase):
         --------
         None
         """
-        self._spline.insert_knots(*args, **kwargs)
+        if "knot_vectors" in self._spline.required_properties:
+            raise NotImplementedError(
+                "Can not perform knot insertion on Bezier spline.")
+        # scale knots from the original bounds into the new bounds
+        dim_bounds = self._orig_para_dim_bounds[parametric_dimension]
+        knots = \
+            (np.array(knots)-dim_bounds[0]*1)/(dim_bounds[-1]-dim_bounds[0])
+        self._spline.insert_knots(parametric_dimension, knots)
 
-    def remove_knots(self, *args, **kwargs):
+    def remove_knots(self, parametric_dimension, knots, tolerance=1e-8):
         """
         Wrapper for Spline.remove_knots
 
@@ -382,7 +340,15 @@ class FFD (GustafBase):
         --------
         None
         """
-        self._spline.remove_knots(*args, **kwargs)
+        if "knot_vectors" in self._spline.required_properties:
+            raise NotImplementedError(
+                "Can not perform knot insertion on Bezier spline.")
+        # scale knots from the original bounds into the new bounds
+        dim_bounds = self._orig_para_dim_bounds[parametric_dimension]
+        knots = \
+            (np.array(knots)-dim_bounds[0]*1)/(dim_bounds[-1]-dim_bounds[0])
+        self._spline.remove_knots(
+            parametric_dimension, knots, tolerance=tolerance)
         self._is_calculated = False
 
     def reduce_degree(self, *args, **kwargs):
@@ -401,19 +367,32 @@ class FFD (GustafBase):
         self._spline.reduce_degree(*args, **kwargs)
         self._is_calculated = False
 
-    def show(self, title: str = "Gustaf - FFD", **kwargs):
+    def show(self, title: str = "Gustaf - FFD", **kwargs) -> Any:
         """
-        Visualize. Shows the deformed mesh and the current spline.
+        Visualize. Shows the deformed mesh and the current spline. Currently 
+        visualization is limited to vedo.
 
         Parameters
         ----------
-        None
+        title: str
+            Title of the vedo window. Defaults to "Gustaf - FFD".
+        kwargs: Any
+            Arbitrary keyword arguments. These are passed onto the vedo
+            functions. Please be aware, that no checking of these are performed
+            in this function.
 
         Returns
         -------
-        None
+        Any:
+            Returns, if applicable, the vedo plotter. 'close=False' as argument
+            to get the plotter.
         """
-
+        if settings.VISUALIZATION_BACKEND != "vedo":
+            raise NotImplementedError(
+                "Visualization of the FFD is not available for the chosen"
+                f"visualization framework -{settings.VISUALIZATION_BACKEND}-."
+                " Please choose vedo to visualize."
+            )
         original_mesh = self._mesh.copy()
         original_mesh.vertices = self._q_vertices
         if original_mesh.kind == "volume":
@@ -427,7 +406,7 @@ class FFD (GustafBase):
                 self.mesh.get_faces()[
                     self.mesh.get_surfaces()]
             )
-            show_vedo(
+            return show_vedo(
                 ["Original Mesh",
                  original_mesh,
                  orig_mesh_outer_faces.toedges(unique=True)],
@@ -438,7 +417,7 @@ class FFD (GustafBase):
                 title=title, **kwargs
             )
         else:
-            show_vedo(
+            return show_vedo(
                 ["Original Mesh",
                  original_mesh,
                  original_mesh.toedges(unique=True)],

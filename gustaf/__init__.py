@@ -9,11 +9,11 @@ from gustaf import show
 from gustaf import utils
 from gustaf import create
 from gustaf import io
-from gustaf import ffd
 
 try:
     from gustaf import spline
     from gustaf.spline.base import BSpline, NURBS, Bezier, RationalBezier
+    from gustaf.spline.ffd import FFD
 except ImportError:
     spline = "cannot import spline modules"
 

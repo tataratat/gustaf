@@ -61,7 +61,7 @@ def show_vedo(*args, **kwargs,):
     close = kwargs.get("close", None)
     size = kwargs.get("size", "auto")
     cam = kwargs.get("cam", None)
-    title = kwargs.get("title", "Gustaf renderer")
+    title = kwargs.get("title", "gustaf")
 
     def clear_vedoplotter(plotter, numrenderers, skipcl=skip_clear):
         """enough said."""
@@ -215,6 +215,7 @@ def _vedo_showable(obj, **kwargs):
         arrows=obj.vis_dict.get("arrows", None),  # only for edges
         # > only for edges internally treated same as `lw`, but higher priority
         thickness=obj.vis_dict.get("thickness", None),
+        title=obj.vis_dict.get("title", "gustaf")
     )
     # loop once more to extract basics from kwargs
     # done after vis_dict, so that this overpowers
