@@ -68,12 +68,12 @@ class FFD (GustafBase):
             Attribute tracking if changes are present since last calculation
         _is_calculated_trackable: bool
             Getter for cp was called. Cps can be changed without knowledge
-            need to recalculate every time. 
-        _orig_para_dim_bounds: np.ndarray:
+            need to recalculate every time.
+        _orig_para_dim_ranges: np.ndarray:
             Original spline parametric dimension boundaries, used in
             knot_insertion to scale the knots to be inserted into the same
             scale as the internal spline (which has a hypercubic parametric
-            dimensional space) 
+            dimensional space)
 
         Returns
         -------
@@ -85,7 +85,7 @@ class FFD (GustafBase):
         self._q_vertices: np.ndarray = None
         self._is_calculated: bool = False
         self._is_calculated_trackable: bool = True
-        self._orig_para_dim_bounds: np.ndarray = None
+        self._orig_para_dim_ranges: np.ndarray = None
 
         if spline is not None:
             self.spline = spline
@@ -139,19 +139,19 @@ class FFD (GustafBase):
             "  Bounds: {b}.".format(b=mesh.get_bounds())
         )
         self._mesh = mesh.copy()  # copy to make sure given mesh stay untouched
-        
-        """
-        Checks dimensions and ranges critical for a correct FFD calculation
-        """
+
+        # Checks dimensions and ranges critical for a correct FFD calculation
         if not self._spline.para_dim == self._spline.dim:
             self._logw("The parametric and geometric dimensions of the "
                        "spline are not the same.")
         if not self._spline.dim == self._mesh.vertices.shape[1]:
             self._logw("The geometric dimensions of the spline and the "
                        "dimension of the mesh are not the same.")
-        
+
         self._scale_mesh_vertices()
         self._is_calculated = False
+        # trackable true since cp overwritten since last getter call
+        self._is_calculated_trackable = True
 
     @property
     def spline(self):
@@ -187,10 +187,10 @@ class FFD (GustafBase):
         """
         self._spline = spline.copy()
         if "knot_vectors" in spline.required_properties:
-            self._orig_para_dim_bounds = spline.knot_vector_bounds.T
+            self._orig_para_dim_ranges = spline.parametric_bounds.T
             self._spline.normalize_knot_vectors()
         else:
-            self._orig_para_dim_bounds = [[0,1]]*spline.para_dim
+            self._orig_para_dim_ranges = [[0, 1]]*spline.para_dim
 
         self._logi("Setting Spline.")
         self._logi("Spline Info:")
@@ -239,9 +239,8 @@ class FFD (GustafBase):
                 "Can not perform deformation for the FFD, since either the "
                 "spline and/or the mesh are not yet defined. Please define "
                 "both a spline and mesh before deforming the mesh.")
-            return
         if self._is_calculated and self._is_calculated_trackable:
-            return
+            return None
 
         self._logd("Applying FFD: Transforming vertices")
 
@@ -256,9 +255,9 @@ class FFD (GustafBase):
     @property
     def control_points(self):
         """
-        Returns current spline's control points. The control points can be 
-        directly updated with this. Please use carefully! After calling this 
-        'self._is_calculated' is not trackable anymore so deformation 
+        Returns current spline's control points. The control points can be
+        directly updated with this. Please use carefully! After calling this
+        'self._is_calculated' is not trackable anymore so deformation
         calculation is performed every time.
 
         Returns
@@ -289,6 +288,8 @@ class FFD (GustafBase):
         self._spline.control_points = control_points.copy()
         self._logd("Set new control points.")
         self._is_calculated = False
+        # trackable true since cp overwritten since last getter call
+        self._is_calculated_trackable = True
 
     def elevate_degree(self, *args, **kwargs):
         """
@@ -322,9 +323,11 @@ class FFD (GustafBase):
             raise NotImplementedError(
                 "Can not perform knot insertion on Bezier spline.")
         # scale knots from the original bounds into the new bounds
-        dim_bounds = self._orig_para_dim_bounds[parametric_dimension]
-        knots = \
-            (np.array(knots)-dim_bounds[0]*1)/(dim_bounds[-1]-dim_bounds[0])
+        dim_bounds = self._orig_para_dim_ranges[parametric_dimension]
+        knots = (
+            (np.array(knots)-dim_bounds[0])
+            / (dim_bounds[-1]-dim_bounds[0])
+        )
         self._spline.insert_knots(parametric_dimension, knots)
 
     def remove_knots(self, parametric_dimension, knots, tolerance=1e-8):
@@ -344,9 +347,11 @@ class FFD (GustafBase):
             raise NotImplementedError(
                 "Can not perform knot insertion on Bezier spline.")
         # scale knots from the original bounds into the new bounds
-        dim_bounds = self._orig_para_dim_bounds[parametric_dimension]
-        knots = \
-            (np.array(knots)-dim_bounds[0]*1)/(dim_bounds[-1]-dim_bounds[0])
+        dim_bounds = self._orig_para_dim_ranges[parametric_dimension]
+        knots = (
+            (np.array(knots)-dim_bounds[0])
+            / (dim_bounds[-1]-dim_bounds[0])
+        )
         self._spline.remove_knots(
             parametric_dimension, knots, tolerance=tolerance)
         self._is_calculated = False
@@ -367,15 +372,23 @@ class FFD (GustafBase):
         self._spline.reduce_degree(*args, **kwargs)
         self._is_calculated = False
 
-    def show(self, title: str = "Gustaf - FFD", **kwargs) -> Any:
+    # The '*' prevents the title to be given as a positional argument
+    def show(
+            self, *, return_showable: bool = False,
+            return_discrete: bool = False,
+            title: str = "gustaf - FFD", **kwargs) -> Any:
         """
-        Visualize. Shows the deformed mesh and the current spline. Currently 
+        Visualize. Shows the deformed mesh and the current spline. Currently
         visualization is limited to vedo.
 
         Parameters
         ----------
         title: str
-            Title of the vedo window. Defaults to "Gustaf - FFD".
+            Title of the vedo window. Defaults to "gustaf - FFD".
+        return_showable: bool
+            If true returns a dict of the showable items. Defaults to False.
+        return_discrete: bool
+            If true returns a dict of the showable items. Defaults to False.
         kwargs: Any
             Arbitrary keyword arguments. These are passed onto the vedo
             functions. Please be aware, that no checking of these are performed
@@ -387,7 +400,11 @@ class FFD (GustafBase):
             Returns, if applicable, the vedo plotter. 'close=False' as argument
             to get the plotter.
         """
-        if settings.VISUALIZATION_BACKEND != "vedo":
+        backend = kwargs.get("backend", None)
+        if backend is None:
+            backend = settings.VISUALIZATION_BACKEND
+
+        if backend != "vedo":
             raise NotImplementedError(
                 "Visualization of the FFD is not available for the chosen"
                 f"visualization framework -{settings.VISUALIZATION_BACKEND}-."
@@ -395,6 +412,7 @@ class FFD (GustafBase):
             )
         original_mesh = self._mesh.copy()
         original_mesh.vertices = self._q_vertices
+        vis_dict = dict()
         if original_mesh.kind == "volume":
             orig_mesh_outer_faces = Faces(
                 original_mesh.vertices,
@@ -406,24 +424,65 @@ class FFD (GustafBase):
                 self.mesh.get_faces()[
                     self.mesh.get_surfaces()]
             )
-            return show_vedo(
-                ["Original Mesh",
-                 original_mesh,
-                 orig_mesh_outer_faces.toedges(unique=True)],
-                ["Deformed Mesh with Spline",
-                 #  self.mesh.showable(),
-                 mesh_outer_faces.toedges(unique=True),
-                 *self._spline.showable().values()],
-                title=title, **kwargs
+            vis_dict.update(
+                original_mesh=[
+                    "Original Mesh",
+                    original_mesh,
+                    orig_mesh_outer_faces.toedges(unique=True)
+                ]
+            )
+            vis_dict.update(
+                deformed_mesh=[
+                    "Deformed Mesh with Spline",
+                    mesh_outer_faces.toedges(unique=True),
+                    *self._spline.showable(
+                        return_discrete=return_discrete
+                    ).values()]
             )
         else:
-            return show_vedo(
-                ["Original Mesh",
-                 original_mesh,
-                 original_mesh.toedges(unique=True)],
-                ["Deformed Mesh with Spline",
-                 #  self.mesh.showable(),
-                 self.mesh.toedges(unique=True),
-                 *self._spline.showable().values()],
-                title=title, **kwargs
+            original_dict = {
+                "ffd_title": "Deformed Mesh with Spline",
+                "ffd_mesh": original_mesh,
+                "ffd_mesh_edges": original_mesh.toedges(unique=True)
+            }
+            vis_dict.update(
+                original_mesh=original_dict
             )
+            deformed_dict = {
+                "ffd_title": "Deformed Mesh with Spline",
+                "ffd_mesh": self.mesh.toedges(unique=True).showable(),
+            }
+            deformed_dict.update(
+                **self._spline.showable(
+                    return_discrete=return_discrete
+                ))
+            vis_dict.update(
+                deformed_mesh=deformed_dict
+            )
+            # return show_vedo(
+            #     ["Original Mesh",
+            #      original_mesh,
+            #      original_mesh.toedges(unique=True)],
+            #     ["Deformed Mesh with Spline",
+            #      #  self.mesh.showable(),
+            #      self.mesh.toedges(unique=True),
+            #      *self._spline.showable().values()],
+            #     title=title, **kwargs
+            # )
+
+        if return_discrete or return_showable:
+            return vis_dict
+        return show_vedo(
+            *vis_dict.values(),
+            title=title, **kwargs
+        )
+
+    def showable(self, *args, **kwargs):
+        """
+        Returns a dictionary of showable items to describe the FFD at the
+        current state.
+
+        See show() for more information. This function redirects to it directly
+        with the return_showable keyword set to True.
+        """
+        self.show(*args, return_showable=True, **kwargs)
