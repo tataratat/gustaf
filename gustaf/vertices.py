@@ -12,6 +12,7 @@ from gustaf import utils
 from gustaf import show
 from gustaf._base import GustafBase
 
+
 class Vertices(GustafBase):
 
     kind = "vertex"
@@ -55,7 +56,7 @@ class Vertices(GustafBase):
 
     def process(
             self,
-            vetices_unique=False,
+            vertices_unique=False,
             vertices_unique_id=False,
             vertices_unique_inverse=False,
             bounds=False,
@@ -78,14 +79,14 @@ class Vertices(GustafBase):
         )
 
         if (
-            vertices_unqiue
+            vertices_unique
             or vertices_unique_id
             or vertices_unique_inverse
             or everything
         ):
             self.vertices_unique()
 
-        if bounbds or everything:
+        if bounds or everything:
             self.bounds()
 
         if centers or everything:
@@ -193,8 +194,8 @@ class Vertices(GustafBase):
         neighbors = kdt.query_ball_point(
             self.vertices[referenced],
             tolerance,
-            #workers=workers,
-            #return_sorted=True # new in 1.6, but default is True, so pass.
+            # workers=workers,
+            # return_sorted=True # new in 1.6, but default is True, so pass.
         )
 
         # inverse based on original vertices.
@@ -210,11 +211,11 @@ class Vertices(GustafBase):
             return_inverse=True,
         )
 
-        # Save 
+        # Save
         self.vertices_unique = self.vertices[uniq_id]
         self.vertices_unique_id = uniq_id
         self.vertices_unique_inverse = inv
-        self.vertices_overlapping = neighbors#.tolist() # array of lists.
+        self.vertices_overlapping = neighbors  # .tolist() # array of lists.
 
         if not return_referenced:
             return self.vertices_unique
@@ -254,10 +255,10 @@ class Vertices(GustafBase):
         # last_item_is_ref maybe np.ndarray or tuple
         # tuple, iff return_referenced==True
         last_item_is_ref = self.get_vertices_unique(
-                tolerance=tolerance,
-                referenced_only=referenced_only,
-                return_referenced=return_referenced,
-                workers=workers,
+            tolerance=tolerance,
+            referenced_only=referenced_only,
+            return_referenced=return_referenced,
+            workers=workers,
         )
 
         if return_referenced:
@@ -299,10 +300,10 @@ class Vertices(GustafBase):
         # last_item_is_ref maybe np.ndarray or tuple
         # tuple, iff return_referenced==True
         last_item_is_ref = self.get_vertices_unique(
-                tolerance=tolerance,
-                referenced_only=referenced_only,
-                return_referenced=return_referenced,
-                workers=workers,
+            tolerance=tolerance,
+            referenced_only=referenced_only,
+            return_referenced=return_referenced,
+            workers=workers,
         )
 
         if return_referenced:
@@ -337,13 +338,13 @@ class Vertices(GustafBase):
         Returns
         --------
         self.vertices_overlapping: (len(self.vertices)) np.ndarray
-          list 
+          list
         """
         last_item_is_ref = self.get_vertices_unique(
-                tolerance=tolerance,
-                referenced_only=referenced_only,
-                return_referenced=return_referenced,
-                workers=workers,
+            tolerance=tolerance,
+            referenced_only=referenced_only,
+            return_referenced=return_referenced,
+            workers=workers,
         )
 
         if return_referenced:
@@ -489,7 +490,6 @@ class Vertices(GustafBase):
             obj.vertexdata = newdata
 
             return obj
-
 
         # update
         if inplace:
@@ -665,9 +665,9 @@ class Vertices(GustafBase):
 
         Returns
         --------
-        None          
+        None
         """
-        show.show(self, **kwargs)
+        return show.show(self, **kwargs)
 
     def copy(self):
         """
@@ -683,7 +683,6 @@ class Vertices(GustafBase):
         """
         # all attributes are deepcopy-able
         return copy.deepcopy(self)
-
 
     @classmethod
     def concat(cls, *instances):

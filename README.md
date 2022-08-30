@@ -19,6 +19,7 @@ Option 2: __`conda`__ & __`pip`__
 ```
 conda install -c anaconda numpy scipy
 conda install -c conda-forge vedo 
+pip install splinepy
 ```
 
 _Note: `vtk` version > 9 tends to work better for our application cases._
