@@ -3,17 +3,12 @@
 io functions for numpy.savez.
 """
 
-#import os
-#import struct
-
 import numpy as np
 
 from gustaf.vertices import Vertices
 from gustaf.edges import Edges
 from gustaf.faces import Faces
 from gustaf.volumes import Volumes
-#from gustaf.io.ioutils import abs_fname, check_and_makedirs
-#from gustaf.utils import log
 
 # tuple instead of dict for correct iteration order
 _types_and_arrays = (
