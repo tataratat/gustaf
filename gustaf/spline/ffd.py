@@ -128,7 +128,7 @@ class FFD (GustafBase):
             par_dim = mesh.vertices.shape[1]
             self.spline = with_bounds(
                 [[0]*par_dim, [1]*par_dim],
-                mesh.bounds)
+                mesh.get_bounds())
 
         self._logi("Setting mesh.")
         self._logi("Mesh Info:")
@@ -388,7 +388,9 @@ class FFD (GustafBase):
         return_showable: bool
             If true returns a dict of the showable items. Defaults to False.
         return_discrete: bool
-            If true returns a dict of the showable items. Defaults to False.
+            Return dict of gustaf discrete objects, for example,
+            {Vertices, Edges, Faces}, instead of opening a window.
+            Defaults to False.
         kwargs: Any
             Arbitrary keyword arguments. These are passed onto the vedo
             functions. Please be aware, that no checking of these are performed
@@ -459,17 +461,6 @@ class FFD (GustafBase):
             vis_dict.update(
                 deformed_mesh=deformed_dict
             )
-            # return show_vedo(
-            #     ["Original Mesh",
-            #      original_mesh,
-            #      original_mesh.toedges(unique=True)],
-            #     ["Deformed Mesh with Spline",
-            #      #  self.mesh.showable(),
-            #      self.mesh.toedges(unique=True),
-            #      *self._spline.showable().values()],
-            #     title=title, **kwargs
-            # )
-
         if return_discrete or return_showable:
             return vis_dict
         return show_vedo(
