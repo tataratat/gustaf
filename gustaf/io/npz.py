@@ -5,18 +5,25 @@ io functions for numpy.savez.
 
 import numpy as np
 
+from gustaf import utils
 from gustaf.vertices import Vertices
 from gustaf.edges import Edges
 from gustaf.faces import Faces
 from gustaf.volumes import Volumes
 
-# tuple instead of dict for correct iteration order
-_types_and_arrays = (
-        (Vertices, ('vertices')),
-        (Edges, ('edges', 'vertices')),
-        (Faces, ('faces', 'vertices')),
-        (Volumes, ('volumes', 'vertices')),
-        )
+_stored_arrays = {
+        Vertices: ('vertices',),
+        Edges: ('vertices', 'edges'),
+        Faces: ('vertices', 'faces'),
+        Volumes: ('vertices', 'volumes')
+        }
+
+_stored_dicts = {
+        Vertices: (),
+        Edges: (),
+        Faces: ('BC',),
+        Volumes: ('BC',)
+        }
 
 def load(
         fname,
@@ -26,11 +33,8 @@ def load(
     """
     Load an npz file.
 
-    This will look for a connectivity array named either 'volumes', 'faces', or
-    'edges' and determine the class type based on that. If none of these are
-    found, only vertices are read.
-
-    A specific mesh type can be forced with, e.g., force_type=Volumes.
+    The type is determined from the 'kind' array. If force_type is used, this
+    type must match what is found in 'kind'.
 
     Parameters
     -----------
@@ -46,41 +50,74 @@ def load(
     """
     # read a dictionary from the file
     with np.load(fname, allow_pickle=False) as data:
-        # determine mesh class type
-        mesh_type = None
-        if force_type is not None:
-            assert force_type in (Volumes, Faces, Edges, Vertices)
-            mesh_type = force_type
-        else:
-            for type_, array_names in _types_and_arrays:
-                if array_names[0] in data:
-                    mesh_type = type_
-        assert mesh_type is not None, \
-                "Could not determine mesh type."
+        # find kind and set mesh class type
+        try:
+            mesh_kind = data['kind'][0]
+        except KeyError:
+            raise RuntimeError("NPZ file is missing 'kind' field. Found "
+                    + ", ".join(data) + ".")
+
+        # prepare kind => type dict (e.g. 'volume': Volumes)
+        kind_to_type = {type_.kind: type_ for type_ in _stored_arrays.keys()}
+        try:
+            mesh_type = kind_to_type[mesh_kind]
+        except KeyError:
+            raise RuntimeError(f"Kind '{mesh_kind}' doesn't match any known "
+                    + "types: " + ", ".join(kind_to_type) + ".")
+
+        if force_type is not None and force_type != mesh_type:
+            raise RuntimeError(f"Requested {force_type} but got {mesh_type}.")
+
+        # loop over all array entries and assign correctly
+        # (we're importing into immediate variables so we can make sure all
+        # arrays are imported before the dicts.)
+        read_arrays = {}
+        read_dicts = {}
+        for name, content in data.items():
+            # check for array
+            if name in _stored_arrays[mesh_type]:
+                read_arrays[name] = content
+            elif name == "kind":
+                continue
+            else:
+                dict_name, *dict_entry_name = name.split("_", 1)
+                # check for dict
+                if dict_name in _stored_dicts[mesh_type]:
+                    if dict_name not in read_dicts:
+                        read_dicts[dict_name] = {}
+                    read_dicts[dict_name][dict_entry_name[0]] = content
+                else:
+                    utils.log.warning("Encountered unknown array "
+                            f"'{name}' while reading NPZ file.")
+
+        # check if everything's there
+        missing_arrays = set(_stored_arrays[mesh_type]).difference(
+                set(read_arrays))
+        if missing_arrays:
+            raise RuntimeError("Missing arrays in NPZ file: "
+                    + ", ".join(list(missing_arrays)))
+
+        # we are not checking for dictionaries, because they may be empty on
+        # purpose!
 
         # create mesh
-        mesh = mesh_type(**{
-            array_name: data[array_name]
-            for array_name in dict(_types_and_arrays)[mesh_type]
-            })
+        mesh = mesh_type(**read_arrays)
 
         # run checks?
         if check:
-            assert np.all(np.less(mesh.elements().flatten(),
-                mesh.vertices.shape[0])), \
-                        "Connectivity array is referencing invalid " \
-                        "vertex indices."
+            if not np.all(np.less(mesh.elements().flatten(),
+                    mesh.vertices.shape[0])):
+                raise RuntimeError("Connectivity array is referencing "
+                    "invalid vertex indices.")
 
-        # also import BC array
-        if mesh_type in (Faces, Volumes):
-            # look for 'BC_*' arrays and import as '*'
-            mesh.BC = {
-                    boundary_name[0]: array
-                    for (prefix, *boundary_name), array in
-                    ((array_name.split('_', 1), array)
-                        for array_name, array in data.items())
-                    if prefix == "BC"
-                    }
+        # import dictionaries
+        for dict_name, dict_content in read_dicts.items():
+            # we try to update existing dictionaries since they might be of a
+            # subclass type
+            if hasattr(mesh, dict_name):
+                getattr(mesh, dict_name).update(dict_content)
+            else:
+                setattr(mesh, dict_name, dict_content)
 
         return mesh
 
@@ -100,20 +137,25 @@ def export(mesh, fname, compressed = False):
     --------
     None
     """
-    assert type(mesh) in (Volumes, Faces, Edges, Vertices)
+    if type(mesh) not in (Volumes, Faces, Edges, Vertices):
+        raise TypeError(f"Can't export type {type(mesh)}.")
 
-    # create export dict
+    # export arrays
     data = {
             array_name: getattr(mesh, array_name)
-            for array_name in dict(_types_and_arrays)[type(mesh)]
+            for array_name in _stored_arrays[type(mesh)]
             }
 
-    # also export boundary condition dict
-    if type(mesh) in (Volumes, Faces) and hasattr(mesh, 'BC'):
-        data.update((
-            (f'BC_{boundary_name}', array)
-            for boundary_name, array in mesh.BC.items()
-            ))
+    # add kind
+    data["kind"] = np.array([type(mesh).kind])
+
+    # export dictionaries
+    for dict_name in _stored_dicts[type(mesh)]:
+        if hasattr(mesh, dict_name):
+            data.update({
+                f'{dict_name}_{dict_entry_name}': array
+                for dict_entry_name, array in getattr(mesh, dict_name).items()
+                })
 
     # write to file
     (np.savez if not compressed else np.savez_compressed)(fname, **data)
