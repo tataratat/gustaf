@@ -163,7 +163,7 @@ def with_physical_bounds(
             [0. for _ in range(dim)],
             [1. for _ in range(dim)],
         ],
-        physical_bounds=parametric_bounds,
+        physical_bounds=physical_bounds,
         num_unique_knots=num_unique_knots,
         nurbs=nurbs,
     )
