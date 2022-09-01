@@ -186,3 +186,52 @@ def simplexify(quad, backslash=False, alternate=True):
                 matches[:, 0]] * number_of_tri_edges + matches[:, 1]
 
     return tri
+
+def tri_block_mesh(
+        bounds = [[0, 0], [1, 1]],
+        resolutions = [2, 2],
+        create_vertex_groups = True,
+        create_edge_groups = True,
+        alternate_diagonals = True
+        ):
+    """
+    Create structured triangle block mesh.
+
+    This combines `quad_block_mesh` and `simplexify`.
+
+    Parameters
+    -----------
+    bounds: (2, 2) array
+        Minimum and maximum coordinates.
+    resolutions: (2) array
+        Vertex count in each dimension.
+    create_vertex_groups: bool
+    create_face_groups: bool
+    alternate_diagonals : bool
+        (Default: True) Alternate diagonals during simplexification.
+
+    Returns
+    --------
+    face_mesh: Volumes
+    """
+    assert np.array(bounds).shape == (2, 2), \
+            "bounds array must have 2x2 entries."
+    assert len(resolutions) == 2, \
+            "resolutions array must have two entries."
+    assert np.greater(resolutions, 1).all(), \
+            "All resolutions must be at least 2."
+
+    # create quad mesh as basis
+    quad_mesh = quad_block_mesh(
+            bounds=bounds,
+            resolutions=resolutions,
+            create_vertex_groups=create_vertex_groups,
+            create_edge_groups=create_edge_groups
+            )
+
+    # turn into triangles
+    tri_mesh = simplexify(quad_mesh,
+            alternate=alternate_diagonals)
+
+    return tri_mesh
+

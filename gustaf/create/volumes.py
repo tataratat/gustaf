@@ -11,7 +11,7 @@ from gustaf import utils
 from gustaf import create
 
 def hexa_block_mesh(
-        bounds = [[0, 0, 0], [1, 1, 1]],
+        bounds = [[0., 0., 0.], [1., 1., 1.]],
         resolutions = [2, 2, 2],
         create_vertex_groups = True,
         create_face_groups = True
@@ -181,7 +181,7 @@ def extrude_to_tet(
         tet.vertex_groups[vertex_group] = vertex_map[vertex_ids].flatten()
     # two additional vertex groups are added at the bottom and top
     tet.vertex_groups[bottom_group] = np.arange(number_of_2d_nodes)
-    tet.vertex_groups[top_group] = (np.arange(number_of_2d_nodes) + 
+    tet.vertex_groups[top_group] = (np.arange(number_of_2d_nodes) +
             layers * number_of_2d_nodes)
 
     # two additional face groups are added at the bottom and top
@@ -237,4 +237,67 @@ def extrude_to_tet(
                 matches[:, 0]] * number_of_tet_faces + matches[:, 1]
 
     return tet
+
+def tet_block_mesh(
+        bounds = [[0., 0., 0.], [1., 1., 1.]],
+        resolutions = [2, 2, 2],
+        alternate_diagonals = True,
+        randomize_extrusion = False
+        ):
+    """
+    Create structured tetrahedron block mesh.
+
+    This creates a quad mesh on the plane spanned by the first two axes and then
+    runs the simplexification and extrusion on it.
+
+    Groups will be created by default.
+
+    Parameters
+    -----------
+    bounds: (2, 3) array
+        Minimum and maximum coordinates.
+    resolutions: (3) array
+        Vertex count in each dimension.
+    alternate_diagonals : bool
+        (Default: True) Try to alternate diagonal direction during
+        simplexification.
+    randomize_extrusion : bool
+        (Default: False) Use randomization during extrusion.
+
+    Returns
+    --------
+    volume_mesh: Volumes
+    """
+    assert np.array(bounds).shape == (2, 3), \
+            "bounds array must have 2x3 entries."
+    assert len(resolutions) == 3, \
+            "resolutions array must have three entries."
+    assert np.greater(resolutions, 1).all(), \
+            "All resolutions must be at least 2."
+
+    # we need to make sure bounds is a numpy array for indexing purposes
+    if not isinstance(bounds, np.ndarray):
+        bounds = np.array(bounds)
+
+    # create a 2D quad mesh along the first two axes
+    quad_mesh = create.faces.quad_block_mesh(
+            bounds = bounds[:,:2],
+            resolutions = resolutions[:2]
+            )
+
+    # simplexify
+    tri_mesh = create.faces.simplexify(quad_mesh,
+            alternate=alternate_diagonals)
+
+    # extrude along third axis
+    number_of_layers = resolutions[2] - 1
+    tet_mesh = create.volumes.extrude_to_tet(tri_mesh,
+            thickness = (bounds[1, 2] - bounds[0, 2])/number_of_layers,
+            layers = number_of_layers,
+            randomize = randomize_extrusion)
+
+    # move all vertices to correct position along third axis
+    tet_mesh.vertices[:,2] += bounds[0, 2]
+
+    return tet_mesh
 
