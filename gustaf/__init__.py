@@ -21,7 +21,19 @@ try:
     from gustaf.spline.ffd import FFD
     has_spline = True
 except ImportError:
-    spline = "cannot import spline modules"
+    # overwrites the all modules which depend on the `splinepy` library
+    # with an object which will throw an error
+    # as soon as it is used the first time. This means that any non spline
+    # functionality works as before, but as soon as these are used a
+    # comprehensive exception will be raised which is understandable in
+    # contrast to the possible multitude of errors previously possible
+    from gustaf.helpers.raise_if import ModuleImportRaiser
+    spline = ModuleImportRaiser("splinepy")
+    BSpline = spline
+    NURBS = spline
+    Bezier = spline
+    RationalBezier = spline
+    FFD = spline
 
 # import try/catch for triangle and gustaf-tetgen
 

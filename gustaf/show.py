@@ -12,7 +12,13 @@ from gustaf._base import GustafBase
 try:
     import vedo
 except ImportError:
-    vedo = "cannot import vedo"
+    # overwrites the vedo module with an object which will throw an error
+    # as soon as it is used the first time. This means that any non vedo
+    # functionality works as before, but as soon as vedo is used a
+    # comprehensive exception will be raised which is understandable in
+    # contrast to the possible errors previously possible
+    from gustaf.helpers.raise_if import ModuleImportRaiser
+    vedo = ModuleImportRaiser("vedo")
 
 
 def show(*gusobj, **kwargs):

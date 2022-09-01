@@ -5,10 +5,12 @@ gustaf welcomes and appreciates discussions, issues and pull requests!
 Once the repo is forked, one possible starting point would be creating a new python environments, for example, using [conda](https://docs.conda.io/en/latest/miniconda.html) with `python=3.9`
 ```bash
 conda create -n gustafenv python=3.9
+conda activate gustafenv
 git clone git@github.com:<path-to-your-fork>
 cd gustaf
 git checkout -b new-feature0
 python3 setup.py develop
+pip install yapf autopep8 flake8
 ```
 
 ## Style / implementation preferences
@@ -27,6 +29,8 @@ Followings are covered by [auto formatting](https://github.com/tataratat/gustaf/
 
 ### Automatic formatting / style check
 gustaf uses combination of [yapf](https://github.com/google/yapf) and [autopep8](https://github.com/hhatto/autopep8) for automatic formatting. Then [flake8](https://github.com/pycqa/flake8) to double check everything.
+
+To check the format and style of your code use the following commands:
 ```bash
 cd <gustaf-root>
 yapf -i -r gustaf examples tests 
