@@ -443,7 +443,7 @@ class FFD (GustafBase):
             )
         else:
             original_dict = {
-                "ffd_title": "Deformed Mesh with Spline",
+                "ffd_title": "Original Mesh",
                 "ffd_mesh": original_mesh,
                 "ffd_mesh_edges": original_mesh.toedges(unique=True)
             }
