@@ -27,14 +27,18 @@ _stored_dicts = {
 
 def load(
         fname,
-        force_type = None,
-        check = False
+        force_type=None,
+        check=False
 ):
     """
     Load an npz file.
 
     The type is determined from the 'kind' array. If force_type is used, this
     type must match what is found in 'kind'.
+
+    Arrays, such as 'vertices', are read from the file as they are. Dictionaries
+    are created from certain array groups that start with the same prefix, such
+    as 'vertex_groups_'.
 
     Parameters
     -----------
@@ -51,11 +55,12 @@ def load(
     # read a dictionary from the file
     with np.load(fname, allow_pickle=False) as data:
         # find kind and set mesh class type
-        try:
-            mesh_kind = data['kind'][0]
-        except KeyError:
-            raise RuntimeError("NPZ file is missing 'kind' field. Found "
-                    + ", ".join(data) + ".")
+        mesh_kind_array = data.get("kind", None)
+        if mesh_kind_array is not None and len(mesh_kind_array) == 1:
+            mesh_kind = mesh_kind_array[0]
+        else:
+            raise RuntimeError("NPZ file is missing correct 'kind' array. "
+                    "Found " + ", ".join(data) + ".")
 
         # prepare kind => type dict (e.g. 'volume': Volumes)
         kind_to_type = {type_.kind: type_ for type_ in _stored_arrays.keys()}
@@ -69,7 +74,7 @@ def load(
             raise RuntimeError(f"Requested {force_type} but got {mesh_type}.")
 
         # loop over all array entries and assign correctly
-        # (we're importing into immediate variables so we can make sure all
+        # (we're importing into intermediate variables so we can make sure all
         # arrays are imported before the dicts.)
         read_arrays = {}
         read_dicts = {}
@@ -80,9 +85,12 @@ def load(
             elif name == "kind":
                 continue
             else:
+                # read dictionary entry name as list to avoid error if
+                # underscore is missing
                 dict_name, *dict_entry_name = name.split("_", 1)
                 # check for dict
-                if dict_name in _stored_dicts[mesh_type]:
+                if (dict_name in _stored_dicts[mesh_type]
+                        and len(dict_entry_name) > 0):
                     if dict_name not in read_dicts:
                         read_dicts[dict_name] = {}
                     read_dicts[dict_name][dict_entry_name[0]] = content
