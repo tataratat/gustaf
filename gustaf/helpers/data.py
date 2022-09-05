@@ -4,10 +4,11 @@ Stores latest computed values saved values.
 """
 
 import abc
+from functools import wraps
 
 import numpy as np
 
-class TrackedArray(np.ndarray):
+class _TrackedArray(np.ndarray):
     """
     Taken from nice implementations of `trimesh` (see LICENSE.txt).
     `https://github.com/mikedh/trimesh/blob/main/trimesh/caching.py`.
@@ -110,7 +111,7 @@ class TrackedArray(np.ndarray):
                                                  **kwargs)
 
 
-def to_tracked_array(array, dtype=None):
+def TrackedArray(array, dtype=None):
     """
     Taken from nice implementations of `trimesh` (see LICENSE.txt).
     `https://github.com/mikedh/trimesh/blob/main/trimesh/caching.py`.
@@ -118,6 +119,8 @@ def to_tracked_array(array, dtype=None):
     Properly subclass a numpy ndarray to track changes.
     Avoids some pitfalls of subclassing by forcing contiguous
     arrays and does a view into a TrackedArray.
+
+    Factory-like wrapper function for _TrackedArray.
 
     Parameters
     ------------
@@ -136,7 +139,7 @@ def to_tracked_array(array, dtype=None):
         array = []
     # make sure it is contiguous then view it as our subclass
     tracked = np.ascontiguousarray(
-        array, dtype=dtype).view(TrackedArray)
+        array, dtype=dtype).view(_TrackedArray)
     # should always be contiguous here
     assert tracked.flags['C_CONTIGUOUS']
 
@@ -264,20 +267,12 @@ class DataHolder(abc.ABC):
         """
         return self._saved.items()
 
-    @abc.abstractmethod
-    def _save(self, key, value):
-        """
-        Do what __setitem__ would do, but only meant for internal use.
-        """
-        pass
-
 
 class ComputedArrays(DataHolder):
+    _depends = None
+    _inv_depends = None
 
-    ___slots___ = [
-            "_dependency",
-            "_inv_dependency",
-    ]
+    ___slots___ = []
 
     def __init__(self, helpee, **kwrags):
         """
@@ -296,51 +291,13 @@ class ComputedArrays(DataHolder):
           keys and str of attributes, on which this array depends
         """ 
         super().__init__(helpee)
-        self._dependency = dict()
-        self._inv_dependency = dict()
 
-        for key, value in kwargs.items():
-            self._append_item(key, value)
-
-    def _append_item(self, key, value):
+    @classmethod
+    def depends_on(cls, var_name):
         """
-        Appends key and value set.
+        Decorator as classmethod.
 
-        Parameters
-        -----------
-        key: str
-        value: str
-
-        Returns
-        --------
-        None
-        """
-        # check if helpee has same named methods that's callable
-        mem_func = getattr(self._helpee, key, None)
-        if not callable(mem_func):
-            raise AttributeError(
-                f"{type(self._helpee)} is expected to have a {f}() method,"
-                " but it doesn't."
-            )
-        # check if dependency is a real thing
-        if not hasattr(self._helpee, value):
-            raise AttributeError(
-                f"{key} requires {value}, but {type(self._helpee)} doesn't "
-                "have it."
-            )
-        # None init.
-        self._saved[key] = None
-        # save dependency
-        self._dependency[key] = value
-        # save inverse dependency, just to make it easy to reset
-        if value not in self._inv_dependency:
-            self._inv_dependency[value] = list()
-
-        self._inv_dependency[value].append(key)
-
-    def should_compute(self, key):
-        """
-        Tells if the key should be computed. Three cases, where the answer is
+        checks if the key should be computed. Three cases, where the answer is
         yes:
         1. there's modification on arrays that the key depend on.
           -> erases all other
@@ -351,24 +308,46 @@ class ComputedArrays(DataHolder):
         -----------
         key: str
         """
-        # check if it is valid key
-        if key not in self._saved:
-            raise KeyError(f"Invalid key ({key}) for {type(self._helpee)}")
+        def inner(func):
+            # followings are done once while modules are loaded
+            # just subclass this class to make a special helper
+            # for each helpee class.
 
-        # is saved value None?
-        saved = self._saved[key]
-        if saved is None:
-            return True
+            # initialize property
+            if cls._depends is None:
+                cls._depends = dict()
 
-        # is modified?
-        dependee = getattr(self._helpee, self._dependency[key])
-        if dependee.is_modified:
-            # let's reset all other related vars.
-            for invd in self._inv_dependency[self._dependency[key]]:
-                self._saved[invd] = None
+            cls._depends[func.__name__] = var_name
 
-            return True
+            if cls._inv_depends is None:
+                cls._inv_depends = dict()
+            if cls._inv_depends.get(var_name, None) is None:
+                cls._inv_depends[var_name] = list()
 
-        return False
+            cls._inv_depends[var_name].append(func.__name__)
 
-    def _save(self, key, value):
+            @wraps(func)
+            def compute_or_return_saved(*args, **kwargs):
+                """
+                Check if the key should be computed,
+                """
+                self = args[0] # the helpee itself
+                # computed arrays are called _computed.
+                dependee = getattr(self, cls._depends[func.__name__])
+                if dependee.is_modified:
+                    for invd in cls._inv_depends[cls._depends[func.__name]]:
+                        self._computed._saved[invd] = None
+
+                saved = self._computed._saved.get(func.__name__, None)
+                if saved is not None:
+                    return saved
+
+                # we've reached this point because we have to compute this
+                computed = func(*args, **kwargs)
+                computed.flags.writable = False # configurable?
+                self._computed._saved[func.__name__] = computed
+
+                return computed
+
+
+class MeshComputedArrays(ComputedArrays): pass
