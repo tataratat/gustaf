@@ -272,9 +272,12 @@ class DataHolder(abc.ABC):
         pass
 
 
-class LastSavedArrays(DataHolder):
+class ComputedArrays(DataHolder):
 
-    ___slots___ = ["_valid_keys"]
+    ___slots___ = [
+            "_dependency",
+            "_inv_dependency",
+    ]
 
     def __init__(self, helpee, **kwrags):
         """
@@ -293,38 +296,79 @@ class LastSavedArrays(DataHolder):
           keys and str of attributes, on which this array depends
         """ 
         super().__init__(helpee)
-        self._valid_keys = tuple(kwargs.keys())
+        self._dependency = dict()
+        self._inv_dependency = dict()
 
-        # check if helpee has same named methods that's callable
-        for key, values in kwargs.items():
-            mem_func = getattr(self._helpee, k, None)
-            # None init.
-            self._saved[key] = None
-            if not callable(mem_func):
-                raise AttributeError(
-                    f"{type(self._helpee)} is expected to have a {f}() method,"
-                    " but it doesn't."
-                )
+        for key, value in kwargs.items():
+            self._append_item(key, value)
 
-    def __setitem__(self, key, value):
+    def _append_item(self, key, value):
         """
-        Stores values if the key exists.
+        Appends key and value set.
 
         Parameters
         -----------
         key: str
-        value: np.ndarray
+        value: str
 
         Returns
         --------
         None
         """
-        if key in self._valid_keys:
-            return self._saved[key] = value
-
-        else:
-            raise KeyError(
-                f"`{key}` cannot be stored for {type(self._helpee)}"
+        # check if helpee has same named methods that's callable
+        mem_func = getattr(self._helpee, key, None)
+        if not callable(mem_func):
+            raise AttributeError(
+                f"{type(self._helpee)} is expected to have a {f}() method,"
+                " but it doesn't."
             )
+        # check if dependency is a real thing
+        if not hasattr(self._helpee, value):
+            raise AttributeError(
+                f"{key} requires {value}, but {type(self._helpee)} doesn't "
+                "have it."
+            )
+        # None init.
+        self._saved[key] = None
+        # save dependency
+        self._dependency[key] = value
+        # save inverse dependency, just to make it easy to reset
+        if value not in self._inv_dependency:
+            self._inv_dependency[value] = list()
 
-    def 
+        self._inv_dependency[value].append(key)
+
+    def should_compute(self, key):
+        """
+        Tells if the key should be computed. Three cases, where the answer is
+        yes:
+        1. there's modification on arrays that the key depend on.
+          -> erases all other
+        2. corresponding value is None
+        3. ?i just can't remember?
+
+        Parameters
+        -----------
+        key: str
+        """
+        # check if it is valid key
+        if key not in self._saved:
+            raise KeyError(f"Invalid key ({key}) for {type(self._helpee)}")
+
+        # is saved value None?
+        saved = self._saved[key]
+        if saved is None:
+            return True
+
+        # is modified?
+        dependee = getattr(self._helpee, self._dependency[key])
+        if dependee.is_modified:
+            # let's reset all other related vars.
+            for invd in self._inv_dependency[self._dependency[key]]:
+                self._saved[invd] = None
+
+            return True
+
+        return False
+
+    def _save(self, key, value):
