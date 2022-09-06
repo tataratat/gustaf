@@ -10,7 +10,6 @@ Jaewook Lee.
 from typing import Any, List, Optional, Union
 import numpy as np
 from gustaf._base import GustafBase
-from gustaf.faces import Faces
 from gustaf.show import show_vedo
 from gustaf._typing import SPLINE_TYPES, MESH_TYPES
 from gustaf.create.spline import with_bounds
@@ -82,6 +81,8 @@ class FFD (GustafBase):
         # Use property definitions to store the values
         self._spline: SPLINE_TYPES = None
         self._mesh: MESH_TYPES = None
+        self._o_mesh: MESH_TYPES = None
+        self._o_edges: Edges = None
         self._q_vertices: np.ndarray = None
         self._is_calculated: bool = False
         self._is_calculated_trackable: bool = True
@@ -138,7 +139,8 @@ class FFD (GustafBase):
         self._logi(
             "  Bounds: {b}.".format(b=mesh.get_bounds())
         )
-        self._mesh = mesh.copy()  # copy to make sure given mesh stay untouched
+        self._o_mesh = mesh.copy()  # we keep original copy for visulization
+        self._mesh = mesh.copy() # another copy for current status.
 
         # Checks dimensions and ranges critical for a correct FFD calculation
         if not self._spline.para_dim == self._spline.dim:
@@ -372,11 +374,7 @@ class FFD (GustafBase):
         self._spline.reduce_degree(*args, **kwargs)
         self._is_calculated = False
 
-    # The '*' prevents the title to be given as a positional argument
-    def show(
-            self, *, return_showable: bool = False,
-            return_discrete: bool = False,
-            title: str = "gustaf - FFD", **kwargs) -> Any:
+    def show(self, **kwargs) -> Any:
         """
         Visualize. Shows the deformed mesh and the current spline. Currently
         visualization is limited to vedo.
@@ -402,7 +400,18 @@ class FFD (GustafBase):
             Returns, if applicable, the vedo plotter. 'close=False' as argument
             to get the plotter.
         """
-        backend = kwargs.get("backend", None)
+        backend = kwargs.pop("backend", None)
+        return_showable = kwargs.pop("return_showable", False)
+        return_discrete = kwargs.pop("return_discrete", False)
+        title = kwargs.pop("title", "gustaf - FFD")
+
+        if return_discrete and return_showable:
+            raise ValueError(
+                "Either one of following params can be True: "
+                "{return_discrete, return_showable} "
+                "You've set both True."
+            )
+
         if backend is None:
             backend = settings.VISUALIZATION_BACKEND
 
@@ -412,63 +421,82 @@ class FFD (GustafBase):
                 f"visualization framework -{settings.VISUALIZATION_BACKEND}-."
                 " Please choose vedo to visualize."
             )
-        original_mesh = self._mesh.copy()
-        original_mesh.vertices = self._q_vertices
-        vis_dict = dict()
-        if original_mesh.kind == "volume":
-            orig_mesh_outer_faces = Faces(
-                original_mesh.vertices,
-                original_mesh.get_faces()[
-                    original_mesh.get_surfaces()]
-            )
-            mesh_outer_faces = Faces(
-                self.mesh.vertices,
-                self.mesh.get_faces()[
-                    self.mesh.get_surfaces()]
-            )
-            vis_dict.update(
-                original_mesh=[
-                    "Original Mesh",
-                    original_mesh,
-                    orig_mesh_outer_faces.toedges(unique=True)
-                ]
-            )
-            vis_dict.update(
-                deformed_mesh=[
-                    "Deformed Mesh with Spline",
-                    mesh_outer_faces.toedges(unique=True),
-                    *self._spline.showable(
-                        return_discrete=return_discrete
-                    ).values()]
-            )
+
+        # prepare originals
+        o_mesh = self._o_mesh.copy()
+        # prepare deformed
+        d_mesh = self.mesh # copies
+
+        things_to_show = dict()
+        # let's show faces at most, since volumes can take awhile
+        if o_mesh.kind == "volume":
+            # only outer faces. overwrite
+            o_mesh = o_mesh.tofaces(unique=False)
+            o_mesh.update_faces(o_mesh.get_surfaces())
+            d_mesh = d_mesh.tofaces(unique=False)
+            d_mesh.update_faces(d_mesh.get_surfaces())
+
+        # prepare edges
+        o_edges = None
+        has_edges = False
+        if self._o_edges is None:
+            if o_mesh.kind != "vertex":
+                self._o_edges = self._o_mesh.toedges(unique=True)
+                has_edges = True
+                o_edges = self._o_edges.copy()
         else:
-            original_dict = {
-                "ffd_title": "Original Mesh",
-                "ffd_mesh": original_mesh,
-                "ffd_mesh_edges": original_mesh.toedges(unique=True)
-            }
-            vis_dict.update(
-                original_mesh=original_dict
-            )
-            deformed_dict = {
-                "ffd_title": "Deformed Mesh with Spline",
-                "ffd_mesh": self.mesh.toedges(unique=True).showable(),
-            }
-            deformed_dict.update(
-                **self._spline.showable(
-                    return_discrete=return_discrete
-                ))
-            vis_dict.update(
-                deformed_mesh=deformed_dict
-            )
-        if return_discrete or return_showable:
-            return vis_dict
+            has_edges = True
+            o_edges = self._o_edges.copy()
+
+        d_edges = None
+        if has_edges:
+            d_edges = d_mesh.toedges(unique=True)
+
+        # update meshes
+        things_to_show.update(original_mesh=o_mesh)
+        things_to_show.update(original_description="Original Mesh")
+        things_to_show.update(deformed_mesh=d_mesh)
+        things_to_show.update(deformed_description="Deformed Mesh with Spline")
+
+        # update spline
+        things_to_show.update(deformed_spline=self.spline)
+
+        if has_edges:
+            things_to_show.update(original_edges=o_edges)
+            things_to_show.update(deformed_edges=d_edges)
+
+        if return_discrete:
+            # spline is strictly not discrete.
+            return things_to_show
+
+        if return_showable:
+            # let's turn others into showable and return
+            for k, v in things_to_show.items():
+                if isinstance(v, GustafBase):
+                    things_to_show[k] = v.showable()
+    
+            return things_to_show
+
+        # current workaround to set spline's surface alpha correctly
+        spl = things_to_show.pop("deformed_spline")
+        spl_showable = spl.showable(surface_alpha=.85)
+
         return show_vedo(
-            *vis_dict.values(),
-            title=title, **kwargs
+            [
+                things_to_show[k]
+                 for k in things_to_show.keys() if k.startswith("original")
+            ],
+            [
+                *[
+                    things_to_show[k]
+                     for k in things_to_show.keys() if k.startswith("deformed")
+                ],
+                *spl_showable.values(),
+            ],
+            title=title,
         )
 
-    def showable(self, *args, **kwargs):
+    def showable(self, **kwargs):
         """
         Returns a dictionary of showable items to describe the FFD at the
         current state.
@@ -476,4 +504,4 @@ class FFD (GustafBase):
         See show() for more information. This function redirects to it directly
         with the return_showable keyword set to True.
         """
-        self.show(*args, return_showable=True, **kwargs)
+        return self.show(return_showable=True, **kwargs)
