@@ -28,5 +28,5 @@ Until all the functionalities are fully transferred, it may go through several d
 Followings are gentle suggestions for PRs, so that the pre-alpha phase can end as soon as possible:
 - small, separable features
 - similar implementation style as current implementation (I know, quite ambiguous)
-- unit tests
+- unit tests  
 On the other hand, it is perfect time for suggestions / requests / feedbacks, so let us know!
