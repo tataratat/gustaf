@@ -8,10 +8,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - uses: actions/setup-python@v2
+      - uses: actions/setup-python@v3
       - name: Install dependencies
         run: |
-          pip install docs/requirements.txt
+          pip install ./docs/requirements.txt
       - name: Sphinx config
           sphinx-apidoc -f -t docs/source/_templates -o docs/source gustaf
       - name: Sphinx build
@@ -23,5 +23,5 @@ jobs:
         with:
           #publish_branch: gh-pages
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: docs/build
+          publish_dir: ./docs/build/html
           force_orphan: true
