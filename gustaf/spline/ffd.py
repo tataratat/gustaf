@@ -470,7 +470,7 @@ class FFD (GustafBase):
             return things_to_show
 
         if return_showable:
-            # let's turn others into showable and return
+            # let's turn everthing into showable and return
             for k, v in things_to_show.items():
                 if isinstance(v, GustafBase):
                     things_to_show[k] = v.showable()
@@ -478,6 +478,7 @@ class FFD (GustafBase):
             return things_to_show
 
         # current workaround to set spline's surface alpha correctly
+        # TODO: support this situation better
         spl = things_to_show.pop("deformed_spline")
         spl_showable = spl.showable(surface_alpha=.85)
 
