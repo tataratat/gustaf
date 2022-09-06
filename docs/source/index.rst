@@ -13,7 +13,7 @@ Sources
 .. toctree::
    Github <http://github.com/tataratat/gustaf>
 
-Contributinng
+Contributing
 ===============
 .. toctree::
    :maxdepth: 2
