@@ -15,7 +15,7 @@ jobs:
         with:
           python-version: 3.9
       - name: install gustaf
-        run:  pip setup.py develop
+        run:  python3 setup.py develop
       - name: Install dependencies
         run: pip install -r ./docs/requirements.txt
       - name: Sphinx config
