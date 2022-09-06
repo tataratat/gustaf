@@ -5,28 +5,23 @@ if __name__ == "__main__":
     gus.utils.log.configure(debug=True)
 
     # Lets start with a 2D example
-    try:
-        mesh_2d = gus.io.mixd.load(
-            mxyz="geometry_files/mxyz.space",
-            mien="geometry_files/mien")
-    except FileNotFoundError as err:
-        gus.utils.log.info(
-            "Geometry files not accessible creating exemplary mesh.")
-        temp_spline = gus.BSpline(
-            [2, 2],
-            [
-                [0, 0, 0, 0.33, 0.66, 1, 1, 1],
-                [0, 0, 0, 1, 1, 1]
-            ],
-            [
-                [0, 0], [0.25, 0], [0.5, 0.05], [0.75, 0.1], [1, 0.1],
-                [0, 0.2], [0.25, 0.2], [0.5, 0.2], [0.75, 0.2], [1, 0.2],
-                [0, 0.4], [0.25, 0.4], [0.5, 0.35], [0.75, 0.3], [1, 0.3]
-            ])
-        d2_resolution = [50, 25]
-        sampled_2d = temp_spline.sample(d2_resolution)
-        connec_2d = gus.utils.connec.make_quad_faces(d2_resolution)
-        mesh_2d = gus.Faces(sampled_2d, connec_2d)
+    gus.utils.log.info(
+        "Geometry files not accessible creating exemplary mesh.")
+    temp_spline = gus.BSpline(
+        [2, 2],
+        [
+            [0, 0, 0, 0.33, 0.66, 1, 1, 1],
+            [0, 0, 0, 1, 1, 1]
+        ],
+        [
+            [0, 0], [0.25, 0], [0.5, 0.05], [0.75, 0.1], [1, 0.1],
+            [0, 0.2], [0.25, 0.2], [0.5, 0.2], [0.75, 0.2], [1, 0.2],
+            [0, 0.4], [0.25, 0.4], [0.5, 0.35], [0.75, 0.3], [1, 0.3]
+        ])
+    d2_resolution = [50, 25]
+    sampled_2d = temp_spline.sample(d2_resolution)
+    connec_2d = gus.utils.connec.make_quad_faces(d2_resolution)
+    mesh_2d = gus.Faces(sampled_2d, connec_2d)
 
     spline_2d = gus.BSpline(
         [2, 2],
@@ -38,7 +33,7 @@ if __name__ == "__main__":
     ffd_2d.show(title="2D FFD - BSpline")
 
     # Now 3D
-    v_res = [20, 30, 40]
+    v_res = [5, 6, 7]
     vertices = gus.create.vertices.raster(
         bounds=[[-1, 0, 5], [4, 1, 10]],
         resolutions=v_res)
@@ -79,21 +74,22 @@ if __name__ == "__main__":
     # Only provide mesh
     ffd_with_out_spline = gus.FFD(volume_3d)
 
-    ffd_with_out_spline.show(title="Spline with out defined spline."
+    ffd_with_out_spline.show(title="Spline without defined spline."
                                    " Projected into dimension of the given "
                                    "mesh.")
 
     # Only provide mesh after initialization
-    ffd_with_out_spline_and_mesh = gus.FFD()
-    ffd_with_out_spline_and_mesh.mesh = volume_3d
-    ffd_with_out_spline_and_mesh.show(title="Spline with out defined spline."
-                                      " Projected into dimension of the given "
-                                      "mesh.")
+    # does same as above 
+    #ffd_with_out_spline_and_mesh = gus.FFD()
+    #ffd_with_out_spline_and_mesh.mesh = volume_3d
+    #ffd_with_out_spline_and_mesh.show(title="Spline without defined spline."
+    #                                  " Projected into dimension of the given "
+    #                                  "mesh.")
 
     # Only provide spline and then mesh after initialization
     ffd_with_out_mesh = gus.FFD()
     ffd_with_out_mesh.spline = spline_3d
     ffd_with_out_mesh.mesh = volume_3d
-    ffd_with_out_mesh.show(title="Spline with out defined mesh at "
+    ffd_with_out_mesh.show(title="Spline without defined mesh at "
                            "initialization. Projected into dimension "
                            "of the given mesh.")
