@@ -1,0 +1,27 @@
+name: build docs
+on:
+  push:
+    branches: ["main", "docs"]
+
+jobs:
+  docs:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-python@v2
+      - name: Install dependencies
+        run: |
+          pip install docs/requirements.txt
+      - name: Sphinx config
+          sphinx-apidoc -f -t docs/source/_templates -o docs/source gustaf
+      - name: Sphinx build
+        run: |
+          sphinx-build -b html docs/source docs/build
+      - name: Deploy
+        uses: peaceiris/actions-gh-pages@v3
+        #if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/master' }}
+        with:
+          #publish_branch: gh-pages
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: docs/build
+          force_orphan: true
