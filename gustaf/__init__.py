@@ -1,4 +1,3 @@
-from ast import Import
 from gustaf import _version
 from gustaf import settings
 from gustaf import vertices
