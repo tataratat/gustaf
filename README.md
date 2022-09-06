@@ -5,7 +5,12 @@ Loyal butler for numerical-analysis-geometry processing and visualization.
 ```
 pip install gustaf
 ```
-__dependencies__  
+you can also get the latest version of gustaf by:
+```
+pip install git+https://github.com/tataratat/gustaf.git@main
+```
+
+### Dependencies
 `numpy` is the only strict dependency of `gustaf`.  
 Followings are optional library for more functionalities!
 ```
