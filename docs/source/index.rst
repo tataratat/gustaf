@@ -16,9 +16,9 @@ Sources
 Contributing
 ===============
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
 
-   Contiributing <../../CONTRIBUTING.md>
+   Contiributing <CONTRIBUTING>
 
 Library
 ============
