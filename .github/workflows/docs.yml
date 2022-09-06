@@ -14,6 +14,7 @@ jobs:
         uses: actions/setup-python@v3
         with:
           python-version: 3.9
+
       - name: install gustaf
         run:  python3 setup.py develop
 
@@ -22,7 +23,7 @@ jobs:
 
       - name: install splinepy
         run: |
-        # test version of v0.0.3
+          # test version of v0.0.3
           pip install -i https://test.pypi.org/simple/ splinepy==0.0.3
 
       - name: Sphinx config
