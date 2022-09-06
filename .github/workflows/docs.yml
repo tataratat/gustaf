@@ -16,7 +16,7 @@ jobs:
           python-version: 3.9
 
       - name: Install dependencies
-        run: pip install ./docs/requirements.txt
+        run: pip install -r ./docs/requirements.txt
       - name: Sphinx config
         run: |
           sphinx-apidoc -f -t docs/source/_templates -o docs/source gustaf
