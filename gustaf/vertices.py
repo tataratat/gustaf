@@ -10,6 +10,7 @@ import numpy as np
 from gustaf import settings
 from gustaf import utils
 from gustaf import show
+from gustaf import helpers
 from gustaf._base import GustafBase
 
 
@@ -18,14 +19,8 @@ class Vertices(GustafBase):
     kind = "vertex"
 
     __slots__ = [
-        "whatami",
-        "vertices",
-        "vertices_unique",
-        "vertices_unique_id",
-        "vertices_unique_inverse",
-        "vertices_overlapping",
-        "bounds",
-        "centers",
+        "_vertices",
+        "_computed"
         "vis_dict",
         "vertexdata",
     ]
@@ -44,27 +39,25 @@ class Vertices(GustafBase):
         Returns
         --------
         None
+
+        Attributes
+        -----------
+        whatami: str
+        vertices: np.ndarray
+        
         """
         if vertices is not None:
-            self.vertices = utils.arr.make_c_contiguous(
-                vertices,
-                settings.FLOAT_DTYPE
-            )
-        self.whatami = "vertices"
+            self.vertices = vertices
+
+        self._computed = helpers.data.ComputedMeshData(self)
+
         self.vis_dict = dict()
         self.vertexdata = dict()
 
-    def process(
-            self,
-            vertices_unique=False,
-            vertices_unique_id=False,
-            vertices_unique_inverse=False,
-            bounds=False,
-            centers=False,
-            everything=False,
-    ):
+    @property
+    def vertices(self):
         """
-        Returns unique vertices.
+        Returns vertices
 
         Parameters
         -----------
@@ -72,288 +65,118 @@ class Vertices(GustafBase):
 
         Returns
         --------
+        vertices: (n, d) np.ndarray
         """
-        self.vertices = utils.make_c_contiguous(
-            self.vertices,
+        return self._vertices
+
+
+    @vertices.setter:
+    def vertices(self, vs):
+        """
+        Vertices setter. This will saved as a tracked array.
+
+        Parameters
+        -----------
+        vs: (n, d) np.ndarray
+
+        Returns
+        --------
+        None
+        """
+        self._vertices = helpers.data.make_tracked_array(
+            vs,
             settings.FLOAT_DTYPE
         )
 
-        if (
-            vertices_unique
-            or vertices_unique_id
-            or vertices_unique_inverse
-            or everything
-        ):
-            self.vertices_unique()
-
-        if bounds or everything:
-            self.bounds()
-
-        if centers or everything:
-            self.centers()
-
-    def elements(self, elements=None):
+    @property
+    def whatami(self,):
         """
-        Returns current elements.
+        Answers deep philosophical question: "what am i"?
+
+        Parameters
+        ----------
+        None
+
+        Returns
+        --------
+        whatami: str
+          vertices
+        """
+        return "vertices"
+
+    @property
+    def elements(self):
+        """
+        Returns current connectivity. A short cut in FEM friendly term.
         Elements mean different things for different classes:
           Vertices -> vertices
           Edges -> edges
           Faces -> faces
           Volumes -> volumes
-        Could be understood as connectivity.
-        Inplace updates only.
 
         Parameters
         -----------
-        elements: (n, d) np.ndarray
-          int. Only updates if it is not None.
+        None
 
         Returns
         --------
         elements: (n, d) np.ndarray
           int. iff elements=None
         """
-        if hasattr(self, "volumes"):
-            if elements is None:
-                return self.volumes
-
-            else:
-                self.volumes = elements
-                return self
-
-        elif hasattr(self, "faces"):
-            if elements is None:
-                return self.faces
-
-            else:
-                self.faces = elements
-                return self
-
-        elif hasattr(self, "edges"):
-            if elements is None:
-                return self.edges
-
-            else:
-                self.edges = elements
-                return self
-
-        elif hasattr(self, "vertices"):
-            return np.arange(
-                (self.vertices.shape[0], 1),
-                dtype=settings.INT_DTYPE
+        if self.kind.startswith("vertex"):
+            self._logd(
+                "returning vertex ids as Vertices.elements()."
+            )
+            # this is just to keep the output of consistent
+            return helpers.data.make_tracked_array(
+                np.arange(
+                    (self.vertices.shape[0], 1),
+                    dtype=settings.INT_DTYPE,
+                )
             )
 
         else:
-            return None
+            # naming rule in gustaf
+            # all of those should be tracked array.
+            elem_name = type(self).__qualname__.lower()
+            self._logd(f"returning {elem_name}")
+ 
+           return getattr(self, elem_name)
 
-    def get_vertices_unique(
+    @helpers.data.ComputedMeshData("vertices")
+    def unique_vertices(
             self,
-            tolerance=settings.TOLERANCE,
-            referenced_only=True,
-            return_referenced=False,
-            workers=1,
+            tolerance=None,
+            **kwargs
     ):
         """
-        Finds unique vertices using KDTree from scipy.
-        TODO: use jjcpp unique
+        Returns a namedtuple that holds unique vertices info.
+        Unique here means "close-enough-within-tolerance".
 
         Parameters
         -----------
         tolerance: float
-          Default is settings.TOLERANCE.
-        referenced_only: bool
-          Only search for unique for referenced vertices. Default is True.
-        return_referenced: bool
-          Default is False.
-        workers: int
-          n_jobs for parallel processing. Default is 1.
-          -1 uses all processes.
+          (Optional) Default is settings.TOLERANCE
+        recompute: bool
+          Only applicable as keyword argument. Force re-computes.
 
         Returns
         --------
-        vertices_unique: (n, d) np.ndarray
-          float.
-        referenced: (len(self.vertices),) np.ndarray
-          bool.
+        unique_vertices_info: Unique2DFloats
+          namedtuple with `values`, `ids`, `inverse`, `union`.
         """
-        from scipy.spatial import cKDTree as KDTree
-
-        # Get referenced vertices if it is not vertices and desired
-        # to avoid unnecessary computation
-        referenced = np.empty(len(self.vertices), dtype=bool)
-        if self.kind != "vertex" and referenced_only:
-            referenced[self.elements()] = True
-
-        else:
-            referenced[:] = True
-
-        # Build kdtree
-        kdt = KDTree(self.vertices[referenced])
-
-        # Ball point query, taking tolerance as radius
-        neighbors = kdt.query_ball_point(
-            self.vertices[referenced],
-            tolerance,
-            # workers=workers,
-            # return_sorted=True # new in 1.6, but default is True, so pass.
+        values, ids, inverse, union = utils.arr.close_rows(
+            tolerance=tolerance
+        )
+        return helpers.data.Unique2DFloats(
+            values,
+            unique_ids,
+            inverse,
+            union,
         )
 
-        # inverse based on original vertices.
-        o_inverse = np.array(
-            [n[0] for n in neighbors],
-            dtype=settings.INT_DTYPE,
-        )
-
-        # unique of o_inverse, and inverse based on that
-        (_, uniq_id, inv) = np.unique(
-            o_inverse,
-            return_index=True,
-            return_inverse=True,
-        )
-
-        # Save
-        self.vertices_unique = self.vertices[uniq_id]
-        self.vertices_unique_id = uniq_id
-        self.vertices_unique_inverse = inv
-        self.vertices_overlapping = neighbors  # .tolist() # array of lists.
-
-        if not return_referenced:
-            return self.vertices_unique
-
-        else:
-            return self.vertices_unique, referenced
-
-    def get_vertices_unique_id(
-            self,
-            tolerance=settings.TOLERANCE,
-            referenced_only=True,
-            return_referenced=False,
-            workers=1,
-    ):
-        """
-        Returns ids of unique vertices.
-
-        Parameters
-        -----------
-        tolerance: float
-          Default is settings.TOLERANCE.
-        referenced_only: bool
-          Only search for unique for referenced vertices. Default is True.
-        return_referenced: bool
-          Default is False.
-        workers: int
-          n_jobs for parallel processing. Default is 1.
-          -1 uses all processes.
-
-        Returns
-        --------
-        vertices_unique_id: (n,) np.ndarray
-          int
-        referenced: (len(self.vertices),) np.ndarray
-          bool. iff return_referenced==True
-        """
-        # last_item_is_ref maybe np.ndarray or tuple
-        # tuple, iff return_referenced==True
-        last_item_is_ref = self.get_vertices_unique(
-            tolerance=tolerance,
-            referenced_only=referenced_only,
-            return_referenced=return_referenced,
-            workers=workers,
-        )
-
-        if return_referenced:
-            return self.vertices_unique_id, last_item_is_ref[-1]
-
-        else:
-            return self.vertices_unique_id
-
-    def get_vertices_unique_inverse(
-            self,
-            tolerance=settings.TOLERANCE,
-            referenced_only=True,
-            return_referenced=False,
-            workers=1,
-    ):
-        """
-        Returns ids that can ber used to reconstruct vertices with unique
-        vertices.
-
-        Parameters
-        -----------
-        tolerance: float
-          Default is settings.TOLERANCE.
-        referenced_only: bool
-          Only search for unique for referenced vertices. Default is True.
-        return_referenced: bool
-          Default is False.
-        workers: int
-          n_jobs for parallel processing. Default is 1.
-          -1 uses all processes.
-
-        Returns
-        --------
-        vertices_unique_id: (n,) np.ndarray
-          int
-        referenced: (len(self.vertices),) np.ndarray
-          bool. iff return_referenced==True
-        """
-        # last_item_is_ref maybe np.ndarray or tuple
-        # tuple, iff return_referenced==True
-        last_item_is_ref = self.get_vertices_unique(
-            tolerance=tolerance,
-            referenced_only=referenced_only,
-            return_referenced=return_referenced,
-            workers=workers,
-        )
-
-        if return_referenced:
-            return self.vertices_unique_inverse, last_item_is_ref[-1]
-
-        else:
-            return self.vertices_unique_inverse
-
-    def get_vertices_overlapping(
-            self,
-            tolerance=settings.TOLERANCE,
-            referenced_only=True,
-            return_referenced=False,
-            workers=1,
-    ):
-        """
-        Returns list of ids that overlapps with current vertices.
-        Includes itself.
-
-        Parameters
-        -----------
-        tolerance: float
-          Default is settings.TOLERANCE.
-        referenced_only: bool
-          Only search for unique for referenced vertices. Default is True.
-        return_referenced: bool
-          Default is False.
-        workers: int
-          n_jobs for parallel processing. Default is 1.
-          -1 uses all processes.
-
-        Returns
-        --------
-        self.vertices_overlapping: (len(self.vertices)) np.ndarray
-          list
-        """
-        last_item_is_ref = self.get_vertices_unique(
-            tolerance=tolerance,
-            referenced_only=referenced_only,
-            return_referenced=return_referenced,
-            workers=workers,
-        )
-
-        if return_referenced:
-            return self.vertices_overlapping, last_item_is_ref[-1]
-
-        else:
-            return self.vertices_overlapping
-
-    def get_bounds(self):
+    @helpers.data.ComputedMeshData("vertices")
+    def bounds(self):
         """
         Returns bounds of the vertices.
         Bounds means AABB of the geometry.
@@ -366,11 +189,11 @@ class Vertices(GustafBase):
         --------
         bounds: (d,) np.ndarray
         """
-        self.bounds = utils.arr.bounds(self.vertices)
+        return utils.arr.bounds(self.vertices)
 
-        return self.bounds
 
-    def get_bounds_diagonal(self):
+    @helpers.data.ComputedMeshData("vertices")
+    def bounds_diagonal(self):
         """
         Returns diagonal vector of the bounding box.
 
@@ -383,11 +206,13 @@ class Vertices(GustafBase):
         bounds_digonal: (d,) np.ndarray
           same as `bounds[1] - bounds[0]`
         """
-        _ = self.get_bounds()
+        bounds = self.bounds()
 
-        return self.bounds[1] - self.bounds[0]
+        return bounds[1] - bounds[0]
 
-    def get_bounds_diagonal_norm(self):
+    
+    @helpers.data.ComputedMeshData("vertices")
+    def bounds_diagonal_norm(self):
         """
         Returns norm of bounds diagonal.
 
@@ -399,11 +224,10 @@ class Vertices(GustafBase):
         --------
         bounds_diagonal_norm: float
         """
-        _ = self.get_bounds()
+        return float(sum(self.bounds_diagonal() ** 2) ** .5)
 
-        return float(sum(self.get_bounds_diagonal() ** 2) ** .5)
-
-    def get_centers(self):
+    @helpers.data.ComputedMeshData(["vertices", "elements"])
+    def centers(self):
         """
         Center of elements.
 
