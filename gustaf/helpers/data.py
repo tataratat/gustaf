@@ -1,14 +1,15 @@
-"""gustaf/gustaf/helpers/saved.py
+"""gustaf/gustaf/helpers/data.py
 
-Stores latest computed values saved values.
+Helps helpee to manage data.
 """
 
 import abc
 from functools import wraps
+from collections import namedtuple
 
 import numpy as np
 
-class _TrackedArray(np.ndarray):
+class TrackedArray(np.ndarray):
     """
     Taken from nice implementations of `trimesh` (see LICENSE.txt).
     `https://github.com/mikedh/trimesh/blob/main/trimesh/caching.py`.
@@ -111,7 +112,7 @@ class _TrackedArray(np.ndarray):
                                                  **kwargs)
 
 
-def TrackedArray(array, dtype=None):
+def make_tracked_array(array, dtype=None):
     """
     Taken from nice implementations of `trimesh` (see LICENSE.txt).
     `https://github.com/mikedh/trimesh/blob/main/trimesh/caching.py`.
@@ -139,7 +140,7 @@ def TrackedArray(array, dtype=None):
         array = []
     # make sure it is contiguous then view it as our subclass
     tracked = np.ascontiguousarray(
-        array, dtype=dtype).view(_TrackedArray)
+        array, dtype=dtype).view(TrackedArray)
     # should always be contiguous here
     assert tracked.flags['C_CONTIGUOUS']
 
@@ -268,7 +269,7 @@ class DataHolder(abc.ABC):
         return self._saved.items()
 
 
-class ComputedArrays(DataHolder):
+class ComputedData(DataHolder):
     _depends = None
     _inv_depends = None
 
@@ -293,7 +294,7 @@ class ComputedArrays(DataHolder):
         super().__init__(helpee)
 
     @classmethod
-    def depends_on(cls, var_name):
+    def depends_on(cls, var_name, make_property=False):
         """
         Decorator as classmethod.
 
@@ -306,7 +307,8 @@ class ComputedArrays(DataHolder):
 
         Parameters
         -----------
-        key: str
+        var_name: str
+        make_property:
         """
         def inner(func):
             # followings are done once while modules are loaded
@@ -334,9 +336,10 @@ class ComputedArrays(DataHolder):
                 self = args[0] # the helpee itself
                 # computed arrays are called _computed.
                 dependee = getattr(self, cls._depends[func.__name__])
-                if dependee.is_modified:
+                if dependee._modified:
                     for invd in cls._inv_depends[cls._depends[func.__name]]:
                         self._computed._saved[invd] = None
+                    dependee._modified = False
 
                 saved = self._computed._saved.get(func.__name__, None)
                 if saved is not None:
@@ -344,10 +347,69 @@ class ComputedArrays(DataHolder):
 
                 # we've reached this point because we have to compute this
                 computed = func(*args, **kwargs)
-                computed.flags.writable = False # configurable?
+                if isinstance(computed, np.ndarray):
+                    computed.flags.writable = False # configurable?
                 self._computed._saved[func.__name__] = computed
 
                 return computed
 
+            if make_property:
+                return property(compute_or_return_saved)
+            else:
+                return compute_or_return_saved
+    
+    return inner
 
-class MeshComputedArrays(ComputedArrays): pass
+
+Unique2DFloats = namedtuple(
+    "Unique2DFloats",
+    [
+        "values",
+        "ids",
+        "inverse",
+        "union"
+    ]
+)
+""""
+namedtuple to hold unique information of float type arrays.
+Note that for float types, "close enough" might be a better name than unique.
+This way, all tracked arrays, as long as they are 2D, have a dot separated
+syntax to acces unique info. For example, `mesh.unique_vertices.ids`.
+
+Attributes
+-----------
+values: (n, d) np.ndarray
+ids: (n) np.ndarray
+inverse: (m) np.ndarray
+union: (m) list of list
+  given original array's index, returns overlapping arrays, including itself.
+"""
+
+
+Unique2DIntegers = namedtuple(
+    "Unique2DIntegers",
+    [
+        "values",
+        "ids",
+        "inverse",
+        "counts"
+    ]
+)
+"""
+namedtuple to hold unique information of integer type arrays.
+Similar approach to Unique2DFloats.
+
+Attributes
+-----------
+values: (n, d) np.ndarray
+ids: (n) np.ndarray
+inverse: (m) np.ndarray
+counts: (n) np.ndarray
+"""
+
+class ComputedMeshData(ComputedData):
+    """
+    A class to hold computed-mesh-data.
+    Subclassed to keep its own dependency info.
+    """
+    pass
