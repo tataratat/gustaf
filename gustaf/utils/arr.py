@@ -19,8 +19,6 @@ def make_c_contiguous(array, dtype=None):
     array: array-like
     dtype: type or str
       (Optional) `numpy` interpretable type or str, describing type.
-      Difference is that type will always return a copy and str will only copy
-      if types doesn't match.
 
     Returns
     --------
@@ -31,13 +29,8 @@ def make_c_contiguous(array, dtype=None):
 
     if isinstance(array, np.ndarray):
         if array.flags.c_contiguous:
-            if dtype is not None:
-                if isinstance(dtype, type):
-                    return array.astype(dtype)
-
-                elif isinstance(dtype, str):
-                    if array.dtype.name != dtype:
-                        return array.astype(dtype)
+            if dtype is not None and array.dtype != dtype:
+                return array.astype(dtype)
 
             return array
 
@@ -58,7 +51,8 @@ def unique_rows(
     """
     Find unique rows using np.unique, but apply tricks. Adapted from
     `skimage.util.unique_rows`.
-    url: github.com/scikit-image/scikit-image/blob/main/skimage/util/unique.py
+    url: github.com/scikit-image/scikit-image/blob/main/skimage/util/unique.py/
+    Suitable for int types.
 
     Parameters
     -----------
@@ -101,6 +95,62 @@ def unique_rows(
         unique_stuff.pop(1)
 
     return unique_stuff
+
+
+def close_rows(arr, tolerance=None):
+    """
+    Similar to unique_rows, but if data type is floats, use this one.
+    Performs radius search using KDTree.
+    Currently uses `scipy.spatial.cKDTree`.
+
+    Parameters
+    -----------
+    arr: (n, d) array-like
+
+    Returns
+    --------
+    close_stuff: tuple
+      unique_arrays: (n, d) np.ndarray
+      unique_ids: (m) np.ndarray
+      inverse: (n) np.ndarray
+      overlapping: list(list)
+        id of neighbors within the tolerance.
+    """
+    from scipy.spatial import cKDTree as KDTree
+
+    if tolerance is None:
+        tolerance = settings.TOLERANCE
+
+    # Build kdtree
+    kdt = KDTree(arr)
+
+    # Ball point query, taking tolerance as radius
+    neighbors = kdt.query_ball_point(
+        self.vertices[referenced],
+        tolerance,
+        # workers=workers,
+        # return_sorted=True # new in 1.6, but default is True, so pass.
+    )
+
+    # inverse based on original vertices.
+    o_inverse = np.array(
+        [n[0] for n in neighbors],
+        dtype=settings.INT_DTYPE,
+    )
+
+    # unique of o_inverse, and inverse based on that
+    (_, uniq_id, inv) = np.unique(
+        o_inverse,
+        return_index=True,
+        return_inverse=True,
+    )
+
+    return (
+        arr[uniq_id],
+        uniq_id,
+        inv,
+        neighbors
+    )
 
 
 def bounds(arr):
