@@ -200,9 +200,13 @@ class Vertices(GustafBase):
           namedtuple with `values`, `ids`, `inverse`, `union`.
         """
         self._logd("computing unique vertices")
+        if tolerance is None:
+            tolerance = settings.TOLERANCE
+
         values, ids, inverse, union = utils.arr.close_rows(
             tolerance=tolerance
         )
+
         return helpers.data.Unique2DFloats(
             values,
             unique_ids,
@@ -354,7 +358,7 @@ class Vertices(GustafBase):
 
         update_vertexdata(self, mask)
 
-        return None
+        return self
 
     def select_vertices(self, ranges):
         """
@@ -371,24 +375,22 @@ class Vertices(GustafBase):
         """
         return utils.arr.select_with_ranges(self.vertices, ranges)
 
-    def remove_vertices(self, ids, inplace=True):
+    def remove_vertices(self, ids):
         """
         Removes vertices with given vertex ids.
 
         Parameters
         -----------
         ids: (n,) np.ndarray
-        inplace: bool
 
         Returns
         --------
         new_self: type(self)
-          iff inplace=True.
         """
         mask = np.ones(len(self.vertices), dtype=bool)
         mask[ids] = False
 
-        return self.update_vertices(mask, inplace=inplace)
+        return self.update_vertices(mask,)
 
     def referenced_vertices(self,):
         """
@@ -403,23 +405,22 @@ class Vertices(GustafBase):
         referenced: (n,) np.ndarray
         """
         referenced = np.zeros(len(self.vertices), dtype=bool)
-        referenced[self.elements()] = True
+        referenced[self.elements] = True
 
         return referenced
 
-    def remove_unreferenced_vertices(self, inplace=True):
+    def remove_unreferenced_vertices(self):
         """
         Remove unreferenced vertices.
         Adapted from `github.com/mikedh/trimesh`
 
         Parameters
         -----------
-        inplace: bool
+        None
 
         Returns
         --------
         new_self: type(self)
-          iff inplace=True.
         """
         if self.kind == "vertex":
             return self
@@ -432,53 +433,33 @@ class Vertices(GustafBase):
         return self.update_vertices(
             mask=referenced,
             inverse=inverse,
-            inplace=inplace,
         )
 
     def merge_vertices(
             self,
-            tolerance=settings.TOLERANCE,
-            referenced_only=True,
-            inplace=True
+            tolerance=None
     ):
         """
-        Based on vertices unique, merge vertices if it is mergeable.
+        Based on unique vertices, merge vertices if it is mergeable.
 
         Parameters
         -----------
         tolerance: float
           Default is settings.TOLERANCE
-        referenced_only: bool
-          Default is True.
-        inplace: bool
-          Default is True.
 
         Returns
         --------
         merged_self: type(self)
-          iff inplace==True
         """
-        inv, referenced = self.get_vertices_unique_inverse(
-            tolerance=tolerance,
-            referenced_only=referenced_only,
-            return_referenced=True,
-            workers=1,
-        )
-
-        # inverse mask for update
-        inverse = np.zeros(len(self.vertices), dtype=settings.INT_DTYPE)
-        inverse[referenced] = inv
-        # Turn bool mask into int mask and extract only required
-        mask = np.nonzero(referenced)[0][self.vertices_unique_id]
+        unique_vs = self.unique_vertices()
 
         self._logd("number of vertices")
         self._logd(f"  before merge: {len(self.vertices)}")
-        self._logd(f"  after merge: {len(mask)}")
+        self._logd(f"  after merge: {len(unique_vs.ids)}")
 
         return self.update_vertices(
-            mask=mask,
-            inverse=inverse,
-            inplace=inplace
+            mask=unique_vs.ids,
+            inverse=unique_vs.inverse,
         )
 
     def showable(self, **kwargs):
@@ -572,7 +553,7 @@ class Vertices(GustafBase):
                 )
 
             # make sure each element index starts from 0 & end at len(vertices)
-            tmp_ins = ins.remove_unreferenced_vertices(inplace=False)
+            tmp_ins = ins.copy().remove_unreferenced_vertices()
 
             vertices.append(
                 tmp_ins.vertices.copy()
