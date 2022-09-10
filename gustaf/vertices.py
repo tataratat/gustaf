@@ -20,7 +20,7 @@ class Vertices(GustafBase):
 
     __slots__ = [
         "_vertices",
-        "_computed"
+        "_computed",
         "vis_dict",
         "vertexdata",
     ]
@@ -71,7 +71,7 @@ class Vertices(GustafBase):
         return self._vertices
 
 
-    @vertices.setter:
+    @vertices.setter
     def vertices(self, vs):
         """
         Vertices setter. This will saved as a tracked array.
@@ -143,7 +143,7 @@ class Vertices(GustafBase):
             elem_name = type(self).__qualname__.lower()
             self._logd(f"returning {elem_name}")
  
-           return getattr(self, elem_name)
+            return getattr(self, elem_name)
 
     @elements.setter
     def elements(self, elems):
@@ -174,10 +174,10 @@ class Vertices(GustafBase):
             elem_name = type(self).__qualname__.lower()
             self._logd(f"seting {elem_name}'s connectivity.")
  
-           return setattr(self, elem_name, elems)
+            return setattr(self, elem_name, elems)
 
 
-    @helpers.data.ComputedMeshData("vertices")
+    @helpers.data.ComputedMeshData.depends_on(["vertices"])
     def unique_vertices(
             self,
             tolerance=None,
@@ -204,17 +204,18 @@ class Vertices(GustafBase):
             tolerance = settings.TOLERANCE
 
         values, ids, inverse, union = utils.arr.close_rows(
+            self.vertices,
             tolerance=tolerance
         )
 
         return helpers.data.Unique2DFloats(
             values,
-            unique_ids,
+            ids,
             inverse,
             union,
         )
 
-    @helpers.data.ComputedMeshData("vertices")
+    @helpers.data.ComputedMeshData.depends_on(["vertices"])
     def bounds(self):
         """
         Returns bounds of the vertices.
@@ -232,7 +233,7 @@ class Vertices(GustafBase):
         return utils.arr.bounds(self.vertices)
 
 
-    @helpers.data.ComputedMeshData("vertices")
+    @helpers.data.ComputedMeshData.depends_on(["vertices"])
     def bounds_diagonal(self):
         """
         Returns diagonal vector of the bounding box.
@@ -250,7 +251,7 @@ class Vertices(GustafBase):
         bounds = self.bounds()
         return bounds[1] - bounds[0]
     
-    @helpers.data.ComputedMeshData("vertices")
+    @helpers.data.ComputedMeshData.depends_on(["vertices"])
     def bounds_diagonal_norm(self):
         """
         Returns norm of bounds diagonal.
@@ -266,7 +267,7 @@ class Vertices(GustafBase):
         self._logd("computing bounds_diagonal_norm")
         return float(sum(self.bounds_diagonal() ** 2) ** .5)
 
-    @helpers.data.ComputedMeshData(["vertices", "elements"])
+    @helpers.data.ComputedMeshData.depends_on(["vertices", "elements"])
     def centers(self):
         """
         Center of elements.

@@ -327,12 +327,12 @@ class ComputedData(DataHolder):
             # _inv_depends is dict(str: list)
             if cls._inv_depends is None:
                 cls._inv_depends = dict()
-            if cls._inv_depends.get(var_name, None) is None:
-                cls._inv_depends[var_name] = list()
             # add inverse dependency
             for vn in var_names:
-                cls._inv_depends[vn].append(func.__name__)
+                if cls._inv_depends.get(vn, None) is None:
+                    cls._inv_depends[vn] = list()
 
+                cls._inv_depends[vn].append(func.__name__)
             @wraps(func)
             def compute_or_return_saved(*args, **kwargs):
                 """
@@ -344,10 +344,11 @@ class ComputedData(DataHolder):
 
                 # computed arrays are called _computed.
                 # loop over dependees and check if they are modified
-                for dependee in getattr(self, cls._depends[func__name__]):
+                for dependee_str in cls._depends[func.__name__]:
+                    dependee = getattr(self, dependee_str)
                     # is modified?
                     if dependee._modified:
-                        for inv in cls._inv_depends[cls._depends[func.__name]]:
+                        for inv in cls._inv_depends[dependee_str]:
                             self._computed._saved[inv] = None
                         # ok, we removed all the arrays that depend on
                         # the dependee.
@@ -372,7 +373,7 @@ class ComputedData(DataHolder):
             else:
                 return compute_or_return_saved
     
-    return inner
+        return inner
 
 
 Unique2DFloats = namedtuple(
