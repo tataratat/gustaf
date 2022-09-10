@@ -67,6 +67,7 @@ class Vertices(GustafBase):
         --------
         vertices: (n, d) np.ndarray
         """
+        self._logd("returning vertices")
         return self._vertices
 
 
@@ -83,6 +84,7 @@ class Vertices(GustafBase):
         --------
         None
         """
+        self._logd("setting vertices")
         self._vertices = helpers.data.make_tracked_array(
             vs,
             settings.FLOAT_DTYPE
@@ -143,6 +145,38 @@ class Vertices(GustafBase):
  
            return getattr(self, elem_name)
 
+    @elements.setter
+    def elements(self, elems):
+        """
+        Calls corresponding connectivity setter.
+        A short cut in FEM friendly term.
+          Vertices -> vertices
+          Edges -> edges
+          Faces -> faces
+          Volumes -> volumes
+
+        Parameters
+        -----------
+        elems: (n, d) np.ndarray
+
+        Returns
+        --------
+        None
+        """
+        if self.kind.startswith("vertex"):
+            self._logw(
+                "no elements setter for vertices. doing nothing."
+            )
+            return None
+
+        else:
+            # naming rule in gustaf
+            elem_name = type(self).__qualname__.lower()
+            self._logd(f"seting {elem_name}'s connectivity.")
+ 
+           return setattr(self, elem_name, elems)
+
+
     @helpers.data.ComputedMeshData("vertices")
     def unique_vertices(
             self,
@@ -165,6 +199,7 @@ class Vertices(GustafBase):
         unique_vertices_info: Unique2DFloats
           namedtuple with `values`, `ids`, `inverse`, `union`.
         """
+        self._logd("computing unique vertices")
         values, ids, inverse, union = utils.arr.close_rows(
             tolerance=tolerance
         )
@@ -189,6 +224,7 @@ class Vertices(GustafBase):
         --------
         bounds: (d,) np.ndarray
         """
+        self._logd("computing bounds")
         return utils.arr.bounds(self.vertices)
 
 
@@ -206,10 +242,9 @@ class Vertices(GustafBase):
         bounds_digonal: (d,) np.ndarray
           same as `bounds[1] - bounds[0]`
         """
+        self._logd("computing bounds_diagonal")
         bounds = self.bounds()
-
         return bounds[1] - bounds[0]
-
     
     @helpers.data.ComputedMeshData("vertices")
     def bounds_diagonal_norm(self):
@@ -224,6 +259,7 @@ class Vertices(GustafBase):
         --------
         bounds_diagonal_norm: float
         """
+        self._logd("computing bounds_diagonal_norm")
         return float(sum(self.bounds_diagonal() ** 2) ** .5)
 
     @helpers.data.ComputedMeshData(["vertices", "elements"])
@@ -239,6 +275,7 @@ class Vertices(GustafBase):
         --------
         centers: (n_elements, d) np.ndarray
         """
+        self._logd("computing centers")
         elements = self.elements()
         self.centers = self.vertices[elements].mean(axis=1)
 
