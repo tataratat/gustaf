@@ -167,8 +167,8 @@ def bounds(arr):
     """
     return np.vstack(
         (
-            np.min(arr, axis=0).reshape(1, -1),
-            np.max(arr, axis=0).reshape(1, -1),
+            np.min(arr, axis=0).ravel(),
+            np.max(arr, axis=0).ravel(),
         )
     )
 
