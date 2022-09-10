@@ -341,6 +341,13 @@ class ComputedData(DataHolder):
                 # extract some related info
                 self = args[0] # the helpee itself
                 recompute = kwargs.get("recompute", False)
+                return_saved = kwargs.get("return_saved", False)
+
+                # if return_saved, try to escape as soon as possible
+                if return_saved:
+                    saved = self._computed._saved.get(func.__name__, None)
+                    if saved is not None and not recompute:
+                        return saved
 
                 # computed arrays are called _computed.
                 # loop over dependees and check if they are modified
@@ -350,9 +357,6 @@ class ComputedData(DataHolder):
                     if dependee._modified:
                         for inv in cls._inv_depends[dependee_str]:
                             self._computed._saved[inv] = None
-                        # ok, we removed all the arrays that depend on
-                        # the dependee.
-                        dependee._modified = False
 
                 # is saved / want to recompute?
                 # recompute is added for computed values that accepts params.
@@ -363,9 +367,14 @@ class ComputedData(DataHolder):
                 # we've reached this point because we have to compute this
                 computed = func(*args, **kwargs)
                 if isinstance(computed, np.ndarray):
-                    computed.flags.writable = False # configurable?
+                    computed.flags.writeable = False # configurable?
                 self._computed._saved[func.__name__] = computed
 
+                # so, all fresh. we can press NOT-modified  button
+                for dependee_str in cls._depends[func.__name__]:
+                    dependee = getattr(self, dependee_str)
+                    dependee._modified = False
+                    
                 return computed
 
             if make_property:
