@@ -132,97 +132,6 @@ class Vertices(GustafBase):
         """
         return "vertices"
 
-    @property
-    def elements(self):
-        """
-        Returns current connectivity. A short cut in FEM friendly term.
-        Elements mean different things for different classes:
-          Vertices -> vertices
-          Edges -> edges
-          Faces -> faces
-          Volumes -> volumes
-
-        Parameters
-        -----------
-        None
-
-        Returns
-        --------
-        elements: (n, d) np.ndarray
-          int. iff elements=None
-        """
-        if self.kind.startswith("vertex"):
-            self._logd(
-                "returning vertex ids as Vertices.elements()."
-            )
-            # this is just to keep the output of consistent
-            # this is always regenerated
-            elem = helpers.data.make_tracked_array(
-                np.arange(
-                    len(self.vertices),
-                    dtype=settings.INT_DTYPE,
-                ).reshape(-1, 1)
-            )
-            elem._modified = False
-            return elem
-
-        else:
-            # naming rule in gustaf
-            # all of those should be tracked array.
-            elem_name = type(self).__qualname__.lower()
-            self._logd(f"returning {elem_name}")
- 
-            return getattr(self, elem_name)
-
-    @elements.setter
-    def elements(self, elems):
-        """
-        Calls corresponding connectivity setter.
-        A short cut in FEM friendly term.
-          Vertices -> vertices
-          Edges -> edges
-          Faces -> faces
-          Volumes -> volumes
-
-        Parameters
-        -----------
-        elems: (n, d) np.ndarray
-
-        Returns
-        --------
-        None
-        """
-        if self.kind.startswith("vertex"):
-            raise ValueError("can't set elements for Vertices")
-
-        else:
-            # naming rule in gustaf
-            elem_name = type(self).__qualname__.lower()
-            self._logd(f"seting {elem_name}'s connectivity.")
- 
-            return setattr(self, elem_name, elems)
-
-    @property
-    def elements_const(self):
-        """
-        Returns non-mutable version of elements
-
-        Parameters
-        -----------
-        None
-
-        Returns
-        --------
-        non_mutable_elements: (n, d) TrackedArray
-        """
-        self._logd("returning elements_const")
-        if self.kind != "vertex": 
-            return getattr(self, type(self).__qualname__.lower() + "_const")
-
-        else:
-            return self.elements
-
-
     @helpers.data.ComputedMeshData.depends_on(["vertices"])
     def unique_vertices(
             self,
@@ -312,23 +221,6 @@ class Vertices(GustafBase):
         """
         self._logd("computing bounds_diagonal_norm")
         return float(sum(self.bounds_diagonal() ** 2) ** .5)
-
-    @helpers.data.ComputedMeshData.depends_on(["vertices", "elements"])
-    def centers(self):
-        """
-        Center of elements.
-
-        Parameters
-        -----------
-        None
-
-        Returns
-        --------
-        centers: (n_elements, d) np.ndarray
-        """
-        self._logd("computing centers")
-
-        return self.vertices_const[self.elements_const].mean(axis=1)
 
     def update_vertices(self, mask, inverse=None):
         """
@@ -437,49 +329,6 @@ class Vertices(GustafBase):
 
         return self.update_vertices(mask,)
 
-    def referenced_vertices(self,):
-        """
-        Returns mask of referenced vertices.
-
-        Parameters
-        -----------
-        None
-
-        Returns
-        --------
-        referenced: (n,) np.ndarray
-        """
-        referenced = np.zeros(len(self.vertices_const), dtype=bool)
-        referenced[self.elements_const] = True
-
-        return referenced
-
-    def remove_unreferenced_vertices(self):
-        """
-        Remove unreferenced vertices.
-        Adapted from `github.com/mikedh/trimesh`
-
-        Parameters
-        -----------
-        None
-
-        Returns
-        --------
-        new_self: type(self)
-        """
-        if self.kind == "vertex":
-            return self
-
-        referenced = self.referenced_vertices()
-
-        inverse = np.zeros(len(self.vertices), dtype=settings.INT_DTYPE)
-        inverse[referenced] = np.arange(referenced.sum())
-
-        return self.update_vertices(
-            mask=referenced,
-            inverse=inverse,
-        )
-
     def merge_vertices(
             self,
             tolerance=None
@@ -570,7 +419,7 @@ class Vertices(GustafBase):
             """
             Return true, if it is same as type(cls)
             """
-            if cls.__name__.startswith(inst.__class__.__name__):
+            if isinstance(inst, cls):
                 return True
             else:
                 return False
