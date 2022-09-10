@@ -20,6 +20,7 @@ class Vertices(GustafBase):
 
     __slots__ = [
         "_vertices",
+        "_vertices_const",
         "_computed",
         "vis_dict",
         "vertexdata",
@@ -75,6 +76,11 @@ class Vertices(GustafBase):
     def vertices(self, vs):
         """
         Vertices setter. This will saved as a tracked array.
+        This tracked array is very sensitive and if we do anything with it
+        that may hint an inplace operation, it will be marked as modified.
+        This includes copying and slicing.
+        If you know you aren't going to modify the array, please consider using
+        `vertices_const`. Somewhat c-style hint in naming.
 
         Parameters
         -----------
@@ -89,6 +95,26 @@ class Vertices(GustafBase):
             vs,
             settings.FLOAT_DTYPE
         )
+        # exact same, but not tracked.
+        self._vertices_const = self._vertices.view()
+        self._vertices_const.flags.writeable = False
+
+    @property
+    def vertices_const(self):
+        """
+        Returns non-mutable view of `vertices`.
+        Naming inspired by c/cpp sessions.
+
+        Parameters
+        -----------
+        None
+
+        Returns
+        --------
+        None
+        """
+        self._logd("returning vertices_const")
+        return self._vertices_const
 
     @property
     def whatami(self,):
@@ -130,12 +156,15 @@ class Vertices(GustafBase):
                 "returning vertex ids as Vertices.elements()."
             )
             # this is just to keep the output of consistent
-            return helpers.data.make_tracked_array(
+            # this is always regenerated
+            elem = helpers.data.make_tracked_array(
                 np.arange(
-                    (self.vertices.shape[0], 1),
+                    len(self.vertices),
                     dtype=settings.INT_DTYPE,
-                )
+                ).reshape(-1, 1)
             )
+            elem._modified = False
+            return elem
 
         else:
             # naming rule in gustaf
@@ -164,10 +193,7 @@ class Vertices(GustafBase):
         None
         """
         if self.kind.startswith("vertex"):
-            self._logw(
-                "no elements setter for vertices. doing nothing."
-            )
-            return None
+            raise ValueError("can't set elements for Vertices")
 
         else:
             # naming rule in gustaf
@@ -175,6 +201,26 @@ class Vertices(GustafBase):
             self._logd(f"seting {elem_name}'s connectivity.")
  
             return setattr(self, elem_name, elems)
+
+    @property
+    def elements_const(self):
+        """
+        Returns non-mutable version of elements
+
+        Parameters
+        -----------
+        None
+
+        Returns
+        --------
+        non_mutable_elements: (n, d) TrackedArray
+        """
+        self._logd("returning elements_const")
+        if self.kind != "vertex": 
+            return getattr(self, type(self).__qualname__.lower() + "_const")
+
+        else:
+            return self.elements
 
 
     @helpers.data.ComputedMeshData.depends_on(["vertices"])
@@ -204,7 +250,7 @@ class Vertices(GustafBase):
             tolerance = settings.TOLERANCE
 
         values, ids, inverse, union = utils.arr.close_rows(
-            self.vertices,
+            self.vertices_const,
             tolerance=tolerance
         )
 
@@ -230,7 +276,7 @@ class Vertices(GustafBase):
         bounds: (d,) np.ndarray
         """
         self._logd("computing bounds")
-        return utils.arr.bounds(self.vertices)
+        return utils.arr.bounds(self.vertices_const)
 
 
     @helpers.data.ComputedMeshData.depends_on(["vertices"])
@@ -281,10 +327,8 @@ class Vertices(GustafBase):
         centers: (n_elements, d) np.ndarray
         """
         self._logd("computing centers")
-        elements = self.elements()
-        self.centers = self.vertices[elements].mean(axis=1)
 
-        return self.centers
+        return self.vertices_const[self.elements_const].mean(axis=1)
 
     def update_vertices(self, mask, inverse=None):
         """
@@ -302,7 +346,7 @@ class Vertices(GustafBase):
         --------
         updated_self: type(self)
         """
-        vertices = self.vertices.copy()
+        vertices = self.vertices_const.copy()
 
         # make mask numpy array
         mask = np.asarray(mask)
@@ -327,7 +371,7 @@ class Vertices(GustafBase):
         # TODO: Here could be a good place to preserve BCs.
         elements = None
         if inverse is not None and self.kind != "vertex":
-            elements = self.elements.copy()
+            elements = self.elements_const.copy()
             elements = inverse[elements.reshape(-1)].reshape(
                 (-1, elements.shape[1])
             )
@@ -405,8 +449,8 @@ class Vertices(GustafBase):
         --------
         referenced: (n,) np.ndarray
         """
-        referenced = np.zeros(len(self.vertices), dtype=bool)
-        referenced[self.elements] = True
+        referenced = np.zeros(len(self.vertices_const), dtype=bool)
+        referenced[self.elements_const] = True
 
         return referenced
 
