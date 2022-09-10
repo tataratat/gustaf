@@ -126,7 +126,7 @@ def close_rows(arr, tolerance=None):
 
     # Ball point query, taking tolerance as radius
     neighbors = kdt.query_ball_point(
-        self.vertices[referenced],
+        arr,
         tolerance,
         # workers=workers,
         # return_sorted=True # new in 1.6, but default is True, so pass.
