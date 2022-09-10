@@ -281,22 +281,21 @@ class Vertices(GustafBase):
 
         return self.centers
 
-    def update_vertices(self, mask, inverse=None, inplace=True):
+    def update_vertices(self, mask, inverse=None):
         """
         Update vertices with a mask.
         In other words, keeps only masked vertices.
         Adapted from `github.com/mikedh/trimesh`.
+        Updates connectivity accordingly too.
 
         Parameters
         -----------
         mask: (n,) bool or int
         inverse: (len(self.vertices),) int
-        inplace: bool
 
         Returns
         --------
         updated_self: type(self)
-          iff inplace==Ture
         """
         vertices = self.vertices.copy()
 
@@ -307,17 +306,11 @@ class Vertices(GustafBase):
             (mask.dtype.name == "bool" and mask.all())
             or len(mask) == 0
         ):
-            # Nothing to do if inplace
-            if inplace:
-                return None
-
-            # if not inplace, it is same as copy
-            else:
-                return self.copy()
+            return self
 
         # create inverse mask if not passed
         if inverse is None:
-            inverse = np.zeros(len(vertices), dtype=settings.INT_DTYPE)
+            inverse = np.full(len(vertices), -1, dtype=settings.INT_DTYPE)
             if mask.dtype.kind == "b":
                 inverse[mask] = np.arange(mask.sum())
             elif mask.dtype.kind == "i":
@@ -329,10 +322,12 @@ class Vertices(GustafBase):
         # TODO: Here could be a good place to preserve BCs.
         elements = None
         if inverse is not None and self.kind != "vertex":
-            elements = self.elements().copy()
+            elements = self.elements.copy()
             elements = inverse[elements.reshape(-1)].reshape(
                 (-1, elements.shape[1])
             )
+            # remove all the elements that's not part of inverse
+            elements = elements[np.unique(np.where(elements < 0)[0])]
 
         # apply mask
         vertices = vertices[mask]
@@ -353,27 +348,13 @@ class Vertices(GustafBase):
             return obj
 
         # update
-        if inplace:
-            self.vertices = vertices
-            if elements is not None:
-                self.elements(elements)
+        self.vertices = vertices
+        if elements is not None:
+            self.elements = elements
 
-            update_vertexdata(self, mask)
+        update_vertexdata(self, mask)
 
-            return None
-
-        else:
-            if elements is None:
-                updated = type(self)(vertices=vertices)
-                update_vertexdata(updated, mask, self.vertexdata)
-
-                return updated
-
-            else:
-                updated = type(self)(vertices=vertices, elements=elements)
-                update_vertexdata(updated, mask, self.vertexdata)
-
-                return updated
+        return None
 
     def select_vertices(self, ranges):
         """
