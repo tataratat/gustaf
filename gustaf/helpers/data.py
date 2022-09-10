@@ -294,7 +294,7 @@ class ComputedData(DataHolder):
         super().__init__(helpee)
 
     @classmethod
-    def depends_on(cls, var_name, make_property=False):
+    def depends_on(cls, var_names, make_property=False):
         """
         Decorator as classmethod.
 
@@ -302,47 +302,61 @@ class ComputedData(DataHolder):
         yes:
         1. there's modification on arrays that the key depend on.
           -> erases all other
-        2. corresponding value is None
-        3. ?i just can't remember?
+        2. is corresponding value None?
+        Supports multi-dependency
 
         Parameters
         -----------
-        var_name: str
+        var_name: list
         make_property:
         """
         def inner(func):
             # followings are done once while modules are loaded
             # just subclass this class to make a special helper
             # for each helpee class.
-
+            assert isinstance(var_names, list), "var_names should be a list"
             # initialize property
+            # _depends is dict(str: list)
             if cls._depends is None:
                 cls._depends = dict()
+            if cls._depends.get(func.__name__, None) is None:
+                    cls._depends[func.__name__] = list()
+            # add dependency info
+            cls._depends[func.__name__].extend(var_names)
 
-            cls._depends[func.__name__] = var_name
-
+            # _inv_depends is dict(str: list)
             if cls._inv_depends is None:
                 cls._inv_depends = dict()
             if cls._inv_depends.get(var_name, None) is None:
                 cls._inv_depends[var_name] = list()
-
-            cls._inv_depends[var_name].append(func.__name__)
+            # add inverse dependency
+            for vn in var_names:
+                cls._inv_depends[vn].append(func.__name__)
 
             @wraps(func)
             def compute_or_return_saved(*args, **kwargs):
                 """
                 Check if the key should be computed,
                 """
+                # extract some related info
                 self = args[0] # the helpee itself
-                # computed arrays are called _computed.
-                dependee = getattr(self, cls._depends[func.__name__])
-                if dependee._modified:
-                    for invd in cls._inv_depends[cls._depends[func.__name]]:
-                        self._computed._saved[invd] = None
-                    dependee._modified = False
+                recompute = kwargs.get("recompute", False)
 
+                # computed arrays are called _computed.
+                # loop over dependees and check if they are modified
+                for dependee in getattr(self, cls._depends[func__name__]):
+                    # is modified?
+                    if dependee._modified:
+                        for inv in cls._inv_depends[cls._depends[func.__name]]:
+                            self._computed._saved[inv] = None
+                        # ok, we removed all the arrays that depend on
+                        # the dependee.
+                        dependee._modified = False
+
+                # is saved / want to recompute?
+                # recompute is added for computed values that accepts params.
                 saved = self._computed._saved.get(func.__name__, None)
-                if saved is not None:
+                if saved is not None and not recompute:
                     return saved
 
                 # we've reached this point because we have to compute this
