@@ -7,7 +7,9 @@ import numpy as np
 
 from gustaf import settings
 from gustaf import utils
+from gustaf import helpers
 from gustaf.vertices import Vertices
+
 
 class Edges(Vertices):
 
@@ -39,6 +41,44 @@ class Edges(Vertices):
 
         elif elements is not None:
             self.edges = elements
+
+    @property
+    def edges(self):
+        """
+        Returns edges. If edges is not its original property
+
+        Parameters
+        -----------
+        None
+
+        Returns
+        --------
+        edges: (n, 2) np.ndarray
+        """
+        self._logd("returning edges")
+        return self._edges
+
+    @edges.setter
+    def edges(self, es):
+        """
+        Edges setter. Similar to vertices, this is a tracked array.
+
+        Parameters
+        -----------
+        es: (n, 2) np.ndarray
+
+        Returns
+        --------
+        None
+        """
+        self._logd("setting edges")
+        self._edges = helpers.data.make_tracked_array(
+            es,
+            settings.INT_DTYPE
+        )
+        # same, but non-writeable view of tracked array
+        self._const_edges = self._edges.view()
+        self._const_edges.flags.writeable = False
 
     @property
     def elements(self):
@@ -121,6 +161,7 @@ class Edges(Vertices):
 
         return self.const_vertices[self.const_elements].mean(axis=1)
 
+    @helpers.data.ComputedMeshData.depends_on(["vertices", "elements"])
     def referenced_vertices(self,):
         """
         Returns mask of referenced vertices.
@@ -151,9 +192,6 @@ class Edges(Vertices):
         --------
         new_self: type(self)
         """
-        if self.kind == "vertex":
-            return self
-
         referenced = self.referenced_vertices()
 
         inverse = np.zeros(len(self.vertices), dtype=settings.INT_DTYPE)
@@ -164,37 +202,9 @@ class Edges(Vertices):
             inverse=inverse,
         )
 
-    def get_edges(self):
-        """
-        Returns edges. If edges is not its original property, it tries to
-        compute it based on existing elements.
 
-        Parameters
-        -----------
-        None
-
-        Returns
-        --------
-        edges: (n, 2) np.ndarray
-        """
-
-        if self.kind == "edge":
-            self.edges = utils.arr.make_c_contiguous(
-                self.edges,
-                settings.INT_DTYPE,
-            )
-
-            return self.edges
-
-        if hasattr(self, "volumes") or hasattr(self, "faces"):
-            self.edges = utils.connec.faces_to_edges(self.get_faces())
-            return self.edges
-
-        # Shouldn't reach this point, but in case it does
-        self._logd("cannot compute/return edges.")
-        return None
-
-    def get_edges_sorted(self):
+    @helpers.data.ComputedMeshData.depends_on(["elements"])
+    def sorted_edges(self):
         """
         Sort edges along axis=1.
 
