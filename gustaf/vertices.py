@@ -20,7 +20,7 @@ class Vertices(GustafBase):
 
     __slots__ = [
         "_vertices",
-        "_vertices_const",
+        "_const_vertices",
         "_computed",
         "vis_dict",
         "vertexdata",
@@ -80,7 +80,7 @@ class Vertices(GustafBase):
         that may hint an inplace operation, it will be marked as modified.
         This includes copying and slicing.
         If you know you aren't going to modify the array, please consider using
-        `vertices_const`. Somewhat c-style hint in naming.
+        `const_vertices`. Somewhat c-style hint in naming.
 
         Parameters
         -----------
@@ -96,11 +96,11 @@ class Vertices(GustafBase):
             settings.FLOAT_DTYPE
         )
         # exact same, but not tracked.
-        self._vertices_const = self._vertices.view()
-        self._vertices_const.flags.writeable = False
+        self._const_vertices = self._vertices.view()
+        self._const_vertices.flags.writeable = False
 
     @property
-    def vertices_const(self):
+    def const_vertices(self):
         """
         Returns non-mutable view of `vertices`.
         Naming inspired by c/cpp sessions.
@@ -113,8 +113,8 @@ class Vertices(GustafBase):
         --------
         None
         """
-        self._logd("returning vertices_const")
-        return self._vertices_const
+        self._logd("returning const_vertices")
+        return self._const_vertices
 
     @property
     def whatami(self,):
@@ -159,7 +159,7 @@ class Vertices(GustafBase):
             tolerance = settings.TOLERANCE
 
         values, ids, inverse, union = utils.arr.close_rows(
-            self.vertices_const,
+            self.const_vertices,
             tolerance=tolerance
         )
 
@@ -185,7 +185,7 @@ class Vertices(GustafBase):
         bounds: (d,) np.ndarray
         """
         self._logd("computing bounds")
-        return utils.arr.bounds(self.vertices_const)
+        return utils.arr.bounds(self.const_vertices)
 
 
     @helpers.data.ComputedMeshData.depends_on(["vertices"])
@@ -238,7 +238,7 @@ class Vertices(GustafBase):
         --------
         updated_self: type(self)
         """
-        vertices = self.vertices_const.copy()
+        vertices = self.const_vertices.copy()
 
         # make mask numpy array
         mask = np.asarray(mask)
