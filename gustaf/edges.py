@@ -14,13 +14,8 @@ class Edges(Vertices):
     kind = "edge"
 
     __slots__ = [
-        "edges",
-        "edges_sorted",
-        "edges_unique",
-        "edges_unique_id",
-        "edges_unique_inverse",
-        "edges_unique_count",
-        "outlines"
+        "_edges",
+        "_edges_sorted",
     ]
 
     def __init__(
@@ -28,26 +23,22 @@ class Edges(Vertices):
             vertices=None,
             edges=None,
             elements=None,
-            process=False,
     ):
-        if vertices is not None:
-            self.vertices = utils.arr.make_c_contiguous(
-                vertices,
-                settings.FLOAT_DTYPE
-            )
+        """
+        Edges. It has vertices and edges. Also known as lines.
+
+        Parameters
+        -----------
+        vertices: (n, d) np.ndarray
+        edges: (n, 2) np.ndarray
+        """
+        super().__init__(vertices=vertices)
 
         if edges is not None:
-            self.edges = utils.arr.make_c_contiguous(edges, settings.INT_DTYPE)
+            self.edges = edges
+
         elif elements is not None:
-            self.edges = utils.arr.make_c_contiguous(
-                elements,
-                settings.INT_DTYPE
-            )
-
-        self.whatami = "edges"
-        self.vis_dict = dict()
-        self.vertexdata = dict()
-
+            self.edges = elements
 
     @property
     def elements(self):
@@ -98,7 +89,7 @@ class Edges(Vertices):
         return setattr(self, elem_name, elems)
 
     @property
-    def elements_const(self):
+    def const_elements(self):
         """
         Returns non-mutable version of elements
 
@@ -110,8 +101,8 @@ class Edges(Vertices):
         --------
         non_mutable_elements: (n, d) TrackedArray
         """
-        self._logd("returning elements_const")
-        return getattr(self, type(self).__qualname__.lower() + "_const")
+        self._logd("returning const_elements")
+        return getattr(self, "const_" + type(self).__qualname__.lower())
 
     @helpers.data.ComputedMeshData.depends_on(["vertices", "elements"])
     def centers(self):
@@ -128,7 +119,7 @@ class Edges(Vertices):
         """
         self._logd("computing centers")
 
-        return self.vertices_const[self.elements_const].mean(axis=1)
+        return self.const_vertices[self.const_elements].mean(axis=1)
 
     def referenced_vertices(self,):
         """
@@ -142,8 +133,8 @@ class Edges(Vertices):
         --------
         referenced: (n,) np.ndarray
         """
-        referenced = np.zeros(len(self.vertices_const), dtype=bool)
-        referenced[self.elements_const] = True
+        referenced = np.zeros(len(self.const_vertices), dtype=bool)
+        referenced[self.const_elements] = True
 
         return referenced
 

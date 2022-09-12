@@ -263,7 +263,7 @@ class Vertices(GustafBase):
         # TODO: Here could be a good place to preserve BCs.
         elements = None
         if inverse is not None and self.kind != "vertex":
-            elements = self.elements_const.copy()
+            elements = self.const_elements.copy()
             elements = inverse[elements.reshape(-1)].reshape(
                 (-1, elements.shape[1])
             )
