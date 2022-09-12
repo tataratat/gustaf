@@ -4,6 +4,7 @@
 from gustaf import settings
 from gustaf import utils
 from gustaf.edges import Edges
+from gustaf import helpers
 
 class Faces(Edges):
 
@@ -46,20 +47,30 @@ class Faces(Edges):
         self.vertexdata = dict()
         self.BC = dict()
 
-        self.process(process)
 
-    def process(
-            self,
-            edges=True,
-            faces_sorted=True,
-            faces_unique=True,
-            faces_unique_id=True,
-            faces_unique_inverse=True,
-            outlines=True,
-            force_process=True,
-            **kwargs,
-    ):
-        pass
+    @helpers.data.ComputedMeshData.depends_on(["elements"])
+    def edges(self):
+        """
+        Edges from here aren't main property.
+        So this needs to be computed.
+
+        Parameters
+        -----------
+        None
+
+        Returns
+        --------
+        edges: (n, 2) np.ndarray
+        """
+        self._logd("computing edges")
+        # edges are based on faces
+        faces = getattr(self, "faces")
+        if callable(faces):
+            faces = faces() 
+        else:
+            faces = getattr(self, "const_faces")
+
+        return utils.connec.faces_to_edges(faces)
 
     def get_whatami(self,):
         """
