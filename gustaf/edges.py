@@ -232,11 +232,10 @@ class Edges(Vertices):
         --------
         edges_sorted: (n_edges, 2) np.ndarray
         """
-        if self.kind.startswith("edge"):
-            sedges = self.const_edges
-        else:
-            sedges = self.edges()
-        sedges = edges.copy()
+        sedges = getattr(self, "edges", N)
+        if callable(sedges): sedges = sedges()
+
+        sedges = sedges.copy()
         sedges.sort(axis=1)
 
         return sedges
@@ -255,12 +254,14 @@ class Edges(Vertices):
         edges_unique: (n, 2) np.ndarray
         """
         unique_stuff = utils.arr.unique_rows(
-            self.get_edges_sorted(),
+            self.sorted_edges(),
             return_index=True,
             return_inverse=True,
             return_counts=True,
             dtype_name=settings.INT_DTYPE,
         )
+
+
 
         # unpack
         #   set edges_unique with `edges`.
@@ -271,7 +272,9 @@ class Edges(Vertices):
         self.edges_unique_count = unique_stuff[3].astype(settings.INT_DTYPE)
         self.outlines = self.edges_unique_id[self.edges_unique_count == 1]
 
-        return self.edges_unique
+        return helpers.data.Unique2DIntegers(
+            self.
+        )
 
     def get_edges_unique_id(self):
         """
