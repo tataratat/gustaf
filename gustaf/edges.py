@@ -81,9 +81,25 @@ class Edges(Vertices):
         self._const_edges.flags.writeable = False
 
     @property
+    def const_edges(self):
+        """
+        Returns non-writeable version of edges.
+
+        Parameters
+        -----------
+        None
+
+        Returns
+        --------
+        const_edges (n, 2) np.ndarray
+        """
+        return self._const_edges
+        
+
+    @property
     def elements(self):
         """
-        Returns current connectivity. A short cut in FEM friendly term.
+        Returns current connectivity. A short cut in FE friendly term.
         Elements mean different things for different classes:
           Vertices -> vertices
           Edges -> edges
@@ -216,12 +232,17 @@ class Edges(Vertices):
         --------
         edges_sorted: (n_edges, 2) np.ndarray
         """
-        self.edges_sorted = self.get_edges().copy()
-        self.edges_sorted.sort(axis=1)
+        if self.kind.startswith("edge"):
+            sedges = self.const_edges
+        else:
+            sedges = self.edges()
+        sedges = edges.copy()
+        sedges.sort(axis=1)
 
-        return self.edges_sorted
+        return sedges
 
-    def get_edges_unique(self):
+    @helpers.data.ComputedMeshData.depends_on("elements")
+    def unique_edges(self):
         """
         Returns unique edges.
 

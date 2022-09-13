@@ -63,12 +63,10 @@ class Faces(Edges):
         edges: (n, 2) np.ndarray
         """
         self._logd("computing edges")
-        # edges are based on faces
-        faces = getattr(self, "faces")
-        if callable(faces):
-            faces = faces() 
+        if self.kind.startswith("face"):
+            faces = self.const_faces
         else:
-            faces = getattr(self, "const_faces")
+            faces = self.faces()
 
         return utils.connec.faces_to_edges(faces)
 
