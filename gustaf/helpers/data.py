@@ -22,8 +22,10 @@ class TrackedArray(np.ndarray):
         during copies and certain types of slicing.
         """
         self._modified = True
-        if isinstance(obj, type(self)):
-            obj._modified = True
+
+        # try not setting the flag for copies, view, and slicng
+        #if isinstance(obj, type(self)):
+        #    obj._modified = True
 
     @property
     def mutable(self):
@@ -333,6 +335,7 @@ class ComputedData(DataHolder):
                     cls._inv_depends[vn] = list()
 
                 cls._inv_depends[vn].append(func.__name__)
+
             @wraps(func)
             def compute_or_return_saved(*args, **kwargs):
                 """
