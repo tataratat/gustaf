@@ -402,3 +402,68 @@ def rotation_matrix_around_axis(
         )
 
     return rotation_matrix
+
+
+def is_shape(arr, shape, strict=False):
+    """
+    Checks if arr matches given shape. shape can have negative numbers.
+
+    Parameters
+    -----------
+    arr: np.ndarray
+    shape: tuple
+    strict: bool
+      raises ValueError if shapes do not match
+
+    Returns
+    --------
+    matches: bool
+    """
+    arr = np.asanyarray(arr)
+
+    if arr.ndim != len(shape):
+        if strict:
+            raise ValueError(f"array should be {arr.ndim}D")
+        return False
+
+    for i, (a, s) in enumerate(zip(arr.shape, shape)):
+        if s < 0:
+            continue
+        if a != s:
+            if strict:
+                raise ValueError(f"array should have {s} shape in {i}-D")
+            return False
+
+    return True
+
+def is_one_of_shapes(arr, shapes, strict=False):
+    """
+    Tuple/list of given shapes, iterates and checks with is_shape.
+    Useful if you have multiple acceptable shapes.
+
+    Parameters
+    -----------
+    arr: np.ndarray
+    shapes: tuple or list
+      tuple/list of tuple/list
+    strict: bool
+
+    Returns
+    --------
+    matches: bool
+    """
+    matches = False
+    for s in shapes:
+        m = is_shape(arr, s, strict=False)
+        if m:
+            matches = True
+
+    if not matches:
+        if strict:
+            raise ValueError(
+                f"array's shape {arr.shape} is not one of f{shape}"
+            )
+        return False
+
+    return True
+        
