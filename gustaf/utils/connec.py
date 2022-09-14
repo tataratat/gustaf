@@ -8,6 +8,7 @@ if it was palindrome.
 import numpy as np
 
 from gustaf import settings
+from gustaf import helpers
 from gustaf.utils import arr
 
 
@@ -551,4 +552,36 @@ def subdivide_quad(mesh, return_dict=False,):
         )
 
     else:
-        return new_vertices, subd_faces 
+        return new_vertices, subd_faces
+
+
+def sorted_unique(connectivity, sorted_=False):
+    """
+    Given connectivity array, finds unique entries, based on its axis=1 sorted
+    values. Returned value will be sorted.
+
+    Parameters
+    -----------
+    connectivity: (n, d) np.ndarray
+    sorted_: bool
+
+    Returns
+    --------
+    unique_info: Unique2DIntegers
+    """
+    s_connec = connectivity if sorted_ else: np.sort(connectivity, axis=1)
+
+    unique_stuff = arr.unique_rows(
+        s_connec,
+        return_index=True,
+        return_inverse=True,
+        return_counts=True,
+        dtype_name=settings.INT_DTYPE,
+    )
+
+    return helpers.data.Unique2DIntegers(
+        unique_stuff[0], # values
+        unique_stuff[1], # ids
+        unique_stuff[2], # inverse
+        unique_stuff[3], # counts
+    )
