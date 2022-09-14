@@ -290,7 +290,7 @@ def _vedo_showable(obj, **kwargs):
         from vtk import VTK_TETRA as frau_tetra
         from vtk import VTK_HEXAHEDRON as herr_hexa
 
-        whatami = obj.get_whatami()
+        whatami = obj.whatami
         if whatami.startswith("tet"):
             grid_type = frau_tetra
         elif whatami.startswith("hexa"):

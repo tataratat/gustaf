@@ -131,7 +131,7 @@ def export(mesh, fname, space_time=False):
     """
     # did you give us an acceptable mesh?
     acceptable_shapes = ["tri", "quad", "tet", "hexa"]
-    whatami = mesh.get_whatami()
+    whatami = mesh.whatami
 
     if whatami not in acceptable_shapes:
         raise NotImplementedError(
