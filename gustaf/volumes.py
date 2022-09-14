@@ -129,11 +129,12 @@ class Volumes(Faces):
         --------
         None
         """
-        utils.arr.is_one_of_shapes(
-            vols,
-            ((-1, 4), (-1, 8)),
-            strict=True,
-        )
+        if vols is not None:
+            utils.arr.is_one_of_shapes(
+                vols,
+                ((-1, 4), (-1, 8)),
+                strict=True,
+            )
 
         self._volumes = helpers.data.make_tracked_array(
             vols,

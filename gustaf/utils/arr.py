@@ -452,6 +452,7 @@ def is_one_of_shapes(arr, shapes, strict=False):
     --------
     matches: bool
     """
+    arr = np.asanyarray(arr)
     matches = False
     for s in shapes:
         m = is_shape(arr, s, strict=False)
@@ -461,7 +462,7 @@ def is_one_of_shapes(arr, shapes, strict=False):
     if not matches:
         if strict:
             raise ValueError(
-                f"array's shape {arr.shape} is not one of f{shape}"
+                f"array's shape {arr.shape} is not one of f{shapes}"
             )
         return False
 

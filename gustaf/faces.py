@@ -1,5 +1,6 @@
 """gustaf/gustaf/faces.py
 """
+import numpy as np
 
 from gustaf import settings
 from gustaf import utils
@@ -54,7 +55,7 @@ class Faces(Edges):
             self.faces = faces
 
         elif elements is not None:
-            self.faces = faces
+            self.faces = elements
 
         self.BC = dict()
 
@@ -152,11 +153,12 @@ class Faces(Edges):
         self._logd("setting faces")
 
         # shape check
-        utils.arr.is_one_of_shapes(
-            fs,
-            ((-1, 3), (-1, 4)),
-            strict=True,
-        )
+        if fs is not None:
+            utils.arr.is_one_of_shapes(
+                fs,
+                ((-1, 3), (-1, 4)),
+                strict=True,
+            )
 
         self._faces = helpers.data.make_tracked_array(
             fs,
@@ -196,7 +198,7 @@ class Faces(Edges):
         """
         faces = self._get_attr("faces")
 
-        return np.sort(edges, axis=1)
+        return np.sort(faces, axis=1)
 
     @helpers.data.ComputedMeshData.depends_on(["elements"])
     def unique_faces(self):
@@ -218,7 +220,7 @@ class Faces(Edges):
             sorted_=True
         )
 
-        faces = self._get_attr("edges")
+        faces = self._get_attr("faces")
 
         unique_info.values[:] = faces[unique_info.ids]
 

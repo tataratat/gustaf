@@ -74,7 +74,8 @@ class Edges(Vertices):
         self._logd("setting edges")
 
         # shape check
-        utils.arr.is_shape(es, (-1, 2), strict=True)
+        if es is not None:
+            utils.arr.is_shape(es, (-1, 2), strict=True)
 
         self._edges = helpers.data.make_tracked_array(
             es,
@@ -446,7 +447,6 @@ class Edges(Vertices):
         attrib: Any
         """
         attrib = getattr(self, attr)
-
         return attrib() if callable(attrib) else attrib
 
 
