@@ -438,7 +438,7 @@ Unique2DFloats = namedtuple(
         "values",
         "ids",
         "inverse",
-        "union"
+        "intersection"
     ]
 )
 """"
@@ -452,7 +452,7 @@ Attributes
 values: (n, d) np.ndarray
 ids: (n) np.ndarray
 inverse: (m) np.ndarray
-union: (m) list of list
+intersection: (m) list of list
   given original array's index, returns overlapping arrays, including itself.
 """
 

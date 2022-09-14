@@ -156,13 +156,13 @@ class Vertices(GustafBase):
         Returns
         --------
         unique_vertices_info: Unique2DFloats
-          namedtuple with `values`, `ids`, `inverse`, `union`.
+          namedtuple with `values`, `ids`, `inverse`, `intersection`.
         """
         self._logd("computing unique vertices")
         if tolerance is None:
             tolerance = settings.TOLERANCE
 
-        values, ids, inverse, union = utils.arr.close_rows(
+        values, ids, inverse, intersection = utils.arr.close_rows(
             self.const_vertices,
             tolerance=tolerance
         )
@@ -171,7 +171,7 @@ class Vertices(GustafBase):
             values,
             ids,
             inverse,
-            union,
+            intersection,
         )
 
     @helpers.data.ComputedMeshData.depends_on(["vertices"])
