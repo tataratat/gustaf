@@ -159,24 +159,6 @@ class Volumes(Faces):
         return self._const_volumes
 
     @helpers.data.ComputedMeshData.depends_on(["elements"])
-    def single_faces(self):
-        """
-        Returns indices of very unique faces: faces that appear only once.
-        For well constructed volumes, this can be considered as surfaces.
-
-        Parameters
-        -----------
-        None
-
-        Returns
-        --------
-        single_faces: (m,) np.ndarray
-        """
-        unique_info = self.unique_faces()
-
-        return unique_info.ids[unique_info.counts == 1]
-
-    @helpers.data.ComputedMeshData.depends_on(["elements"])
     def sorted_volumes(self):
         """
         Sort volumes along axis=1.
