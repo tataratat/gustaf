@@ -16,6 +16,9 @@ class TrackedArray(np.ndarray):
     `https://github.com/mikedh/trimesh/blob/main/trimesh/caching.py`.
     Minor adaption, since we don't have hashing functionalities.
     """
+
+    __slots__ = ("_modified", "_mutable_getitem")
+
     def __array_finalize__(self, obj):
         """
         Sets a modified flag on every TrackedArray
@@ -23,6 +26,7 @@ class TrackedArray(np.ndarray):
         during copies and certain types of slicing.
         """
         self._modified = True
+        self._mutable_getitem = False
 
         # try not setting the flag for copies, view, and slicng
         #if isinstance(obj, type(self)):
@@ -35,6 +39,31 @@ class TrackedArray(np.ndarray):
     @mutable.setter
     def mutable(self, value):
         self.flags.writeable = value
+
+    def view(self, *args, **kwargs):
+        """
+        views of tracked array is read only
+        """
+        v = super(self.__class__, self).view(*args, **kwargs)
+        v.flags.writeable = False
+        return v
+
+    def __getitem__(self, *args, **kwargs):
+        """
+        returning items are read only
+        """
+        item = super(self.__class__, self).__getitem__(*args, **kwargs)
+        if self._mutable_getitem:
+            self._mutable_getitem = False
+            return item
+
+        # possibly bad for performance, but 
+        if isinstance(item, np.ndarray):
+            item.flags.writeable = False
+        else:
+            item = item.copy()
+
+        return item
 
     def __iadd__(self, *args, **kwargs):
         self._modified = True
@@ -106,6 +135,7 @@ class TrackedArray(np.ndarray):
 
     def __setitem__(self, *args, **kwargs):
         self._modified = True
+        self._mutable_getitem = True
         super(self.__class__, self).__setitem__(*args,
                                                 **kwargs)
 
@@ -113,9 +143,18 @@ class TrackedArray(np.ndarray):
         self._modified = True
         super(self.__class__, self).__setslice__(*args,
                                                  **kwargs)
+    def __getslice__(self, *args, **kwrags):
+        """
+        return slices I am pretty sure np.ndarray does not have __*slice__
+        """
+        slices = super(self.__class__, self).__getitem__(*args, **kwargs)
+        if isinstance(item, np.ndarray):
+            item.flags.writeable = False
+        return item
 
 
-def make_tracked_array(array, dtype=None):
+
+def make_tracked_array(array, dtype=None, copy=True):
     """
     Taken from nice implementations of `trimesh` (see LICENSE.txt).
     `https://github.com/mikedh/trimesh/blob/main/trimesh/caching.py`.
@@ -128,10 +167,12 @@ def make_tracked_array(array, dtype=None):
 
     Parameters
     ------------
-    array : array- like object
+    array: array- like object
       To be turned into a TrackedArray
-    dtype : np.dtype
+    dtype: np.dtype
       Which dtype to use for the array
+    copy: bool
+      Default is True. copy if True.
 
     Returns
     ------------
@@ -142,8 +183,10 @@ def make_tracked_array(array, dtype=None):
     if array is None:
         array = []
     # make sure it is contiguous then view it as our subclass
-    tracked = np.ascontiguousarray(
-        array, dtype=dtype).view(TrackedArray)
+    tracked = np.ascontiguousarray(array, dtype=dtype)
+    if copy:
+        tracked = tracked.copy().view(TrackedArray)
+
     # should always be contiguous here
     assert tracked.flags['C_CONTIGUOUS']
 
