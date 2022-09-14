@@ -18,7 +18,6 @@ class Edges(Vertices):
     __slots__ = (
         "_edges",
         "_const_edges",
-        "_edges_sorted",
     )
 
     def __init__(
@@ -124,8 +123,7 @@ class Edges(Vertices):
         --------
         edges_sorted: (n_edges, 2) np.ndarray
         """
-        edges = getattr(self, "edges")
-        if callable(edges): edges = edges()
+        edges = self._get_attr("edges")
 
         return np.sort(edges, axis=1)
 
@@ -150,31 +148,12 @@ class Edges(Vertices):
             sorted_=True
         )
 
-        edges = getattr(self, "edges")
-        if callable(edges): edges = edges()
+        edges = self._get_attr("edges")
 
         # tuple is not assignable, but entry is mutable...
         unique_info.values[:] = edges[unique_info.ids]
 
         return unique_info
-
-    @helpers.data.ComputedMeshData.depends_on(["elements"])
-    def outlines(self):
-        """
-        Returns indices of very unique edges: edges that appear only once.
-        For well constructed edges, this can be considered as outlines.
-
-        Parameters
-        -----------
-        None
-
-        Returns
-        --------
-        outlines: (m,) np.ndarray
-        """
-        unique_info = self.unique_edges()
-
-        return unique_info.ids[unique_info.counts == 1]
 
     @property
     def elements(self):
@@ -318,9 +297,6 @@ class Edges(Vertices):
         """
         Alias to update_elements.
         """
-        if not self.kind.startswith("edge"):
-            raise TypeError(f"can't update edges for {self.kind}.")
-
         return self.update_elements(*args, **kwargs)
 
     def dashed(self, spacing=None):
@@ -433,3 +409,23 @@ class Edges(Vertices):
         vertices: Vertices
         """
         return Vertices(self.vertices)
+
+    def _get_attr(self, attr):
+        """
+        Internal function to get attribute that maybe property or callable.
+        Some properties are replaced by callable in subclasses as it may depend
+        on other properties of subclass.
+
+        Parameters
+        -----------
+        attr: str
+
+        Returns
+        --------
+        attrib: Any
+        """
+        attrib = getattr(self, attr)
+
+        return attrib() if callable(attrib) else attrib
+
+
