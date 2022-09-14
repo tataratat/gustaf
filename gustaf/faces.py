@@ -176,7 +176,7 @@ class Faces(Edges):
         return self._const_faces
 
     @helpers.data.ComputedMeshData.depends_on(["elements"])
-    def outlines(self):
+    def outer_edges(self):
         """
         Returns indices of very unique edges: edges that appear only once.
         For well constructed edges, this can be considered as outlines.
@@ -193,7 +193,8 @@ class Faces(Edges):
 
         return unique_info.ids[unique_info.counts == 1]
 
-    def get_faces_sorted(self):
+    @helpers.data.ComputedMeshData.depends_on(["elements"])
+    def sorted_faces(self):
         """
         Similar to edges_sorted but for faces.
 
@@ -203,16 +204,17 @@ class Faces(Edges):
 
         Returns
         --------
-        faces_sorted: (self.faces.shape) np.ndarray
+        sorted_faces: (self.faces.shape) np.ndarray
         """
-        self.faces_sorted = self.get_faces().copy()
-        self.faces_sorted.sort(axis=1)
+        faces = self._get_attr("faces")
 
-        return self.faces_sorted
+        return np.sort(edges, axis=1)
 
-    def get_faces_unique(self):
+    @helpers.data.ComputeMeshData.depends_on(["elements"])
+    def unique_faces(self):
         """
-        Similar to edges_unique but for faces.
+        Returns a namedtuple of unique faces info.
+        Similar to unique_edges
 
         Parameters
         -----------
@@ -220,84 +222,19 @@ class Faces(Edges):
 
         Returns
         --------
-        faces_unique: (n, d) np.ndarray
+        unique_info: Unique2DIntegers
+          valid attributes are {values, ids, inverse, counts}
         """
-        unique_stuff = utils.arr.unique_rows(
-            self.get_faces_sorted(),
-            return_index=True,
-            return_inverse=True,
-            return_counts=True,
-            dtype_name=settings.INT_DTYPE,
+        unique_info = utils.connec.sorted_unique(
+            self.sorted_faces(),
+            sorted_=True
         )
 
-        # unpack
-        #  set faces_unique with `faces` to avoid orientation change
-        self.faces_unique_id = unique_stuff[1].astype(settings.INT_DTYPE)
-        self.faces_unique = self.faces[self.faces_unique_id]
-        self.faces_unique_inverse = unique_stuff[2].astype(settings.INT_DTYPE)
-        self.faces_unique_count = unique_stuff[3].astype(settings.INT_DTYPE)
-        self.surfaces = self.faces_unique_id[self.faces_unique_count == 1]
+        faces = self._get_attr("edges")
 
-        return self.faces[self.faces_unique_id]
+        unique_info.values[:] = edges[unique_info.ids]
 
-    def get_faces_unique_id(self):
-        """
-        Similar to edges_unique_id but for faces.
-
-        Parameters
-        -----------
-        None
-
-        Returns
-        --------
-        faces_unique: (n,) np.ndarray
-        """
-        _ = self.get_faces_unique()
-
-        return self.faces_unique_id
-
-    def get_faces_unique_inverse(self,):
-        """
-        Similar to edges_unique_inverse but for faces.
-
-        Parameters
-        -----------
-        None
-
-        Returns
-        --------
-        None
-        """
-        _ = self.get_faces_unique()
-
-        return self.faces_unique_inverse
-
-    def get_surfaces(self,):
-        """
-        Returns indices of very unique faces: faces that appear only once.
-        For well constructed faces, this can be considred as surfaces.
-
-        Parameters
-        -----------
-        None
-
-        Returns
-        --------
-        surfaces: (m,) np.ndarray
-        """
-        _ = self.get_faces_unique()
-
-        return self.surfaces
-
-    def update_edges(self):
-        """
-        Just to decouple inherited alias
-
-        Raises
-        -------
-        NotImplementedError
-        """
-        raise NotImplementedError
+        return unique_info
 
     def update_faces(self, *args, **kwargs):
         """
@@ -320,19 +257,5 @@ class Faces(Edges):
         """
         return Edges(
             self.vertices,
-            edges=self.get_edges_unique() if unique else self.get_edges()
+            edges=self.unique_edges().values if unique else self.edges()
         )
-
-    #def show(self, BC=False):
-        """
-        Overwrite `show` to offer frequently used showing options
-
-        Parameters
-        -----------
-        BC: bool
-          Default is False.
-
-        Returns
-        --------
-        None
-        """
