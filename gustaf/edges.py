@@ -15,10 +15,11 @@ class Edges(Vertices):
 
     kind = "edge"
 
-    __slots__ = [
+    __slots__ = (
         "_edges",
+        "_const_edges",
         "_edges_sorted",
-    ]
+    )
 
     def __init__(
             self,
@@ -128,7 +129,7 @@ class Edges(Vertices):
 
         return np.sort(edges, axis=1)
 
-    @helpers.data.ComputedMeshData.depends_on("elements")
+    @helpers.data.ComputedMeshData.depends_on(["elements"])
     def unique_edges(self):
         """
         Returns a named tuple of unique edge info.
@@ -148,17 +149,16 @@ class Edges(Vertices):
             self.sorted_edges(),
             sorted_=True
         )
-        self.outlines = self.edges_unique_id[self.edges_unique_count == 1]
 
         edges = getattr(self, "edges")
-        if callable(sedges): edges = edges()
+        if callable(edges): edges = edges()
 
         # tuple is not assignable, but entry is mutable...
         unique_info.values[:] = edges[unique_info.ids]
 
         return unique_info
 
-    @helpers.data.ComputedMeshData.depends_on("elements")
+    @helpers.data.ComputedMeshData.depends_on(["elements"])
     def outlines(self):
         """
         Returns indices of very unique edges: edges that appear only once.
@@ -318,6 +318,9 @@ class Edges(Vertices):
         """
         Alias to update_elements.
         """
+        if not self.kind.startswith("edge"):
+            raise TypeError(f"can't update edges for {self.kind}.")
+
         return self.update_elements(*args, **kwargs)
 
     def dashed(self, spacing=None):
@@ -392,14 +395,14 @@ class Edges(Vertices):
         s_elements: Elements
           shrunk elements
         """
-        elements = self.elements()
+        elements = self.const_elements
         vs = np.vstack(self.vertices[elements])
         es = np.arange(len(vs))
 
         nodes_per_element = elements.shape[1]
         es = es.reshape(-1, nodes_per_element)
 
-        mids = np.repeat(self.get_centers(), nodes_per_element, axis=0)
+        mids = np.repeat(self.centers(), nodes_per_element, axis=0)
 
         vs -= mids
         vs *= ratio
