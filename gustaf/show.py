@@ -66,6 +66,7 @@ def show_vedo(
     size = kwargs.get("size", "auto")
     cam = kwargs.get("cam", None)
     title = kwargs.get("title", "gustaf")
+    return_show_list = kwargs.get("return_show_list", False)
 
     def clear_vedoplotter(plotter, numrenderers, skipcl=skip_clear):
         """enough said."""
@@ -189,9 +190,12 @@ def show_vedo(
         if close or close is None:  # explicitly given or None.
             # It seems to leak some memory, but here it goes.
             plt.close()  # if i close it, this cannot be reused...
-            return None
+            plt = None
 
-    return plt
+    if return_show_list:
+        return (plt, showlist)
+    else:
+        return plt
 
 
 def _vedo_showable(obj, **kwargs):

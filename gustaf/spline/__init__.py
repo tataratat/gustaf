@@ -13,6 +13,7 @@ from gustaf.spline.base import (
         Bezier, RationalBezier, BSpline, NURBS, show, from_mfem, load_splines
 )
 from gustaf.spline import ffd
+from gustaf.spline import microstructure
 
 __all__ = [
         "base",
@@ -26,4 +27,5 @@ __all__ = [
         "from_mfem",
         "load_splines",
         "ffd",
+        "microstructure"
 ]
