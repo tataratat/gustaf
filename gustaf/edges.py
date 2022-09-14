@@ -94,7 +94,87 @@ class Edges(Vertices):
         const_edges (n, 2) np.ndarray
         """
         return self._const_edges
-        
+
+    @property
+    def whatami(self):
+        """
+        whatami?
+
+        Parameters
+        -----------
+        None
+
+        Returns
+        --------
+        whatami: str
+        """
+        return "edges"
+
+    @helpers.data.ComputedMeshData.depends_on(["elements"])
+    def sorted_edges(self):
+        """
+        Sort edges along axis=1.
+
+        Parameters
+        -----------
+        None
+
+        Returns
+        --------
+        edges_sorted: (n_edges, 2) np.ndarray
+        """
+        edges = getattr(self, "edges")
+        if callable(edges): edges = edges()
+
+        return np.sort(edges, axis=1)
+
+    @helpers.data.ComputedMeshData.depends_on("elements")
+    def unique_edges(self):
+        """
+        Returns a named tuple of unique edge info.
+        Info includes unique values, ids of unique edges, inverse ids,
+        count of each unique values. 
+
+        Parameters
+        -----------
+        None
+
+        Returns
+        --------
+        unique_info: Unique2DIntegers
+          valid attributes are {values, ids, inverse, counts}
+        """
+        unique_info = utils.connec.sorted_unique(
+            self.sorted_edges(),
+            sorted_=True
+        )
+        self.outlines = self.edges_unique_id[self.edges_unique_count == 1]
+
+        edges = getattr(self, "edges")
+        if callable(sedges): edges = edges()
+
+        # tuple is not assignable, but entry is mutable...
+        unique_info.values[:] = edges[unique_info.ids]
+
+        return unique_info
+
+    @helpers.data.ComputedMeshData.depends_on("elements")
+    def outlines(self):
+        """
+        Returns indices of very unique edges: edges that appear only once.
+        For well constructed edges, this can be considered as outlines.
+
+        Parameters
+        -----------
+        None
+
+        Returns
+        --------
+        outlines: (m,) np.ndarray
+        """
+        unique_info = self.unique_edges()
+
+        return unique_info.ids[unique_info.counts == 1]
 
     @property
     def elements(self):
@@ -218,74 +298,7 @@ class Edges(Vertices):
             inverse=inverse,
         )
 
-
-    @helpers.data.ComputedMeshData.depends_on(["elements"])
-    def sorted_edges(self):
-        """
-        Sort edges along axis=1.
-
-        Parameters
-        -----------
-        None
-
-        Returns
-        --------
-        edges_sorted: (n_edges, 2) np.ndarray
-        """
-        edges = getattr(self, "edges")
-        if callable(edges): edges = edges()
-
-        return np.sort(edges, axis=1)
-
-    @helpers.data.ComputedMeshData.depends_on("elements")
-    def unique_edges(self):
-        """
-        Returns a named tuple of unique edge info.
-        Info includes unique values, ids of unique edges, inverse ids,
-        count of each unique values. 
-
-        Parameters
-        -----------
-        None
-
-        Returns
-        --------
-        unique_info: Unique2DIntegers
-          valid attributes are {values, ids, inverse, counts}
-        """
-        unique_info = utils.connec.sorted_unique(
-            self.sorted_edges(),
-            sorted_=True
-        )
-        self.outlines = self.edges_unique_id[self.edges_unique_count == 1]
-
-        edges = getattr(self, "edges")
-        if callable(sedges): edges = edges()
-
-        # tuple is not assignable, but entry is mutable...
-        unique_info.values[:] = edges[unique_info.ids]
-
-        return unique_info
-
-    @helpers.data.ComputedMeshData.depends_on("elements")
-    def outlines(self):
-        """
-        Returns indices of very unique edges: edges that appear only once.
-        For well constructed edges, this can be considered as outlines.
-
-        Parameters
-        -----------
-        None
-
-        Returns
-        --------
-        outlines: (m,) np.ndarray
-        """
-        unique_info = self.unique_edges()
-
-        return unique_info.ids[unique_info.counts == 1]
-
-    def update_elements(self, mask, inplace=True):
+    def update_elements(self, mask):
         """
         Similar to update_vertices, but for elements.
 
@@ -296,20 +309,10 @@ class Edges(Vertices):
         Returns
         --------
         new_self: type(self)
-          iff inplace=False
         """
-        new_elements = self.elements()[mask]
-        if inplace:
-            self.elements(new_elements).remove_unreferenced_vertices(
-                inplace=True
-            )
-            return None
+        self.elements = self.elements[mask]
 
-        else:
-            return type(self)(
-                vertices=self.vertices,
-                elements=new_elements
-            ).remove_unreferenced_vertices(inplace=False)
+        return self.elements.remove_unreferenced_vertices()
 
     def update_edges(self, *args, **kwargs):
         """
@@ -317,62 +320,35 @@ class Edges(Vertices):
         """
         return self.update_elements(*args, **kwargs)
 
-    def subdivide(self):
-        """
-        Subdivides elements.
-        Edges into 2, faces into 4.
-        Not an inplace operation.
-
-        Parameters
-        -----------
-        None
-
-        Returns
-        --------
-        subdivided: Edges or Faces
-        """
-        if self.kind != "face":
-            raise NotImplementedError
-
-        else:
-            whatami = self.get_whatami()
-            if whatami.startswith("tri"):
-                return type(self)(
-                    **(utils.connec.subdivide_tri(self, return_dict=True))
-                )
-
-            elif whatami.startswith("quad"):
-                return type(self)(
-                    **(utils.connec.subdivide_quad(self, return_dict=True))
-                )
-
-            else:
-                return None
-
     def dashed(self, spacing=None):
         """
         Turn edges into dashed edges(=lines).
         Given spacing, it will try to chop edges as close to it as possible.
         Pattern should look:
-           o--------o    o--------o    o--------o
-           |<------>|             |<-->|
-              (chop length)         (chop length / 2)
+
+        ``dashed edges``
+
+        .. code-block::
+
+             o--------o    o--------o    o--------o
+             |<------>|             |<-->|
+                (chop length)         (chop length / 2)
 
         Parameters
         -----------
         spacing: float
-          Default is None and it will use self.get_bounds_diagonal_norm() / 50
+          Default is None and it will use self.bounds_diagonal_norm() / 50
 
         Returns
         --------
         dashing_edges: Edges
         """
         if self.kind != "edge":
-            raise NotImplementedError
+            raise NotImplementedError("dashed is only for edges.")
 
         if spacing is None:
             # apply "automatic" spacing
-            spacing = self.get_bounds_diagonal_norm() / 50
+            spacing = self.bounds_diagonal_norm() / 50
 
         v0s = self.vertices[self.edges[:,0]]
         v1s = self.vertices[self.edges[:,1]]
