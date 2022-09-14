@@ -159,6 +159,24 @@ class Edges(Vertices):
 
         return unique_info
 
+    @helpers.data.ComputedMeshData.depends_on(["elements"])
+    def single_edges(self):
+        """
+        Returns indices of very unique edges: edges that appear only once.
+        For well constructed faces, this can be considered as outlines.
+
+        Parameters
+        -----------
+        None
+
+        Returns
+        --------
+        outlines: (m,) np.ndarray
+        """
+        unique_info = self.unique_edges()
+
+        return unique_info.ids[unique_info.counts == 1]
+
     @property
     def elements(self):
         """
