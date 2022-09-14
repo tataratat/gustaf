@@ -56,9 +56,7 @@ class Faces(Edges):
         elif elements is not None:
             self.faces = faces
 
-        self.whatami = "faces"
         self.BC = dict()
-        self.const_edges = raise_if
 
     @helpers.data.ComputedMeshData.depends_on(["elements"])
     def edges(self):
@@ -75,7 +73,7 @@ class Faces(Edges):
         edges: (n, 2) np.ndarray
         """
         self._logd("computing edges")
-        faces = self._get_attr("faces"):
+        faces = self._get_attr("faces")
 
         return utils.connec.faces_to_edges(faces)
 
@@ -152,13 +150,21 @@ class Faces(Edges):
         None
         """
         self._logd("setting faces")
+
+        # shape check
+        utils.arr.is_one_of_shapes(
+            fs,
+            ((-1, 3), (-1, 4)),
+            strict=True,
+        )
+
         self._faces = helpers.data.make_tracked_array(
             fs,
             settings.INT_DTYPE,
         )
         # same, but non-writeable view of tracekd array
         self._const_faces = self._faces.view()
-        self._const_edges.flags.writeable = False
+        self._const_faces.flags.writeable = False
 
     @property
     def const_faces(self):
@@ -174,24 +180,6 @@ class Faces(Edges):
         const_faces: (n, 2
         """
         return self._const_faces
-
-    @helpers.data.ComputedMeshData.depends_on(["elements"])
-    def outer_edges(self):
-        """
-        Returns indices of very unique edges: edges that appear only once.
-        For well constructed edges, this can be considered as outlines.
-
-        Parameters
-        -----------
-        None
-
-        Returns
-        --------
-        outlines: (m,) np.ndarray
-        """
-        unique_info = self.unique_edges()
-
-        return unique_info.ids[unique_info.counts == 1]
 
     @helpers.data.ComputedMeshData.depends_on(["elements"])
     def sorted_faces(self):
@@ -210,7 +198,7 @@ class Faces(Edges):
 
         return np.sort(edges, axis=1)
 
-    @helpers.data.ComputeMeshData.depends_on(["elements"])
+    @helpers.data.ComputedMeshData.depends_on(["elements"])
     def unique_faces(self):
         """
         Returns a namedtuple of unique faces info.
@@ -232,7 +220,7 @@ class Faces(Edges):
 
         faces = self._get_attr("edges")
 
-        unique_info.values[:] = edges[unique_info.ids]
+        unique_info.values[:] = faces[unique_info.ids]
 
         return unique_info
 
