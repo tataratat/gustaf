@@ -569,7 +569,7 @@ def sorted_unique(connectivity, sorted_=False):
     --------
     unique_info: Unique2DIntegers
     """
-    s_connec = connectivity if sorted_ else: np.sort(connectivity, axis=1)
+    s_connec = connectivity if sorted_ else np.sort(connectivity, axis=1)
 
     unique_stuff = arr.unique_rows(
         s_connec,
