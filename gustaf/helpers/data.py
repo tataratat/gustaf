@@ -1,6 +1,7 @@
 """gustaf/gustaf/helpers/data.py
 
 Helps helpee to manage data.
+Some useful data structures.
 """
 
 import abc
