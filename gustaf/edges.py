@@ -72,6 +72,10 @@ class Edges(Vertices):
         None
         """
         self._logd("setting edges")
+
+        # shape check
+        utils.arr.is_shape(es, (-1, 2), strict=True)
+
         self._edges = helpers.data.make_tracked_array(
             es,
             settings.INT_DTYPE
