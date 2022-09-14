@@ -304,9 +304,9 @@ def _vedo_showable(obj, **kwargs):
             # UGrid would be politically correct,
             # but currently it can't show field
             # so, extract only surface mesh
-            surf_ids = obj.get_surfaces()  # gets faces too
-            sfaces = Faces(obj.vertices, obj.faces[surf_ids])
-            sfaces.remove_unreferenced_vertices(inplace=True)
+            surf_ids = obj.single_faces()  # gets faces too
+            sfaces = Faces(obj.vertices, obj.faces()[surf_ids])
+            sfaces.remove_unreferenced_vertices()
 
             vobj = sfaces.showable(backend="vedo")  # recursive alert
 

@@ -120,7 +120,7 @@ def faces(spline, resolutions,):
     Extract faces from spline.
     Valid iff para_dim is one of the followings: {2, 3}.
     In case of {3}, it will return only surfaces.
-    If internal faces are desired, used `spline.extract.volumes().get_faces()`.
+    If internal faces are desired, used `spline.extract.volumes().faces()`.
     Note that dimension higher than 3 is not showable.
 
     Parameters

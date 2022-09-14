@@ -129,7 +129,7 @@ class FFD (GustafBase):
             par_dim = mesh.vertices.shape[1]
             self.spline = with_bounds(
                 [[0]*par_dim, [1]*par_dim],
-                mesh.get_bounds())
+                mesh.bounds())
 
         self._logi("Setting mesh.")
         self._logi("Mesh Info:")
@@ -137,7 +137,7 @@ class FFD (GustafBase):
             "  Vertices: {v}.".format(v=mesh.vertices.shape)
         )
         self._logi(
-            "  Bounds: {b}.".format(b=mesh.get_bounds())
+            "  Bounds: {b}.".format(b=mesh.bounds())
         )
         self._o_mesh = mesh.copy()  # we keep original copy for visulization
         self._mesh = mesh.copy() # another copy for current status.
@@ -210,7 +210,7 @@ class FFD (GustafBase):
 
         self._q_vertices = self._mesh.vertices.copy()
 
-        original_mesh_bounds = self._mesh.get_bounds()
+        original_mesh_bounds = self._mesh.bounds()
 
         # save mesh offset and scale for reasons
         self._mesh_offset = original_mesh_bounds[0]
@@ -432,9 +432,9 @@ class FFD (GustafBase):
         if o_mesh.kind == "volume":
             # only outer faces. overwrite
             o_mesh = o_mesh.tofaces(unique=False)
-            o_mesh.update_faces(o_mesh.get_surfaces())
+            o_mesh.update_faces(o_mesh.single_faces())
             d_mesh = d_mesh.tofaces(unique=False)
-            d_mesh.update_faces(d_mesh.get_surfaces())
+            d_mesh.update_faces(d_mesh.single_faces())
 
         # prepare edges
         o_edges = None

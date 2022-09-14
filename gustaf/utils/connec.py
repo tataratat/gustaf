@@ -463,7 +463,7 @@ def subdivide_tri(mesh, return_dict=False,):
         raise ValueError("Invalid faces shape!")
 
     # Form new vertices
-    edge_mid_v = mesh.vertices[mesh.get_edges_unique()].mean(axis=1)
+    edge_mid_v = mesh.vertices[mesh.unique_edges().values].mean(axis=1)
     new_vertices = np.vstack((mesh.vertices, edge_mid_v))
 
     subd_faces = np.empty(
@@ -479,7 +479,7 @@ def subdivide_tri(mesh, return_dict=False,):
 
     # Form ids for new vertices
     new_vertices_ids = (
-        mesh.get_edges_unique_inverse()
+        mesh.unique_edges().inverse
         + int(mesh.faces.max() + 1)
     )
     # 1st & 2nd columns
@@ -521,8 +521,8 @@ def subdivide_quad(mesh, return_dict=False,):
         raise ValueError("Invalid faces shape!")
 
     # Form new vertices
-    edge_mid_v = mesh.vertices[mesh.get_edges_unique()].mean(axis=1)
-    face_centers = mesh.get_centers()
+    edge_mid_v = mesh.vertices[mesh.unique_edges().values].mean(axis=1)
+    face_centers = mesh.centers()
     new_vertices = np.vstack(
         (
             mesh.vertices,
@@ -537,7 +537,7 @@ def subdivide_quad(mesh, return_dict=False,):
     )
 
     subd_faces[:, 0] = mesh.faces.flatten()
-    subd_faces[:, 1] = mesh.get_edges_unique_inverse() + len(mesh.vertices)
+    subd_faces[:, 1] = mesh.unique_edges().inverse + len(mesh.vertices)
     subd_faces[:, 2] = np.repeat(
         np.arange(len(face_centers)) + (len(mesh.vertices) + len(edge_mid_v)),
         4,
