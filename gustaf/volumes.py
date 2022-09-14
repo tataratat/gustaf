@@ -4,6 +4,7 @@
 import numpy as np
 
 from gustaf import utils
+from gustaf import helpers
 from gustaf import settings
 from gustaf.faces import Faces
 
@@ -11,14 +12,21 @@ class Volumes(Faces):
 
     kind = "volume"
 
-    __slots__ = [
-        "volumes",
-        "volumes_sorted",
-        "volumes_unique",
-        "volumes_unique_id",
-        "volumes_unique_inverse",
-        "volumes_unique_count",
-    ]
+    const_faces = helpers.raise_if.invalid_inherited_attr(
+        Faces.const_faces,
+        __qualname__,
+        property_=True,
+    )
+    update_faces = helpers.raise_if.invalid_inherited_attr(
+        Faces.update_edges,
+        __qualname__,
+        property_=False,
+    )
+
+    __slots__ = (
+        "_volumes",
+        "_const_volumes",
+    )
 
     def __init__(
             self,
@@ -26,39 +34,26 @@ class Volumes(Faces):
             volumes=None,
             elements=None,
     ):
-
-        self.whatami = "volumes"
-        self.vis_dict = dict()
-        self.vertexdata = dict()
-
-        if vertices is not None:
-            self.vertices = utils.arr.make_c_contiguous(
-                vertices,
-                settings.FLOAT_DTYPE,
-            )
-
-        if volumes is not None:
-            self.volumes = utils.arr.make_c_contiguous(
-                volumes,
-                settings.INT_DTYPE,
-            )
-
-        elif elements is not None:
-            self.volumes = utils.arr.make_c_contiguous(
-                elements,
-                settings.INT_DTYPE,
-            )
-
-    def process(
-            self,
-            faces=True,
-            force_process=True,
-    ):
-        pass
-
-    def get_whatami(self):
         """
-        Determines whatami.
+        Volumes. It has vertices and volumes. Volumes could be tetrahedrons or
+        hexahedrons.
+
+        Parameters
+        -----------
+        vertices: (n, d) np.ndarray
+        volumes: (n, 4) or (n, 8) np.ndarray
+        """
+        super().__init__(vertices=vertices)
+        if volumes is not None:
+            self.volumes = volumes
+        elif elements is not None:
+            self.volumes = elements
+
+    @helpers.data.ComputedMeshData.depends_on(["elements"])
+    def faces(self):
+        """
+        Faces here aren't main property.
+        So this needs to be computed
 
         Parameters
         -----------
@@ -66,32 +61,123 @@ class Volumes(Faces):
 
         Returns
         --------
-        None
+        faces: (n, 3) or (n, 4) np.ndarray
         """
-        if self.volumes.shape[1] == 4:
-            self.whatami = "tet"
-        elif self.volumes.shape[1] == 8:
-            self.whatami = "hexa"
+        whatami = self.whatami
+        faces = None
+        if whatami.startswith("tet"):
+            faces = utils.connec.tet_to_tri(self.volumes)
+        elif whatami.startswith("hexa"):
+            faces = utils.connec.hexa_to_quad(self.volumes)
+
+        return faces
+
+    @classmethod
+    def whatisthis(cls, volume_obj):
+        """
+        overwrites Faces.whatisthis to tell you is this volume is
+        tet or hexa.
+
+        Parameters
+        -----------
+        volume_obj: Volumes
+
+        Returns
+        --------
+        whatisthis: str
+        """
+        if not cls.kind.startswith(volume_obj.kind):
+            raise TypeError("Given obj is not {cls.__qualname__}")
+
+        if volume_obj.volumes.shape[1] == 4:
+            return "tet"
+
+        elif volume_obj.volumes.shape[1] == 8:
+            return "hexa"
+
         else:
             raise ValueError(
-                "I have invalid volumes array shape. It should be (n, 4) or "
-                f"(n, 8), but I have: {self.faces.shape}"
+                "Invalid volumes connectivity shape. It should be (n, 4) or "
+                f"(n, 8), but given: {volume_obj.volumes.shape}"
             )
 
-        return self.whatami
+    @property
+    def volumes(self):
+        """
+        Returns volumes.
 
-    def update_faces(self):
-        """
-        """
-        raise NotImplementedError
+        Parameters
+        -----------
+        None
 
-    def update_volumes(self, *args, **kwargs):
+        Returns
+        --------
+        volumes: (n, 4) or (n, 8) np.ndarray
         """
-        Alias to update_elements.
-        """
-        self.update_elements(*args, **kwargs)
+        return self._volumes
 
-    def get_volumes_sorted(self):
+    @volumes.setter
+    def volumes(self, vols):
+        """
+        volumes setter. Similar to vertices, this will be a tracked array.
+
+        Parameters
+        -----------
+        vols: (n, 4) or (n, 8) np.ndarray
+
+        Returns
+        --------
+        None
+        """
+        utils.arr.is_one_of_shapes(
+            vols,
+            ((-1, 4), (-1, 8)),
+            strict=True,
+        )
+
+        self._volumes = helpers.data.make_tracked_array(
+            vols,
+            settings.INT_DTYPE,
+        )
+        # same, but non-writeable view of tracked array
+        self._const_volumes = self._volumes.view()
+        self._const_volumes.flags.writeable = False
+
+    @property
+    def const_volumes(self):
+        """
+        Returns non-writeable view of volumes
+
+        Parameters
+        -----------
+        None
+
+        Returns
+        --------
+        const_volumes: (n, 4) or (n, 8) np.ndarray
+        """
+        return self._const_volumes
+
+    @helpers.data.ComputedMeshData.depends_on(["elements"])
+    def single_faces(self):
+        """
+        Returns indices of very unique faces: faces that appear only once.
+        For well constructed volumes, this can be considered as surfaces.
+
+        Parameters
+        -----------
+        None
+
+        Returns
+        --------
+        single_faces: (m,) np.ndarray
+        """
+        unique_info = self.unique_faces()
+
+        return unique_info.ids[unique_info.counts == 1]
+
+    @helpers.data.ComputedMeshData.depends_on(["elements"])
+    def sorted_volumes(self):
         """
         Sort volumes along axis=1.
 
@@ -103,14 +189,15 @@ class Volumes(Faces):
         --------
         volumes_sorted: (volumes.shape) np.ndarray
         """
-        self.volumes_sorted = self.volumes.copy()
-        self.volumes_sorted.sort(axis=1)
+        volumes = self._get_attr("volumes")
 
-        return self.volumes_sorted
+        return np.sort(volumes, axis=1)
 
-    def get_volumes_unique(self):
+    @helpers.data.ComputedMeshData.depends_on(["eleemnts"])
+    def unique_volumes(self):
         """
-        Returns unique volumes.
+        Returns a namedtuple of unique volumes info.
+        Similar to unique_edges
 
         Parameters
         -----------
@@ -118,58 +205,25 @@ class Volumes(Faces):
 
         Returns
         --------
-        volumes_unique: (n, 4) or (n, 8) np.ndarray
+        unique_info: Unique2DIntegers
+          valid attribut4es are {values, ids, inverse, counts}
         """
-        unique_stuff = utils.arr.unique_rows(
-            self.get_volumes_sorted(),
-            return_index=True,
-            return_inverse=True,
-            return_counts=True,
-            dtype_name=settings.INT_DTYPE,
+        unique_info = utils.connec.sorted_unique(
+            self.sorted_volumes(),
+            sorted_=True,
         )
 
-        # unpack
-        #  set volumes_unique with `volumes` to avoid orientation change
-        self.volumes_unique_id = unique_stuff[1].astype(settings.INT_DTYPE)
-        self.volumes_unique = self.volumes[self.volumes_unique_id]
-        self.volumes_unique_inverse = unique_stuff[2].astype(
-            settings.INT_DTYPE
-        )
-        self.volumes_unique_count = unique_stuff[2].astype(settings.INT_DTYPE)
+        volumes = self._get_attr("volumes")
 
-        return self.volumes_unique
+        unique_info.values[:] = volumes[unique_info.ids]
 
-    def get_volumes_unique_id(self):
+        return unique_info
+
+    def update_volumes(self, *args, **kwargs):
         """
-        Similar to faces_unique_id but for volumes.
-
-        Parameters
-        -----------
-        None
-
-        Returns
-        --------
-        volumes_unique: (n,) np.ndarray
+        Alias to update_elements.
         """
-        _ = self.get_volumes_unique()
-
-        return self.volumes_unique_id
-
-    def get_volumes_unique_inverse(self,):
-        """
-        Similar to faces_unique_inverse but for volumes.
-
-        Parameters
-        -----------
-        None
-
-        Returns
-        --------
-        None
-        """
-        _ = self.get_volumes_unique()
-
-        return self.volumes_unique_inverse
+        self.update_elements(*args, **kwargs)
 
     def tofaces(self, unique=True):
         """
@@ -186,5 +240,5 @@ class Volumes(Faces):
         """
         return Faces(
             self.vertices,
-            faces=self.get_faces_unique() if unique else self.get_faces()
+            faces=self.unique_faces().values if unique else self.faces()
         )
