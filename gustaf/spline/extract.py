@@ -249,7 +249,7 @@ def faces(spline, resolutions,):
             vertices=np.vstack(vertices),
             faces=np.vstack(faces)
         )
-        f.merge_vertices(inplace=True)
+        f.merge_vertices()
 
         return f
 

@@ -254,8 +254,10 @@ class Vertices(GustafBase):
             return self
 
         # create inverse mask if not passed
-        if inverse is None:
+        check_neg = False
+        if inverse is None and self.kind != "vertex":
             inverse = np.full(len(vertices), -1, dtype=settings.INT_DTYPE)
+            check_neg = True
             if mask.dtype.kind == "b":
                 inverse[mask] = np.arange(mask.sum())
             elif mask.dtype.kind == "i":
@@ -272,7 +274,8 @@ class Vertices(GustafBase):
                 (-1, elements.shape[1])
             )
             # remove all the elements that's not part of inverse
-            elements = elements[np.unique(np.where(elements < 0)[0])]
+            if check_neg:
+                elements = elements[np.unique(np.where(elements >= 0)[0])]
 
         # apply mask
         vertices = vertices[mask]
@@ -460,13 +463,14 @@ class Vertices(GustafBase):
             if haselem:
                 if len(elements) == 0:
                     elements.append(
-                        tmp_ins.elements().copy()
+                        tmp_ins.elements.copy()
                     )
                     e_offset = elements[-1].max() + 1
 
                 else:
                     elements.append(
-                        tmp_ins.elements().copy() + e_offset
+                        # copy is not necessary here,
+                        tmp_ins.elements + e_offset
                     )
                     e_offset = elements[-1].max() + 1
 

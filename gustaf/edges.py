@@ -222,7 +222,6 @@ class Edges(Vertices):
         # naming rule in gustaf
         elem_name = type(self).__qualname__.lower()
         self._logd(f"seting {elem_name}'s connectivity.")
-
         return setattr(self, elem_name, elems)
 
     @property
@@ -305,7 +304,7 @@ class Edges(Vertices):
 
         Parameters
         -----------
-        inplace: bool
+        mask: bool or (m,) np.ndarray
 
         Returns
         --------
