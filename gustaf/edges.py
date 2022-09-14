@@ -232,18 +232,17 @@ class Edges(Vertices):
         --------
         edges_sorted: (n_edges, 2) np.ndarray
         """
-        sedges = getattr(self, "edges", N)
-        if callable(sedges): sedges = sedges()
+        edges = getattr(self, "edges")
+        if callable(edges): edges = edges()
 
-        sedges = sedges.copy()
-        sedges.sort(axis=1)
-
-        return sedges
+        return np.sort(edges, axis=1)
 
     @helpers.data.ComputedMeshData.depends_on("elements")
     def unique_edges(self):
         """
-        Returns unique edges.
+        Returns a named tuple of unique edge info.
+        Info includes unique values, ids of unique edges, inverse ids,
+        count of each unique values. 
 
         Parameters
         -----------
@@ -251,68 +250,25 @@ class Edges(Vertices):
 
         Returns
         --------
-        edges_unique: (n, 2) np.ndarray
+        unique_info: Unique2DIntegers
+          valid attributes are {values, ids, inverse, counts}
         """
-        unique_stuff = utils.arr.unique_rows(
+        unique_info = utils.connec.sorted_unique(
             self.sorted_edges(),
-            return_index=True,
-            return_inverse=True,
-            return_counts=True,
-            dtype_name=settings.INT_DTYPE,
+            sorted_=True
         )
-
-
-
-        # unpack
-        #   set edges_unique with `edges`.
-        #   otherwise it'd be based on edges_sorted and it changes orientation
-        self.edges_unique_id = unique_stuff[1].astype(settings.INT_DTYPE)
-        self.edges_unique = self.edges[self.edges_unique_id]
-        self.edges_unique_inverse = unique_stuff[2].astype(settings.INT_DTYPE)
-        self.edges_unique_count = unique_stuff[3].astype(settings.INT_DTYPE)
         self.outlines = self.edges_unique_id[self.edges_unique_count == 1]
 
-        return helpers.data.Unique2DIntegers(
-            self.
-        )
+        edges = getattr(self, "edges")
+        if callable(sedges): edges = edges()
 
-    def get_edges_unique_id(self):
-        """
-        Returns ids of unique edges.
+        # tuple is not assignable, but entry is mutable...
+        unique_info.values[:] = edges[unique_info.ids]
 
-        Parameters
-        -----------
-        None
+        return unique_info
 
-        Returns
-        --------
-        edges_unique_id: (n,) np.ndarray
-        """
-        _ = self.get_edges_unique()
-
-        return self.edges_unique_id
-
-    def get_edges_unique_inverse(self):
-        """
-        Returns ids that can be used to reconstruct edges with unique
-        edges.
-
-        Good to know:
-          mesh.edges == mesh.unique_edges[mesh.edges_unique_inverse]
-
-        Parameters
-        -----------
-        None
-
-        Returns
-        --------
-        edges_unique_inverse: (len(self.edges),) np.ndarray
-        """
-        _ = self.get_edges_unique()
-
-        return self.edges_unique_inverse
-
-    def get_outlines(self):
+    @helpers.data.ComputedMeshData.depends_on("elements")
+    def outlines(self):
         """
         Returns indices of very unique edges: edges that appear only once.
         For well constructed edges, this can be considered as outlines.
@@ -325,9 +281,9 @@ class Edges(Vertices):
         --------
         outlines: (m,) np.ndarray
         """
-        _ = self.get_edges_unique()
+        unique_info = self.unique_edges()
 
-        return self.outlines
+        return unique_info.ids[unique_info.counts == 1]
 
     def update_elements(self, mask, inplace=True):
         """
