@@ -91,6 +91,10 @@ class Vertices(GustafBase):
         None
         """
         self._logd("setting vertices")
+
+        # shape check
+        utils.arr.is_shape(vs, (-1, -1), strict=True)
+
         self._vertices = helpers.data.make_tracked_array(
             vs,
             settings.FLOAT_DTYPE
