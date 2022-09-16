@@ -2,8 +2,6 @@
 
 Everything related to show/visualization.
 """
-from math import prod
-
 import numpy as np
 
 from gustaf import settings
@@ -92,7 +90,7 @@ def show_vedo(*args, **kwargs,):
 
     else:
         # check if plt has enough Ns
-        trueN = prod(plt.shape)
+        trueN = np.prod(plt.shape)
         clear_vedoplotter(plt, trueN)  # always clear.
         if trueN != N:
             utils.log.warning(
@@ -174,7 +172,7 @@ def show_vedo(*args, **kwargs,):
 
     if interac and not offs:
         # only way to ensure memory is released
-        clear_vedoplotter(plt, prod(plt.shape))
+        clear_vedoplotter(plt, np.prod(plt.shape))
 
         if close or close is None:  # explicitly given or None.
             # It seems to leak some memory, but here it goes.
