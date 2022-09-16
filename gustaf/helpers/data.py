@@ -7,6 +7,7 @@ Some useful data structures.
 import abc
 from functools import wraps
 from collections import namedtuple
+import sys
 
 import numpy as np
 
@@ -25,7 +26,7 @@ class TrackedArray(np.ndarray):
     array with out setting modified flag.
     """
 
-    __slots__ = ("_modified", "_mutable_getitem")
+    __slots__ = ("_modified", "_source")
 
     def __array_finalize__(self, obj):
         """
@@ -33,7 +34,14 @@ class TrackedArray(np.ndarray):
         tracked array.
         """
         self._modified = True
-        self._mutable_getitem = False
+        self._source = int(0)
+
+        if isinstance(obj, type(self)):
+            if isinstance(obj._source, int):
+                self._source = obj
+            else:
+                self._source = obj._source
+        
 
     @property
     def mutable(self):
@@ -42,6 +50,14 @@ class TrackedArray(np.ndarray):
     @mutable.setter
     def mutable(self, value):
         self.flags.writeable = value
+
+    def _set_modified(self):
+        """
+        set modified flags to itself and to the source
+        """
+        self._modified = True
+        if isinstance(self._source, type(self)):
+            self._source._modified = True
 
     def copy(self, *args, **kwargs):
         """
@@ -57,100 +73,85 @@ class TrackedArray(np.ndarray):
         v.flags.writeable = False
         return v
 
-    def __getitem__(self, *args, **kwargs):
-        item = super(self.__class__, self).__getitem__(*args, **kwargs)
-
-        # __setitem__ can assign
-        if self._mutable_getitem:
-            self._mutable_getitem = False
-            return item
-
-        # if this tracked array is writeable, return a view
-        if self.flags.writeable:
-            return item.view()
-
-        else:
-            return item
-
     def __iadd__(self, *args, **kwargs):
-        self._modified = True
+        self._set_modified()
         return super(self.__class__, self).__iadd__(*args,
                                                     **kwargs)
 
     def __isub__(self, *args, **kwargs):
-        self._modified = True
+        self._set_modified()
         return super(self.__class__, self).__isub__(*args,
                                                     **kwargs)
 
     def __imul__(self, *args, **kwargs):
-        self._modified = True
+        self._set_modified()
         return super(self.__class__, self).__imul__(*args,
                                                     **kwargs)
 
     def __idiv__(self, *args, **kwargs):
-        self._modified = True
+        self._set_modified()
         return super(self.__class__, self).__idiv__(*args,
                                                     **kwargs)
 
     def __itruediv__(self, *args, **kwargs):
-        self._modified = True
+        self._set_modified()
         return super(self.__class__, self).__itruediv__(*args,
                                                         **kwargs)
 
     def __imatmul__(self, *args, **kwargs):
-        self._modified = True
+        self._set_modified()
         return super(self.__class__, self).__imatmul__(*args,
                                                        **kwargs)
 
     def __ipow__(self, *args, **kwargs):
-        self._modified = True
+        self._set_modified()
         return super(self.__class__, self).__ipow__(*args, **kwargs)
 
     def __imod__(self, *args, **kwargs):
-        self._modified = True
+        self._set_modified()
         return super(self.__class__, self).__imod__(*args, **kwargs)
 
     def __ifloordiv__(self, *args, **kwargs):
-        self._modified = True
+        self._set_modified()
         return super(self.__class__, self).__ifloordiv__(*args,
                                                          **kwargs)
 
     def __ilshift__(self, *args, **kwargs):
-        self._modified = True
+        self._set_modified()
         return super(self.__class__, self).__ilshift__(*args,
                                                        **kwargs)
 
     def __irshift__(self, *args, **kwargs):
-        self._modified = True
+        self._set_modified()
         return super(self.__class__, self).__irshift__(*args,
                                                        **kwargs)
 
     def __iand__(self, *args, **kwargs):
-        self._modified = True
+        self._set_modified()
         return super(self.__class__, self).__iand__(*args,
                                                     **kwargs)
 
     def __ixor__(self, *args, **kwargs):
-        self._modified = True
+        self._set_modified()
         return super(self.__class__, self).__ixor__(*args,
                                                     **kwargs)
 
     def __ior__(self, *args, **kwargs):
-        self._modified = True
+        self._set_modified()
         return super(self.__class__, self).__ior__(*args,
                                                    **kwargs)
 
     def __setitem__(self, *args, **kwargs):
-        self._modified = True
-        self._mutable_getitem = True
+        self._set_modified()
         super(self.__class__, self).__setitem__(*args,
                                                 **kwargs)
 
     def __setslice__(self, *args, **kwargs):
-        self._modified = True
+        self._set_modified()
         super(self.__class__, self).__setslice__(*args,
                                                  **kwargs)
     def __getslice__(self, *args, **kwrags):
+        self._set_modified()
         """
         return slices I am pretty sure np.ndarray does not have __*slice__
         """
