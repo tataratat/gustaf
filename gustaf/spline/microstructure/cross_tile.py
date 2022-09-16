@@ -3,11 +3,65 @@ import numpy as np
 from gustaf.spline import base
 
 
-class CrossTile():
+class CrossTile(base.GustafBase):
 
-    def parametrized_closing_tile(
+    def __init__(self):
+        """
+        Simple crosstile with linear-quadratic branches and a trilinear center
+        spline
+        """
+        self._dim = 3
+        self._evaluation_points = np.array([
+            [0., .5, .5],
+            [1., .5, .5],
+            [.5, 0., .5],
+            [.5, 1., .5],
+            [.5, .5, 0.],
+            [.5, .5, 1.],
+        ])
+        self._parameter_space_dimension = 1
+
+    @property
+    def parameter_space_dimension(self):
+        """
+        Number of parameters per evaluation point
+        """
+        return self._parameter_space_dimension
+
+    @property
+    def evaluation_points(self):
+        """
+        Positions in the parametrization function to be evaluated when tile "
+        "is constructed prior to composition
+
+        Parameters
+        ----------
+        None
+
+        Returns
+        -------
+        evaluation_points : np.ndarray(6,3)
+        """
+        return self._evaluation_points
+
+    @property
+    def dim(self):
+        """
+        Returns dimensionality in physical space of the Microtile
+
+        Parameters
+        ----------
+        None
+
+        Returns
+        -------
+        dim : int
+        """
+        return self._dim
+
+    def closing_tile(
         self,
-        branch_thickness=.2,
+        parameters=None,
         closure=None,
         boundary_width=0.1,
         filling_height=0.75
@@ -17,10 +71,13 @@ class CrossTile():
 
         Parameters
         ----------
-        branch_thickness : float
-          radius of fitting cylinder in branch (0,0.5)
-        closure : str
-          ["x_min","x_max"] Rest not yet implemented
+        parameters : tuple(np.ndarray)
+          radii of fitting cylinder at evaluation points
+        closure : int
+          parametric dimension that needs to be closed. Positiv values mean
+          that minimum parametric dimension is requested. That means, 
+          i.e. -2 closes the tile at maximum z-coordinate.
+          (must currently be either -2 or 2)
         boundary_width : float
           with of the boundary surronding branch
         filling_height : float
@@ -34,7 +91,11 @@ class CrossTile():
         if closure is None:
             raise ValueError("No closing direction given")
 
-        if not (0. < float(branch_thickness) < .5):
+        if parameters is None:
+            self._logd("Tile request is not parametrized, setting default 0.2")
+            parameters = tuple([np.ones(6) * 0.2])
+        parameters = parameters[0]
+        if not (np.all(parameters > 0) and np.all(parameters < .5)):
             raise ValueError("Thickness out of range (0, .5)")
 
         if not (0. < float(boundary_width) < .5):
@@ -51,7 +112,8 @@ class CrossTile():
         r_center = center_width * .5
 
         spline_list = []
-        if closure == "z_min":
+        if closure == 2:
+            branch_thickness = parameters[4]
             ctps_corner = np.array([
                 [0., 0., 0.],
                 [boundary_width, 0., 0.],
@@ -173,7 +235,8 @@ class CrossTile():
             )
 
             return spline_list
-        elif closure == "z_max":
+        elif closure == -2:
+            branch_thickness = parameters[5]
             ctps_corner = np.array([
                 [0., 0., inv_filling_height],
                 [boundary_width, 0., inv_filling_height],
@@ -297,16 +360,13 @@ class CrossTile():
 
             return spline_list
         else:
-            raise ValueError("Corner Type not supported")
+            raise NotImplementedError(
+                "Requested closing dimension is not supported"
+            )
 
-    def parametrized_microtile(
+    def create_tile(
         self,
-        x_min_r=0.2,
-        x_max_r=0.2,
-        y_min_r=0.2,
-        y_max_r=0.2,
-        z_min_r=0.2,
-        z_max_r=0.2,
+        parameters=None,
         center_expansion=1.
     ):
         """
@@ -317,18 +377,8 @@ class CrossTile():
         facing branches
         Parameters
         ----------
-        x_min_r : float
-            thickness at branch with coords x_min
-        x_max_r : float
-            thickness at branch with coords x_max
-        y_min_r : float
-            thickness at branch with coords y_min
-        y_max_r : float
-            thickness at branch with coords y_max
-        z_min_r : float
-            thickness at branch with coords z_min
-        z_max_r : float
-            thickness at branch with coords z_max
+        parameters : tuple(np.array)
+            only first entry is used, defines the internal radii of the branches
         center_expansion : float
             thickness of center is expanded by a factor
         Returns
@@ -341,6 +391,12 @@ class CrossTile():
         if not ((center_expansion > .5) and (center_expansion < 1.5)):
             raise ValueError("Center Expansion must be in (.5,1.5)")
         max_radius = min(.5, (.5/center_expansion))
+        # set to default if nothing is given
+        if parameters is None:
+            self._logd("Setting branch thickness to default 0.2")
+            parameters = tuple([np.ones(6) * 0.2])
+        [x_min_r, x_max_r, y_min_r,
+         y_max_r, z_min_r, z_max_r] = parameters[0].tolist()
         for radius in [x_min_r, x_max_r, y_min_r, y_max_r, z_min_r, z_max_r]:
             if not isinstance(radius, float):
                 raise ValueError("Invalid type")
@@ -512,15 +568,69 @@ class CrossTile():
         ]
 
 
-class InverseCrossTile():
+class InverseCrossTile(base.GustafBase):
     """
     Class that provides necessary functions to create inverse microtile, that
     can be used to describe the domain within a microstructure
     """
 
-    def parametrized_closing_tile(
+    def __init__(self):
+        """
+        Simple inverse crosstile to tile with linear-quadratic branches 
+        and a trilinear center spline
+        """
+        self._dim = 3
+        self._evaluation_points = np.array([
+            [0., .5, .5],
+            [1., .5, .5],
+            [.5, 0., .5],
+            [.5, 1., .5],
+            [.5, .5, 0.],
+            [.5, .5, 1.],
+        ])
+        self._parameter_space_dimension = 1
+
+    @property
+    def parameter_space_dimension(self):
+        """
+        Number of parameters per evaluation point
+        """
+        return self._parameter_space_dimension
+
+    @property
+    def evaluation_points(self):
+        """
+        Positions in the parametrization function to be evaluated when tile
+        is constructed prior to composition
+
+        Parameters
+        ----------
+        None
+
+        Returns
+        -------
+        evaluation_points : np.ndarray(6,3)
+        """
+        return self._evaluation_points
+
+    @property
+    def dim(self):
+        """
+        Returns dimensionality in physical space of the inverse tile
+
+        Parameters
+        ----------
+        None
+
+        Returns
+        -------
+        dim : int
+        """
+        return self._dim
+
+    def closing_tile(
         self,
-        branch_thickness=.2,
+        parameters=None,
         closure=None,
         boundary_width=0.1,
         filling_height=0.5,
@@ -531,10 +641,13 @@ class InverseCrossTile():
 
         Parameters
         ----------
-        branch_thickness : float
-          radius of fitting cylinder in branch (0,0.5)
-        closure : str
-          ["x_min","x_max"] Rest not yet implemented
+        parameters : tuple(np.ndarray)
+          radii of fitting cylinder at evaluation points
+        closure : int
+          parametric dimension that needs to be closed. Positiv values mean
+          that minimum parametric dimension is requested. That means, 
+          i.e. -2 closes the tile at maximum z-coordinate.
+          (must currently be either -2 or 2)
         boundary_width : float
           with of the boundary surronding branch
         filling_height : float
@@ -555,7 +668,11 @@ class InverseCrossTile():
                 " value should be greater than the biggest branch radius"
             )
 
-        if not (0. < float(branch_thickness) < seperator_distance):
+        if parameters is None:
+            self._logd("Tile request is not parametrized, setting default 0.2")
+            parameters = tuple([np.ones(6) * 0.2])
+        parameters = parameters[0]
+        if not (np.all(parameters > 0) and np.all(parameters < .5)):
             raise ValueError("Thickness out of range (0, .5)")
 
         if not (0. < float(boundary_width) < .5):
@@ -1125,14 +1242,9 @@ class InverseCrossTile():
         else:
             raise ValueError("Corner Type not supported")
 
-    def parametrized_microtile(
+    def create_tile(
         self,
-        x_min_r=0.2,
-        x_max_r=0.2,
-        y_min_r=0.2,
-        y_max_r=0.2,
-        z_min_r=0.2,
-        z_max_r=0.2,
+        parameters=None,
         seperator_distance=None,
         center_expansion=1.
     ):
@@ -1144,18 +1256,8 @@ class InverseCrossTile():
         facing branches
         Parameters
         ----------
-        x_min_r : float
-            thickness at branch with coords x_min
-        x_max_r : float
-            thickness at branch with coords x_max
-        y_min_r : float
-            thickness at branch with coords y_min
-        y_max_r : float
-            thickness at branch with coords y_max
-        z_min_r : float
-            thickness at branch with coords z_min
-        z_max_r : float
-            thickness at branch with coords z_max
+        parameters : tuple(np.array)
+            only first entry is used, defines the internal radii of the branches
         seperator_distance : float
             position of the control points for higher order elements
         center_expansion : float
@@ -1180,6 +1282,14 @@ class InverseCrossTile():
         # Check if all radii are in allowed range
         max_radius = min(.5, (.5/center_expansion))
         max_radius = min(max_radius, seperator_distance)
+
+        # set to default if nothing is given
+        if parameters is None:
+            self._logd("Setting branch thickness to default 0.2")
+            parameters = tuple([np.ones(6) * 0.2])
+        [x_min_r, x_max_r, y_min_r,
+         y_max_r, z_min_r, z_max_r] = parameters[0].tolist()
+
         for radius in [x_min_r, x_max_r, y_min_r, y_max_r, z_min_r, z_max_r]:
             if not isinstance(radius, float):
                 raise ValueError("Invalid type")

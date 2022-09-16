@@ -109,14 +109,20 @@ def load(
     return mesh
 
 
-def export(mesh, fname, space_time=False):
-    """Export in mixd format. Supports triangle, quadrilateral, tetrahedron,
-    and hexahedron semi-discrete and (flat) space-time mesh output.
+def export(mesh, fname, space_time=False, boundary_default=False):
+    """
+    Export in mixd format.
+    Supports triangle, quadrilateral, tetrahedron, and hexahedron
+    semi-discrete and (flat) space-time mesh output.
 
     Parameters
     -----------
     mesh: Faces or Volumes
     fname: str
+    space_time : bool
+      Export Mesh as Space-Time Slab for discontinous space-time
+    boundary_default : bool
+      Set all boundaries to default value, else no boundaries
 
     Returns
     --------
@@ -190,6 +196,15 @@ def export(mesh, fname, space_time=False):
         # But they aren't.
         boundaries = np.empty(mesh.elements().shape[0] * nbelem, dtype=int)
         boundaries[:] = -1
+        if not hasattr(mesh, "BC"):
+            if boundary_default:
+                # determine number of face elements
+                n_face_elements = mesh.tofaces(
+                    unique=False
+                ).elements().shape[0]
+                mesh.BC = {"default": np.arange(n_face_elements)}
+            else:
+                mesh.BC = {}
 
         for i, belem_ids in enumerate(mesh.BC.values()):
             boundaries[belem_ids] = i + 1  # bid starts at 1
