@@ -15,22 +15,25 @@ class TrackedArray(np.ndarray):
     Taken from nice implementations of `trimesh` (see LICENSE.txt).
     `https://github.com/mikedh/trimesh/blob/main/trimesh/caching.py`.
     Minor adaption, since we don't have hashing functionalities.
+
+
+    All the inplace functions will set modified flag and if some operations
+    has potential to cause un-trackable behavior, writeable flags will be set
+    to False.
+
+    Note, if you really really want, it is possible to change the tracked
+    array with out setting modified flag.
     """
 
     __slots__ = ("_modified", "_mutable_getitem")
 
     def __array_finalize__(self, obj):
         """
-        Sets a modified flag on every TrackedArray
-        This flag will be set on every change as well as
-        during copies and certain types of slicing.
+        Sets default flags for any arrays that maybe generated based on
+        tracked array.
         """
         self._modified = True
         self._mutable_getitem = False
-
-        # try not setting the flag for copies, view, and slicng
-        #if isinstance(obj, type(self)):
-        #    obj._modified = True
 
     @property
     def mutable(self):
@@ -40,30 +43,34 @@ class TrackedArray(np.ndarray):
     def mutable(self, value):
         self.flags.writeable = value
 
+    def copy(self, *args, **kwargs):
+        """
+        copy gives np.ndarray. no more tracking.
+        """
+        return np.array(self, copy=True)
+
     def view(self, *args, **kwargs):
         """
-        views of tracked array is read only
+        Set writeable flags to False for the view.
         """
         v = super(self.__class__, self).view(*args, **kwargs)
         v.flags.writeable = False
         return v
 
     def __getitem__(self, *args, **kwargs):
-        """
-        returning items are read only
-        """
         item = super(self.__class__, self).__getitem__(*args, **kwargs)
+
+        # __setitem__ can assign
         if self._mutable_getitem:
             self._mutable_getitem = False
             return item
 
-        # possibly bad for performance, but 
-        if isinstance(item, np.ndarray):
-            item.flags.writeable = False
-        else:
-            item = item.copy()
+        # if this tracked array is writeable, return a view
+        if self.flags.writeable:
+            return item.view()
 
-        return item
+        else:
+            return item
 
     def __iadd__(self, *args, **kwargs):
         self._modified = True
@@ -158,12 +165,12 @@ def make_tracked_array(array, dtype=None, copy=True):
     """
     Taken from nice implementations of `trimesh` (see LICENSE.txt).
     `https://github.com/mikedh/trimesh/blob/main/trimesh/caching.py`.
-
-    Properly subclass a numpy ndarray to track changes.
+    
+    ``Properly subclass a numpy ndarray to track changes.
     Avoids some pitfalls of subclassing by forcing contiguous
-    arrays and does a view into a TrackedArray.
+    arrays and does a view into a TrackedArray.``
 
-    Factory-like wrapper function for _TrackedArray.
+    Factory-like wrapper function for TrackedArray.
 
     Parameters
     ------------
