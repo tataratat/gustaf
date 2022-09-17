@@ -436,21 +436,23 @@ class FFD (GustafBase):
             d_mesh = d_mesh.tofaces(unique=False)
             d_mesh.update_faces(d_mesh.single_faces())
 
+        # edges are too memory hungry
+        #
         # prepare edges
-        o_edges = None
-        has_edges = False
-        if self._o_edges is None:
-            if o_mesh.kind != "vertex":
-                self._o_edges = self._o_mesh.toedges(unique=True)
-                has_edges = True
-                o_edges = self._o_edges.copy()
-        else:
-            has_edges = True
-            o_edges = self._o_edges.copy()
+        #o_edges = None
+        #has_edges = False
+        #if self._o_edges is None:
+        #    if o_mesh.kind != "vertex":
+        #        self._o_edges = self._o_mesh.toedges(unique=True)
+        #        has_edges = True
+        #        o_edges = self._o_edges.copy()
+        #else:
+        #    has_edges = True
+        #    o_edges = self._o_edges.copy()
 
-        d_edges = None
-        if has_edges:
-            d_edges = d_mesh.toedges(unique=True)
+        #d_edges = None
+        #if has_edges:
+        #    d_edges = d_mesh.toedges(unique=True)
 
         # update meshes
         things_to_show.update(original_mesh=o_mesh)
@@ -461,9 +463,9 @@ class FFD (GustafBase):
         # update spline
         things_to_show.update(deformed_spline=self.spline)
 
-        if has_edges:
-            things_to_show.update(original_edges=o_edges)
-            things_to_show.update(deformed_edges=d_edges)
+        #if has_edges:
+            #things_to_show.update(original_edges=o_edges)
+            #things_to_show.update(deformed_edges=d_edges)
 
         if return_discrete:
             # spline is strictly not discrete.
@@ -480,7 +482,7 @@ class FFD (GustafBase):
         # current workaround to set spline's surface alpha correctly
         # TODO: support this situation better
         spl = things_to_show.pop("deformed_spline")
-        spl_showable = spl.showable(surface_alpha=.85)
+        spl_showable = spl.showable(surface_alpha=.3)
 
         return show_vedo(
             [
