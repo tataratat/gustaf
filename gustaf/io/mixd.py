@@ -45,8 +45,8 @@ def load(
       Default is None. This is optional.
     """
     # figure out input type
-    specified_input = mxyz != None  # bare minimum input
-    fname_input = (fname != None) and not specified_input
+    specified_input = mxyz is not None  # bare minimum input
+    fname_input = (fname is not None) and not specified_input
     default_input = not (fname_input or specified_input)
 
     if default_input:

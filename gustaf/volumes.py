@@ -93,8 +93,8 @@ class Volumes(Faces):
 
         else:
             raise ValueError(
-                    "Invalid volumes connectivity shape. It should be (n, 4) or "
-                    f"(n, 8), but given: {volume_obj.volumes.shape}"
+                    "Invalid volumes connectivity shape. It should be (n, 4) "
+                    f"or (n, 8), but given: {volume_obj.volumes.shape}"
             )
 
     @property
