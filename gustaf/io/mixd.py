@@ -8,7 +8,6 @@ import struct
 
 import numpy as np
 
-from gustaf.vertices import Vertices
 from gustaf.faces import Faces
 from gustaf.volumes import Volumes
 from gustaf.io.ioutils import abs_fname, check_and_makedirs
@@ -55,7 +54,7 @@ def load(
         mrng = "mrng"
 
     elif fname_input:
-        absfname = abs_fname(fname)
+        fname = abs_fname(fname)
         fbase, ext = os.path.splitext(fname)
 
         if os.path.basename(fbase) == "_":
@@ -74,7 +73,7 @@ def load(
     connec = None
     try:
         connec = (np.fromfile(mien, dtype=">i") - int(1)).astype(np.int32)
-    except:
+    except BaseException:
         log.debug(f"mien file, `{mien}`, does not exist. Skipping.")
 
     # boundary conditions
@@ -88,7 +87,7 @@ def load(
         for ubci in uniq_bcs_in:
             bcs.update({str(ubci): subelemids[bcs_in == ubci]})
 
-    except:
+    except BaseException:
         log.debug(f"mrng file, `{mrng}`, does not exist. Skipping.")
 
     # reshape vertices

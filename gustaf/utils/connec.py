@@ -24,7 +24,7 @@ def tet_to_tri(volumes):
                  (0)
                  /\
                 / 1\
-            (1)/____\(3)
+            (1)/____\ (3)
               /\    /\
              / 0\ 2/ 3\
             /____\/____\
@@ -368,8 +368,6 @@ def subdivide_edges(edges):
     if edges.ndim != 2 or edges.shape[1] != 2:
         raise ValueError("Invalid edges shape!")
 
-    subd_edges = np.ones((edges.shape[0] * 2, 2))
-
     raise NotImplementedError
 
 
@@ -500,7 +498,7 @@ def subdivide_quad(
             np.arange(len(face_centers))
             + (len(mesh.vertices) + len(edge_mid_v)),
             4,
-            #dtype=np.int32,
+            # dtype=np.int32,
     )
     subd_faces[:, 3] = subd_faces[:, 1].reshape(-1, 4)[:,
                                                        [3, 0, 1, 2]].flatten()

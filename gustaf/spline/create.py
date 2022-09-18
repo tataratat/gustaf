@@ -3,8 +3,6 @@
 Create operations for spline geometries
 """
 
-import itertools
-
 import numpy as np
 from splinepy._spline import _RequiredProperties
 
@@ -42,8 +40,9 @@ def extruded(spline, extrusion_vector=None):
         # one smaller dim is allowed
         # warn that we assume new dim is all zero
         utils.log.warning(
-                f"Given extrusion vector is {expansion_dimension} dimension bigger than "
-                "spline's dim. Assuming 0.0 entries for new dimension.",
+                f"Given extrusion vector is {expansion_dimension} dimension "
+                "bigger than spline's dim. Assuming 0.0 entries for "
+                "new dimension.",
         )
         cps = np.hstack(
                 (
@@ -58,7 +57,8 @@ def extruded(spline, extrusion_vector=None):
         )
     else:
         raise ValueError(
-                "Dimension Mismatch between extrusion extrusion vector and spline."
+                "Dimension Mismatch between extrusion extrusion vector "
+                "and spline."
         )
 
     # Start Extrusion
@@ -192,8 +192,9 @@ def revolved(
     if "Bezier" in spline.whatami:
         if n_knot_spans > 1:
             raise ValueError(
-                    "Revolutions are only supported for angles up to 180 degrees"
-                    "for Bezier type splines as they consist of only one knot span"
+                    "Revolutions are only supported for angles up to 180 "
+                    "degrees for Bezier type splines as they consist of only "
+                    "one knot span"
             )
 
     # Determine auxiliary values
@@ -243,8 +244,8 @@ def revolved(
             )
     else:
         utils.log.warning(
-                "True revolutions are only possible for rational spline types.\n"
-                "Creating Approximation"
+                "True revolutions are only possible for rational spline types."
+                "\nCreating Approximation."
         )
 
     if center is not None:

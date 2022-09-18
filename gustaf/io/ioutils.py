@@ -20,7 +20,7 @@ def abs_fname(fname):
     """
     if os.path.isabs(fname):
         pass
-    #elif fname.startswith("~"):
+    # elif fname.startswith("~"):
     elif "~" in fname:
         fname = os.path.expanduser(fname)
     else:

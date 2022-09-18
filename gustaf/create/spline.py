@@ -37,7 +37,7 @@ def with_bounds(
     spline: BSpline or NURBS
       If `spline` is not availabe, will return dict of corresponding
     """
-    ## First, prepare for degree 1 spline.
+    # First, prepare for degree 1 spline.
     # KV
     l_bound, u_bound = parametric_bounds
     assert len(l_bound) == len(u_bound),\
@@ -69,7 +69,7 @@ def with_bounds(
     if degrees is None and num_unique_knots is None:
         return spl
 
-    ## Manipulate to satisfy degrees and num_unique_knots
+    # Manipulate to satisfy degrees and num_unique_knots
     # Degrees
     for i, d in enumerate(degrees):
         diff = int(d - 1)

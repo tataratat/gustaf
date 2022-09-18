@@ -428,17 +428,17 @@ class FFD(GustafBase):
         # prepare edges
         #o_edges = None
         #has_edges = False
-        #if self._o_edges is None:
+        # if self._o_edges is None:
         #    if o_mesh.kind != "vertex":
         #        self._o_edges = self._o_mesh.toedges(unique=True)
         #        has_edges = True
         #        o_edges = self._o_edges.copy()
-        #else:
+        # else:
         #    has_edges = True
         #    o_edges = self._o_edges.copy()
 
         #d_edges = None
-        #if has_edges:
+        # if has_edges:
         #    d_edges = d_mesh.toedges(unique=True)
 
         # update meshes
@@ -450,9 +450,9 @@ class FFD(GustafBase):
         # update spline
         things_to_show.update(deformed_spline=self.spline)
 
-        #if has_edges:
-        #things_to_show.update(original_edges=o_edges)
-        #things_to_show.update(deformed_edges=d_edges)
+        # if has_edges:
+        # things_to_show.update(original_edges=o_edges)
+        # things_to_show.update(deformed_edges=d_edges)
 
         if return_discrete:
             # spline is strictly not discrete.

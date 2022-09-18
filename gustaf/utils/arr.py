@@ -271,7 +271,7 @@ def rotation_matrix(rotation, degree=True):
 
     rotation = np.asarray(rotation).flatten()
 
-    if degree == True:
+    if degree:
         rotation = np.radians(rotation)
 
     # 2D
