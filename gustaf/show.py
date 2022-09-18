@@ -220,7 +220,8 @@ def _vedo_showable(obj, **kwargs):
             dataname=obj.vis_dict.get("dataname", None),
             # <
             arrows=obj.vis_dict.get("arrows", None),  # only for edges
-            # > only for edges internally treated same as `lw`, but higher priority
+            # >only for edges internally treated same as `lw`,
+            # but higher priority
             thickness=obj.vis_dict.get("thickness", None),
             title=obj.vis_dict.get("title", "gustaf")
     )

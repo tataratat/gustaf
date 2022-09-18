@@ -5,10 +5,6 @@ Plus some useful decorators.
 """
 
 import abc
-import logging
-import os
-
-import numpy as np
 
 from gustaf import utils
 
