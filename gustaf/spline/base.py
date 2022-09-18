@@ -510,8 +510,8 @@ class Bezier(GustafSpline, splinepy.Bezier):
                 degrees=self.degrees,
                 control_points=self.control_points,
                 knot_vectors=[
-                        [0] * (self.degrees[i] + 1) + [1] *
-                        (self.degrees[i] + 1) for i in range(self.para_dim)
+                        [0] * (self.degrees[i] + 1) + [1]
+                        * (self.degrees[i] + 1) for i in range(self.para_dim)
                 ]
         )
 
@@ -601,8 +601,8 @@ class RationalBezier(GustafSpline, splinepy.RationalBezier):
                 degrees=self.degrees,
                 control_points=self.control_points,
                 knot_vectors=[
-                        [0] * (self.degrees[i] + 1) + [1] *
-                        (self.degrees[i] + 1) for i in range(self.para_dim)
+                        [0] * (self.degrees[i] + 1) + [1]
+                        * (self.degrees[i] + 1) for i in range(self.para_dim)
                 ],
                 weights=self.weights
         )

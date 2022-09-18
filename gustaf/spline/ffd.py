@@ -326,8 +326,8 @@ class FFD(GustafBase):
         # scale knots from the original bounds into the new bounds
         dim_bounds = self._orig_para_dim_ranges[parametric_dimension]
         knots = (
-                (np.array(knots) - dim_bounds[0]) /
-                (dim_bounds[-1] - dim_bounds[0])
+                (np.array(knots) - dim_bounds[0])
+                / (dim_bounds[-1] - dim_bounds[0])
         )
         self._spline.insert_knots(parametric_dimension, knots)
 
@@ -351,8 +351,8 @@ class FFD(GustafBase):
         # scale knots from the original bounds into the new bounds
         dim_bounds = self._orig_para_dim_ranges[parametric_dimension]
         knots = (
-                (np.array(knots) - dim_bounds[0]) /
-                (dim_bounds[-1] - dim_bounds[0])
+                (np.array(knots) - dim_bounds[0])
+                / (dim_bounds[-1] - dim_bounds[0])
         )
         self._spline.remove_knots(
                 parametric_dimension, knots, tolerance=tolerance

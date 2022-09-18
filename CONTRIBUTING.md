@@ -22,10 +22,10 @@ gustaf implementations tries to follow [pep8](pep8.org)'s suggestion closely. A 
 - if a new feature would open doors to more related functionalities, consider a helper class
 - try to avoid looping possibly giant loops
 
-### formatter
+### Formatter
 ```
 yapf -i -r gustaf
-autopep8 --select=W291,W292,W293,W503 -r -d gustaf
+autopep8 --select=W291,W292,W293,W504 -r -d gustaf
 ```
 
 ## Pull request suggessions
