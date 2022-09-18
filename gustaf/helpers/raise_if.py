@@ -21,10 +21,11 @@ def invalid_inherited_attr(func, qualname, property_=False):
     raiser: function
        behaves same as func if property_ is correctly defined
     """
+
     def raiser(self):
         raise AttributeError(
-            f"{func.__name__} is not supported from {qualname} "
-            "and its subclasses thereof."
+                f"{func.__name__} is not supported from {qualname} "
+                "and its subclasses thereof."
         )
 
     if property_:

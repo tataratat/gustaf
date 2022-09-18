@@ -19,11 +19,11 @@ class Vertices(GustafBase):
     kind = "vertex"
 
     __slots__ = [
-        "_vertices",
-        "_const_vertices",
-        "_computed",
-        "vis_dict",
-        "vertexdata",
+            "_vertices",
+            "_const_vertices",
+            "_computed",
+            "vis_dict",
+            "vertexdata",
     ]
 
     def __init__(
@@ -71,7 +71,6 @@ class Vertices(GustafBase):
         self._logd("returning vertices")
         return self._vertices
 
-
     @vertices.setter
     def vertices(self, vs):
         """
@@ -96,8 +95,7 @@ class Vertices(GustafBase):
         utils.arr.is_shape(vs, (-1, -1), strict=True)
 
         self._vertices = helpers.data.make_tracked_array(
-            vs,
-            settings.FLOAT_DTYPE
+                vs, settings.FLOAT_DTYPE
         )
         # exact same, but not tracked.
         self._const_vertices = self._vertices.view()
@@ -121,7 +119,7 @@ class Vertices(GustafBase):
         return self._const_vertices
 
     @property
-    def whatami(self,):
+    def whatami(self, ):
         """
         Answers deep philosophical question: "what am i"?
 
@@ -137,11 +135,7 @@ class Vertices(GustafBase):
         return "vertices"
 
     @helpers.data.ComputedMeshData.depends_on(["vertices"])
-    def unique_vertices(
-            self,
-            tolerance=None,
-            **kwargs
-    ):
+    def unique_vertices(self, tolerance=None, **kwargs):
         """
         Returns a namedtuple that holds unique vertices info.
         Unique here means "close-enough-within-tolerance".
@@ -163,15 +157,14 @@ class Vertices(GustafBase):
             tolerance = settings.TOLERANCE
 
         values, ids, inverse, intersection = utils.arr.close_rows(
-            self.const_vertices,
-            tolerance=tolerance
+                self.const_vertices, tolerance=tolerance
         )
 
         return helpers.data.Unique2DFloats(
-            values,
-            ids,
-            inverse,
-            intersection,
+                values,
+                ids,
+                inverse,
+                intersection,
         )
 
     @helpers.data.ComputedMeshData.depends_on(["vertices"])
@@ -191,7 +184,6 @@ class Vertices(GustafBase):
         self._logd("computing bounds")
         return utils.arr.bounds(self.const_vertices)
 
-
     @helpers.data.ComputedMeshData.depends_on(["vertices"])
     def bounds_diagonal(self):
         """
@@ -209,7 +201,7 @@ class Vertices(GustafBase):
         self._logd("computing bounds_diagonal")
         bounds = self.bounds()
         return bounds[1] - bounds[0]
-    
+
     @helpers.data.ComputedMeshData.depends_on(["vertices"])
     def bounds_diagonal_norm(self):
         """
@@ -224,7 +216,7 @@ class Vertices(GustafBase):
         bounds_diagonal_norm: float
         """
         self._logd("computing bounds_diagonal_norm")
-        return float(sum(self.bounds_diagonal() ** 2) ** .5)
+        return float(sum(self.bounds_diagonal()**2)**.5)
 
     def update_vertices(self, mask, inverse=None):
         """
@@ -247,10 +239,7 @@ class Vertices(GustafBase):
         # make mask numpy array
         mask = np.asarray(mask)
 
-        if (
-            (mask.dtype.name == "bool" and mask.all())
-            or len(mask) == 0
-        ):
+        if ((mask.dtype.name == "bool" and mask.all()) or len(mask) == 0):
             return self
 
         # create inverse mask if not passed
@@ -271,7 +260,7 @@ class Vertices(GustafBase):
         if inverse is not None and self.kind != "vertex":
             elements = self.const_elements.copy()
             elements = inverse[elements.reshape(-1)].reshape(
-                (-1, elements.shape[1])
+                    (-1, elements.shape[1])
             )
             # remove all the elements that's not part of inverse
             if check_neg:
@@ -334,12 +323,9 @@ class Vertices(GustafBase):
         mask = np.ones(len(self.vertices), dtype=bool)
         mask[ids] = False
 
-        return self.update_vertices(mask,)
+        return self.update_vertices(mask, )
 
-    def merge_vertices(
-            self,
-            tolerance=None
-    ):
+    def merge_vertices(self, tolerance=None):
         """
         Based on unique vertices, merge vertices if it is mergeable.
 
@@ -359,8 +345,8 @@ class Vertices(GustafBase):
         self._logd(f"  after merge: {len(unique_vs.ids)}")
 
         return self.update_vertices(
-            mask=unique_vs.ids,
-            inverse=unique_vs.inverse,
+                mask=unique_vs.ids,
+                inverse=unique_vs.inverse,
         )
 
     def showable(self, **kwargs):
@@ -422,6 +408,7 @@ class Vertices(GustafBase):
         --------
         one_instance: type(cls)
         """
+
         def is_concatable(inst):
             """
             Return true, if it is same as type(cls)
@@ -434,9 +421,8 @@ class Vertices(GustafBase):
         # If only one instance is given and it is iterable, adjust
         # so that we will just iterate that.
         if (
-            len(instances) == 1
-            and not isinstance(instances[0], str)
-            and hasattr(instances[0], "__iter__")
+                len(instances) == 1 and not isinstance(instances[0], str)
+                and hasattr(instances[0], "__iter__")
         ):
             instances = instances[0]
 
@@ -449,41 +435,35 @@ class Vertices(GustafBase):
         for ins in instances:
             if not is_concatable(ins):
                 raise TypeError(
-                    "Can't concat. One of the instances is not "
-                    f"`{cls.__name__}`."
+                        "Can't concat. One of the instances is not "
+                        f"`{cls.__name__}`."
                 )
 
             # make sure each element index starts from 0 & end at len(vertices)
             tmp_ins = ins.copy().remove_unreferenced_vertices()
 
-            vertices.append(
-                tmp_ins.vertices.copy()
-            )
+            vertices.append(tmp_ins.vertices.copy())
 
             if haselem:
                 if len(elements) == 0:
-                    elements.append(
-                        tmp_ins.elements.copy()
-                    )
+                    elements.append(tmp_ins.elements.copy())
                     e_offset = elements[-1].max() + 1
 
                 else:
                     elements.append(
-                        # copy is not necessary here,
-                        tmp_ins.elements + e_offset
+                            # copy is not necessary here,
+                            tmp_ins.elements + e_offset
                     )
                     e_offset = elements[-1].max() + 1
 
         if haselem:
             return cls(
-                vertices=np.vstack(vertices),
-                elements=np.vstack(elements),
+                    vertices=np.vstack(vertices),
+                    elements=np.vstack(elements),
             )
 
         else:
-            return Vertices(
-                vertices=np.vstack(vertices),
-            )
+            return Vertices(vertices=np.vstack(vertices), )
 
     def __add__(self, to_add):
         """

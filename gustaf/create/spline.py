@@ -53,8 +53,8 @@ def with_bounds(
     dim_diff = len(l_bound) - len(pl_bound)
     if dim_diff < 0:
         raise ValueError(
-            "Sorry, we don't support spline generation with phys_dim > "
-            "para_dim."
+                "Sorry, we don't support spline generation with phys_dim > "
+                "para_dim."
         )
 
     cps = raster(physical_bounds, [2] * len(pl_bound)).vertices
@@ -62,9 +62,9 @@ def with_bounds(
 
     # Now, make spline
     spl = BSpline(
-        knot_vectors=kvs,
-        control_points=cps,
-        degrees=[1]*len(l_bound),
+            knot_vectors=kvs,
+            control_points=cps,
+            degrees=[1] * len(l_bound),
     )
 
     # Return early if there's nothing left to do
@@ -124,12 +124,13 @@ def with_parametric_bounds(
       If `spline` is not availabe, will return dict of corresponding 
     """
     return with_bounds(
-        parametric_bounds=parametric_bounds,
-        physical_bounds=parametric_bounds,
-        degrees=degrees,
-        num_unique_knots=num_unique_knots,
-        nurbs=nurbs,
+            parametric_bounds=parametric_bounds,
+            physical_bounds=parametric_bounds,
+            degrees=degrees,
+            num_unique_knots=num_unique_knots,
+            nurbs=nurbs,
     )
+
 
 def with_physical_bounds(
         physical_bounds,
@@ -159,13 +160,13 @@ def with_physical_bounds(
     dim = len(physical_bounds[0])
 
     return with_bounds(
-        parametric_bounds=[
-            [0. for _ in range(dim)],
-            [1. for _ in range(dim)],
-        ],
-        physical_bounds=physical_bounds,
-        num_unique_knots=num_unique_knots,
-        nurbs=nurbs,
+            parametric_bounds=[
+                    [0. for _ in range(dim)],
+                    [1. for _ in range(dim)],
+            ],
+            physical_bounds=physical_bounds,
+            num_unique_knots=num_unique_knots,
+            nurbs=nurbs,
     )
 
 
@@ -185,10 +186,10 @@ def parametric_view(spline):
     para_spline: BSpline
     """
     para_spline = with_parametric_bounds(
-        parametric_bounds=spline.knot_vector_bounds,
-        degrees=[1] * spline.para_dim,
-        num_unique_knots=None,
-        nurbs=False, 
+            parametric_bounds=spline.knot_vector_bounds,
+            degrees=[1] * spline.para_dim,
+            num_unique_knots=None,
+            nurbs=False,
     )
 
     # loop through knot vectors and insert missing knots
@@ -209,8 +210,8 @@ def with_dimension(
     """
     kvs = [[0, 0, 1, 1] for _ in range(parametric_dim)]
     physical_bounds = [
-        [0 for _ in range(physical_dim)],
-        [1 for _ in range(physical_dim)],
+            [0 for _ in range(physical_dim)],
+            [1 for _ in range(physical_dim)],
     ]
     resolutions = [2 for _ in range(parametric_dim)]
     degrees = [1 for _ in range(parametric_dim)]

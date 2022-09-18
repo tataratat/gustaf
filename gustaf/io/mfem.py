@@ -6,7 +6,8 @@ For detailed information, see:
     https://mfem.org/mesh-format-v1.0/#straight-meshes
 """
 
-def mfem_format(mesh,):
+
+def mfem_format(mesh, ):
     """
     """
     pass

@@ -1,0 +1,8 @@
+[style]
+based_on_style = pep8
+coalesce_brackets = false
+continuation_align_style = space
+split_before_arithmetic_operator = True
+continuation_indent_width = 8
+dedent_closing_brackets = true
+SPLIT_COMPLEX_COMPREHENSION = true

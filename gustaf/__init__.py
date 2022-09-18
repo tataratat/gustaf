@@ -26,9 +26,9 @@ from gustaf.volumes import Volumes
 __version__ = _version.version
 
 __all__ = [
-    "__version__",
-    "Vertices",
-    "Edges",
-    "Faces",
-    "Volumes",
+        "__version__",
+        "Vertices",
+        "Edges",
+        "Faces",
+        "Volumes",
 ]

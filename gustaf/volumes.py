@@ -8,24 +8,25 @@ from gustaf import helpers
 from gustaf import settings
 from gustaf.faces import Faces
 
+
 class Volumes(Faces):
 
     kind = "volume"
 
     const_faces = helpers.raise_if.invalid_inherited_attr(
-        Faces.const_faces,
-        __qualname__,
-        property_=True,
+            Faces.const_faces,
+            __qualname__,
+            property_=True,
     )
     update_faces = helpers.raise_if.invalid_inherited_attr(
-        Faces.update_edges,
-        __qualname__,
-        property_=False,
+            Faces.update_edges,
+            __qualname__,
+            property_=False,
     )
 
     __slots__ = (
-        "_volumes",
-        "_const_volumes",
+            "_volumes",
+            "_const_volumes",
     )
 
     def __init__(
@@ -97,8 +98,8 @@ class Volumes(Faces):
 
         else:
             raise ValueError(
-                "Invalid volumes connectivity shape. It should be (n, 4) or "
-                f"(n, 8), but given: {volume_obj.volumes.shape}"
+                    "Invalid volumes connectivity shape. It should be (n, 4) or "
+                    f"(n, 8), but given: {volume_obj.volumes.shape}"
             )
 
     @property
@@ -131,14 +132,14 @@ class Volumes(Faces):
         """
         if vols is not None:
             utils.arr.is_one_of_shapes(
-                vols,
-                ((-1, 4), (-1, 8)),
-                strict=True,
+                    vols,
+                    ((-1, 4), (-1, 8)),
+                    strict=True,
             )
 
         self._volumes = helpers.data.make_tracked_array(
-            vols,
-            settings.INT_DTYPE,
+                vols,
+                settings.INT_DTYPE,
         )
         # same, but non-writeable view of tracked array
         self._const_volumes = self._volumes.view()
@@ -192,8 +193,8 @@ class Volumes(Faces):
           valid attribut4es are {values, ids, inverse, counts}
         """
         unique_info = utils.connec.sorted_unique(
-            self.sorted_volumes(),
-            sorted_=True,
+                self.sorted_volumes(),
+                sorted_=True,
         )
 
         volumes = self._get_attr("volumes")
@@ -222,6 +223,6 @@ class Volumes(Faces):
         faces: Faces
         """
         return Faces(
-            self.vertices,
-            faces=self.unique_faces().values if unique else self.faces()
+                self.vertices,
+                faces=self.unique_faces().values if unique else self.faces()
         )

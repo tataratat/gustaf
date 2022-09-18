@@ -16,8 +16,8 @@ class Edges(Vertices):
     kind = "edge"
 
     __slots__ = (
-        "_edges",
-        "_const_edges",
+            "_edges",
+            "_const_edges",
     )
 
     def __init__(
@@ -77,10 +77,7 @@ class Edges(Vertices):
         if es is not None:
             utils.arr.is_shape(es, (-1, 2), strict=True)
 
-        self._edges = helpers.data.make_tracked_array(
-            es,
-            settings.INT_DTYPE
-        )
+        self._edges = helpers.data.make_tracked_array(es, settings.INT_DTYPE)
         # same, but non-writeable view of tracked array
         self._const_edges = self._edges.view()
         self._const_edges.flags.writeable = False
@@ -149,8 +146,7 @@ class Edges(Vertices):
           valid attributes are {values, ids, inverse, counts}
         """
         unique_info = utils.connec.sorted_unique(
-            self.sorted_edges(),
-            sorted_=True
+                self.sorted_edges(), sorted_=True
         )
 
         edges = self._get_attr("edges")
@@ -259,7 +255,7 @@ class Edges(Vertices):
         return self.const_vertices[self.const_elements].mean(axis=1)
 
     @helpers.data.ComputedMeshData.depends_on(["vertices", "elements"])
-    def referenced_vertices(self,):
+    def referenced_vertices(self, ):
         """
         Returns mask of referenced vertices.
 
@@ -295,8 +291,8 @@ class Edges(Vertices):
         inverse[referenced] = np.arange(referenced.sum())
 
         return self.update_vertices(
-            mask=referenced,
-            inverse=inverse,
+                mask=referenced,
+                inverse=inverse,
         )
 
     def update_elements(self, mask):
@@ -351,8 +347,8 @@ class Edges(Vertices):
             # apply "automatic" spacing
             spacing = self.bounds_diagonal_norm() / 50
 
-        v0s = self.vertices[self.edges[:,0]]
-        v1s = self.vertices[self.edges[:,1]]
+        v0s = self.vertices[self.edges[:, 0]]
+        v1s = self.vertices[self.edges[:, 1]]
 
         distances = np.linalg.norm(v0s - v1s, axis=1)
         linspaces = (((distances // (spacing * 1.5)) + 1) * 3).astype(np.int32)
@@ -366,7 +362,7 @@ class Edges(Vertices):
         # there might be duplicating vertices. you can use merge_vertices
         new_vs = np.vstack(new_vs)
         # all mid points are explicitly defined, but they aren't required
-        # so, rm. 
+        # so, rm.
         mask = np.ones(len(new_vs), dtype=bool)
         mask[1::3] = False
         new_vs = new_vs[mask]
@@ -448,5 +444,3 @@ class Edges(Vertices):
         """
         attrib = getattr(self, attr)
         return attrib() if callable(attrib) else attrib
-
-

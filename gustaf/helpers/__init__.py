@@ -1,2 +1,2 @@
 from gustaf.helpers import data
-from gustaf.helpers import raise_if 
+from gustaf.helpers import raise_if

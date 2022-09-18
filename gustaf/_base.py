@@ -12,6 +12,7 @@ import numpy as np
 
 from gustaf import utils
 
+
 class GustafBase(abc.ABC):
     """
     Base class for gustaf, where logging is nicely wrapped, and some useful

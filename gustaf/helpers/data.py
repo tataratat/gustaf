@@ -11,6 +11,7 @@ import sys
 
 import numpy as np
 
+
 class TrackedArray(np.ndarray):
     """
     Taken from nice implementations of `trimesh` (see LICENSE.txt).
@@ -41,7 +42,6 @@ class TrackedArray(np.ndarray):
                 self._source = obj
             else:
                 self._source = obj._source
-        
 
     @property
     def mutable(self):
@@ -75,33 +75,27 @@ class TrackedArray(np.ndarray):
 
     def __iadd__(self, *args, **kwargs):
         self._set_modified()
-        return super(self.__class__, self).__iadd__(*args,
-                                                    **kwargs)
+        return super(self.__class__, self).__iadd__(*args, **kwargs)
 
     def __isub__(self, *args, **kwargs):
         self._set_modified()
-        return super(self.__class__, self).__isub__(*args,
-                                                    **kwargs)
+        return super(self.__class__, self).__isub__(*args, **kwargs)
 
     def __imul__(self, *args, **kwargs):
         self._set_modified()
-        return super(self.__class__, self).__imul__(*args,
-                                                    **kwargs)
+        return super(self.__class__, self).__imul__(*args, **kwargs)
 
     def __idiv__(self, *args, **kwargs):
         self._set_modified()
-        return super(self.__class__, self).__idiv__(*args,
-                                                    **kwargs)
+        return super(self.__class__, self).__idiv__(*args, **kwargs)
 
     def __itruediv__(self, *args, **kwargs):
         self._set_modified()
-        return super(self.__class__, self).__itruediv__(*args,
-                                                        **kwargs)
+        return super(self.__class__, self).__itruediv__(*args, **kwargs)
 
     def __imatmul__(self, *args, **kwargs):
         self._set_modified()
-        return super(self.__class__, self).__imatmul__(*args,
-                                                       **kwargs)
+        return super(self.__class__, self).__imatmul__(*args, **kwargs)
 
     def __ipow__(self, *args, **kwargs):
         self._set_modified()
@@ -113,43 +107,36 @@ class TrackedArray(np.ndarray):
 
     def __ifloordiv__(self, *args, **kwargs):
         self._set_modified()
-        return super(self.__class__, self).__ifloordiv__(*args,
-                                                         **kwargs)
+        return super(self.__class__, self).__ifloordiv__(*args, **kwargs)
 
     def __ilshift__(self, *args, **kwargs):
         self._set_modified()
-        return super(self.__class__, self).__ilshift__(*args,
-                                                       **kwargs)
+        return super(self.__class__, self).__ilshift__(*args, **kwargs)
 
     def __irshift__(self, *args, **kwargs):
         self._set_modified()
-        return super(self.__class__, self).__irshift__(*args,
-                                                       **kwargs)
+        return super(self.__class__, self).__irshift__(*args, **kwargs)
 
     def __iand__(self, *args, **kwargs):
         self._set_modified()
-        return super(self.__class__, self).__iand__(*args,
-                                                    **kwargs)
+        return super(self.__class__, self).__iand__(*args, **kwargs)
 
     def __ixor__(self, *args, **kwargs):
         self._set_modified()
-        return super(self.__class__, self).__ixor__(*args,
-                                                    **kwargs)
+        return super(self.__class__, self).__ixor__(*args, **kwargs)
 
     def __ior__(self, *args, **kwargs):
         self._set_modified()
-        return super(self.__class__, self).__ior__(*args,
-                                                   **kwargs)
+        return super(self.__class__, self).__ior__(*args, **kwargs)
 
     def __setitem__(self, *args, **kwargs):
         self._set_modified()
-        super(self.__class__, self).__setitem__(*args,
-                                                **kwargs)
+        super(self.__class__, self).__setitem__(*args, **kwargs)
 
     def __setslice__(self, *args, **kwargs):
         self._set_modified()
-        super(self.__class__, self).__setslice__(*args,
-                                                 **kwargs)
+        super(self.__class__, self).__setslice__(*args, **kwargs)
+
     def __getslice__(self, *args, **kwrags):
         self._set_modified()
         """
@@ -159,7 +146,6 @@ class TrackedArray(np.ndarray):
         if isinstance(item, np.ndarray):
             item.flags.writeable = False
         return item
-
 
 
 def make_tracked_array(array, dtype=None, copy=True):
@@ -202,7 +188,10 @@ def make_tracked_array(array, dtype=None, copy=True):
 
 
 class DataHolder(abc.ABC):
-    __slots__ = ["_helpee", "_saved",]
+    __slots__ = [
+            "_helpee",
+            "_saved",
+    ]
 
     def __init__(self, helpee):
         """
@@ -235,8 +224,8 @@ class DataHolder(abc.ABC):
         None
         """
         raise NotImplementedError(
-            "Sorry, you can't set items directly for "
-            f"{type(self).__qualname__}"
+                "Sorry, you can't set items directly for "
+                f"{type(self).__qualname__}"
         )
 
     def __getitem__(self, key):
@@ -255,9 +244,7 @@ class DataHolder(abc.ABC):
             return self._saved[key]
 
         else:
-            raise KeyError(
-                f"`{key}` is not stored for {type(self._helpee)}"
-            )
+            raise KeyError(f"`{key}` is not stored for {type(self._helpee)}")
 
     def get(self, key, default_values=None):
         """
@@ -344,7 +331,7 @@ class ComputedData(DataHolder):
         helpee: GustafBase
         kwrags: **kwrags
           keys and str of attributes, on which this array depends
-        """ 
+        """
         super().__init__(helpee)
 
     @classmethod
@@ -364,6 +351,7 @@ class ComputedData(DataHolder):
         var_name: list
         make_property:
         """
+
         def inner(func):
             # followings are done once while modules are loaded
             # just subclass this class to make a special helper
@@ -374,7 +362,7 @@ class ComputedData(DataHolder):
             if cls._depends is None:
                 cls._depends = dict()
             if cls._depends.get(func.__name__, None) is None:
-                    cls._depends[func.__name__] = list()
+                cls._depends[func.__name__] = list()
             # add dependency info
             cls._depends[func.__name__].extend(var_names)
 
@@ -394,7 +382,7 @@ class ComputedData(DataHolder):
                 Check if the key should be computed,
                 """
                 # extract some related info
-                self = args[0] # the helpee itself
+                self = args[0]  # the helpee itself
                 recompute = kwargs.get("recompute", False)
                 return_saved = kwargs.get("return_saved", False)
 
@@ -422,32 +410,26 @@ class ComputedData(DataHolder):
                 # we've reached this point because we have to compute this
                 computed = func(*args, **kwargs)
                 if isinstance(computed, np.ndarray):
-                    computed.flags.writeable = False # configurable?
+                    computed.flags.writeable = False  # configurable?
                 self._computed._saved[func.__name__] = computed
 
                 # so, all fresh. we can press NOT-modified  button
                 for dependee_str in cls._depends[func.__name__]:
                     dependee = getattr(self, dependee_str)
                     dependee._modified = False
-                    
+
                 return computed
 
             if make_property:
                 return property(compute_or_return_saved)
             else:
                 return compute_or_return_saved
-    
+
         return inner
 
 
 Unique2DFloats = namedtuple(
-    "Unique2DFloats",
-    [
-        "values",
-        "ids",
-        "inverse",
-        "intersection"
-    ]
+        "Unique2DFloats", ["values", "ids", "inverse", "intersection"]
 )
 """"
 namedtuple to hold unique information of float type arrays.
@@ -464,15 +446,8 @@ intersection: (m) list of list
   given original array's index, returns overlapping arrays, including itself.
 """
 
-
 Unique2DIntegers = namedtuple(
-    "Unique2DIntegers",
-    [
-        "values",
-        "ids",
-        "inverse",
-        "counts"
-    ]
+        "Unique2DIntegers", ["values", "ids", "inverse", "counts"]
 )
 """
 namedtuple to hold unique information of integer type arrays.
@@ -485,6 +460,7 @@ ids: (n) np.ndarray
 inverse: (m) np.ndarray
 counts: (n) np.ndarray
 """
+
 
 class ComputedMeshData(ComputedData):
     """

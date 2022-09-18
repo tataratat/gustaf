@@ -16,12 +16,12 @@ from gustaf.create.spline import with_bounds
 from gustaf import settings
 
 
-class FFD (GustafBase):
+class FFD(GustafBase):
 
     def __init__(
-        self,
-        mesh: Optional[MESH_TYPES] = None,
-        spline: Optional[SPLINE_TYPES] = None
+            self,
+            mesh: Optional[MESH_TYPES] = None,
+            spline: Optional[SPLINE_TYPES] = None
     ):
         """
         Free-form deformation is a method used to deform an object by a
@@ -96,7 +96,7 @@ class FFD (GustafBase):
         self._is_calculated = False
 
     @property
-    def mesh(self,) -> MESH_TYPES:
+    def mesh(self, ) -> MESH_TYPES:
         """Returns copy of current mesh. Before copying, it applies
         deformation.
 
@@ -128,27 +128,27 @@ class FFD (GustafBase):
             # Define a default spline if mesh is given but no spline
             par_dim = mesh.vertices.shape[1]
             self.spline = with_bounds(
-                [[0]*par_dim, [1]*par_dim],
-                mesh.bounds())
+                    [[0] * par_dim, [1] * par_dim], mesh.bounds()
+            )
 
         self._logi("Setting mesh.")
         self._logi("Mesh Info:")
-        self._logi(
-            "  Vertices: {v}.".format(v=mesh.vertices.shape)
-        )
-        self._logi(
-            "  Bounds: {b}.".format(b=mesh.bounds())
-        )
+        self._logi("  Vertices: {v}.".format(v=mesh.vertices.shape))
+        self._logi("  Bounds: {b}.".format(b=mesh.bounds()))
         self._o_mesh = mesh.copy()  # we keep original copy for visulization
-        self._mesh = mesh.copy() # another copy for current status.
+        self._mesh = mesh.copy()  # another copy for current status.
 
         # Checks dimensions and ranges critical for a correct FFD calculation
         if not self._spline.para_dim == self._spline.dim:
-            self._logw("The parametric and geometric dimensions of the "
-                       "spline are not the same.")
+            self._logw(
+                    "The parametric and geometric dimensions of the "
+                    "spline are not the same."
+            )
         if not self._spline.dim == self._mesh.vertices.shape[1]:
-            self._logw("The geometric dimensions of the spline and the "
-                       "dimension of the mesh are not the same.")
+            self._logw(
+                    "The geometric dimensions of the spline and the "
+                    "dimension of the mesh are not the same."
+            )
 
         self._scale_mesh_vertices()
         self._is_calculated = False
@@ -192,13 +192,11 @@ class FFD (GustafBase):
             self._orig_para_dim_ranges = spline.parametric_bounds.T
             self._spline.normalize_knot_vectors()
         else:
-            self._orig_para_dim_ranges = [[0, 1]]*spline.para_dim
+            self._orig_para_dim_ranges = [[0, 1]] * spline.para_dim
 
         self._logi("Setting Spline.")
         self._logi("Spline Info:")
-        self._logi(
-            f"  Parametric dimensions: {spline.para_dim}."
-        )
+        self._logi(f"  Parametric dimensions: {spline.para_dim}.")
         self._is_calculated = False
 
     def _scale_mesh_vertices(self):
@@ -214,8 +212,9 @@ class FFD (GustafBase):
 
         # save mesh offset and scale for reasons
         self._mesh_offset = original_mesh_bounds[0]
-        self._mesh_scale = 1/(original_mesh_bounds[1] -
-                              original_mesh_bounds[0])
+        self._mesh_scale = 1 / (
+                original_mesh_bounds[1] - original_mesh_bounds[0]
+        )
 
         # scale and offset vertices coordinates
         self._q_vertices -= self._mesh_offset
@@ -238,18 +237,17 @@ class FFD (GustafBase):
         """
         if self._mesh is None or self._spline is None:
             raise RuntimeError(
-                "Can not perform deformation for the FFD, since either the "
-                "spline and/or the mesh are not yet defined. Please define "
-                "both a spline and mesh before deforming the mesh.")
+                    "Can not perform deformation for the FFD, since either the "
+                    "spline and/or the mesh are not yet defined. Please define "
+                    "both a spline and mesh before deforming the mesh."
+            )
         if self._is_calculated and self._is_calculated_trackable:
             return None
 
         self._logd("Applying FFD: Transforming vertices")
 
         # Here, we take _q_vertices, due to possible scale/offset.
-        self._mesh.vertices = self._spline.evaluate(
-            self._q_vertices
-        )
+        self._mesh.vertices = self._spline.evaluate(self._q_vertices)
         self._logd("FFD successful.")
 
         self._is_calculated = True
@@ -270,9 +268,9 @@ class FFD (GustafBase):
         return self._spline.control_points
 
     @control_points.setter
-    def control_points(self,
-                       control_points: Union[List[List[float]], np.ndarray]
-                       ):
+    def control_points(
+            self, control_points: Union[List[List[float]], np.ndarray]
+    ):
         """
         Sets control points and deforms mesh.
 
@@ -323,12 +321,13 @@ class FFD (GustafBase):
         """
         if "knot_vectors" in self._spline.required_properties:
             raise NotImplementedError(
-                "Can not perform knot insertion on Bezier spline.")
+                    "Can not perform knot insertion on Bezier spline."
+            )
         # scale knots from the original bounds into the new bounds
         dim_bounds = self._orig_para_dim_ranges[parametric_dimension]
         knots = (
-            (np.array(knots)-dim_bounds[0])
-            / (dim_bounds[-1]-dim_bounds[0])
+                (np.array(knots) - dim_bounds[0]) /
+                (dim_bounds[-1] - dim_bounds[0])
         )
         self._spline.insert_knots(parametric_dimension, knots)
 
@@ -347,15 +346,17 @@ class FFD (GustafBase):
         """
         if "knot_vectors" in self._spline.required_properties:
             raise NotImplementedError(
-                "Can not perform knot insertion on Bezier spline.")
+                    "Can not perform knot insertion on Bezier spline."
+            )
         # scale knots from the original bounds into the new bounds
         dim_bounds = self._orig_para_dim_ranges[parametric_dimension]
         knots = (
-            (np.array(knots)-dim_bounds[0])
-            / (dim_bounds[-1]-dim_bounds[0])
+                (np.array(knots) - dim_bounds[0]) /
+                (dim_bounds[-1] - dim_bounds[0])
         )
         self._spline.remove_knots(
-            parametric_dimension, knots, tolerance=tolerance)
+                parametric_dimension, knots, tolerance=tolerance
+        )
         self._is_calculated = False
 
     def reduce_degree(self, *args, **kwargs):
@@ -407,9 +408,9 @@ class FFD (GustafBase):
 
         if return_discrete and return_showable:
             raise ValueError(
-                "Either one of following params can be True: "
-                "{return_discrete, return_showable} "
-                "You've set both True."
+                    "Either one of following params can be True: "
+                    "{return_discrete, return_showable} "
+                    "You've set both True."
             )
 
         if backend is None:
@@ -417,15 +418,15 @@ class FFD (GustafBase):
 
         if backend != "vedo":
             raise NotImplementedError(
-                "Visualization of the FFD is not available for the chosen"
-                f"visualization framework -{settings.VISUALIZATION_BACKEND}-."
-                " Please choose vedo to visualize."
+                    "Visualization of the FFD is not available for the chosen"
+                    f"visualization framework -{settings.VISUALIZATION_BACKEND}-."
+                    " Please choose vedo to visualize."
             )
 
         # prepare originals
         o_mesh = self._o_mesh.copy()
         # prepare deformed
-        d_mesh = self.mesh # copies
+        d_mesh = self.mesh  # copies
 
         things_to_show = dict()
         # let's show faces at most, since volumes can take awhile
@@ -464,8 +465,8 @@ class FFD (GustafBase):
         things_to_show.update(deformed_spline=self.spline)
 
         #if has_edges:
-            #things_to_show.update(original_edges=o_edges)
-            #things_to_show.update(deformed_edges=d_edges)
+        #things_to_show.update(original_edges=o_edges)
+        #things_to_show.update(deformed_edges=d_edges)
 
         if return_discrete:
             # spline is strictly not discrete.
@@ -476,7 +477,7 @@ class FFD (GustafBase):
             for k, v in things_to_show.items():
                 if isinstance(v, GustafBase):
                     things_to_show[k] = v.showable()
-    
+
             return things_to_show
 
         # current workaround to set spline's surface alpha correctly
@@ -485,18 +486,20 @@ class FFD (GustafBase):
         spl_showable = spl.showable(surface_alpha=.3)
 
         return show_vedo(
-            [
-                things_to_show[k]
-                 for k in things_to_show.keys() if k.startswith("original")
-            ],
-            [
-                *[
-                    things_to_show[k]
-                     for k in things_to_show.keys() if k.startswith("deformed")
+                [
+                        things_to_show[k]
+                        for k in things_to_show.keys()
+                        if k.startswith("original")
                 ],
-                *spl_showable.values(),
-            ],
-            title=title,
+                [
+                        *[
+                                things_to_show[k]
+                                for k in things_to_show.keys()
+                                if k.startswith("deformed")
+                        ],
+                        *spl_showable.values(),
+                ],
+                title=title,
         )
 
     def showable(self, **kwargs):

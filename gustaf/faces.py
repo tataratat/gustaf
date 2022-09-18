@@ -7,32 +7,31 @@ from gustaf import utils
 from gustaf.edges import Edges
 from gustaf import helpers
 
+
 class Faces(Edges):
 
     kind = "face"
 
     const_edges = helpers.raise_if.invalid_inherited_attr(
-        Edges.const_edges,
-        __qualname__,
-        property_=True,
+            Edges.const_edges,
+            __qualname__,
+            property_=True,
     )
     update_edges = helpers.raise_if.invalid_inherited_attr(
-        Edges.update_edges,
-        __qualname__,
-        property_=False,
+            Edges.update_edges,
+            __qualname__,
+            property_=False,
     )
     dashed = helpers.raise_if.invalid_inherited_attr(
-        Edges.const_edges,
-        __qualname__,
-        property_=False,
+            Edges.const_edges,
+            __qualname__,
+            property_=False,
     )
 
-
-
     __slots__ = (
-        "_faces",
-        "_const_faces",
-        "BC",
+            "_faces",
+            "_const_faces",
+            "BC",
     )
 
     def __init__(
@@ -79,7 +78,7 @@ class Faces(Edges):
         return utils.connec.faces_to_edges(faces)
 
     @property
-    def whatami(self,):
+    def whatami(self, ):
         """
         Determines whatami.
 
@@ -117,12 +116,12 @@ class Faces(Edges):
 
         else:
             raise ValueError(
-                "Invalid faces connectivity shape. It should be (n, 3) or "
-                f"(n, 4), but given: {face_obj.faces.shape}"
+                    "Invalid faces connectivity shape. It should be (n, 3) or "
+                    f"(n, 4), but given: {face_obj.faces.shape}"
             )
 
     @property
-    def faces(self,):
+    def faces(self, ):
         """
         Returns faces.
 
@@ -155,14 +154,14 @@ class Faces(Edges):
         # shape check
         if fs is not None:
             utils.arr.is_one_of_shapes(
-                fs,
-                ((-1, 3), (-1, 4)),
-                strict=True,
+                    fs,
+                    ((-1, 3), (-1, 4)),
+                    strict=True,
             )
 
         self._faces = helpers.data.make_tracked_array(
-            fs,
-            settings.INT_DTYPE,
+                fs,
+                settings.INT_DTYPE,
         )
         # same, but non-writeable view of tracekd array
         self._const_faces = self._faces.view()
@@ -216,8 +215,7 @@ class Faces(Edges):
           valid attributes are {values, ids, inverse, counts}
         """
         unique_info = utils.connec.sorted_unique(
-            self.sorted_faces(),
-            sorted_=True
+                self.sorted_faces(), sorted_=True
         )
 
         faces = self._get_attr("faces")
@@ -264,6 +262,6 @@ class Faces(Edges):
         edges: Edges
         """
         return Edges(
-            self.vertices,
-            edges=self.unique_edges().values if unique else self.edges()
+                self.vertices,
+                edges=self.unique_edges().values if unique else self.edges()
         )
