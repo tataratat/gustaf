@@ -1,4 +1,4 @@
-"""gustaf/spline/extract.py
+"""gustaf/spline/extract.py.
 
 Extract operations. Both discrete and spline extraction.
 """
@@ -24,14 +24,13 @@ def edges(
         extract_knot=None,
         all_knots=False,
 ):
-    """
-    Extract edges (lines) from a given spline.
-    Only entity you can extract without dimension limit
+    """Extract edges (lines) from a given spline. Only entity you can extract
+    without dimension limit.
 
     Parameters
     -----------
     spline: Spline
-    resolution: int 
+    resolution: int
     extract_dim: int
       Parametric dimension to extract.
     extract_knot: list
@@ -116,12 +115,10 @@ def faces(
         spline,
         resolutions,
 ):
-    """
-    Extract faces from spline.
-    Valid iff para_dim is one of the followings: {2, 3}.
-    In case of {3}, it will return only surfaces.
-    If internal faces are desired, used `spline.extract.volumes().faces()`.
-    Note that dimension higher than 3 is not showable.
+    """Extract faces from spline. Valid iff para_dim is one of the followings:
+    {2, 3}. In case of {3}, it will return only surfaces. If internal faces are
+    desired, used `spline.extract.volumes().faces()`. Note that dimension
+    higher than 3 is not showable.
 
     Parameters
     -----------
@@ -252,14 +249,12 @@ def faces(
 
 
 def volumes(spline, resolutions):
-    """
-    Extract volumes from spline.
-    Valid iff spline.para_dim == 3.
+    """Extract volumes from spline. Valid iff spline.para_dim == 3.
 
     Parameters
     -----------
     spline: BSpline or NURBS
-    resolutions: 
+    resolutions:
 
     Returns
     --------
@@ -278,9 +273,8 @@ def volumes(spline, resolutions):
 
 
 def control_points(spline):
-    """
-    Extracts control points and return as vertices.
-    Same can be achieved by doing `gustaf.Vertices(spline.control_points)`
+    """Extracts control points and return as vertices. Same can be achieved by
+    doing `gustaf.Vertices(spline.control_points)`
 
     Parameters
     -----------
@@ -294,9 +288,7 @@ def control_points(spline):
 
 
 def control_edges(spline):
-    """
-    Extract control edges (mesh).
-    Valid iff para_dim is 1.
+    """Extract control edges (mesh). Valid iff para_dim is 1.
 
     Parameters
     -----------
@@ -318,9 +310,7 @@ def control_edges(spline):
 
 
 def control_faces(spline):
-    """
-    Extract control face (mesh).
-    Valid iff para_dim is 2.
+    """Extract control face (mesh). Valid iff para_dim is 2.
 
     Parameters
     -----------
@@ -342,9 +332,7 @@ def control_faces(spline):
 
 
 def control_volumes(spline):
-    """
-    Extract control volumes (mesh).
-    Valid iff para_dim is 3.
+    """Extract control volumes (mesh). Valid iff para_dim is 3.
 
     Parameters
     -----------
@@ -366,9 +354,8 @@ def control_volumes(spline):
 
 
 def control_mesh(spline, ):
-    """
-    Calls control_edges, control_faces, control_volumes
-    based on current spline.
+    """Calls control_edges, control_faces, control_volumes based on current
+    spline.
 
     Parameters
     -----------
@@ -392,8 +379,7 @@ def control_mesh(spline, ):
 
 
 def beziers(spline):
-    """
-    Extracts Bezier-type objects of any spline-type object
+    """Extracts Bezier-type objects of any spline-type object.
 
     Parameters
     ----------
@@ -418,9 +404,8 @@ def beziers(spline):
 
 
 class _Extractor:
-    """
-    Helper class to allow direct extraction from spline obj (BSpline or NURBS).
-    Internal use only.
+    """Helper class to allow direct extraction from spline obj (BSpline or
+    NURBS). Internal use only.
 
     Examples
     ---------

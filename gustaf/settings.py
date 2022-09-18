@@ -1,4 +1,4 @@
-"""gustaf/gustaf/settings.py
+"""gustaf/gustaf/settings.py.
 
 Global variables/constants that's used throughout `gustaf`.
 """

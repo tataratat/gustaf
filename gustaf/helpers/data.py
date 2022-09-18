@@ -1,7 +1,6 @@
-"""gustaf/gustaf/helpers/data.py
+"""gustaf/gustaf/helpers/data.py.
 
-Helps helpee to manage data.
-Some useful data structures.
+Helps helpee to manage data. Some useful data structures.
 """
 
 import abc
@@ -13,11 +12,9 @@ import numpy as np
 
 
 class TrackedArray(np.ndarray):
-    """
-    Taken from nice implementations of `trimesh` (see LICENSE.txt).
-    `https://github.com/mikedh/trimesh/blob/main/trimesh/caching.py`.
-    Minor adaption, since we don't have hashing functionalities.
-
+    """Taken from nice implementations of `trimesh` (see LICENSE.txt).
+    `https://github.com/mikedh/trimesh/blob/main/trimesh/caching.py`. Minor
+    adaption, since we don't have hashing functionalities.
 
     All the inplace functions will set modified flag and if some operations
     has potential to cause un-trackable behavior, writeable flags will be set
@@ -30,10 +27,8 @@ class TrackedArray(np.ndarray):
     __slots__ = ("_modified", "_source")
 
     def __array_finalize__(self, obj):
-        """
-        Sets default flags for any arrays that maybe generated based on
-        tracked array.
-        """
+        """Sets default flags for any arrays that maybe generated based on
+        tracked array."""
         self._modified = True
         self._source = int(0)
 
@@ -52,23 +47,20 @@ class TrackedArray(np.ndarray):
         self.flags.writeable = value
 
     def _set_modified(self):
-        """
-        set modified flags to itself and to the source
-        """
+        """set modified flags to itself and to the source."""
         self._modified = True
         if isinstance(self._source, type(self)):
             self._source._modified = True
 
     def copy(self, *args, **kwargs):
-        """
-        copy gives np.ndarray. no more tracking.
+        """copy gives np.ndarray.
+
+        no more tracking.
         """
         return np.array(self, copy=True)
 
     def view(self, *args, **kwargs):
-        """
-        Set writeable flags to False for the view.
-        """
+        """Set writeable flags to False for the view."""
         v = super(self.__class__, self).view(*args, **kwargs)
         v.flags.writeable = False
         return v
@@ -149,10 +141,9 @@ class TrackedArray(np.ndarray):
 
 
 def make_tracked_array(array, dtype=None, copy=True):
-    """
-    Taken from nice implementations of `trimesh` (see LICENSE.txt).
+    """Taken from nice implementations of `trimesh` (see LICENSE.txt).
     `https://github.com/mikedh/trimesh/blob/main/trimesh/caching.py`.
-    
+
     ``Properly subclass a numpy ndarray to track changes.
     Avoids some pitfalls of subclassing by forcing contiguous
     arrays and does a view into a TrackedArray.``
@@ -194,9 +185,7 @@ class DataHolder(abc.ABC):
     ]
 
     def __init__(self, helpee):
-        """
-        Base class for any data holder.
-        Behaves similar to dict.
+        """Base class for any data holder. Behaves similar to dict.
 
         Attributes
         -----------
@@ -211,8 +200,7 @@ class DataHolder(abc.ABC):
         self._saved = dict()
 
     def __setitem__(self, key, value):
-        """
-        Raise Error to disable direct value setting.
+        """Raise Error to disable direct value setting.
 
         Parameters
         -----------
@@ -229,8 +217,7 @@ class DataHolder(abc.ABC):
         )
 
     def __getitem__(self, key):
-        """
-        Returns stored item if the key exists.
+        """Returns stored item if the key exists.
 
         Parameters
         -----------
@@ -247,11 +234,9 @@ class DataHolder(abc.ABC):
             raise KeyError(f"`{key}` is not stored for {type(self._helpee)}")
 
     def get(self, key, default_values=None):
-        """
-        Returns stored item if the key exists.
-        Else, given default value.
-        If the key exist, default value always exists, since it is
-        initialized that way.
+        """Returns stored item if the key exists. Else, given default value. If
+        the key exist, default value always exists, since it is initialized
+        that way.
 
         Parameters
         -----------
@@ -268,8 +253,7 @@ class DataHolder(abc.ABC):
             return default_values
 
     def keys(self):
-        """
-        Returns keys of data holding dict.
+        """Returns keys of data holding dict.
 
         Parameters
         -----------
@@ -282,8 +266,7 @@ class DataHolder(abc.ABC):
         return self._saved.keys()
 
     def values(self):
-        """
-        Returns values of data holding dict.
+        """Returns values of data holding dict.
 
         Parameters
         -----------
@@ -296,8 +279,7 @@ class DataHolder(abc.ABC):
         return self._saved.values()
 
     def items(self):
-        """
-        Returns items of data holding dict.
+        """Returns items of data holding dict.
 
         Parameters
         -----------
@@ -317,10 +299,8 @@ class ComputedData(DataHolder):
     ___slots___ = []
 
     def __init__(self, helpee, **kwrags):
-        """
-        Stores last computed values.
-        Keys are expected to be the same as helpee's function that computes
-        the value.
+        """Stores last computed values. Keys are expected to be the same as
+        helpee's function that computes the value.
 
         Attributes
         -----------
@@ -336,8 +316,7 @@ class ComputedData(DataHolder):
 
     @classmethod
     def depends_on(cls, var_names, make_property=False):
-        """
-        Decorator as classmethod.
+        """Decorator as classmethod.
 
         checks if the key should be computed. Three cases, where the answer is
         yes:
@@ -378,9 +357,7 @@ class ComputedData(DataHolder):
 
             @wraps(func)
             def compute_or_return_saved(*args, **kwargs):
-                """
-                Check if the key should be computed,
-                """
+                """Check if the key should be computed,"""
                 # extract some related info
                 self = args[0]  # the helpee itself
                 recompute = kwargs.get("recompute", False)
@@ -463,8 +440,8 @@ counts: (n) np.ndarray
 
 
 class ComputedMeshData(ComputedData):
-    """
-    A class to hold computed-mesh-data.
+    """A class to hold computed-mesh-data.
+
     Subclassed to keep its own dependency info.
     """
     pass

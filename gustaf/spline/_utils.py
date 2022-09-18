@@ -1,13 +1,12 @@
-"""gustaf/spline/_utils.py
+"""gustaf/spline/_utils.py.
 
 Utils for spline. Internal use only.
 """
 
 
 def to_res_list(res, length):
-    """
-    Given int or list, returns a list of resolutions of correct length.
-    If list is given, checks if it is a correct length.
+    """Given int or list, returns a list of resolutions of correct length. If
+    list is given, checks if it is a correct length.
 
     Parameters
     -----------

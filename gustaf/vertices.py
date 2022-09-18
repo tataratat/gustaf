@@ -1,4 +1,4 @@
-"""gustaf/gustaf/vertices.py
+"""gustaf/gustaf/vertices.py.
 
 Vertices. Base of all "Mesh" geometries.
 """
@@ -30,8 +30,7 @@ class Vertices(GustafBase):
             self,
             vertices=None,
     ):
-        """
-        Vertices. It has vertices.
+        """Vertices. It has vertices.
 
         Parameters
         -----------
@@ -45,7 +44,6 @@ class Vertices(GustafBase):
         -----------
         whatami: str
         vertices: np.ndarray
-        
         """
         if vertices is not None:
             self.vertices = vertices
@@ -57,8 +55,7 @@ class Vertices(GustafBase):
 
     @property
     def vertices(self):
-        """
-        Returns vertices
+        """Returns vertices.
 
         Parameters
         -----------
@@ -73,13 +70,11 @@ class Vertices(GustafBase):
 
     @vertices.setter
     def vertices(self, vs):
-        """
-        Vertices setter. This will saved as a tracked array.
-        This tracked array is very sensitive and if we do anything with it
-        that may hint an inplace operation, it will be marked as modified.
-        This includes copying and slicing.
-        If you know you aren't going to modify the array, please consider using
-        `const_vertices`. Somewhat c-style hint in naming.
+        """Vertices setter. This will saved as a tracked array. This tracked
+        array is very sensitive and if we do anything with it that may hint an
+        inplace operation, it will be marked as modified. This includes copying
+        and slicing. If you know you aren't going to modify the array, please
+        consider using `const_vertices`. Somewhat c-style hint in naming.
 
         Parameters
         -----------
@@ -103,9 +98,8 @@ class Vertices(GustafBase):
 
     @property
     def const_vertices(self):
-        """
-        Returns non-mutable view of `vertices`.
-        Naming inspired by c/cpp sessions.
+        """Returns non-mutable view of `vertices`. Naming inspired by c/cpp
+        sessions.
 
         Parameters
         -----------
@@ -120,8 +114,7 @@ class Vertices(GustafBase):
 
     @property
     def whatami(self, ):
-        """
-        Answers deep philosophical question: "what am i"?
+        """Answers deep philosophical question: "what am i"?
 
         Parameters
         ----------
@@ -136,9 +129,8 @@ class Vertices(GustafBase):
 
     @helpers.data.ComputedMeshData.depends_on(["vertices"])
     def unique_vertices(self, tolerance=None, **kwargs):
-        """
-        Returns a namedtuple that holds unique vertices info.
-        Unique here means "close-enough-within-tolerance".
+        """Returns a namedtuple that holds unique vertices info. Unique here
+        means "close-enough-within-tolerance".
 
         Parameters
         -----------
@@ -169,9 +161,7 @@ class Vertices(GustafBase):
 
     @helpers.data.ComputedMeshData.depends_on(["vertices"])
     def bounds(self):
-        """
-        Returns bounds of the vertices.
-        Bounds means AABB of the geometry.
+        """Returns bounds of the vertices. Bounds means AABB of the geometry.
 
         Parameters
         -----------
@@ -186,8 +176,7 @@ class Vertices(GustafBase):
 
     @helpers.data.ComputedMeshData.depends_on(["vertices"])
     def bounds_diagonal(self):
-        """
-        Returns diagonal vector of the bounding box.
+        """Returns diagonal vector of the bounding box.
 
         Parameters
         -----------
@@ -204,8 +193,7 @@ class Vertices(GustafBase):
 
     @helpers.data.ComputedMeshData.depends_on(["vertices"])
     def bounds_diagonal_norm(self):
-        """
-        Returns norm of bounds diagonal.
+        """Returns norm of bounds diagonal.
 
         Parameters
         -----------
@@ -219,11 +207,9 @@ class Vertices(GustafBase):
         return float(sum(self.bounds_diagonal()**2)**.5)
 
     def update_vertices(self, mask, inverse=None):
-        """
-        Update vertices with a mask.
-        In other words, keeps only masked vertices.
-        Adapted from `github.com/mikedh/trimesh`.
-        Updates connectivity accordingly too.
+        """Update vertices with a mask. In other words, keeps only masked
+        vertices. Adapted from `github.com/mikedh/trimesh`. Updates
+        connectivity accordingly too.
 
         Parameters
         -----------
@@ -270,9 +256,7 @@ class Vertices(GustafBase):
         vertices = vertices[mask]
 
         def update_vertexdata(obj, m, vertex_data=None):
-            """
-            apply mask to vertex data if there's any.
-            """
+            """apply mask to vertex data if there's any."""
             newdata = dict()
             if vertex_data is None:
                 vertex_data = obj.vertexdata
@@ -294,8 +278,7 @@ class Vertices(GustafBase):
         return self
 
     def select_vertices(self, ranges):
-        """
-        Returns vertices inside the given range.
+        """Returns vertices inside the given range.
 
         Parameters
         -----------
@@ -309,8 +292,7 @@ class Vertices(GustafBase):
         return utils.arr.select_with_ranges(self.vertices, ranges)
 
     def remove_vertices(self, ids):
-        """
-        Removes vertices with given vertex ids.
+        """Removes vertices with given vertex ids.
 
         Parameters
         -----------
@@ -326,8 +308,7 @@ class Vertices(GustafBase):
         return self.update_vertices(mask, )
 
     def merge_vertices(self, tolerance=None):
-        """
-        Based on unique vertices, merge vertices if it is mergeable.
+        """Based on unique vertices, merge vertices if it is mergeable.
 
         Parameters
         -----------
@@ -350,8 +331,7 @@ class Vertices(GustafBase):
         )
 
     def showable(self, **kwargs):
-        """
-        Returns showable object, meaning object of visualization backend.
+        """Returns showable object, meaning object of visualization backend.
 
         Parameters
         -----------
@@ -365,8 +345,7 @@ class Vertices(GustafBase):
         return show.make_showable(self, **kwargs)
 
     def show(self, **kwargs):
-        """
-        Show current object using visualization backend.
+        """Show current object using visualization backend.
 
         Parameters
         -----------
@@ -380,8 +359,7 @@ class Vertices(GustafBase):
         return show.show(self, **kwargs)
 
     def copy(self):
-        """
-        Returns deepcopy of self.
+        """Returns deepcopy of self.
 
         Parameters
         -----------
@@ -396,8 +374,7 @@ class Vertices(GustafBase):
 
     @classmethod
     def concat(cls, *instances):
-        """
-        Sequentially put them together to make one object.
+        """Sequentially put them together to make one object.
 
         Parameters
         -----------
@@ -410,9 +387,7 @@ class Vertices(GustafBase):
         """
 
         def is_concatable(inst):
-            """
-            Return true, if it is same as type(cls)
-            """
+            """Return true, if it is same as type(cls)"""
             if isinstance(inst, cls):
                 return True
             else:
@@ -466,8 +441,7 @@ class Vertices(GustafBase):
             return Vertices(vertices=np.vstack(vertices), )
 
     def __add__(self, to_add):
-        """
-        Concat in form of +.
+        """Concat in form of +.
 
         Parameters
         -----------

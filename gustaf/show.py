@@ -1,4 +1,4 @@
-"""gustaf/gustaf/show.py
+"""gustaf/gustaf/show.py.
 
 Everything related to show/visualization.
 """
@@ -16,8 +16,7 @@ except ImportError:
 
 
 def show(*gusobj, **kwargs):
-    """
-    Shows using appropriate backend.
+    """Shows using appropriate backend.
 
     Parameters
     -----------
@@ -44,10 +43,8 @@ def show_vedo(
         *args,
         **kwargs,
 ):
-    """
-    `vedo.show` wrapper.
-    Each args represent one section of window. In other words len(args) == N,
-    where N corresponds to the parameter for vedo.show().
+    """`vedo.show` wrapper. Each args represent one section of window. In other
+    words len(args) == N, where N corresponds to the parameter for vedo.show().
 
     Parameters
     -----------
@@ -76,7 +73,7 @@ def show_vedo(
         return None
 
     def cam_tuple_to_list(dictcam):
-        """if entity is tuple, turns it into list"""
+        """if entity is tuple, turns it into list."""
         if dictcam is None:
             return None
 
@@ -192,8 +189,7 @@ def show_vedo(
 
 
 def _vedo_showable(obj, **kwargs):
-    """
-    Generates a vedo obj based on `kind` attribute from given obj.
+    """Generates a vedo obj based on `kind` attribute from given obj.
 
     Parameters
     -----------
@@ -351,24 +347,20 @@ def _vedo_showable(obj, **kwargs):
 
 
 def _trimesh_showable(obj):
-    """
-    """
+    """"""
     pass
 
 
 def _matplotlib_showable(obj):
-    """
-    """
+    """"""
     pass
 
 
 def make_showable(obj, backend=settings.VISUALIZATION_BACKEND, **kwargs):
-    """
-    Since gustaf does not natively support visualization, one of the following
-    library is used to visualize gustaf (visualizable) objects:
-    (1) vedo -> Fast, offers a lot of features
-    (2) trimesh -> Fast, compatible with old opengl
-    (3) matplotlib -> Slow, offers vector graphics
+    """Since gustaf does not natively support visualization, one of the
+    following library is used to visualize gustaf (visualizable) objects: (1)
+    vedo -> Fast, offers a lot of features (2) trimesh -> Fast, compatible with
+    old opengl (3) matplotlib -> Slow, offers vector graphics.
 
     This determines showing types using `whatami`.
 
@@ -396,8 +388,7 @@ def make_showable(obj, backend=settings.VISUALIZATION_BACKEND, **kwargs):
 
 # possibly relocate
 def interpolate_vedo_dictcam(cameras, resolutions, spline_degree=1):
-    """
-    Interpolate between vedo dict cameras.
+    """Interpolate between vedo dict cameras.
 
     Parameters
     ------------

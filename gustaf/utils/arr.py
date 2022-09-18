@@ -1,7 +1,7 @@
-"""gustaf/gustaf/utils/arr.py
+"""gustaf/gustaf/utils/arr.py.
 
-Useful functions for array / point operations.
-Named `arr`, since `array` is python library and it sounds funny.
+Useful functions for array / point operations. Named `arr`, since
+`array` is python library and it sounds funny.
 """
 
 import numpy as np
@@ -10,9 +10,8 @@ from gustaf import settings
 
 
 def make_c_contiguous(array, dtype=None):
-    """
-    Make given array like object a c contiguous np.ndarray.
-    dtype is optional. If None is given, just returns None.
+    """Make given array like object a c contiguous np.ndarray. dtype is
+    optional. If None is given, just returns None.
 
     Parameters
     -----------
@@ -96,10 +95,9 @@ def unique_rows(
 
 
 def close_rows(arr, tolerance=None):
-    """
-    Similar to unique_rows, but if data type is floats, use this one.
-    Performs radius search using KDTree.
-    Currently uses `scipy.spatial.cKDTree`.
+    """Similar to unique_rows, but if data type is floats, use this one.
+    Performs radius search using KDTree. Currently uses
+    `scipy.spatial.cKDTree`.
 
     Parameters
     -----------
@@ -147,8 +145,7 @@ def close_rows(arr, tolerance=None):
 
 
 def bounds(arr):
-    """
-    Return bounds.
+    """Return bounds.
 
     Parameters
     -----------
@@ -167,8 +164,8 @@ def bounds(arr):
 
 
 def bounds_diagonal(arr):
-    """
-    Returns diagonal vector of the bounds.
+    """Returns diagonal vector of the bounds.
+
     bounds[1] - bounds[0]
 
     Parameters
@@ -184,8 +181,7 @@ def bounds_diagonal(arr):
 
 
 def bounds_norm(arr):
-    """
-    Returns norm of the bounds.
+    """Returns norm of the bounds.
 
     Parameters
     -----------
@@ -199,8 +195,7 @@ def bounds_norm(arr):
 
 
 def bounds_mean(arr):
-    """
-    Returns mean of the bounds
+    """Returns mean of the bounds.
 
     Parameters
     -----------
@@ -214,9 +209,8 @@ def bounds_mean(arr):
 
 
 def select_with_ranges(arr, ranges):
-    """
-    Select array with ranges of each column.
-    Always parsed as:
+    """Select array with ranges of each column. Always parsed as:
+
     [[greater_than, less_than], [....], ...]
 
     Parameters
@@ -256,12 +250,9 @@ def select_with_ranges(arr, ranges):
 
 
 def rotation_matrix(rotation, degree=True):
-    '''
-    Compute rotation matrix.
-    Works for both 2D and 3D point sets.
-    In 2D, it can rotate along the (virtual) z-axis.
-    In 3D, it can rotate along [x, y, z]-axis.
-    Uses `scipy.spatial.transform.Rotation`.
+    """Compute rotation matrix. Works for both 2D and 3D point sets. In 2D, it
+    can rotate along the (virtual) z-axis. In 3D, it can rotate along [x, y,
+    z]-axis. Uses `scipy.spatial.transform.Rotation`.
 
     Parameters
     -----------
@@ -275,7 +266,7 @@ def rotation_matrix(rotation, degree=True):
     Returns
     --------
     rotation_matrix: np.ndarray (3,3)
-    '''
+    """
     from scipy.spatial.transform import Rotation as R
 
     rotation = np.asarray(rotation).flatten()
@@ -293,17 +284,15 @@ def rotation_matrix(rotation, degree=True):
 
 
 def rotate(arr, rotation, rotation_axis=None, degree=True):
-    """
-    Rotates given arrays.
-    Arrays shape[1] should equal to either 2 or 3
-    For more information, see `rotation_matrix()`.
+    """Rotates given arrays. Arrays shape[1] should equal to either 2 or 3 For
+    more information, see `rotation_matrix()`.
 
     Parameters
     -----------
     arr: (n, (2 or 3)) list-like
     rotation: list or float
       angle of rotation (around each axis)
-    rotation_axis: (n, (2 or 3)) or (2 or 3) list-like 
+    rotation_axis: (n, (2 or 3)) or (2 or 3) list-like
       center of rotation
 
     Returns
@@ -327,10 +316,8 @@ def rotate(arr, rotation, rotation_axis=None, degree=True):
 
 
 def rotation_matrix_around_axis(axis=None, rotation=None, degree=True):
-    """
-    Compute rotation matrix given the axis of rotation.
-    Works for both 2D and 3D
-    Uses Rodrigues' formula.
+    """Compute rotation matrix given the axis of rotation. Works for both 2D
+    and 3D Uses Rodrigues' formula.
 
     If axis is not specified, 2D rotation matrix is assumed.
 
@@ -391,8 +378,7 @@ def rotation_matrix_around_axis(axis=None, rotation=None, degree=True):
 
 
 def is_shape(arr, shape, strict=False):
-    """
-    Checks if arr matches given shape. shape can have negative numbers.
+    """Checks if arr matches given shape. shape can have negative numbers.
 
     Parameters
     -----------
@@ -424,9 +410,8 @@ def is_shape(arr, shape, strict=False):
 
 
 def is_one_of_shapes(arr, shapes, strict=False):
-    """
-    Tuple/list of given shapes, iterates and checks with is_shape.
-    Useful if you have multiple acceptable shapes.
+    """Tuple/list of given shapes, iterates and checks with is_shape. Useful if
+    you have multiple acceptable shapes.
 
     Parameters
     -----------

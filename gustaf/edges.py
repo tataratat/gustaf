@@ -1,6 +1,6 @@
-"""gustaf/gustaf/edges.py
+"""gustaf/gustaf/edges.py.
 
-Edges. Also known as 
+Edges. Also known as lines.
 """
 
 import numpy as np
@@ -26,8 +26,7 @@ class Edges(Vertices):
             edges=None,
             elements=None,
     ):
-        """
-        Edges. It has vertices and edges. Also known as lines.
+        """Edges. It has vertices and edges. Also known as lines.
 
         Parameters
         -----------
@@ -44,8 +43,7 @@ class Edges(Vertices):
 
     @property
     def edges(self):
-        """
-        Returns edges. If edges is not its original property
+        """Returns edges. If edges is not its original property.
 
         Parameters
         -----------
@@ -60,8 +58,7 @@ class Edges(Vertices):
 
     @edges.setter
     def edges(self, es):
-        """
-        Edges setter. Similar to vertices, this is a tracked array.
+        """Edges setter. Similar to vertices, this is a tracked array.
 
         Parameters
         -----------
@@ -84,8 +81,7 @@ class Edges(Vertices):
 
     @property
     def const_edges(self):
-        """
-        Returns non-writeable version of edges.
+        """Returns non-writeable version of edges.
 
         Parameters
         -----------
@@ -99,8 +95,7 @@ class Edges(Vertices):
 
     @property
     def whatami(self):
-        """
-        whatami?
+        """whatami?
 
         Parameters
         -----------
@@ -114,8 +109,7 @@ class Edges(Vertices):
 
     @helpers.data.ComputedMeshData.depends_on(["elements"])
     def sorted_edges(self):
-        """
-        Sort edges along axis=1.
+        """Sort edges along axis=1.
 
         Parameters
         -----------
@@ -131,10 +125,8 @@ class Edges(Vertices):
 
     @helpers.data.ComputedMeshData.depends_on(["elements"])
     def unique_edges(self):
-        """
-        Returns a named tuple of unique edge info.
-        Info includes unique values, ids of unique edges, inverse ids,
-        count of each unique values. 
+        """Returns a named tuple of unique edge info. Info includes unique
+        values, ids of unique edges, inverse ids, count of each unique values.
 
         Parameters
         -----------
@@ -158,8 +150,7 @@ class Edges(Vertices):
 
     @helpers.data.ComputedMeshData.depends_on(["elements"])
     def single_edges(self):
-        """
-        Returns indices of very unique edges: edges that appear only once.
+        """Returns indices of very unique edges: edges that appear only once.
         For well constructed faces, this can be considered as outlines.
 
         Parameters
@@ -176,13 +167,9 @@ class Edges(Vertices):
 
     @property
     def elements(self):
-        """
-        Returns current connectivity. A short cut in FE friendly term.
-        Elements mean different things for different classes:
-          Vertices -> vertices
-          Edges -> edges
-          Faces -> faces
-          Volumes -> volumes
+        """Returns current connectivity. A short cut in FE friendly term.
+        Elements mean different things for different classes: Vertices ->
+        vertices Edges -> edges Faces -> faces Volumes -> volumes.
 
         Parameters
         -----------
@@ -200,13 +187,9 @@ class Edges(Vertices):
 
     @elements.setter
     def elements(self, elems):
-        """
-        Calls corresponding connectivity setter.
-        A short cut in FEM friendly term.
-          Vertices -> vertices
-          Edges -> edges
-          Faces -> faces
-          Volumes -> volumes
+        """Calls corresponding connectivity setter. A short cut in FEM friendly
+        term. Vertices -> vertices Edges -> edges Faces -> faces Volumes ->
+        volumes.
 
         Parameters
         -----------
@@ -223,8 +206,7 @@ class Edges(Vertices):
 
     @property
     def const_elements(self):
-        """
-        Returns non-mutable version of elements
+        """Returns non-mutable version of elements.
 
         Parameters
         -----------
@@ -239,8 +221,7 @@ class Edges(Vertices):
 
     @helpers.data.ComputedMeshData.depends_on(["vertices", "elements"])
     def centers(self):
-        """
-        Center of elements.
+        """Center of elements.
 
         Parameters
         -----------
@@ -256,8 +237,7 @@ class Edges(Vertices):
 
     @helpers.data.ComputedMeshData.depends_on(["vertices", "elements"])
     def referenced_vertices(self, ):
-        """
-        Returns mask of referenced vertices.
+        """Returns mask of referenced vertices.
 
         Parameters
         -----------
@@ -273,9 +253,8 @@ class Edges(Vertices):
         return referenced
 
     def remove_unreferenced_vertices(self):
-        """
-        Remove unreferenced vertices.
-        Adapted from `github.com/mikedh/trimesh`
+        """Remove unreferenced vertices. Adapted from
+        `github.com/mikedh/trimesh`
 
         Parameters
         -----------
@@ -296,8 +275,7 @@ class Edges(Vertices):
         )
 
     def update_elements(self, mask):
-        """
-        Similar to update_vertices, but for elements.
+        """Similar to update_vertices, but for elements.
 
         Parameters
         -----------
@@ -312,16 +290,12 @@ class Edges(Vertices):
         return self.elements.remove_unreferenced_vertices()
 
     def update_edges(self, *args, **kwargs):
-        """
-        Alias to update_elements.
-        """
+        """Alias to update_elements."""
         return self.update_elements(*args, **kwargs)
 
     def dashed(self, spacing=None):
-        """
-        Turn edges into dashed edges(=lines).
-        Given spacing, it will try to chop edges as close to it as possible.
-        Pattern should look:
+        """Turn edges into dashed edges(=lines). Given spacing, it will try to
+        chop edges as close to it as possible. Pattern should look:
 
         ``dashed edges``
 
@@ -374,8 +348,7 @@ class Edges(Vertices):
         return Edges(vertices=new_vs, edges=new_es)
 
     def shrink(self, ratio=.8, map_vertexdata=True):
-        """
-        Returns shrunk elements.
+        """Returns shrunk elements.
 
         Parameters
         -----------
@@ -415,8 +388,7 @@ class Edges(Vertices):
         return s_elements
 
     def tovertices(self):
-        """
-        Returns Vertices obj.
+        """Returns Vertices obj.
 
         Parameters
         -----------
@@ -429,8 +401,7 @@ class Edges(Vertices):
         return Vertices(self.vertices)
 
     def _get_attr(self, attr):
-        """
-        Internal function to get attribute that maybe property or callable.
+        """Internal function to get attribute that maybe property or callable.
         Some properties are replaced by callable in subclasses as it may depend
         on other properties of subclass.
 

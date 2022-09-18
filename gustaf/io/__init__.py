@@ -1,5 +1,4 @@
-"""
-gustaf/gustaf/io/__init__.py
+"""gustaf/gustaf/io/__init__.py.
 
 io.
 I - `load`.

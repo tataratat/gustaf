@@ -1,8 +1,9 @@
-"""gustaf/spline/__init__.py
+"""gustaf/spline/__init__.py.
 
-Interface for `splinepy` library and additional operations.
-Everything related to `splinepy` is here, which includes its load function.
-However, since create.spline does not rely on `splinepy`, it is not here.
+Interface for `splinepy` library and additional operations. Everything
+related to `splinepy` is here, which includes its load function.
+However, since create.spline does not rely on `splinepy`, it is not
+here.
 """
 
 from gustaf.spline import base

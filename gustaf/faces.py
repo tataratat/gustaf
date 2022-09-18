@@ -1,5 +1,4 @@
-"""gustaf/gustaf/faces.py
-"""
+"""gustaf/gustaf/faces.py."""
 import numpy as np
 
 from gustaf import settings
@@ -40,8 +39,7 @@ class Faces(Edges):
             faces=None,
             elements=None,
     ):
-        """
-        Faces. It has vertices and faces. Faces could be triangles or
+        """Faces. It has vertices and faces. Faces could be triangles or
         quadrilaterals.
 
         Parameters
@@ -60,9 +58,7 @@ class Faces(Edges):
 
     @helpers.data.ComputedMeshData.depends_on(["elements"])
     def edges(self):
-        """
-        Edges from here aren't main property.
-        So this needs to be computed.
+        """Edges from here aren't main property. So this needs to be computed.
 
         Parameters
         -----------
@@ -79,8 +75,7 @@ class Faces(Edges):
 
     @property
     def whatami(self, ):
-        """
-        Determines whatami.
+        """Determines whatami.
 
         Parameters
         -----------
@@ -94,8 +89,8 @@ class Faces(Edges):
 
     @classmethod
     def whatisthis(cls, face_obj):
-        """
-        classmethod that tells you if the Faces is tri or quad or invalid kind.
+        """classmethod that tells you if the Faces is tri or quad or invalid
+        kind.
 
         Parameters
         -----------
@@ -122,8 +117,7 @@ class Faces(Edges):
 
     @property
     def faces(self, ):
-        """
-        Returns faces.
+        """Returns faces.
 
         Parameters
         -----------
@@ -138,8 +132,7 @@ class Faces(Edges):
 
     @faces.setter
     def faces(self, fs):
-        """
-        Faces setter. Similar to veritces, this will be a tracked array
+        """Faces setter. Similar to veritces, this will be a tracked array.
 
         Parameters
         -----------
@@ -169,8 +162,7 @@ class Faces(Edges):
 
     @property
     def const_faces(self):
-        """
-        Returns non-writeable view of faces
+        """Returns non-writeable view of faces.
 
         Parameters
         -----------
@@ -184,8 +176,7 @@ class Faces(Edges):
 
     @helpers.data.ComputedMeshData.depends_on(["elements"])
     def sorted_faces(self):
-        """
-        Similar to edges_sorted but for faces.
+        """Similar to edges_sorted but for faces.
 
         Parameters
         -----------
@@ -201,9 +192,7 @@ class Faces(Edges):
 
     @helpers.data.ComputedMeshData.depends_on(["elements"])
     def unique_faces(self):
-        """
-        Returns a namedtuple of unique faces info.
-        Similar to unique_edges
+        """Returns a namedtuple of unique faces info. Similar to unique_edges.
 
         Parameters
         -----------
@@ -226,8 +215,7 @@ class Faces(Edges):
 
     @helpers.data.ComputedMeshData.depends_on(["elements"])
     def single_faces(self):
-        """
-        Returns indices of very unique faces: faces that appear only once.
+        """Returns indices of very unique faces: faces that appear only once.
         For well constructed volumes, this can be considered as surfaces.
 
         Parameters
@@ -243,14 +231,11 @@ class Faces(Edges):
         return unique_info.ids[unique_info.counts == 1]
 
     def update_faces(self, *args, **kwargs):
-        """
-        Alias to update_elements.
-        """
+        """Alias to update_elements."""
         self.update_elements(*args, **kwargs)
 
     def toedges(self, unique=True):
-        """
-        Returns Edges obj.
+        """Returns Edges obj.
 
         Parameters
         -----------

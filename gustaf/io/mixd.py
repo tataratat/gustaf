@@ -1,4 +1,4 @@
-"""gustaf/gustaf/io/mfem.py
+"""gustaf/gustaf/io/mfem.py.
 
 io functions for mixd.
 """
@@ -23,11 +23,9 @@ def load(
         mien=None,
         mrng=None
 ):
-    """
-    mixd load.
-    To avoid reading minf, all the crucial info can be given as params.
-    Default input will try to import `mxyz`, `mien`, `mrng` from current
-    location and assumes mesh is 2D triangle.
+    """mixd load. To avoid reading minf, all the crucial info can be given as
+    params. Default input will try to import `mxyz`, `mien`, `mrng` from
+    current location and assumes mesh is 2D triangle.
 
     Parameters
     -----------
@@ -113,10 +111,8 @@ def load(
 
 
 def export(mesh, fname, space_time=False):
-    """
-    Export in mixd format.
-    Supports triangle, quadrilateral, tetrahedron, and hexahedron
-    semi-discrete and (flat) space-time mesh output.
+    """Export in mixd format. Supports triangle, quadrilateral, tetrahedron,
+    and hexahedron semi-discrete and (flat) space-time mesh output.
 
     Parameters
     -----------

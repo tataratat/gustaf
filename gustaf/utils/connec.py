@@ -1,8 +1,8 @@
-"""gustaf/gustaf/utils/connec.py
+"""gustaf/gustaf/utils/connec.py.
 
-Useful functions for connectivity operation. Ranging from edges to volumes.
-Named connec because connectivity is too long. Would have been even cooler,
-if it was palindrome.
+Useful functions for connectivity operation. Ranging from edges to
+volumes. Named connec because connectivity is too long. Would have been
+even cooler, if it was palindrome.
 """
 
 import numpy as np
@@ -13,8 +13,7 @@ from gustaf.utils import arr
 
 
 def tet_to_tri(volumes):
-    """
-    Computes tri faces based on following index scheme.
+    """Computes tri faces based on following index scheme.
 
     ``Tetrahedron``
 
@@ -23,12 +22,12 @@ def tet_to_tri(volumes):
         Ref: (node_ind), face_ind
 
                  (0)
-                 /\ 
-                / 1\ 
+                 /\
+                / 1\
             (1)/____\(3)
-              /\    /\ 
-             / 0\ 2/ 3\ 
-            /____\/____\ 
+              /\    /\
+             / 0\ 2/ 3\
+            /____\/____\
           (0)   (2)    (0)
 
         face_ind | node_ind
@@ -69,8 +68,7 @@ def tet_to_tri(volumes):
 
 
 def hexa_to_quad(volumes):
-    """
-    Computes quad faces based on following index scheme.
+    """Computes quad faces based on following index scheme.
 
     ``Hexahedron``
 
@@ -131,8 +129,7 @@ def hexa_to_quad(volumes):
 
 
 def volumes_to_faces(volumes):
-    """
-    Guidance function for `tet_to_tri` and `hexa_to_quad`.
+    """Guidance function for `tet_to_tri` and `hexa_to_quad`.
 
     Parameters
     -----------
@@ -151,17 +148,16 @@ def volumes_to_faces(volumes):
 
 
 def faces_to_edges(faces):
-    """
-    Compute edges based on following edge scheme.
+    """Compute edges based on following edge scheme.
 
     .. code-block::
 
         Ref: (node_ind), edge_ind
 
              (0)
-             /\ 
+             /\
           0 /  \ 2
-           /____\ 
+           /____\
         (1)  1   (2)
 
               2
@@ -179,7 +175,7 @@ def faces_to_edges(faces):
 
     Returns
     --------
-    edges: (n * 3, 2) or (n * 4, 2) np.ndarray 
+    edges: (n * 3, 2) or (n * 4, 2) np.ndarray
     """
     num_faces = faces.shape[0]
     vertices_per_face = faces.shape[1]
@@ -205,11 +201,9 @@ def faces_to_edges(faces):
 
 
 def range_to_edges(range_, closed=False):
-    """
-    Given range, for example (a, b), returns an edge sequence that
+    """Given range, for example (a, b), returns an edge sequence that
     sequentially connects indices. If int is given as range, it is considered
-    as (0, value).
-    Used to be called "closed/open_loop_index_train".
+    as (0, value). Used to be called "closed/open_loop_index_train".
 
     Parameters
     -----------
@@ -240,8 +234,7 @@ def range_to_edges(range_, closed=False):
 
 
 def sequence_to_edges(seq, closed=False):
-    """
-    Given a sequence of int, "connect" to turn them into edges.
+    """Given a sequence of int, "connect" to turn them into edges.
 
     Parameters
     -----------
@@ -261,10 +254,8 @@ def sequence_to_edges(seq, closed=False):
 
 
 def make_quad_faces(resolutions):
-    """
-    Given number of nodes per each dimension, returns connectivity information 
-    of a structured mesh.
-    Counter clock wise connectivity.
+    """Given number of nodes per each dimension, returns connectivity
+    information of a structured mesh. Counter clock wise connectivity.
 
     (3)*------*(2)
        |      |
@@ -297,10 +288,9 @@ def make_quad_faces(resolutions):
 
 
 def make_hexa_volumes(resolutions):
-    """
-    Given number of nodes per each dimension, returns connectivity information 
-    of structured hexahedron elements.
-    Counter clock wise connectivity.
+    """Given number of nodes per each dimension, returns connectivity
+    information of structured hexahedron elements. Counter clock wise
+    connectivity.
 
        (7)*-------*(6)
          /|      /|
@@ -349,8 +339,7 @@ def make_hexa_volumes(resolutions):
 
 
 def subdivide_edges(edges):
-    """
-    Subdivide edges. We assume that mid point is newly added points.
+    """Subdivide edges. We assume that mid point is newly added points.
 
     ``Subdivided Edges``
 
@@ -388,8 +377,7 @@ def subdivide_tri(
         mesh,
         return_dict=False,
 ):
-    """
-    Subdivide triangles. Each triangle is divided into 4 meshes.
+    """Subdivide triangles. Each triangle is divided into 4 meshes.
 
     ``Subdivided Faces``
 
@@ -473,8 +461,7 @@ def subdivide_quad(
         mesh,
         return_dict=False,
 ):
-    """
-    Subdivide quads.
+    """Subdivide quads.
 
     Parameters
     -----------
@@ -529,9 +516,8 @@ def subdivide_quad(
 
 
 def sorted_unique(connectivity, sorted_=False):
-    """
-    Given connectivity array, finds unique entries, based on its axis=1 sorted
-    values. Returned value will be sorted.
+    """Given connectivity array, finds unique entries, based on its axis=1
+    sorted values. Returned value will be sorted.
 
     Parameters
     -----------

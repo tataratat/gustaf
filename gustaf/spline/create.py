@@ -1,4 +1,4 @@
-"""gustaf/spline/create.py
+"""gustaf/spline/create.py.
 
 Create operations for spline geometries
 """
@@ -13,8 +13,7 @@ from gustaf import settings
 
 
 def extruded(spline, extrusion_vector=None):
-    """
-    Extrudes Splines
+    """Extrudes Splines.
 
     Parameters
     ----------
@@ -85,8 +84,7 @@ def revolved(
         n_knot_spans=None,
         degree=True
 ):
-    """
-    Revolve spline around an axis and extend its parametric dimension
+    """Revolve spline around an axis and extend its parametric dimension.
 
     Parameters
     ----------
@@ -104,7 +102,7 @@ def revolved(
 
     Returns
     -------
-    spline : GustafSpline         
+    spline : GustafSpline
     """
     from gustaf.spline.base import GustafSpline
 
@@ -256,8 +254,7 @@ def revolved(
 
 
 class _Creator:
-    """
-    Helper class to build new splines from existing geometries
+    """Helper class to build new splines from existing geometries.
 
     Examples
     ---------

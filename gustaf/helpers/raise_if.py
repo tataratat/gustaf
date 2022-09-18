@@ -1,13 +1,13 @@
-"""gustaf/gustaf/helpers/raise_if.py
+"""gustaf/gustaf/helpers/raise_if.py.
 
-Collection of wrapper functions/classes that raises Error with certain behavior
+Collection of wrapper functions/classes that raises Error with certain
+behavior
 """
 
 
 def invalid_inherited_attr(func, qualname, property_=False):
-    """
-    Returns a function that would behave the same as given function,
-    but would raise AttributeError. This needs to be defined in class level.
+    """Returns a function that would behave the same as given function, but
+    would raise AttributeError. This needs to be defined in class level.
 
     Parameters
     -----------

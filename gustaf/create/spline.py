@@ -1,4 +1,4 @@
-"""gustaf/create/spline.py
+"""gustaf/create/spline.py.
 
 Frequently used spline shapes generation.
 """
@@ -17,11 +17,9 @@ def with_bounds(
         num_unique_knots=None,
         nurbs=False,
 ):
-    """
-    Creates spline with given parametric bounds, physical bounds, degrees,
-    num_unique_knots.
-    Physical bounds can have less or equal number of dimension as parametric
-    bounds. (Greater is not supported)
+    """Creates spline with given parametric bounds, physical bounds, degrees,
+    num_unique_knots. Physical bounds can have less or equal number of
+    dimension as parametric bounds. (Greater is not supported)
 
     Parameters
     -----------
@@ -37,7 +35,7 @@ def with_bounds(
     Returns
     --------
     spline: BSpline or NURBS
-      If `spline` is not availabe, will return dict of corresponding 
+      If `spline` is not availabe, will return dict of corresponding
     """
     ## First, prepare for degree 1 spline.
     # KV
@@ -104,9 +102,8 @@ def with_parametric_bounds(
         num_unique_knots=None,
         nurbs=False,
 ):
-    """
-    Similar to with_bounds.
-    Creates spline that has same parametric and physical bounds.
+    """Similar to with_bounds. Creates spline that has same parametric and
+    physical bounds.
 
     Parameters
     -----------
@@ -121,7 +118,7 @@ def with_parametric_bounds(
     Returns
     --------
     spline: BSpline or NURBS
-      If `spline` is not availabe, will return dict of corresponding 
+      If `spline` is not availabe, will return dict of corresponding
     """
     return with_bounds(
             parametric_bounds=parametric_bounds,
@@ -138,9 +135,8 @@ def with_physical_bounds(
         num_unique_knots=None,
         nurbs=None,
 ):
-    """
-    Similar to with_bounds.
-    Creates spline that has same [0, 1]^3 parametric bounds.
+    """Similar to with_bounds. Creates spline that has same [0, 1]^3 parametric
+    bounds.
 
     Parameters
     -----------
@@ -155,7 +151,7 @@ def with_physical_bounds(
     Returns
     --------
     spline: BSpline or NURBS
-      If `spline` is not availabe, will return dict of corresponding 
+      If `spline` is not availabe, will return dict of corresponding
     """
     dim = len(physical_bounds[0])
 
@@ -171,11 +167,9 @@ def with_physical_bounds(
 
 
 def parametric_view(spline):
-    """
-    Create parametric view of given spline.
-    Previously called `naive_spline()`.
-    Degrees are always 1 and knot multiplicity is not preserved.
-    Returns BSpline, as BSpline and NURBS should look the same
+    """Create parametric view of given spline. Previously called
+    `naive_spline()`. Degrees are always 1 and knot multiplicity is not
+    preserved. Returns BSpline, as BSpline and NURBS should look the same.
 
     Parameters
     -----------
@@ -204,10 +198,8 @@ def with_dimension(
         physical_dim,
         nurbs=False,
 ):
-    """
-    Creates zero to one bounded (both physical and parametric space) spline
-    based on given dimension.
-    """
+    """Creates zero to one bounded (both physical and parametric space) spline
+    based on given dimension."""
     kvs = [[0, 0, 1, 1] for _ in range(parametric_dim)]
     physical_bounds = [
             [0 for _ in range(physical_dim)],

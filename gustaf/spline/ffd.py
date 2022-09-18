@@ -1,5 +1,4 @@
-"""
-gustaf/gustaf/ffd.py
+"""gustaf/gustaf/ffd.py.
 
 Freeform Deformation!
 
@@ -110,8 +109,7 @@ class FFD(GustafBase):
 
     @mesh.setter
     def mesh(self, mesh: MESH_TYPES):
-        """
-        Sets mesh. If it is first time, the copy of it will be saved as
+        """Sets mesh. If it is first time, the copy of it will be saved as
         original mesh. If spline is already defined and in transformed status,
         it applies transformation directly.
 
@@ -157,9 +155,8 @@ class FFD(GustafBase):
 
     @property
     def spline(self):
-        """
-        Returns a copy of the spline. Please use the setter to explicitly make
-        changes to the spline.
+        """Returns a copy of the spline. Please use the setter to explicitly
+        make changes to the spline.
 
         Parameters
         -----------
@@ -174,8 +171,7 @@ class FFD(GustafBase):
 
     @spline.setter
     def spline(self, spline: SPLINE_TYPES):
-        """
-        Sets spline. The spline parametric range bounds will be converted
+        """Sets spline. The spline parametric range bounds will be converted
         into the bounds [0,1]^para_dim.
 
         Parameters
@@ -200,10 +196,8 @@ class FFD(GustafBase):
         self._is_calculated = False
 
     def _scale_mesh_vertices(self):
-        """
-        Scales the mesh vertices into the dimension of a hypercube and save
-        them in self._q_vertices.
-        """
+        """Scales the mesh vertices into the dimension of a hypercube and save
+        them in self._q_vertices."""
         self._logd("Fitting mesh into spline's parametric space.")
 
         self._q_vertices = self._mesh.vertices.copy()
@@ -223,8 +217,7 @@ class FFD(GustafBase):
         self._logd("Successfully scaled and transformed mesh vertices!")
 
     def _deform(self):
-        """
-        Deforms mesh if spline or mesh changes were detected since last
+        """Deforms mesh if spline or mesh changes were detected since last
         calculation. Meant for internal use.
 
         Parameters
@@ -254,8 +247,7 @@ class FFD(GustafBase):
 
     @property
     def control_points(self):
-        """
-        Returns current spline's control points. The control points can be
+        """Returns current spline's control points. The control points can be
         directly updated with this. Please use carefully! After calling this
         'self._is_calculated' is not trackable anymore so deformation
         calculation is performed every time.
@@ -271,8 +263,7 @@ class FFD(GustafBase):
     def control_points(
             self, control_points: Union[List[List[float]], np.ndarray]
     ):
-        """
-        Sets control points and deforms mesh.
+        """Sets control points and deforms mesh.
 
         Parameters
         -----------
@@ -292,8 +283,7 @@ class FFD(GustafBase):
         self._is_calculated_trackable = True
 
     def elevate_degree(self, *args, **kwargs):
-        """
-        Wrapper for Spline.elevate_degree
+        """Wrapper for Spline.elevate_degree.
 
         Parameters
         -----------
@@ -307,8 +297,7 @@ class FFD(GustafBase):
         self._spline.elevate_degree(*args, **kwargs)
 
     def insert_knots(self, parametric_dimension, knots):
-        """
-        Wrapper for Spline.insert_knots
+        """Wrapper for Spline.insert_knots.
 
         Parameters
         -----------
@@ -332,8 +321,7 @@ class FFD(GustafBase):
         self._spline.insert_knots(parametric_dimension, knots)
 
     def remove_knots(self, parametric_dimension, knots, tolerance=1e-8):
-        """
-        Wrapper for Spline.remove_knots
+        """Wrapper for Spline.remove_knots.
 
         Parameters
         -----------
@@ -360,8 +348,7 @@ class FFD(GustafBase):
         self._is_calculated = False
 
     def reduce_degree(self, *args, **kwargs):
-        """
-        Wrapper for Spline.reduce_degree
+        """Wrapper for Spline.reduce_degree.
 
         Parameters
         -----------
@@ -376,8 +363,7 @@ class FFD(GustafBase):
         self._is_calculated = False
 
     def show(self, **kwargs) -> Any:
-        """
-        Visualize. Shows the deformed mesh and the current spline. Currently
+        """Visualize. Shows the deformed mesh and the current spline. Currently
         visualization is limited to vedo.
 
         Parameters
@@ -503,11 +489,10 @@ class FFD(GustafBase):
         )
 
     def showable(self, **kwargs):
-        """
-        Returns a dictionary of showable items to describe the FFD at the
+        """Returns a dictionary of showable items to describe the FFD at the
         current state.
 
-        See show() for more information. This function redirects to it directly
-        with the return_showable keyword set to True.
+        See show() for more information. This function redirects to it
+        directly with the return_showable keyword set to True.
         """
         return self.show(return_showable=True, **kwargs)

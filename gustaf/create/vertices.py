@@ -1,4 +1,4 @@
-"""gustaf/create/vertices.py
+"""gustaf/create/vertices.py.
 
 Routines to create vertices.
 """
@@ -12,8 +12,7 @@ def raster(
         bounds,
         resolutions,
 ):
-    """
-    Simple wraper of np.mgrid to extract raster points of desired bounds and
+    """Simple wraper of np.mgrid to extract raster points of desired bounds and
     resolutions.
 
     Parameters

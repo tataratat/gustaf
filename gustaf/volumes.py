@@ -1,5 +1,4 @@
-"""gustaf/gustaf/volumes.py
-"""
+"""gustaf/gustaf/volumes.py."""
 
 import numpy as np
 
@@ -35,9 +34,8 @@ class Volumes(Faces):
             volumes=None,
             elements=None,
     ):
-        """
-        Volumes. It has vertices and volumes. Volumes could be tetrahedrons or
-        hexahedrons.
+        """Volumes. It has vertices and volumes. Volumes could be tetrahedrons
+        or hexahedrons.
 
         Parameters
         -----------
@@ -52,9 +50,7 @@ class Volumes(Faces):
 
     @helpers.data.ComputedMeshData.depends_on(["elements"])
     def faces(self):
-        """
-        Faces here aren't main property.
-        So this needs to be computed
+        """Faces here aren't main property. So this needs to be computed.
 
         Parameters
         -----------
@@ -75,9 +71,8 @@ class Volumes(Faces):
 
     @classmethod
     def whatisthis(cls, volume_obj):
-        """
-        overwrites Faces.whatisthis to tell you is this volume is
-        tet or hexa.
+        """overwrites Faces.whatisthis to tell you is this volume is tet or
+        hexa.
 
         Parameters
         -----------
@@ -104,8 +99,7 @@ class Volumes(Faces):
 
     @property
     def volumes(self):
-        """
-        Returns volumes.
+        """Returns volumes.
 
         Parameters
         -----------
@@ -119,8 +113,7 @@ class Volumes(Faces):
 
     @volumes.setter
     def volumes(self, vols):
-        """
-        volumes setter. Similar to vertices, this will be a tracked array.
+        """volumes setter. Similar to vertices, this will be a tracked array.
 
         Parameters
         -----------
@@ -147,8 +140,7 @@ class Volumes(Faces):
 
     @property
     def const_volumes(self):
-        """
-        Returns non-writeable view of volumes
+        """Returns non-writeable view of volumes.
 
         Parameters
         -----------
@@ -162,8 +154,7 @@ class Volumes(Faces):
 
     @helpers.data.ComputedMeshData.depends_on(["elements"])
     def sorted_volumes(self):
-        """
-        Sort volumes along axis=1.
+        """Sort volumes along axis=1.
 
         Parameters
         -----------
@@ -179,9 +170,8 @@ class Volumes(Faces):
 
     @helpers.data.ComputedMeshData.depends_on(["eleemnts"])
     def unique_volumes(self):
-        """
-        Returns a namedtuple of unique volumes info.
-        Similar to unique_edges
+        """Returns a namedtuple of unique volumes info. Similar to
+        unique_edges.
 
         Parameters
         -----------
@@ -204,14 +194,11 @@ class Volumes(Faces):
         return unique_info
 
     def update_volumes(self, *args, **kwargs):
-        """
-        Alias to update_elements.
-        """
+        """Alias to update_elements."""
         self.update_elements(*args, **kwargs)
 
     def tofaces(self, unique=True):
-        """
-        Returns Faces obj.
+        """Returns Faces obj.
 
         Parameters
         -----------

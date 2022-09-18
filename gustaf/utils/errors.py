@@ -1,12 +1,13 @@
-"""gustaf/gustaf/utils/errors.py
+"""gustaf/gustaf/utils/errors.py.
 
 States all custom errors for gustaf.
 """
 
 
 class InvalidSetterCallError(Exception):
-    """
-    Raised when setter is called, but it is inappropriate to call the setter.
+    """Raised when setter is called, but it is inappropriate to call the
+    setter.
+
     Probably because there are enough properties set, that setting more
     properties will result in undefined behavior.
     """

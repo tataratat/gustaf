@@ -1,4 +1,4 @@
-"""gustaf/gustaf/version.py
+"""gustaf/gustaf/version.py.
 
 Current version.
 """
