@@ -1,7 +1,8 @@
 name: format check and runs tests
 
 on:
-  pull_request
+  pull_request:
+    branches: ["main"]
   push:
     branches: ["main"]
 
@@ -40,9 +41,9 @@ jobs:
 
     - name: check diff
       uses: mudlabs/simple-diff@v1.2.0
-      id: diff
       with:
         path: .
+      id: diff
       - run: exit 1
         if: steps.diff.outputs.modified == true
  
