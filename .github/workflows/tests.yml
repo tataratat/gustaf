@@ -39,30 +39,9 @@ jobs:
         autopep8 --select=W291,W292,W293,W504,E265,E501,E711,E722 -r -i --aggressive examples
         autopep8 --select=W291,W292,W293,W504,E265,E501,E711,E722 -r -i --aggressive tests
 
-    # can't take . as path input, so do it 3 times
-    - name: check diff gustaf
-      uses: mudlabs/simple-diff@v1.2.0
+    - uses: getsentry/action-git-diff-suggestions@main
       with:
-        path: gustaf
-      id: diff
-    - run: exit 1
-      if: steps.diff.outputs.modified == true
-
-    - name: check diff examples
-      uses: mudlabs/simple-diff@v1.2.0
-      with:
-        path: examples
-    - run: exit 1
-      if: steps.diff.outputs.modified == true
-
-    - name: check diff tests
-      uses: mudlabs/simple-diff@v1.2.0
-      with:
-        path: test
-    - run: exit 1
-      if: steps.diff.outputs.modified == true
-
-
+        message: formatting suggestions
  
     - name: install gustaf
       run: python3 setup.py install
