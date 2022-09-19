@@ -68,7 +68,6 @@ if __name__ == "__main__":
                 control_points.append([i * 0.5, j * 0.5, k * 0.5])
 
     # change a control point so that there is a deformation
-    # control_points[16] = [0.5, .75, .5]
     control_points[22] = [1.5, .5, .5]
     control_points[2] = [0.25, .25, .75]
 
@@ -117,11 +116,13 @@ if __name__ == "__main__":
 
     # Only provide mesh after initialization
     # does same as above
-    #ffd_with_out_spline_and_mesh = gus.FFD()
-    #ffd_with_out_spline_and_mesh.mesh = volume_3d
-    #ffd_with_out_spline_and_mesh.show(title="Spline without defined spline."
-    #                                  " Projected into dimension of the given "
-    #                                  "mesh.")
+    ffd_with_out_spline_and_mesh = gus.FFD()
+    ffd_with_out_spline_and_mesh.mesh = volume_3d
+    ffd_with_out_spline_and_mesh.show(
+            title="Spline without defined spline."
+            " Projected into dimension of the given "
+            "mesh."
+    )
 
     # Only provide spline and then mesh after initialization
     ffd_with_out_mesh = gus.FFD()

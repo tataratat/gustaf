@@ -2,7 +2,7 @@ import gustaf as gus
 import numpy as np
 try:
     from . import common as c
-except:
+except BaseException:
     import common as c
 
 
@@ -15,22 +15,22 @@ class CreatorTest(c.unittest.TestCase):
         """
         # make a couple of 2D splines
         bspline = gus.BSpline(
-                control_points=c.CTPS_2D,
+                control_points=c.CPS_2D,
                 degrees=c.DEGREES_2D_NU,
-                knot_vectors=c.KV_2D
+                knot_vectors=c.KVS_2D
         )
         nurbs = gus.NURBS(
-                control_points=c.CTPS_2D,
+                control_points=c.CPS_2D,
                 degrees=c.DEGREES_2D_NU,
-                knot_vectors=c.KV_2D,
+                knot_vectors=c.KVS_2D,
                 weights=c.WEIGHTS_2D
         )
         bezier = gus.Bezier(
-                control_points=c.CTPS_2D,
+                control_points=c.CPS_2D,
                 degrees=c.DEGREES_2D_U,
         )
         rationalbezier = gus.RationalBezier(
-                control_points=c.CTPS_2D,
+                control_points=c.CPS_2D,
                 degrees=c.DEGREES_2D_U,
                 weights=c.WEIGHTS_2D
         )
@@ -54,7 +54,7 @@ class CreatorTest(c.unittest.TestCase):
             self.assertTrue(
                     np.allclose(
                             bspline.create.extruded(extrusion_vector=axis
-                                                   ).evaluate([[x, y, z]]),
+                                                    ).evaluate([[x, y, z]]),
                             np.hstack(
                                     (
                                             bspline.evaluate([[x, y]]),
@@ -73,7 +73,7 @@ class CreatorTest(c.unittest.TestCase):
             self.assertTrue(
                     np.allclose(
                             spline_g.create.extruded(extrusion_vector=axis
-                                                    ).evaluate([[x, y, z]]),
+                                                     ).evaluate([[x, y, z]]),
                             np.hstack(
                                     (
                                             spline_g.evaluate([[x, y]]),
@@ -90,22 +90,22 @@ class CreatorTest(c.unittest.TestCase):
         """
         # make a couple of 2D splines
         bspline = gus.BSpline(
-                control_points=c.CTPS_2D,
+                control_points=c.CPS_2D,
                 degrees=c.DEGREES_2D_NU,
-                knot_vectors=c.KV_2D
+                knot_vectors=c.KVS_2D
         )
         nurbs = gus.NURBS(
-                control_points=c.CTPS_2D,
+                control_points=c.CPS_2D,
                 degrees=c.DEGREES_2D_NU,
-                knot_vectors=c.KV_2D,
+                knot_vectors=c.KVS_2D,
                 weights=c.WEIGHTS_2D
         )
         bezier = gus.Bezier(
-                control_points=c.CTPS_2D,
+                control_points=c.CPS_2D,
                 degrees=c.DEGREES_2D_U,
         )
         rationalbezier = gus.RationalBezier(
-                control_points=c.CTPS_2D,
+                control_points=c.CPS_2D,
                 degrees=c.DEGREES_2D_U,
                 weights=c.WEIGHTS_2D
         )

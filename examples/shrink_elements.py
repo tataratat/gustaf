@@ -1,5 +1,4 @@
 import gustaf as gus
-import numpy as np
 
 if __name__ == "__main__":
     # create 2x3x4 test hexa element
@@ -11,8 +10,6 @@ if __name__ == "__main__":
     v = gus.Volumes(vertices.vertices, connec)
 
     try:
-        import vedo  # if nothing's raised, following should be usable
-
         # v shrink - f shrink - e shrink
         e = v.shrink().tofaces().shrink().toedges().shrink()
         e.vis_dict["arrows"] = True
@@ -42,7 +39,7 @@ if __name__ == "__main__":
                 ],
         )
 
-    except:
+    except BaseException:
         v.show()
         v.shrink().tofaces().show()
         v.shrink().tofaces().shrink().show()

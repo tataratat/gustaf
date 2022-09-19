@@ -5,7 +5,7 @@ if __name__ == "__main__":
     # turn on debug logs
     gus.utils.log.configure(debug=True)
 
-    ## curve
+    # curve
     # define degrees
     ds1 = [1]
 
@@ -28,7 +28,7 @@ if __name__ == "__main__":
     # show
     bspline1.show()
 
-    ## surface
+    # surface
     # define degrees
     ds2 = [2, 2]
 
@@ -66,7 +66,7 @@ if __name__ == "__main__":
     # show
     bspline2.show()
 
-    ## volume
+    # volume
     # define degrees
     ds3 = [1, 1, 1]
 
