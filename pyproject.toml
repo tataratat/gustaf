@@ -5,4 +5,4 @@ continuation_align_style = space
 split_before_arithmetic_operator = True
 continuation_indent_width = 8
 dedent_closing_brackets = true
-SPLIT_COMPLEX_COMPREHENSION = true
+split_complex_comprehension = true
