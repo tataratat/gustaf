@@ -32,12 +32,10 @@ jobs:
         flake8 tests
         # actually apply in place to check diff later.
         # yapf is great, but skips a few checks
-        yapf -r -i gustaf
-        yapf -r -i examples
-        yapf -r -i tests
-        autopep8 --select=W291,W292,W293,W504,E265,E501,E711,E722 -r -i --aggressive gustaf
-        autopep8 --select=W291,W292,W293,W504,E265,E501,E711,E722 -r -i --aggressive examples
-        autopep8 --select=W291,W292,W293,W504,E265,E501,E711,E722 -r -i --aggressive tests
+        yapf -r -i gustaf examples tests
+        autopep8 --select=W291,W292,W293,W504,E265,E501,E711,E722 -r -i --aggressive gustaf examples tests
+        # double check
+        flake8 gustaf examples tests
 
     - uses: getsentry/action-git-diff-suggestions@main
       with:
