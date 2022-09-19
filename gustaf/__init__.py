@@ -8,20 +8,22 @@ from gustaf import show
 from gustaf import utils
 from gustaf import create
 from gustaf import io
+from gustaf.vertices import Vertices
+from gustaf.edges import Edges
+from gustaf.faces import Faces
+from gustaf.volumes import Volumes
 
+has_spline = False
 try:
     from gustaf import spline
     from gustaf.spline.base import BSpline, NURBS, Bezier, RationalBezier
     from gustaf.spline.ffd import FFD
+    has_spline = True
 except ImportError:
     spline = "cannot import spline modules"
 
 # import try/catch for triangle and gustaf-tetgen
 
-from gustaf.vertices import Vertices
-from gustaf.edges import Edges
-from gustaf.faces import Faces
-from gustaf.volumes import Volumes
 
 __version__ = _version.version
 
@@ -36,13 +38,15 @@ __all__ = [
         "utils",
         "create",
         "io",
+        "Vertices",
+        "Edges",
+        "Faces",
+        "Volumes",
+        "spline",
+        "has_spline",
         "BSpline",
         "NURBS",
         "Bezier",
         "RationalBezier",
         "FFD",
-        "Vertices",
-        "Edges",
-        "Faces",
-        "Volumes",
 ]

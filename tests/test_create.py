@@ -13,6 +13,10 @@ class CreatorTest(c.unittest.TestCase):
         """
         Test extrusion for different input types and arguments
         """
+        if not gus.has_spline:
+            print("gustaf cannot load spline ext. skipping test.")
+            return None
+
         # make a couple of 2D splines
         bspline = gus.BSpline(
                 control_points=c.CPS_2D,
@@ -85,6 +89,10 @@ class CreatorTest(c.unittest.TestCase):
 
     # Test Revolution Routine
     def test_create_revolution(self):
+        if not gus.has_spline:
+            print("gustaf cannot load spline ext. skipping test.")
+            return None
+
         """
         Test revolution routines for different input types and arguments
         """
