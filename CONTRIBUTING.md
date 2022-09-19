@@ -24,12 +24,23 @@ gustaf implementations tries to follow [pep8](pep8.org)'s suggestion closely.
 
 ### Automatic formatting / style check
 gustaf uses combination of [yapf](https://github.com/google/yapf) and [autopep8](https://github.com/hhatto/autopep8) for automatic formatting. Then [flake8](https://github.com/pycqa/flake8) to double check everything.
-```
+```bash
 cd <gustaf-root>
 yapf -i -r gustaf examples tests 
 autopep8 --select=W291,W292,W293,W504,E265,E501,E711,E722 -r -i --aggressive gustaf examples tests
 flake8 gustaf examples tests
 ```
+
+## Local docs build
+To check if documentations look as intended, you can build it locally.
+Remember, `spline` extentions will be empty if you don't have `splinepy` available.
+```bash
+pip install -r ./docs/requirements.txt
+sphinx-apidoc -f -t docs/source/_templates -o docs/source gustaf
+sphinx-build -b html docs/source docs/build
+```
+Now, you can check documentations by opening `docs/build/index.html` with a browser.
+
 
 ## Pull request suggessions
 gustaf is a successor of gustav, which was an internal/experimental library.
