@@ -3,7 +3,7 @@ name: format check and runs tests
 on:
   pull_request
   push:
-    branched: ["main"]
+    branches: ["main"]
 
 jobs:
   build_and_tests:
