@@ -25,7 +25,7 @@ gustaf implementations tries to follow [pep8](pep8.org)'s suggestion closely. A 
 ### Formatter
 ```
 yapf -i -r gustaf
-autopep8 --select=W291,W292,W293,W504 -r -d gustaf
+autopep8 --select=W291,W292,W293,W504,E265,E501,E711,E722 -r -i --aggressive tests
 ```
 
 ## Pull request suggessions
