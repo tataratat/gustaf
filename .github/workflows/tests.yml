@@ -44,8 +44,8 @@ jobs:
       with:
         path: .
       id: diff
-      - run: exit 1
-        if: steps.diff.outputs.modified == true
+    - run: exit 1
+      if: steps.diff.outputs.modified == true
  
     - name: install gustaf
       run: python3 setup.py install
