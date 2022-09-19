@@ -52,7 +52,6 @@ jobs:
       uses: mudlabs/simple-diff@v1.2.0
       with:
         path: examples
-      id: diff
     - run: exit 1
       if: steps.diff.outputs.modified == true
 
@@ -60,7 +59,6 @@ jobs:
       uses: mudlabs/simple-diff@v1.2.0
       with:
         path: test
-      id: diff
     - run: exit 1
       if: steps.diff.outputs.modified == true
 
