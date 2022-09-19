@@ -24,7 +24,6 @@ except ImportError:
 
 # import try/catch for triangle and gustaf-tetgen
 
-
 __version__ = _version.version
 
 __all__ = [
