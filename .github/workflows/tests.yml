@@ -1,0 +1,55 @@
+name: format check and runs tests
+
+on:
+  pull_request
+  push:
+    branched: ["main"]
+
+jobs:
+  build_and_tests:
+
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        python-version: [3.8, 3.9]
+        os: [ubuntu-latest, macos-latest]
+
+    steps:
+    - uses: actions/checkout@v3
+      with:
+        submodules: recursive
+    - name: Set up  ${{ matrix.python-version }}
+      uses: actions/setup-python@v3
+      with:
+        python-version: ${{ matrix.python-version }}
+
+    - name: check formats
+      run: |
+        pip install flake8 autopep8 yapf
+        flake8 gustaf
+        flake8 examples
+        flake8 tests
+        # actually apply in place to check diff later.
+        # yapf is great, but skips a few checks
+        yapf -r -i gustaf
+        yapf -r -i examples
+        yapf -r -i tests
+        autopep8 --select=W291,W292,W293,W504,E265,E501,E711,E722 -r -i --aggressive gustaf
+        autopep8 --select=W291,W292,W293,W504,E265,E501,E711,E722 -r -i --aggressive examples
+        autopep8 --select=W291,W292,W293,W504,E265,E501,E711,E722 -r -i --aggressive tests
+
+    - name: check diff
+      uses: mudlabs/simple-diff@v1.2.0
+      id: diff
+      with:
+        path: .
+      - run: exit 1
+        if: steps.diff.outputs.modified == true
+ 
+    - name: install gustaf
+      run: python3 setup.py install
+
+    - name: prepare test and test
+      run: |
+        pip install pytest
+        pytest tests
