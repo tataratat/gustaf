@@ -20,7 +20,7 @@ class BasicCallsTest(c.unittest.TestCase):
         v.vertices = v.vertices
         v.const_vertices
         v.whatami
-        v.unique_vertices()
+        # v.unique_vertices()
         v.bounds()
         v.bounds_diagonal()
         v.bounds_diagonal_norm()
