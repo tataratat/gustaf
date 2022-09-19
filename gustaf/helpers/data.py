@@ -6,7 +6,6 @@ Helps helpee to manage data. Some useful data structures.
 import abc
 from functools import wraps
 from collections import namedtuple
-import sys
 
 import numpy as np
 
@@ -129,15 +128,15 @@ class TrackedArray(np.ndarray):
         self._set_modified()
         super(self.__class__, self).__setslice__(*args, **kwargs)
 
-    def __getslice__(self, *args, **kwrags):
+    def __getslice__(self, *args, **kwargs):
         self._set_modified()
         """
         return slices I am pretty sure np.ndarray does not have __*slice__
         """
         slices = super(self.__class__, self).__getitem__(*args, **kwargs)
-        if isinstance(item, np.ndarray):
-            item.flags.writeable = False
-        return item
+        if isinstance(slices, np.ndarray):
+            slices.flags.writeable = False
+        return slices
 
 
 def make_tracked_array(array, dtype=None, copy=True):

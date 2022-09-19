@@ -81,7 +81,6 @@ class FFD(GustafBase):
         self._spline: SPLINE_TYPES = None
         self._mesh: MESH_TYPES = None
         self._o_mesh: MESH_TYPES = None
-        self._o_edges: MESH_TYPES = None
         self._q_vertices: np.ndarray = None
         self._is_calculated: bool = False
         self._is_calculated_trackable: bool = True
@@ -416,24 +415,6 @@ class FFD(GustafBase):
             d_mesh = d_mesh.tofaces(unique=False)
             d_mesh.update_faces(d_mesh.single_faces())
 
-        # edges are too memory hungry
-        #
-        # prepare edges
-        #o_edges = None
-        #has_edges = False
-        # if self._o_edges is None:
-        #    if o_mesh.kind != "vertex":
-        #        self._o_edges = self._o_mesh.toedges(unique=True)
-        #        has_edges = True
-        #        o_edges = self._o_edges.copy()
-        # else:
-        #    has_edges = True
-        #    o_edges = self._o_edges.copy()
-
-        #d_edges = None
-        # if has_edges:
-        #    d_edges = d_mesh.toedges(unique=True)
-
         # update meshes
         things_to_show.update(original_mesh=o_mesh)
         things_to_show.update(original_description="Original Mesh")
@@ -442,10 +423,6 @@ class FFD(GustafBase):
 
         # update spline
         things_to_show.update(deformed_spline=self.spline)
-
-        # if has_edges:
-        # things_to_show.update(original_edges=o_edges)
-        # things_to_show.update(deformed_edges=d_edges)
 
         if return_discrete or not backend.startswith("vedo"):
             # spline is strictly not discrete.
