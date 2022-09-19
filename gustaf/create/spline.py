@@ -5,7 +5,6 @@ Frequently used spline shapes generation.
 
 import numpy as np
 
-from gustaf.settings import TOLERANCE
 from gustaf.create.vertices import raster
 from gustaf.spline.base import BSpline
 
@@ -42,7 +41,7 @@ def with_bounds(
     l_bound, u_bound = parametric_bounds
     assert len(l_bound) == len(u_bound),\
         "Length of lower and upper parametric_bounds aren't identical"
-    kvs = [[l, l, u, u] for l, u in zip(l_bound, u_bound)]
+    kvs = [[lb, lb, u, u] for lb, u in zip(l_bound, u_bound)]
 
     # CP
     pl_bound, pu_bound = physical_bounds
@@ -191,22 +190,3 @@ def parametric_view(spline):
         para_spline.insert_knots(i, kv[1:-1])
 
     return para_spline
-
-
-def with_dimension(
-        parametric_dim,
-        physical_dim,
-        nurbs=False,
-):
-    """Creates zero to one bounded (both physical and parametric space) spline
-    based on given dimension."""
-    kvs = [[0, 0, 1, 1] for _ in range(parametric_dim)]
-    physical_bounds = [
-            [0 for _ in range(physical_dim)],
-            [1 for _ in range(physical_dim)],
-    ]
-    resolutions = [2 for _ in range(parametric_dim)]
-    degrees = [1 for _ in range(parametric_dim)]
-
-    # Prepare cps
-    cps = raster(physical_bounds, resolutions)

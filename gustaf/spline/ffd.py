@@ -81,7 +81,7 @@ class FFD(GustafBase):
         self._spline: SPLINE_TYPES = None
         self._mesh: MESH_TYPES = None
         self._o_mesh: MESH_TYPES = None
-        self._o_edges: Edges = None
+        self._o_edges: MESH_TYPES = None
         self._q_vertices: np.ndarray = None
         self._is_calculated: bool = False
         self._is_calculated_trackable: bool = True
@@ -230,9 +230,9 @@ class FFD(GustafBase):
         """
         if self._mesh is None or self._spline is None:
             raise RuntimeError(
-                    "Can not perform deformation for the FFD, since either the "
-                    "spline and/or the mesh are not yet defined. Please define "
-                    "both a spline and mesh before deforming the mesh."
+                    "Can't perform deformation for the FFD, since either the "
+                    "spline or(and) the mesh are not yet defined. "
+                    "Please set either spline or mesh."
             )
         if self._is_calculated and self._is_calculated_trackable:
             return None
@@ -402,13 +402,6 @@ class FFD(GustafBase):
         if backend is None:
             backend = settings.VISUALIZATION_BACKEND
 
-        if backend != "vedo":
-            raise NotImplementedError(
-                    "Visualization of the FFD is not available for the chosen"
-                    f"visualization framework -{settings.VISUALIZATION_BACKEND}-."
-                    " Please choose vedo to visualize."
-            )
-
         # prepare originals
         o_mesh = self._o_mesh.copy()
         # prepare deformed
@@ -454,7 +447,7 @@ class FFD(GustafBase):
         # things_to_show.update(original_edges=o_edges)
         # things_to_show.update(deformed_edges=d_edges)
 
-        if return_discrete:
+        if return_discrete or not backend.startswith("vedo"):
             # spline is strictly not discrete.
             return things_to_show
 

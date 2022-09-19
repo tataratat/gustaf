@@ -8,7 +8,6 @@ import itertools
 import numpy as np
 
 from gustaf import utils
-from gustaf import settings
 from gustaf.vertices import Vertices
 from gustaf.edges import Edges
 from gustaf.faces import Faces
@@ -263,8 +262,7 @@ def volumes(spline, resolutions):
     """
     if spline.para_dim != 3:
         raise ValueError(
-                "Volume extraction from a spline is only valid for para_dim: 3 "
-                + "dim: 3 splines."
+                "Volume extraction from a spline is only valid for para_dim==3"
         )
 
     return Volumes(

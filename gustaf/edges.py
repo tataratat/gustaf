@@ -287,7 +287,7 @@ class Edges(Vertices):
         """
         self.elements = self.elements[mask]
 
-        return self.elements.remove_unreferenced_vertices()
+        return self.remove_unreferenced_vertices()
 
     def update_edges(self, *args, **kwargs):
         """Alias to update_elements."""

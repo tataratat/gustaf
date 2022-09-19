@@ -13,3 +13,17 @@ from gustaf.spline.base import (
         Bezier, RationalBezier, BSpline, NURBS, show, from_mfem, load_splines
 )
 from gustaf.spline import ffd
+
+__all__ = [
+        "base",
+        "create",
+        "extract",
+        "Bezier",
+        "RationalBezier",
+        "BSpline",
+        "NURBS",
+        "show",
+        "from_mfem",
+        "load_splines",
+        "ffd",
+]
