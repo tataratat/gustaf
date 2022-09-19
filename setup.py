@@ -13,14 +13,15 @@ setup(
     long_description=readme,
     long_description_content_type="text/markdown",
     author="Jaewook Lee",
-    author_email="jlee@ilsb.tuwien.ac.at",
+    author_email="jaewooklee042@gmail.com",
     url="https://github.com/tataratat/gustaf",
     packages=[
         "gustaf",
         "gustaf.utils",
         "gustaf.io",
         "gustaf.spline",
-        "gustaf.create"
+        "gustaf.create",
+        "gustaf.helpers",
     ],
     install_requires=[
         "numpy",
