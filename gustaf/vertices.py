@@ -19,11 +19,11 @@ class Vertices(GustafBase):
     kind = "vertex"
 
     __slots__ = [
-        "_vertices",
-        "_const_vertices",
-        "_computed",
-        "vis_dict",
-        "vertexdata",
+            "_vertices",
+            "_const_vertices",
+            "_computed",
+            "vis_dict",
+            "vertexdata",
     ]
 
     def __init__(
