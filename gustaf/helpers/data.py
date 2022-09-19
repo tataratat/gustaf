@@ -407,7 +407,7 @@ class ComputedData(DataHolder):
 Unique2DFloats = namedtuple(
         "Unique2DFloats", ["values", "ids", "inverse", "intersection"]
 )
-""""
+"""
 namedtuple to hold unique information of float type arrays.
 Note that for float types, "close enough" might be a better name than unique.
 This way, all tracked arrays, as long as they are 2D, have a dot separated

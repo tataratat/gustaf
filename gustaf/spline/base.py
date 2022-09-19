@@ -13,9 +13,9 @@ from gustaf import settings
 from gustaf import show as showmodule
 from gustaf._base import GustafBase
 from gustaf.vertices import Vertices
-from gustaf.spline.create import _Creator
-from gustaf.spline.extract import _Extractor
-from gustaf.spline.proximity import _Proximity
+from gustaf.spline.create import Creator
+from gustaf.spline.extract import Extractor
+from gustaf.spline.proximity import Proximity
 from gustaf.spline._utils import to_res_list
 from gustaf.create.vertices import raster
 
@@ -290,7 +290,7 @@ class GustafSpline(GustafBase):
     def extract(self):
         """Returns spline extracter. Can directly perform extractions available
         at `gustaf/spline/extract.py`. For more info, take a look at
-        `gustaf/spline/extract.py`: _Extracter.
+        `gustaf/spline/extract.py`: Extracter.
 
         Examples
         ---------
@@ -302,7 +302,7 @@ class GustafSpline(GustafBase):
 
         Returns
         --------
-        spline_extracter: _Extracter
+        spline_extracter: Extracter
         """
         return self._extractor
 
@@ -320,7 +320,7 @@ class GustafSpline(GustafBase):
         None
 
         Returns
-        spline._Creator
+        spline.Creator
         """
         return self._creator
 
@@ -328,7 +328,7 @@ class GustafSpline(GustafBase):
     def proximity(self):
         """Returns spline proximity helper. Can directly perform proximity
         queries available at `gustaf/spline/proximity.py`. For more info, take
-        a look at `gustaf/spline/proximity.py`: _Proximity.
+        a look at `gustaf/spline/proximity.py`: Proximity.
 
         Examples
         ---------
@@ -345,7 +345,7 @@ class GustafSpline(GustafBase):
 
         Returns
         --------
-        spline_proximity: _Proximity
+        spline_proximity: Proximity
         """
         return self._proximity
 
@@ -427,9 +427,9 @@ class Bezier(GustafSpline, splinepy.Bezier):
 
         Attributes
         -----------
-        extract: _Extractor
-        create: _Creator
-        proximity: _Proximity
+        extract: Extractor
+        create: Creator
+        proximity: Proximity
 
         Parameters
         -----------
@@ -443,9 +443,9 @@ class Bezier(GustafSpline, splinepy.Bezier):
         super(splinepy.Bezier,
               self).__init__(degrees=degrees, control_points=control_points)
 
-        self._extractor = _Extractor(self)
-        self._proximity = _Proximity(self)
-        self._creator = _Creator(self)
+        self._extractor = Extractor(self)
+        self._proximity = Proximity(self)
+        self._creator = Creator(self)
 
     @property
     def bezier(self):
@@ -528,9 +528,9 @@ class RationalBezier(GustafSpline, splinepy.RationalBezier):
 
         Attributes
         -----------
-        extract: _Extractor
-        create: _Creator
-        proximity: _Proximity
+        extract: Extractor
+        create: Creator
+        proximity: Proximity
 
         Parameters
         -----------
@@ -548,9 +548,9 @@ class RationalBezier(GustafSpline, splinepy.RationalBezier):
                 weights=weights
         )
 
-        self._extractor = _Extractor(self)
-        self._proximity = _Proximity(self)
-        self._creator = _Creator(self)
+        self._extractor = Extractor(self)
+        self._proximity = Proximity(self)
+        self._creator = Creator(self)
 
     @property
     def rationalbezier(self):
@@ -601,9 +601,9 @@ class BSpline(GustafSpline, splinepy.BSpline):
 
         Attributes
         -----------
-        extract: _Extractor
-        create: _Creator
-        proximity: _Proximity
+        extract: Extractor
+        create: Creator
+        proximity: Proximity
 
         Parameters
         -----------
@@ -621,9 +621,9 @@ class BSpline(GustafSpline, splinepy.BSpline):
                 control_points=control_points
         )
 
-        self._extractor = _Extractor(self)
-        self._proximity = _Proximity(self)
-        self._creator = _Creator(self)
+        self._extractor = Extractor(self)
+        self._proximity = Proximity(self)
+        self._creator = Creator(self)
 
     @property
     def bspline(self):
@@ -694,9 +694,9 @@ class NURBS(GustafSpline, splinepy.NURBS):
 
         Attributes
         -----------
-        extract: _Extractor
-        create: _Creator
-        proximity: _Proximity
+        extract: Extractor
+        create: Creator
+        proximity: Proximity
 
         Parameters
         -----------
@@ -716,9 +716,9 @@ class NURBS(GustafSpline, splinepy.NURBS):
                 weights=weights,
         )
 
-        self._extractor = _Extractor(self)
-        self._proximity = _Proximity(self)
-        self._creator = _Creator(self)
+        self._extractor = Extractor(self)
+        self._proximity = Proximity(self)
+        self._creator = Creator(self)
 
     @property
     def _mfem_ids(self):

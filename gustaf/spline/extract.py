@@ -402,7 +402,7 @@ def beziers(spline):
         raise TypeError("Unknown Spline-Type.")
 
 
-class _Extractor:
+class Extractor:
     """Helper class to allow direct extraction from spline obj (BSpline or
     NURBS). Internal use only.
 

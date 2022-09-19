@@ -254,7 +254,7 @@ def revolved(
     return type(spline)(**spline_dict)
 
 
-class _Creator:
+class Creator:
     """Helper class to build new splines from existing geometries.
 
     Examples

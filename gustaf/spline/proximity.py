@@ -48,7 +48,7 @@ def closest_parametric_coordinate(
     pass
 
 
-class _Proximity:
+class Proximity:
     """Helper class to allow direct proximity queries for spline obj (BSpline
     or NURBS). Internal use only.
 
