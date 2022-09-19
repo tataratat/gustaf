@@ -317,7 +317,7 @@ class ComputedData(DataHolder):
     def depends_on(cls, var_names, make_property=False):
         """Decorator as classmethod.
 
-        checks if the key should be computed. Three cases, where the answer is
+        checks if the key should be computed. Two cases, where the answer is
         yes:
         1. there's modification on arrays that the key depend on.
           -> erases all other
