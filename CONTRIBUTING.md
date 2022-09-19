@@ -17,10 +17,13 @@ gustaf implementations tries to follow [pep8](pep8.org)'s suggestion closely.
 - no complex comphrehensions: preferably fits in a line, 2 lines max if it is totally necessary
 - use first letter abbreviations in element loops:  `for kv in knot_vectors`
 - use `i`, `j`, `k`, `l` for pure index: `for i, kv in enumerate(knot_vectors)`
-- vertical alignment only with spaces with multiples of indent width
-- put closing brackets on a separate line, dedented
 - if a new feature would open doors to more related functionalities, consider a helper class
-- try to avoid looping possibly giant entries
+- try to avoid looping possibly giant entries  
+Followings are covered by [auto formatting](https://github.com/tataratat/gustaf/blob/main/CONTRIBUTING.md#automatic-formatting--style-check):
+- vertical alignment only with spaces with multiples of indent width (tip: adding trailing commas will vertilcally align/list all the entries in parenthesis/bracket/brace)
+- put closing brackets on a separate line, dedented
+
+
 
 ### Automatic formatting / style check
 gustaf uses combination of [yapf](https://github.com/google/yapf) and [autopep8](https://github.com/hhatto/autopep8) for automatic formatting. Then [flake8](https://github.com/pycqa/flake8) to double check everything.
