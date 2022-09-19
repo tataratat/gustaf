@@ -85,10 +85,10 @@ class Faces(Edges):
         --------
         None
         """
-        return type(self).whatisthis(self)
+        return type(self).whatareyou(self)
 
     @classmethod
-    def whatisthis(cls, face_obj):
+    def whatareyou(cls, face_obj):
         """classmethod that tells you if the Faces is tri or quad or invalid
         kind.
 
@@ -98,7 +98,7 @@ class Faces(Edges):
 
         Returns
         --------
-        whatisthis: str
+        whatareyou: str
         """
         if not cls.kind.startswith(face_obj.kind):
             raise TypeError("Given obj is not {cls.__qualname__}")

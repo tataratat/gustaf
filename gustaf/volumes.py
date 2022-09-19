@@ -70,8 +70,8 @@ class Volumes(Faces):
         return faces
 
     @classmethod
-    def whatisthis(cls, volume_obj):
-        """overwrites Faces.whatisthis to tell you is this volume is tet or
+    def whatareyou(cls, volume_obj):
+        """overwrites Faces.whatareyou to tell you is this volume is tet or
         hexa.
 
         Parameters
@@ -80,7 +80,7 @@ class Volumes(Faces):
 
         Returns
         --------
-        whatisthis: str
+        whatareyou: str
         """
         if not cls.kind.startswith(volume_obj.kind):
             raise TypeError("Given obj is not {cls.__qualname__}")
@@ -168,7 +168,7 @@ class Volumes(Faces):
 
         return np.sort(volumes, axis=1)
 
-    @helpers.data.ComputedMeshData.depends_on(["eleemnts"])
+    @helpers.data.ComputedMeshData.depends_on(["elements"])
     def unique_volumes(self):
         """Returns a namedtuple of unique volumes info. Similar to
         unique_edges.
