@@ -222,7 +222,7 @@ class Generator(GustafBase):
         self._parametrization_function = parametrization_function
         self._sanity_check()
 
-    def create(self, closing_faces=None, *kwargs):
+    def create(self, closing_faces=None, **kwargs):
         """
         Create a Microstructure
 
@@ -230,7 +230,7 @@ class Generator(GustafBase):
         ----------
         closing_faces : int
           If not None, Microtile must provide a function `closing_tile`
-        *kwargs 
+        **kwargs 
           will be passed to `create_tile` function
 
         Returns
@@ -330,24 +330,24 @@ class Generator(GustafBase):
                         tile = self._microtile.closing_tile(
                             parameters=tile_parameters,
                             closure=closing_faces,
-                            *kwargs
+                            **kwargs
                         )
                     elif (index + 1) == element_resolutions[closing_faces]:
                         # Closure at minimum id
                         tile = self._microtile.closing_tile(
                             parameters=tile_parameters,
                             closure=-closing_faces,
-                            *kwargs
+                            **kwargs
                         )
                     else:
                         tile = self._microtile.create_tile(
                             parameters=tile_parameters,
-                            *kwargs
+                            **kwargs
                         )
                 else:
                     tile = self._microtile.create_tile(
                         parameters=tile_parameters,
-                        *kwargs
+                        **kwargs
                     )
 
                 # Perform composition

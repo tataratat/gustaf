@@ -691,7 +691,8 @@ class InverseCrossTile(base.GustafBase):
         aux_column_width = .5 - 2*(.5 - seperator_distance)
 
         spline_list = []
-        if closure == "z_min":
+        if closure == 2:
+            branch_thickness = parameters[4]
             branch_neighbor_x_min_ctps = np.array([
                 [-.5, -r_center, filling_height],
                 [-half_r_center, -r_center, filling_height],
@@ -965,7 +966,8 @@ class InverseCrossTile(base.GustafBase):
 
             return spline_list
 
-        elif closure == "z_max":
+        elif closure == -2:
+            branch_thickness = parameters[5]
             branch_neighbor_x_min_ctps = np.array([
                 [-.5, -aux_column_width, 0.],
                 [-seperator_distance, -aux_column_width, 0.],
