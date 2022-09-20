@@ -20,7 +20,7 @@ class TrackedArray(np.ndarray):
     to False.
 
     Note, if you really really want, it is possible to change the tracked
-    array with out setting modified flag.
+    array without setting modified flag.
     """
 
     __slots__ = ("_modified", "_source")
