@@ -1,5 +1,4 @@
-"""
-gustaf/gustaf/io/__init__.py
+"""gustaf/gustaf/io/__init__.py.
 
 io.
 I - `load`.
@@ -10,3 +9,10 @@ from gustaf.io import ioutils
 from gustaf.io import mfem
 from gustaf.io import meshio
 from gustaf.io import mixd
+
+__all__ = [
+        "ioutils",
+        "mfem",
+        "meshio",
+        "mixd",
+]

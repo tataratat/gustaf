@@ -1,69 +1,81 @@
-"""gustaf/gustaf/faces.py
-"""
+"""gustaf/gustaf/faces.py."""
+import numpy as np
 
 from gustaf import settings
 from gustaf import utils
 from gustaf.edges import Edges
+from gustaf import helpers
+
 
 class Faces(Edges):
 
     kind = "face"
 
-    __slots__ = [
-        "faces",
-        "faces_sorted",
-        "faces_unique",
-        "faces_unique_id",
-        "faces_unique_inverse",
-        "faces_unique_count",
-        "surfaces",
-        "BC",
-    ]
+    const_edges = helpers.raise_if.invalid_inherited_attr(
+            Edges.const_edges,
+            __qualname__,
+            property_=True,
+    )
+    update_edges = helpers.raise_if.invalid_inherited_attr(
+            Edges.update_edges,
+            __qualname__,
+            property_=False,
+    )
+    dashed = helpers.raise_if.invalid_inherited_attr(
+            Edges.const_edges,
+            __qualname__,
+            property_=False,
+    )
+
+    __slots__ = (
+            "_faces",
+            "_const_faces",
+            "BC",
+    )
 
     def __init__(
             self,
             vertices=None,
             faces=None,
             elements=None,
-            process=False,
     ):
-        if vertices is not None:
-            self.vertices = utils.arr.make_c_contiguous(
-                vertices,
-                settings.FLOAT_DTYPE
-            )
+        """Faces. It has vertices and faces. Faces could be triangles or
+        quadrilaterals.
 
+        Parameters
+        -----------
+        vertices: (n, d) np.ndarray
+        faces: (n, 3) or (n, 4) np.ndarray
+        """
+        super().__init__(vertices=vertices)
         if faces is not None:
-            self.faces = utils.arr.make_c_contiguous(faces, settings.INT_DTYPE)
-        elif elements is not None:
-            self.faces = utils.arr.make_c_contiguous(
-                elements,
-                settings.INT_DTYPE
-            )
+            self.faces = faces
 
-        self.whatami = "faces"
-        self.vis_dict = dict()
-        self.vertexdata = dict()
+        elif elements is not None:
+            self.faces = elements
+
         self.BC = dict()
 
-        self.process(process)
+    @helpers.data.ComputedMeshData.depends_on(["elements"])
+    def edges(self):
+        """Edges from here aren't main property. So this needs to be computed.
 
-    def process(
-            self,
-            edges=True,
-            faces_sorted=True,
-            faces_unique=True,
-            faces_unique_id=True,
-            faces_unique_inverse=True,
-            outlines=True,
-            force_process=True,
-            **kwargs,
-    ):
-        pass
+        Parameters
+        -----------
+        None
 
-    def get_whatami(self,):
+        Returns
+        --------
+        edges: (n, 2) np.ndarray
         """
-        Determines whatami.
+        self._logd("computing edges")
+        faces = self._get_attr("faces")
+
+        return utils.connec.faces_to_edges(faces)
+
+    @property
+    def whatami(self, ):
+        """Determines whatami.
 
         Parameters
         -----------
@@ -73,21 +85,39 @@ class Faces(Edges):
         --------
         None
         """
-        if self.faces.shape[1] == 3:
-            self.whatami = "tri"
-        elif self.faces.shape[1] == 4:
-            self.whatami = "quad"
+        return type(self).whatareyou(self)
+
+    @classmethod
+    def whatareyou(cls, face_obj):
+        """classmethod that tells you if the Faces is tri or quad or invalid
+        kind.
+
+        Parameters
+        -----------
+        face_obj: Faces
+
+        Returns
+        --------
+        whatareyou: str
+        """
+        if not cls.kind.startswith(face_obj.kind):
+            raise TypeError("Given obj is not {cls.__qualname__}")
+
+        if face_obj.faces.shape[1] == 3:
+            return "tri"
+
+        elif face_obj.faces.shape[1] == 4:
+            return "quad"
+
         else:
             raise ValueError(
-                "I have invalid faces array shape. It should be (n, 3) or "
-                f"(n, 4), but I have: {self.faces.shape}"
+                    "Invalid faces connectivity shape. It should be (n, 3) or "
+                    f"(n, 4), but given: {face_obj.faces.shape}"
             )
 
-        return self.whatami
-
-    def get_faces(self,):
-        """
-        Generates edges based on faces and returns.
+    @property
+    def faces(self, ):
+        """Returns faces.
 
         Parameters
         -----------
@@ -95,32 +125,44 @@ class Faces(Edges):
 
         Returns
         --------
+        faces
+        """
+        self._logd("returning faces")
+        return self._faces
+
+    @faces.setter
+    def faces(self, fs):
+        """Faces setter. Similar to veritces, this will be a tracked array.
+
+        Parameters
+        -----------
+        fs: (n, 2) np.ndarray
+
+        Returns
+        --------
         None
         """
-        if self.kind == "face":
-            self.faces = utils.arr.make_c_contiguous(
-                self.faces,
+        self._logd("setting faces")
+
+        # shape check
+        if fs is not None:
+            utils.arr.is_one_of_shapes(
+                    fs,
+                    ((-1, 3), (-1, 4)),
+                    strict=True,
+            )
+
+        self._faces = helpers.data.make_tracked_array(
+                fs,
                 settings.INT_DTYPE,
-            )
+        )
+        # same, but non-writeable view of tracekd array
+        self._const_faces = self._faces.view()
+        self._const_faces.flags.writeable = False
 
-            return self.faces
-
-        if hasattr(self, "volumes"):
-            whatami = self.get_whatami()
-            if whatami.startswith("tet"):
-                self.faces = utils.connec.tet_to_tri(self.volumes)
-            elif whatami.startswith("hexa"):
-                self.faces = utils.connec.hexa_to_quad(self.volumes)
-
-            return self.faces
-
-        # Shouldn't reach this point, but in case it dooes
-        self._logd("cannot compute/return faces.")
-        return None
-
-    def get_faces_sorted(self):
-        """
-        Similar to edges_sorted but for faces.
+    @property
+    def const_faces(self):
+        """Returns non-writeable view of faces.
 
         Parameters
         -----------
@@ -128,16 +170,13 @@ class Faces(Edges):
 
         Returns
         --------
-        faces_sorted: (self.faces.shape) np.ndarray
+        const_faces: (n, 2
         """
-        self.faces_sorted = self.get_faces().copy()
-        self.faces_sorted.sort(axis=1)
+        return self._const_faces
 
-        return self.faces_sorted
-
-    def get_faces_unique(self):
-        """
-        Similar to edges_unique but for faces.
+    @helpers.data.ComputedMeshData.depends_on(["elements"])
+    def sorted_faces(self):
+        """Similar to edges_sorted but for faces.
 
         Parameters
         -----------
@@ -145,29 +184,39 @@ class Faces(Edges):
 
         Returns
         --------
-        faces_unique: (n, d) np.ndarray
+        sorted_faces: (self.faces.shape) np.ndarray
         """
-        unique_stuff = utils.arr.unique_rows(
-            self.get_faces_sorted(),
-            return_index=True,
-            return_inverse=True,
-            return_counts=True,
-            dtype_name=settings.INT_DTYPE,
+        faces = self._get_attr("faces")
+
+        return np.sort(faces, axis=1)
+
+    @helpers.data.ComputedMeshData.depends_on(["elements"])
+    def unique_faces(self):
+        """Returns a namedtuple of unique faces info. Similar to unique_edges.
+
+        Parameters
+        -----------
+        None
+
+        Returns
+        --------
+        unique_info: Unique2DIntegers
+          valid attributes are {values, ids, inverse, counts}
+        """
+        unique_info = utils.connec.sorted_unique(
+                self.sorted_faces(), sorted_=True
         )
 
-        # unpack
-        #  set faces_unique with `faces` to avoid orientation change
-        self.faces_unique_id = unique_stuff[1].astype(settings.INT_DTYPE)
-        self.faces_unique = self.faces[self.faces_unique_id]
-        self.faces_unique_inverse = unique_stuff[2].astype(settings.INT_DTYPE)
-        self.faces_unique_count = unique_stuff[3].astype(settings.INT_DTYPE)
-        self.surfaces = self.faces_unique_id[self.faces_unique_count == 1]
+        faces = self._get_attr("faces")
 
-        return self.faces[self.faces_unique_id]
+        unique_info.values[:] = faces[unique_info.ids]
 
-    def get_faces_unique_id(self):
-        """
-        Similar to edges_unique_id but for faces.
+        return unique_info
+
+    @helpers.data.ComputedMeshData.depends_on(["elements"])
+    def single_faces(self):
+        """Returns indices of very unique faces: faces that appear only once.
+        For well constructed volumes, this can be considered as surfaces.
 
         Parameters
         -----------
@@ -175,64 +224,18 @@ class Faces(Edges):
 
         Returns
         --------
-        faces_unique: (n,) np.ndarray
+        single_faces: (m,) np.ndarray
         """
-        _ = self.get_faces_unique()
+        unique_info = self.unique_faces()
 
-        return self.faces_unique_id
-
-    def get_faces_unique_inverse(self,):
-        """
-        Similar to edges_unique_inverse but for faces.
-
-        Parameters
-        -----------
-        None
-
-        Returns
-        --------
-        None
-        """
-        _ = self.get_faces_unique()
-
-        return self.faces_unique_inverse
-
-    def get_surfaces(self,):
-        """
-        Returns indices of very unique faces: faces that appear only once.
-        For well constructed faces, this can be considred as surfaces.
-
-        Parameters
-        -----------
-        None
-
-        Returns
-        --------
-        surfaces: (m,) np.ndarray
-        """
-        _ = self.get_faces_unique()
-
-        return self.surfaces
-
-    def update_edges(self):
-        """
-        Just to decouple inherited alias
-
-        Raises
-        -------
-        NotImplementedError
-        """
-        raise NotImplementedError
+        return unique_info.ids[unique_info.counts == 1]
 
     def update_faces(self, *args, **kwargs):
-        """
-        Alias to update_elements.
-        """
+        """Alias to update_elements."""
         self.update_elements(*args, **kwargs)
 
     def toedges(self, unique=True):
-        """
-        Returns Edges obj.
+        """Returns Edges obj.
 
         Parameters
         -----------
@@ -244,20 +247,6 @@ class Faces(Edges):
         edges: Edges
         """
         return Edges(
-            self.vertices,
-            edges=self.get_edges_unique() if unique else self.get_edges()
+                self.vertices,
+                edges=self.unique_edges().values if unique else self.edges()
         )
-
-    #def show(self, BC=False):
-        """
-        Overwrite `show` to offer frequently used showing options
-
-        Parameters
-        -----------
-        BC: bool
-          Default is False.
-
-        Returns
-        --------
-        None
-        """

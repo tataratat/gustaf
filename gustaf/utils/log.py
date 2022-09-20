@@ -1,4 +1,4 @@
-"""gustaf/gustaf/utils/log.py
+"""gustaf/gustaf/utils/log.py.
 
 Thin logging wrapper.
 """
@@ -7,8 +7,7 @@ import logging
 
 
 def configure(debug=False, logfile=None):
-    """
-    Logging configurator.
+    """Logging configurator.
 
     Parameters
     -----------
@@ -28,14 +27,12 @@ def configure(debug=False, logfile=None):
 
     if logfile is not None:
         file_logger_handler = logging.FileHandler(logfile)
+        logger.addHandler(file_logger_handler)
+    logging.basicConfig(format="%(asctime)-15s [%(levelname)s]: %(message)s", )
 
-    logging.basicConfig(
-        format="%(asctime)-15s [%(levelname)s]: %(message)s",
-    )
 
 def debug(*log):
-    """
-    Debug logger.
+    """Debug logger.
 
     Parameters
     -----------
@@ -49,8 +46,7 @@ def debug(*log):
 
 
 def info(*log):
-    """
-    Info logger.
+    """Info logger.
 
     Parameters
     -----------
@@ -64,8 +60,7 @@ def info(*log):
 
 
 def warning(*log):
-    """
-    warning logger.
+    """warning logger.
 
     Parameters
     -----------

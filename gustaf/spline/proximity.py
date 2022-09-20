@@ -1,5 +1,4 @@
-"""
-gustaf/spline/proximity.py
+"""gustaf/spline/proximity.py.
 
 Closest what?
 """
@@ -10,8 +9,7 @@ def closest_control_points(
         query_points,
         return_distances=False,
 ):
-    """
-    Returns indices of closest control points
+    """Returns indices of closest control points.
 
     Parameters
     -----------
@@ -19,7 +17,7 @@ def closest_control_points(
     query_points: (n, spline.dim) np.ndarray
       float
     return_distances: bool
-      
+
     tolerance: float
       Default is settings.Tolerance. Only relevant iff nearest_only==False
 
@@ -46,16 +44,13 @@ def closest_parametric_coordinate(
         spline,
         query_points,
 ):
-    """
-    Finds closest points using 
-    """
+    """Finds closest points using."""
     pass
 
-class _Proximity:
-    """
-    Helper class to allow direct proximity queries for spline obj (BSpline or
-    NURBS).
-    Internal use only.
+
+class Proximity:
+    """Helper class to allow direct proximity queries for spline obj (BSpline
+    or NURBS). Internal use only.
 
     Examples
     ---------

@@ -1,4 +1,4 @@
-"""gustaf/create/vertices.py
+"""gustaf/create/vertices.py.
 
 Routines to create vertices.
 """
@@ -12,8 +12,7 @@ def raster(
         bounds,
         resolutions,
 ):
-    """
-    Simple wraper of np.mgrid to extract raster points of desired bounds and
+    """Simple wraper of np.mgrid to extract raster points of desired bounds and
     resolutions.
 
     Parameters
@@ -30,12 +29,11 @@ def raster(
     if len(resolutions) != len(bounds[0]) == len(bounds[1]):
         raise ValueError("Length of resolutions and bounds should match.")
 
-    points = "np.mgrid["
-    for i, (b0, b1) in enumerate(zip(bounds[0], bounds[1])):
-        points += f"{b0}:{b1}:{int(resolutions[i])}j,"
-    points += "]"
+    slices = list()
+    for b0, b1, r in zip(bounds[0], bounds[1], resolutions):
+        slices.append(slice(b0, b1, r * 1j))
 
     # Organize it nicely: 2D np.ndarray with shape (prod(resolutions), dim)
-    points = eval(points).T.reshape(-1, len(resolutions))
+    points = np.mgrid[slices].T.reshape(-1, len(resolutions))
 
     return Vertices(points)

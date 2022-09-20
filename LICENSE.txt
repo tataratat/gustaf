@@ -1,6 +1,6 @@
 MIT License
 
-Copyright (c) 2021 jlee
+Copyright (c) 2021 Jaewook Lee
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -53,6 +53,7 @@ gustaf/utils/arr.py:unique_rows
 
 gustaf/veritces.py:update_vertices
 gustaf/vertices.py:remove_unreferenced_vertices
+gustaf/helpers/data.py:TrackedArray, make_tracked_array
     The MIT License (MIT)
 
     Copyright (c) 2019 Michael Dawson-Haggerty

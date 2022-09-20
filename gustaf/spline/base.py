@@ -1,7 +1,6 @@
-"""gustaf/spline/base.py
+"""gustaf/spline/base.py.
 
-Base for splines.
-Contains show and inherited classes from `spline`.
+Base for splines. Contains show and inherited classes from `spline`.
 """
 
 import abc
@@ -14,9 +13,9 @@ from gustaf import settings
 from gustaf import show as showmodule
 from gustaf._base import GustafBase
 from gustaf.vertices import Vertices
-from gustaf.spline.create import _Creator
-from gustaf.spline.extract import _Extractor
-from gustaf.spline.proximity import _Proximity
+from gustaf.spline.create import Creator
+from gustaf.spline.extract import Extractor
+from gustaf.spline.proximity import Proximity
 from gustaf.spline._utils import to_res_list
 from gustaf.create.vertices import raster
 
@@ -42,9 +41,8 @@ def show(
         cmap=None,  # only required
         **kwargs,
 ):
-    """
-    Shows splines with various options.
-    They are excessively listed, so that it can be adjustable.
+    """Shows splines with various options. They are excessively listed, so that
+    it can be adjustable.
 
     Parameters
     -----------
@@ -79,11 +77,11 @@ def show(
     """
     # Showing is only possible for following splines
     allowed_dim_combo = (
-        (1, 2),
-        (1, 3),
-        (2, 2),
-        (2, 3),
-        (3, 3),
+            (1, 2),
+            (1, 3),
+            (2, 2),
+            (2, 3),
+            (3, 3),
     )
     if (spline.para_dim, spline.dim) not in allowed_dim_combo:
         raise ValueError("Sorry, can't show given spline.")
@@ -191,20 +189,21 @@ def show(
         # add red points for at control points
         if control_points and control_point_ids:
             vedo_things.update(
-                control_point_ids=vedo_things["control_points"].labels("id")
+                    control_point_ids=vedo_things["control_points"].
+                    labels("id")
             )
 
         # add knots as "x" for curves
         if knots and spline.para_dim == 1:
             uks = spline.unique_knots[0]
             phys_uks = showmodule.make_showable(
-                Vertices(spline.evaluate([[uk] for uk in uks])),
-                backend=backend,
+                    Vertices(spline.evaluate([[uk] for uk in uks])),
+                    backend=backend,
             )
             xs = ["x"] * len(uks)
 
             vedo_things.update(
-                knots=phys_uks.labels(xs, justify="center", c="green")
+                    knots=phys_uks.labels(xs, justify="center", c="green")
             )
 
         # generate parametric view of spline
@@ -215,36 +214,34 @@ def show(
 
             para_spline = parametric_view(spline)
             para_showables = show(
-                para_spline,
-                control_points=False,
-                return_showable=True,
-                lighting=lighting,
-                knots=knots,
-                parametric_space=False,
-                backend=backend,
+                    para_spline,
+                    control_points=False,
+                    return_showable=True,
+                    lighting=lighting,
+                    knots=knots,
+                    parametric_space=False,
+                    backend=backend,
             )
             # Make lines a bit thicker
             if knots:
                 para_showables["knots"].lw(6)
 
             # Trick to show begin/end value
-            bs = np.asarray(
-                bounds(para_showables["spline"].points())
-            )
+            bs = np.asarray(bounds(para_showables["spline"].points()))
             bs_diff_001 = (bs[1] - bs[0]) * 0.001
             lowerb = bs[0] - bs_diff_001
             upperb = bs[1] + bs_diff_001
 
             axes_config = dict(
-                xtitle="u",
-                ytitle="v",
-                xrange=[lowerb[0], upperb[0]],
-                yrange=[lowerb[1], upperb[1]],
-                tipSize=0,
-                xMinorTicks=3,
-                yMinorTicks=3,
-                xyGrid=False,
-                yzGrid=False,
+                    xtitle="u",
+                    ytitle="v",
+                    xrange=[lowerb[0], upperb[0]],
+                    yrange=[lowerb[1], upperb[1]],
+                    tipSize=0,
+                    xMinorTicks=3,
+                    yMinorTicks=3,
+                    xyGrid=False,
+                    yzGrid=False,
             )
 
             if spline.para_dim == 3:
@@ -254,7 +251,7 @@ def show(
                 axes_config.update(zxGrid=False)
 
             para_showables.update(
-                axes=Axes(para_showables["spline"], **axes_config)
+                    axes=Axes(para_showables["spline"], **axes_config)
             )
 
         # reset skip_update option
@@ -282,20 +279,18 @@ class GustafSpline(GustafBase):
 
     @abc.abstractmethod
     def __init__(self):
-        """
-        Contructor as abstractmethod.
-        This needs to be inherited first to make sure duplicating functions
-        properly override splinepy.Spline 
+        """Contructor as abstractmethod.
+
+        This needs to be inherited first to make sure duplicating
+        functions properly override splinepy.Spline
         """
         pass
 
     @property
     def extract(self):
-        """
-        Returns spline extracter.
-        Can directly perform extractions available at
-        `gustaf/spline/extract.py`.
-        For more info, take a look at `gustaf/spline/extract.py`: _Extracter.
+        """Returns spline extracter. Can directly perform extractions available
+        at `gustaf/spline/extract.py`. For more info, take a look at
+        `gustaf/spline/extract.py`: Extracter.
 
         Examples
         ---------
@@ -307,15 +302,14 @@ class GustafSpline(GustafBase):
 
         Returns
         --------
-        spline_extracter: _Extracter
+        spline_extracter: Extracter
         """
         return self._extractor
 
     @property
     def create(self):
-        """
-        Returns spline creator
-        Can be used to create new splines using geometric relations
+        """Returns spline creator Can be used to create new splines using
+        geometric relations.
 
         Examples
         --------
@@ -326,17 +320,15 @@ class GustafSpline(GustafBase):
         None
 
         Returns
-        spline._Creator
+        spline.Creator
         """
         return self._creator
 
     @property
     def proximity(self):
-        """
-        Returns spline proximity helper.
-        Can directly perform proximity queries available at
-        `gustaf/spline/proximity.py`.
-        For more info, take a look at `gustaf/spline/proximity.py`: _Proximity
+        """Returns spline proximity helper. Can directly perform proximity
+        queries available at `gustaf/spline/proximity.py`. For more info, take
+        a look at `gustaf/spline/proximity.py`: Proximity.
 
         Examples
         ---------
@@ -353,13 +345,13 @@ class GustafSpline(GustafBase):
 
         Returns
         --------
-        spline_proximity: _Proximity
+        spline_proximity: Proximity
         """
         return self._proximity
 
     def evaluate(self, *args, **kwargs):
-        """
-        evaluate wrapper with n_threads default.
+        """evaluate wrapper with n_threads default.
+
         This takes 2 args with 1 required arg.
         """
         if len(args) != 2:
@@ -371,8 +363,8 @@ class GustafSpline(GustafBase):
         return super().evaluate(*args, **kwargs)
 
     def derivative(self, *args, **kwargs):
-        """
-        derivative wrapper with n_threads default.
+        """derivative wrapper with n_threads default.
+
         This takes 3 args with 2 required args
         """
         if len(args) != 3:
@@ -384,8 +376,7 @@ class GustafSpline(GustafBase):
         return super().derivative(*args, **kwargs)
 
     def sample(self, query_resolutions, n_threads=None):
-        """
-        Overwrite sample function to offer equivalent, but with multithread
+        """Overwrite sample function to offer equivalent, but with multithread
         eval.
 
         Parameters
@@ -410,21 +401,18 @@ class GustafSpline(GustafBase):
             return self.evaluate(q.vertices, n_threads=n_threads)
 
     def show(self, **kwargs):
-        """
-        Equivalent to `gustaf.spline.base.show(**kwrags)`
-        """
+        """Equivalent to `gustaf.spline.base.show(**kwrags)`"""
         return show(self, **kwargs)
 
     def showable(self, **kwargs):
-        """
-        Equivalent to 
-        `gustaf.spline.base.show(return_showable=True, **kwargs)`
+        """Equivalent to `gustaf.spline.base.show(return_showable=True,
+
+        **kwargs)`
         """
         return show(self, return_showable=True, **kwargs)
 
     def copy(self):
-        """
-        """
+        """"""
         return type(self)(**self.todict())
 
 
@@ -435,14 +423,13 @@ class Bezier(GustafSpline, splinepy.Bezier):
             degrees=None,
             control_points=None,
     ):
-        """
-        Bezier of gustaf. Inherited from splinepy.Bezier and GustafSpline.
+        """Bezier of gustaf. Inherited from splinepy.Bezier and GustafSpline.
 
         Attributes
         -----------
-        extract: _Extractor
-        create: _Creator
-        proximity: _Proximity
+        extract: Extractor
+        create: Creator
+        proximity: Proximity
 
         Parameters
         -----------
@@ -453,19 +440,16 @@ class Bezier(GustafSpline, splinepy.Bezier):
         --------
         None
         """
-        super(splinepy.Bezier, self).__init__(
-            degrees=degrees,
-            control_points=control_points
-        )
+        super(splinepy.Bezier,
+              self).__init__(degrees=degrees, control_points=control_points)
 
-        self._extractor = _Extractor(self)
-        self._proximity = _Proximity(self)
-        self._creator = _Creator(self)
+        self._extractor = Extractor(self)
+        self._proximity = Proximity(self)
+        self._creator = Creator(self)
 
     @property
     def bezier(self):
-        """
-        Returns same parametric representation as Bezier Spline
+        """Returns same parametric representation as Bezier Spline.
 
         Parameters
         ----------
@@ -479,8 +463,7 @@ class Bezier(GustafSpline, splinepy.Bezier):
 
     @property
     def rationalbezier(self):
-        """
-        Returns same parametric representation as Rational Bezier Spline
+        """Returns same parametric representation as Rational Bezier Spline.
 
         Parameters
         ----------
@@ -491,15 +474,14 @@ class Bezier(GustafSpline, splinepy.Bezier):
         same : RationalBezier
         """
         return RationalBezier(
-            degrees=self.degrees,
-            control_points=self.control_points,
-            weights=np.ones(self.control_points.shape[0])
+                degrees=self.degrees,
+                control_points=self.control_points,
+                weights=np.ones(self.control_points.shape[0])
         )
 
     @property
     def bspline(self):
-        """
-        Returns same parametric representation as BSpline.
+        """Returns same parametric representation as BSpline.
 
         Parameters
         -----------
@@ -510,17 +492,17 @@ class Bezier(GustafSpline, splinepy.Bezier):
         same_bspline : BSpline
         """
         return BSpline(
-            degrees=self.degrees,
-            control_points=self.control_points,
-            knot_vectors=[
-                [0] * (self.degrees[i] + 1) + [1] * (self.degrees[i] + 1)
-                for i in range(self.para_dim)]
+                degrees=self.degrees,
+                control_points=self.control_points,
+                knot_vectors=[
+                        [0] * (self.degrees[i] + 1) + [1]
+                        * (self.degrees[i] + 1) for i in range(self.para_dim)
+                ]
         )
 
     @property
     def nurbs(self):
-        """
-        Returns same parametric representation as nurbs.
+        """Returns same parametric representation as nurbs.
 
         Parameters
         -----------
@@ -541,15 +523,14 @@ class RationalBezier(GustafSpline, splinepy.RationalBezier):
             control_points=None,
             weights=None,
     ):
-        """
-        Rational Bezier of gustaf. Inherited from splinepy.RationalBezier and
-        GustafSpline.
+        """Rational Bezier of gustaf. Inherited from splinepy.RationalBezier
+        and GustafSpline.
 
         Attributes
         -----------
-        extract: _Extractor
-        create: _Creator
-        proximity: _Proximity
+        extract: Extractor
+        create: Creator
+        proximity: Proximity
 
         Parameters
         -----------
@@ -562,19 +543,18 @@ class RationalBezier(GustafSpline, splinepy.RationalBezier):
         None
         """
         super(splinepy.RationalBezier, self).__init__(
-            degrees=degrees,
-            control_points=control_points,
-            weights=weights
+                degrees=degrees,
+                control_points=control_points,
+                weights=weights
         )
 
-        self._extractor = _Extractor(self)
-        self._proximity = _Proximity(self)
-        self._creator = _Creator(self)
+        self._extractor = Extractor(self)
+        self._proximity = Proximity(self)
+        self._creator = Creator(self)
 
     @property
     def rationalbezier(self):
-        """
-        Returns same parametric representation as Rational Bezier Spline
+        """Returns same parametric representation as Rational Bezier Spline.
 
         Parameters
         ----------
@@ -588,8 +568,7 @@ class RationalBezier(GustafSpline, splinepy.RationalBezier):
 
     @property
     def nurbs(self):
-        """
-        Returns same parametric representation as nurbs.
+        """Returns same parametric representation as nurbs.
 
         Parameters
         -----------
@@ -600,12 +579,13 @@ class RationalBezier(GustafSpline, splinepy.RationalBezier):
         same_nurbs: NURBS
         """
         return NURBS(
-            degrees=self.degrees,
-            control_points=self.control_points,
-            knot_vectors=[
-                [0] * (self.degrees[i] + 1) + [1] * (self.degrees[i] + 1)
-                for i in range(self.para_dim)],
-            weights=self.weights
+                degrees=self.degrees,
+                control_points=self.control_points,
+                knot_vectors=[
+                        [0] * (self.degrees[i] + 1) + [1]
+                        * (self.degrees[i] + 1) for i in range(self.para_dim)
+                ],
+                weights=self.weights
         )
 
 
@@ -617,14 +597,13 @@ class BSpline(GustafSpline, splinepy.BSpline):
             knot_vectors=None,
             control_points=None,
     ):
-        """
-        BSpline of gustaf. Inherited from splinepy.BSpline and GustafSpline.
+        """BSpline of gustaf. Inherited from splinepy.BSpline and GustafSpline.
 
         Attributes
         -----------
-        extract: _Extractor
-        create: _Creator
-        proximity: _Proximity
+        extract: Extractor
+        create: Creator
+        proximity: Proximity
 
         Parameters
         -----------
@@ -637,19 +616,18 @@ class BSpline(GustafSpline, splinepy.BSpline):
         None
         """
         super(splinepy.BSpline, self).__init__(
-            degrees=degrees,
-            knot_vectors=knot_vectors,
-            control_points=control_points
+                degrees=degrees,
+                knot_vectors=knot_vectors,
+                control_points=control_points
         )
 
-        self._extractor = _Extractor(self)
-        self._proximity = _Proximity(self)
-        self._creator = _Creator(self)
+        self._extractor = Extractor(self)
+        self._proximity = Proximity(self)
+        self._creator = Creator(self)
 
     @property
     def bspline(self):
-        """
-        Returns same parametric representation as BSpline.
+        """Returns same parametric representation as BSpline.
 
         Parameters
         -----------
@@ -663,9 +641,8 @@ class BSpline(GustafSpline, splinepy.BSpline):
 
     @property
     def nurbs(self):
-        """
-        Returns same nurbs.
-        Overwrites one from splinepy to return correct type.
+        """Returns same nurbs. Overwrites one from splinepy to return correct
+        type.
 
         Parameters
         -----------
@@ -678,17 +655,16 @@ class BSpline(GustafSpline, splinepy.BSpline):
         from copy import deepcopy
 
         return NURBS(
-            degrees=deepcopy(self.degrees),
-            knot_vectors=deepcopy(self.knot_vectors),
-            control_points=deepcopy(self.control_points),
-            # fix dtype to match splinepy's dtype.
-            weights=np.ones(self.control_points.shape[0], dtype="float64")
+                degrees=deepcopy(self.degrees),
+                knot_vectors=deepcopy(self.knot_vectors),
+                control_points=deepcopy(self.control_points),
+                # fix dtype to match splinepy's dtype.
+                weights=np.ones(self.control_points.shape[0], dtype="float64")
         )
 
     def extract_bezier_patches(self):
-        """
-        Overwrites splinepy-parent's function to ensure the conversion of
-        Splines into a usable gustaf format
+        """Overwrites splinepy-parent's function to ensure the conversion of
+        Splines into a usable gustaf format.
 
         Parameters
         ----------
@@ -699,8 +675,8 @@ class BSpline(GustafSpline, splinepy.BSpline):
         None
         """
         logging.warning(
-            "Functionality not supported, please use:\n"
-            "<BSpline>.extract.beziers()"
+                "Functionality not supported, please use:\n"
+                "<BSpline>.extract.beziers()"
         )
         return None
 
@@ -714,14 +690,13 @@ class NURBS(GustafSpline, splinepy.NURBS):
             control_points=None,
             weights=None,
     ):
-        """
-        NURBS of gustaf. Inherited from splinepy.NURBS.
+        """NURBS of gustaf. Inherited from splinepy.NURBS.
 
         Attributes
         -----------
-        extract: _Extractor
-        create: _Creator
-        proximity: _Proximity
+        extract: Extractor
+        create: Creator
+        proximity: Proximity
 
         Parameters
         -----------
@@ -735,20 +710,19 @@ class NURBS(GustafSpline, splinepy.NURBS):
         None
         """
         super(splinepy.NURBS, self).__init__(
-            degrees=degrees,
-            knot_vectors=knot_vectors,
-            control_points=control_points,
-            weights=weights,
+                degrees=degrees,
+                knot_vectors=knot_vectors,
+                control_points=control_points,
+                weights=weights,
         )
 
-        self._extractor = _Extractor(self)
-        self._proximity = _Proximity(self)
-        self._creator = _Creator(self)
+        self._extractor = Extractor(self)
+        self._proximity = Proximity(self)
+        self._creator = Creator(self)
 
     @property
     def _mfem_ids(self):
-        """
-        Returns mfem index mapping. For ease of use.
+        """Returns mfem index mapping. For ease of use.
 
         Parameters
         -----------
@@ -760,21 +734,20 @@ class NURBS(GustafSpline, splinepy.NURBS):
         """
         if self.para_dim != 2:
             raise NotImplementedError(
-                "Sorry, only avilable for para_dim = 2 splines"
+                    "Sorry, only avilable for para_dim = 2 splines"
             )
 
         gustaf2mfem, mfem2gustaf = splinepy.io.mfem.mfem_index_mapping(
-            self.para_dim,
-            self.degrees,
-            self. knot_vectors,
+                self.para_dim,
+                self.degrees,
+                self.knot_vectors,
         )
 
         return gustaf2mfem, mfem2gustaf
 
     def extract_bezier_patches(self):
-        """
-        Overwrites splinepy-parent's function to ensure the conversion of
-        Splines into a usable gustaf format
+        """Overwrites splinepy-parent's function to ensure the conversion of
+        Splines into a usable gustaf format.
 
         Parameters
         ----------
@@ -785,15 +758,14 @@ class NURBS(GustafSpline, splinepy.NURBS):
         None
         """
         logging.warning(
-            "Functionality not supported, please use:\n"
-            "<NURBS>.extract.beziers()"
+                "Functionality not supported, please use:\n"
+                "<NURBS>.extract.beziers()"
         )
         return None
 
     @property
     def nurbs(self):
-        """
-        Returns same parametric representation as nurbs.
+        """Returns same parametric representation as nurbs.
 
         Parameters
         -----------
@@ -807,9 +779,7 @@ class NURBS(GustafSpline, splinepy.NURBS):
 
 
 def from_mfem(nurbs_dict):
-    """
-    Construct a gustaf NURBS. Reorganizes control points and weights.
-
+    """Construct a gustaf NURBS. Reorganizes control points and weights.
 
     Parameters
     -----------
@@ -820,23 +790,21 @@ def from_mfem(nurbs_dict):
     nurbs: NURBS
     """
     _, m2gus = splinepy.io.mfem.mfem_index_mapping(
-        len(nurbs_dict["degrees"]),
-        nurbs_dict["degrees"],
-        nurbs_dict["knot_vectors"],
+            len(nurbs_dict["degrees"]),
+            nurbs_dict["degrees"],
+            nurbs_dict["knot_vectors"],
     )
 
     return NURBS(
-        degrees=nurbs_dict["degrees"],
-        knot_vectors=nurbs_dict["knot_vectors"],
-        control_points=nurbs_dict["control_points"][m2gus],
-        weights=nurbs_dict["weights"][m2gus],
+            degrees=nurbs_dict["degrees"],
+            knot_vectors=nurbs_dict["knot_vectors"],
+            control_points=nurbs_dict["control_points"][m2gus],
+            weights=nurbs_dict["weights"][m2gus],
     )
 
 
 def load_splines(fname):
-    """
-    Loads and creates gustaf NURBS.
-    Does not perform any check or tests.
+    """Loads and creates gustaf NURBS. Does not perform any check or tests.
 
     Parameters
     -----------

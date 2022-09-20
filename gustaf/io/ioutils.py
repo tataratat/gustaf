@@ -1,14 +1,13 @@
-"""
-gustaf/gustaf/io/ioutils.py
+"""gustaf/gustaf/io/ioutils.py.
 
 utils for lord load and his expected expertise, export.
 """
 
 import os
 
+
 def abs_fname(fname):
-    """
-    Checks if fname is abs. If not, returns abs. Tilde safe.
+    """Checks if fname is abs. If not, returns abs. Tilde safe.
 
     Parameters
     -----------
@@ -21,7 +20,7 @@ def abs_fname(fname):
     """
     if os.path.isabs(fname):
         pass
-    #elif fname.startswith("~"):
+    # elif fname.startswith("~"):
     elif "~" in fname:
         fname = os.path.expanduser(fname)
     else:
@@ -31,8 +30,7 @@ def abs_fname(fname):
 
 
 def check_and_makedirs(fname):
-    """
-    Checks if the directories of the path exists. If not, makedirs!
+    """Checks if the directories of the path exists. If not, makedirs!
 
     Parameters
     -----------

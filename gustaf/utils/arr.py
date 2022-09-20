@@ -1,7 +1,7 @@
-"""gustaf/gustaf/utils/arr.py
+"""gustaf/gustaf/utils/arr.py.
 
-Useful functions for array / point operations.
-Named `arr`, since `array` is python library and it sounds funny.
+Useful functions for array / point operations. Named `arr`, since
+`array` is python library and it sounds funny.
 """
 
 import numpy as np
@@ -10,17 +10,14 @@ from gustaf import settings
 
 
 def make_c_contiguous(array, dtype=None):
-    """
-    Make given array like object a c contiguous np.ndarray.
-    dtype is optional. If None is given, just returns None.
+    """Make given array like object a c contiguous np.ndarray. dtype is
+    optional. If None is given, just returns None.
 
     Parameters
     -----------
     array: array-like
     dtype: type or str
       (Optional) `numpy` interpretable type or str, describing type.
-      Difference is that type will always return a copy and str will only copy
-      if types doesn't match.
 
     Returns
     --------
@@ -31,13 +28,8 @@ def make_c_contiguous(array, dtype=None):
 
     if isinstance(array, np.ndarray):
         if array.flags.c_contiguous:
-            if dtype is not None:
-                if isinstance(dtype, type):
-                    return array.astype(dtype)
-
-                elif isinstance(dtype, str):
-                    if array.dtype.name != dtype:
-                        return array.astype(dtype)
+            if dtype is not None and array.dtype != dtype:
+                return array.astype(dtype)
 
             return array
 
@@ -58,7 +50,8 @@ def unique_rows(
     """
     Find unique rows using np.unique, but apply tricks. Adapted from
     `skimage.util.unique_rows`.
-    url: github.com/scikit-image/scikit-image/blob/main/skimage/util/unique.py
+    url: github.com/scikit-image/scikit-image/blob/main/skimage/util/unique.py/
+    Suitable for int types.
 
     Parameters
     -----------
@@ -80,17 +73,15 @@ def unique_rows(
     in_arr = make_c_contiguous(in_arr, dtype_name)
 
     if len(in_arr.shape) != 2:
-        raise ValueError(
-            "unique_rows can be only applied for 2D arrays"
-        )
+        raise ValueError("unique_rows can be only applied for 2D arrays")
 
     in_arr_row_view = in_arr.view(f"|S{in_arr.itemsize * in_arr.shape[1]}")
 
     unique_stuff = np.unique(
-        in_arr_row_view,
-        return_index=True,
-        return_inverse=return_inverse,
-        return_counts=return_counts,
+            in_arr_row_view,
+            return_index=True,
+            return_inverse=return_inverse,
+            return_counts=return_counts,
     )
     unique_stuff = list(unique_stuff)  # list, to allow item assignment
 
@@ -103,9 +94,58 @@ def unique_rows(
     return unique_stuff
 
 
-def bounds(arr):
+def close_rows(arr, tolerance=None):
+    """Similar to unique_rows, but if data type is floats, use this one.
+    Performs radius search using KDTree. Currently uses
+    `scipy.spatial.cKDTree`.
+
+    Parameters
+    -----------
+    arr: (n, d) array-like
+
+    Returns
+    --------
+    close_stuff: tuple
+      unique_arrays: (n, d) np.ndarray
+      unique_ids: (m) np.ndarray
+      inverse: (n) np.ndarray
+      overlapping: list(list)
+        id of neighbors within the tolerance.
     """
-    Return bounds.
+    from scipy.spatial import cKDTree as KDTree
+
+    if tolerance is None:
+        tolerance = settings.TOLERANCE
+
+    # Build kdtree
+    kdt = KDTree(arr)
+
+    # Ball point query, taking tolerance as radius
+    neighbors = kdt.query_ball_point(
+            arr,
+            tolerance,
+            # workers=workers,
+            # return_sorted=True # new in 1.6, but default is True, so pass.
+    )
+
+    # inverse based on original vertices.
+    o_inverse = np.array(
+            [n[0] for n in neighbors],
+            dtype=settings.INT_DTYPE,
+    )
+
+    # unique of o_inverse, and inverse based on that
+    (_, uniq_id, inv) = np.unique(
+            o_inverse,
+            return_index=True,
+            return_inverse=True,
+    )
+
+    return (arr[uniq_id], uniq_id, inv, neighbors)
+
+
+def bounds(arr):
+    """Return bounds.
 
     Parameters
     -----------
@@ -116,16 +156,16 @@ def bounds(arr):
     bounds: (2, d) np.ndarray
     """
     return np.vstack(
-        (
-            np.min(arr, axis=0).reshape(1, -1),
-            np.max(arr, axis=0).reshape(1, -1),
-        )
+            (
+                    np.min(arr, axis=0).ravel(),
+                    np.max(arr, axis=0).ravel(),
+            )
     )
 
 
 def bounds_diagonal(arr):
-    """
-    Returns diagonal vector of the bounds.
+    """Returns diagonal vector of the bounds.
+
     bounds[1] - bounds[0]
 
     Parameters
@@ -141,8 +181,7 @@ def bounds_diagonal(arr):
 
 
 def bounds_norm(arr):
-    """
-    Returns norm of the bounds.
+    """Returns norm of the bounds.
 
     Parameters
     -----------
@@ -156,8 +195,7 @@ def bounds_norm(arr):
 
 
 def bounds_mean(arr):
-    """
-    Returns mean of the bounds
+    """Returns mean of the bounds.
 
     Parameters
     -----------
@@ -171,9 +209,8 @@ def bounds_mean(arr):
 
 
 def select_with_ranges(arr, ranges):
-    """
-    Select array with ranges of each column.
-    Always parsed as:
+    """Select array with ranges of each column. Always parsed as:
+
     [[greater_than, less_than], [....], ...]
 
     Parameters
@@ -213,12 +250,9 @@ def select_with_ranges(arr, ranges):
 
 
 def rotation_matrix(rotation, degree=True):
-    '''
-    Compute rotation matrix.
-    Works for both 2D and 3D point sets.
-    In 2D, it can rotate along the (virtual) z-axis.
-    In 3D, it can rotate along [x, y, z]-axis.
-    Uses `scipy.spatial.transform.Rotation`.
+    """Compute rotation matrix. Works for both 2D and 3D point sets. In 2D, it
+    can rotate along the (virtual) z-axis. In 3D, it can rotate along [x, y,
+    z]-axis. Uses `scipy.spatial.transform.Rotation`.
 
     Parameters
     -----------
@@ -232,12 +266,12 @@ def rotation_matrix(rotation, degree=True):
     Returns
     --------
     rotation_matrix: np.ndarray (3,3)
-    '''
+    """
     from scipy.spatial.transform import Rotation as R
 
     rotation = np.asarray(rotation).flatten()
 
-    if degree == True:
+    if degree:
         rotation = np.radians(rotation)
 
     # 2D
@@ -250,17 +284,15 @@ def rotation_matrix(rotation, degree=True):
 
 
 def rotate(arr, rotation, rotation_axis=None, degree=True):
-    """
-    Rotates given arrays.
-    Arrays shape[1] should equal to either 2 or 3
-    For more information, see `rotation_matrix()`.
+    """Rotates given arrays. Arrays shape[1] should equal to either 2 or 3 For
+    more information, see `rotation_matrix()`.
 
     Parameters
     -----------
     arr: (n, (2 or 3)) list-like
     rotation: list or float
       angle of rotation (around each axis)
-    rotation_axis: (n, (2 or 3)) or (2 or 3) list-like 
+    rotation_axis: (n, (2 or 3)) or (2 or 3) list-like
       center of rotation
 
     Returns
@@ -269,16 +301,11 @@ def rotate(arr, rotation, rotation_axis=None, degree=True):
     """
     arr = make_c_contiguous(arr, settings.FLOAT_DTYPE)
     if rotation_axis is not None:
-        rotation_axis = make_c_contiguous(
-            rotation_axis,
-            settings.FLOAT_DTYPE
-        ).ravel()
+        rotation_axis = make_c_contiguous(rotation_axis,
+                                          settings.FLOAT_DTYPE).ravel()
 
     if rotation_axis is None:
-        return np.matmul(
-            arr,
-            rotation_matrix(rotation, degree)
-        )
+        return np.matmul(arr, rotation_matrix(rotation, degree))
 
     else:
         rarr = arr - rotation_axis
@@ -288,14 +315,9 @@ def rotate(arr, rotation, rotation_axis=None, degree=True):
         return rarr
 
 
-def rotation_matrix_around_axis(
-        axis=None,
-        rotation=None,
-        degree=True):
-    """
-    Compute rotation matrix given the axis of rotation.
-    Works for both 2D and 3D
-    Uses Rodrigues' formula.
+def rotation_matrix_around_axis(axis=None, rotation=None, degree=True):
+    """Compute rotation matrix given the axis of rotation. Works for both 2D
+    and 3D Uses Rodrigues' formula.
 
     If axis is not specified, 2D rotation matrix is assumed.
 
@@ -331,24 +353,89 @@ def rotation_matrix_around_axis(
 
     # Assemble rotation matrix
     if problem_dimension == 2:
-        rotation_matrix = np.array([
-            [np.cos(rotation), -np.sin(rotation)],
-            [np.sin(rotation), np.cos(rotation)]
-        ])
+        rotation_matrix = np.array(
+                [
+                        [np.cos(rotation), -np.sin(rotation)],
+                        [np.sin(rotation), np.cos(rotation)]
+                ]
+        )
     else:
         # See Rodrigues' formula
         rotation_matrix = np.array(
-            [[0, -axis[2], axis[1]],
-             [axis[2], 0, -axis[0]],
-             [axis[1], axis[0], 0]]
+                [
+                        [0, -axis[2], axis[1]], [axis[2], 0, -axis[0]],
+                        [axis[1], axis[0], 0]
+                ]
         )
         rotation_matrix = (
-            np.eye(3)
-            + np.sin(rotation) * rotation_matrix
-            + (
-                (1 - np.cos(rotation))
-                * np.matmul(rotation_matrix, rotation_matrix)
-            )
+                np.eye(3) + np.sin(rotation) * rotation_matrix + (
+                        (1 - np.cos(rotation))
+                        * np.matmul(rotation_matrix, rotation_matrix)
+                )
         )
 
     return rotation_matrix
+
+
+def is_shape(arr, shape, strict=False):
+    """Checks if arr matches given shape. shape can have negative numbers.
+
+    Parameters
+    -----------
+    arr: np.ndarray
+    shape: tuple
+    strict: bool
+      raises ValueError if shapes do not match
+
+    Returns
+    --------
+    matches: bool
+    """
+    arr = np.asanyarray(arr)
+
+    if arr.ndim != len(shape):
+        if strict:
+            raise ValueError(f"array should be {arr.ndim}D")
+        return False
+
+    for i, (a, s) in enumerate(zip(arr.shape, shape)):
+        if s < 0:
+            continue
+        if a != s:
+            if strict:
+                raise ValueError(f"array should have {s} shape in {i}-D")
+            return False
+
+    return True
+
+
+def is_one_of_shapes(arr, shapes, strict=False):
+    """Tuple/list of given shapes, iterates and checks with is_shape. Useful if
+    you have multiple acceptable shapes.
+
+    Parameters
+    -----------
+    arr: np.ndarray
+    shapes: tuple or list
+      tuple/list of tuple/list
+    strict: bool
+
+    Returns
+    --------
+    matches: bool
+    """
+    arr = np.asanyarray(arr)
+    matches = False
+    for s in shapes:
+        m = is_shape(arr, s, strict=False)
+        if m:
+            matches = True
+
+    if not matches:
+        if strict:
+            raise ValueError(
+                    f"array's shape {arr.shape} is not one of f{shapes}"
+            )
+        return False
+
+    return True

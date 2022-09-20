@@ -1,0 +1,50 @@
+name: format check and runs tests
+
+on:
+  pull_request:
+    branches: ["main"]
+  push:
+    branches: ["main"]
+
+jobs:
+  build_and_tests:
+
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        python-version: [3.8, 3.9]
+        os: [ubuntu-latest, macos-latest]
+
+    steps:
+    - uses: actions/checkout@v3
+      with:
+        submodules: recursive
+    - name: Set up  ${{ matrix.python-version }}
+      uses: actions/setup-python@v3
+      with:
+        python-version: ${{ matrix.python-version }}
+
+    - name: check formats
+      run: |
+        pip install flake8 autopep8 yapf
+        flake8 gustaf
+        flake8 examples
+        flake8 tests
+        # actually apply in place to check diff later.
+        # yapf is great, but skips a few checks
+        yapf -r -i gustaf examples tests
+        autopep8 --select=W291,W292,W293,W504,E265,E501,E711,E722 -r -i --aggressive gustaf examples tests
+        # double check
+        flake8 gustaf examples tests
+
+    - uses: getsentry/action-git-diff-suggestions@main
+      with:
+        message: formatting suggestions
+ 
+    - name: install gustaf
+      run: python3 setup.py install
+
+    - name: prepare test and test
+      run: |
+        pip install pytest
+        pytest tests

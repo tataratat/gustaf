@@ -1,20 +1,15 @@
-"""gustaf/gustaf/_base.py
+"""gustaf/gustaf/_base.py.
 
-Useful base class for gustaf.
-Plus some useful decorators.
+Useful base class for gustaf. Plus some useful decorators.
 """
 
 import abc
-import logging
-import os
-
-import numpy as np
 
 from gustaf import utils
 
+
 class GustafBase(abc.ABC):
-    """
-    Base class for gustaf, where logging is nicely wrapped, and some useful
+    """Base class for gustaf, where logging is nicely wrapped, and some useful
     methods are defined as classmethods..
 
     Since attributes are predefined with __slots__, we can pre define
@@ -30,8 +25,7 @@ class GustafBase(abc.ABC):
     __slots__ = []
 
     def _logd(self, *log):
-        """
-        Debug logger wrapper for Mesh.
+        """Debug logger wrapper for Mesh.
 
         Parameters
         -----------
@@ -44,8 +38,7 @@ class GustafBase(abc.ABC):
         utils.log.debug(type(self).__qualname__, "-", *log)
 
     def _logi(self, *log):
-        """
-        Info logger wrapper for Mesh.
+        """Info logger wrapper for Mesh.
 
         Parameters
         -----------
@@ -58,8 +51,7 @@ class GustafBase(abc.ABC):
         utils.log.info(type(self).__qualname__, "-", *log)
 
     def _logw(self, *log):
-        """
-        Warning logger wrapper for Mesh.
+        """Warning logger wrapper for Mesh.
 
         Parameters
         -----------

@@ -1,4 +1,4 @@
-"""gustaf/gustaf/io/mfem.py
+"""gustaf/gustaf/io/mfem.py.
 
 io functions for mixd.
 """
@@ -8,7 +8,6 @@ import struct
 
 import numpy as np
 
-from gustaf.vertices import Vertices
 from gustaf.faces import Faces
 from gustaf.volumes import Volumes
 from gustaf.io.ioutils import abs_fname, check_and_makedirs
@@ -23,11 +22,9 @@ def load(
         mien=None,
         mrng=None
 ):
-    """
-    mixd load.
-    To avoid reading minf, all the crucial info can be given as params.
-    Default input will try to import `mxyz`, `mien`, `mrng` from current
-    location and assumes mesh is 2D triangle.
+    """mixd load. To avoid reading minf, all the crucial info can be given as
+    params. Default input will try to import `mxyz`, `mien`, `mrng` from
+    current location and assumes mesh is 2D triangle.
 
     Parameters
     -----------
@@ -47,8 +44,8 @@ def load(
       Default is None. This is optional.
     """
     # figure out input type
-    specified_input = mxyz != None # bare minimum input
-    fname_input = (fname != None) and not specified_input
+    specified_input = mxyz is not None  # bare minimum input
+    fname_input = (fname is not None) and not specified_input
     default_input = not (fname_input or specified_input)
 
     if default_input:
@@ -57,7 +54,7 @@ def load(
         mrng = "mrng"
 
     elif fname_input:
-        absfname = abs_fname(fname)
+        fname = abs_fname(fname)
         fbase, ext = os.path.splitext(fname)
 
         if os.path.basename(fbase) == "_":
@@ -76,23 +73,21 @@ def load(
     connec = None
     try:
         connec = (np.fromfile(mien, dtype=">i") - int(1)).astype(np.int32)
-    except:
+    except BaseException:
         log.debug(f"mien file, `{mien}`, does not exist. Skipping.")
 
     # boundary conditions
     bcs = dict()
     try:
-        bcs_in = np.fromfile(mrng, dtype=">i").astype(np.int32) # flattened
+        bcs_in = np.fromfile(mrng, dtype=">i").astype(np.int32)  # flattened
         uniq_bcs_in = np.unique(bcs_in)
-        uniq_bcs_in = uniq_bcs_in[uniq_bcs_in > 0] # keep only natural nums
+        uniq_bcs_in = uniq_bcs_in[uniq_bcs_in > 0]  # keep only natural nums
         subelemids = np.arange(bcs_in.size)
 
         for ubci in uniq_bcs_in:
-            bcs.update(
-                {str(ubci) : subelemids[bcs_in == ubci]}
-            )
-            
-    except:
+            bcs.update({str(ubci): subelemids[bcs_in == ubci]})
+
+    except BaseException:
         log.debug(f"mrng file, `{mrng}`, does not exist. Skipping.")
 
     # reshape vertices
@@ -115,10 +110,8 @@ def load(
 
 
 def export(mesh, fname, space_time=False):
-    """
-    Export in mixd format.
-    Supports triangle, quadrilateral, tetrahedron, and hexahedron
-    semi-discrete and (flat) space-time mesh output.
+    """Export in mixd format. Supports triangle, quadrilateral, tetrahedron,
+    and hexahedron semi-discrete and (flat) space-time mesh output.
 
     Parameters
     -----------
@@ -131,11 +124,11 @@ def export(mesh, fname, space_time=False):
     """
     # did you give us an acceptable mesh?
     acceptable_shapes = ["tri", "quad", "tet", "hexa"]
-    whatami = mesh.get_whatami()
+    whatami = mesh.whatami
 
     if whatami not in acceptable_shapes:
         raise NotImplementedError(
-            f"Sorry, we can't export {whatami}-shape in mixd format."
+                f"Sorry, we can't export {whatami}-shape in mixd format."
         )
 
     # prepare export location
@@ -151,7 +144,7 @@ def export(mesh, fname, space_time=False):
     fbase, ext = os.path.splitext(fname)
 
     if ext.startswith(".xns"):
-        # frequently used case in practice. no base export 
+        # frequently used case in practice. no base export
         if os.path.basename(fbase) == "_":
             fdir = os.path.dirname(fbase)
             vert_file = os.path.join(fdir, "mxyz")
@@ -199,13 +192,13 @@ def export(mesh, fname, space_time=False):
         boundaries[:] = -1
 
         for i, belem_ids in enumerate(mesh.BC.values()):
-            boundaries[belem_ids] = i + 1 # bid starts at 1
+            boundaries[belem_ids] = i + 1  # bid starts at 1
 
         for b in boundaries:
             bf.write(struct.pack(big_endian_int, b))
 
     # write info
-    with open(info_file, "w") as infof: # if and inf... just can't
+    with open(info_file, "w") as infof:  # if and inf... just can't
         infof.write(f"# dim: {dim}\n")
         infof.write(f"# mesh type: {whatami}\n\n")
 
