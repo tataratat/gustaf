@@ -226,7 +226,7 @@ class Vertices(GustafBase):
         # create inverse mask if not passed
         check_neg = False
         if inverse is None and self.kind != "vertex":
-            inverse = np.full(len(vertices), -1, dtype=settings.INT_DTYPE)
+            inverse = np.full(len(vertices), -11, dtype=settings.INT_DTYPE)
             check_neg = True
             if mask.dtype.kind == "b":
                 inverse[mask] = np.arange(mask.sum())
@@ -245,7 +245,8 @@ class Vertices(GustafBase):
             )
             # remove all the elements that's not part of inverse
             if check_neg:
-                elements = elements[np.unique(np.where(elements >= 0)[0])]
+                emask = (elements > -1).all(axis=1)
+                elements = elements[emask]
 
         # apply mask
         vertices = vertices[mask]
