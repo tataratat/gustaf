@@ -199,9 +199,8 @@ def export(mesh, fname, space_time=False, boundary_default=False):
         if not hasattr(mesh, "BC"):
             if boundary_default:
                 # determine number of face elements
-                n_face_elements = mesh.tofaces(
-                    unique=False
-                ).elements().shape[0]
+                n_face_elements = mesh.tofaces(unique=False
+                                               ).elements().shape[0]
                 mesh.BC = {"default": np.arange(n_face_elements)}
             else:
                 mesh.BC = {}

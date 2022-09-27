@@ -1,13 +1,7 @@
-import itertools
-from multiprocessing.sharedctypes import Value
-from operator import is_
-from gustaf.spline.extract import control_points
 import numpy as np
 
-from gustaf import spline
-
 from gustaf._base import GustafBase
-from gustaf.spline import base, microstructure
+from gustaf.spline import base
 
 
 class Generator(GustafBase):
@@ -15,11 +9,13 @@ class Generator(GustafBase):
     Helper class to facilitatae the construction of microstructures
     """
 
-    def __init__(self,
-                 deformation_function=None,
-                 tiling=None,
-                 microtile=None,
-                 parametrization_function=None):
+    def __init__(
+            self,
+            deformation_function=None,
+            tiling=None,
+            microtile=None,
+            parametrization_function=None
+    ):
         """
         Helper class to facilitatae the construction of microstructures
 
@@ -69,8 +65,8 @@ class Generator(GustafBase):
     @deformation_function.setter
     def deformation_function(self, deformation_function):
         """
-        Deformation function setter defining the outer geometry of the 
-        microstructure. Must be spline type and as such inherit from 
+        Deformation function setter defining the outer geometry of the
+        microstructure. Must be spline type and as such inherit from
         gustaf.GustafSpline
 
         Parameters
@@ -83,7 +79,8 @@ class Generator(GustafBase):
         """
         if not issubclass(type(deformation_function), base.GustafSpline):
             raise ValueError(
-                "Deformation function must be Gustaf-Spline. e.g. gustaf.NURBS"
+                "Deformation function must be Gustaf-Spline."
+                " e.g. gustaf.NURBS"
             )
         self._deformation_function = deformation_function
         self._sanity_check()
@@ -122,7 +119,8 @@ class Generator(GustafBase):
         if not isinstance(tiling, list):
             if not isinstance(tiling, int):
                 raise ValueError(
-                    "Tiling mus be either list of integers of integer value"
+                    "Tiling mus be either list of integers of integer "
+                    "value"
                 )
         self._tiling = tiling
         # Is defaulted to False using function arguments
@@ -159,8 +157,10 @@ class Generator(GustafBase):
         None
         """
         # place single tiles into a list to provide common interface
-        if (isinstance(microtile, list)
-                or issubclass(type(microtile), base.GustafSpline)):
+        if (
+                isinstance(microtile, list)
+                or issubclass(type(microtile), base.GustafSpline)
+        ):
             microtile = self._make_microtilable(microtile)
         # Assign Microtile object to member variable
         self._microtile = microtile
@@ -177,7 +177,7 @@ class Generator(GustafBase):
           1. `evaluation_points` - a list of points defined in the unit cube
              that will be evaluated in the parametrization function to provide
              the required set of data points
-          2. `parameter_space_dimension` - dimensionality of the 
+          2. `parameter_space_dimension` - dimensionality of the
               parametrization function and number of design variables for said
               microtile
 
@@ -198,7 +198,7 @@ class Generator(GustafBase):
 
     @parametrization_function.setter
     def parametrization_function(self, parametrization_function):
-        """        
+        """
         Optional function, that - if required - parametrizes the microtiles
 
         In order to use said function, the Microtile needs to provide a couple
@@ -206,7 +206,7 @@ class Generator(GustafBase):
           1. `evaluation_points` - a list of points defined in the unit cube
              that will be evaluated in the parametrization function to provide
              the required set of data points
-          2. `parameter_space_dimension` - dimensionality of the 
+          2. `parameter_space_dimension` - dimensionality of the
               parametrization function and number of design variables for said
               microtile
 
@@ -218,7 +218,7 @@ class Generator(GustafBase):
         None
         """
         if not callable(parametrization_function):
-            raise("parametrization_function must be callable")
+            raise ("parametrization_function must be callable")
         self._parametrization_function = parametrization_function
         self._sanity_check()
 
@@ -230,7 +230,7 @@ class Generator(GustafBase):
         ----------
         closing_faces : int
           If not None, Microtile must provide a function `closing_tile`
-        **kwargs 
+        **kwargs
           will be passed to `create_tile` function
 
         Returns
@@ -254,8 +254,8 @@ class Generator(GustafBase):
                 )
             if self._parametrization_function is None:
                 raise ValueError(
-                    "Faceclosure is currently only implemented for parametrized"
-                    " microstructures"
+                    "Faceclosure is currently only implemented for "
+                    "parametrized microstructures"
                 )
 
         # Prepare the deformation function
@@ -271,9 +271,11 @@ class Generator(GustafBase):
                 if self.tiling[i_pd] == 1:
                     continue
                 inv_t = 1 / self.tiling[i_pd]
-                new_knots = [j * inv_t * (ukvs[i_pd][i] - ukvs[i_pd][i-1])
-                             for i in range(1, len(ukvs[i_pd]))
-                             for j in range(1, self.tiling[i_pd])]
+                new_knots = [
+                    j * inv_t * (ukvs[i_pd][i] - ukvs[i_pd][i - 1])
+                    for i in range(1, len(ukvs[i_pd]))
+                    for j in range(1, self.tiling[i_pd])
+                ]
                 # insert knots in both the deformation function
                 deformation_function_copy_.insert_knots(i_pd, new_knots)
             def_fun_patches = deformation_function_copy_.extract.beziers()
@@ -290,9 +292,13 @@ class Generator(GustafBase):
             # Trust me @j042
             def_fun_para_space = base.Bezier(
                 degrees=[1] * deformation_function_copy_.para_dim,
-                control_points=np.array(list(
-                    itertools.product(*para_space_dimensions[::-1])
-                ))[:, ::-1]
+                control_points=np.array(
+                    list(
+                        itertools.product(
+                            *para_space_dimensions[::-1]
+                        )
+                    )
+                )[:, ::-1]
             ).bspline
             for i_pd in range(deformation_function_copy_.para_dim):
                 if self.tiling[i_pd] != 1:
@@ -303,19 +309,20 @@ class Generator(GustafBase):
             def_fun_para_space = def_fun_para_space.extract.beziers()
 
         # Determine element resolution
-        element_resolutions = [len(c) - 1
-                               for c in deformation_function_copy_.unique_knots]
+        element_resolutions = [
+            len(c) - 1 for c in deformation_function_copy_.unique_knots
+        ]
 
         # Start actual composition
         microstructure = []
         if is_parametrized:
-            for i, (def_fun, def_fun_para) in enumerate(zip(
-                def_fun_patches,
-                def_fun_para_space
-            )):
+            for i, (def_fun, def_fun_para) in enumerate(
+                    zip(def_fun_patches, def_fun_para_space)
+            ):
                 # Evaluate tile parameters
                 positions = def_fun_para.evaluate(
-                    self._microtile.evaluation_points)
+                    self._microtile.evaluation_points
+                )
                 tile_parameters = self._parametrization_function(positions)
 
                 # Check if center or closing tile
@@ -342,20 +349,16 @@ class Generator(GustafBase):
                         )
                     else:
                         tile = self._microtile.create_tile(
-                            parameters=tile_parameters,
-                            **kwargs
+                            parameters=tile_parameters, **kwargs
                         )
                 else:
                     tile = self._microtile.create_tile(
-                        parameters=tile_parameters,
-                        **kwargs
+                        parameters=tile_parameters, **kwargs
                     )
 
                 # Perform composition
                 for tile_patch in tile:
-                    microstructure.append(
-                        def_fun.compose(tile_patch)
-                    )
+                    microstructure.append(def_fun.compose(tile_patch))
         # Not parametrized
         else:
             # Tile can be computed once (prevent to many evaluations)
@@ -370,7 +373,7 @@ class Generator(GustafBase):
         """
         Check all members and consistency of user data
 
-        Parameters 
+        Parameters
         ----------
         None
 
@@ -378,9 +381,10 @@ class Generator(GustafBase):
         -------
         None
         """
-        if ((self.deformation_function is None) or
-            (self.microtile is None) or
-                (self.tiling is None)):
+        if (
+                (self.deformation_function is None)
+                or (self.microtile is None) or (self.tiling is None)
+        ):
             self._logd(
                 "Current information not sufficient,"
                 " awaiting further assignments"
@@ -412,8 +416,8 @@ class Generator(GustafBase):
             self.tiling = [self.tiling] * self.deformation_function.para_dim
         if len(self.tiling) != self.deformation_function.para_dim:
             raise ValueError(
-                "Tiling list must have one entry per parametric dimension of the "
-                "deformation function"
+                "Tiling list must have one entry per parametric dimension of"
+                " the deformation function"
             )
         if self.parametrization_function is not None:
             self._logd("Checking compatibility of parametrization function")
@@ -430,7 +434,8 @@ class Generator(GustafBase):
                     " for a parametrized microstructure construction"
                 )
             result = self._parametrization_function(
-                self._microtile.evaluation_points)
+                self._microtile.evaluation_points
+            )
             if not isinstance(result, tuple):
                 raise ValueError(
                     "Function outline of parametrization function must be "
@@ -454,7 +459,9 @@ class Generator(GustafBase):
         microtile : spline / list<splines>
           Microtile definition of a spline
         """
+
         class _UserTile():
+
             def __init__(self, microtile):
                 """
                 On the fly created class of a user tile
@@ -471,8 +478,8 @@ class Generator(GustafBase):
                 for m in microtile:
                     if not issubclass(type(m), base.GustafSpline):
                         raise ValueError(
-                            "Microtiles must be (list of) gustaf.GustafSplines. "
-                            "e.g. gustaf.NURBS"
+                            "Microtiles must be (list of) "
+                            "gustaf.GustafSplines. e.g. gustaf.NURBS"
                         )
                     # Extract beziers for every non Bezier patch else this just
                     # returns itself

@@ -16,16 +16,6 @@ from gustaf.spline import ffd
 from gustaf.spline import microstructure
 
 __all__ = [
-        "base",
-        "create",
-        "extract",
-        "Bezier",
-        "RationalBezier",
-        "BSpline",
-        "NURBS",
-        "show",
-        "from_mfem",
-        "load_splines",
-        "ffd",
-        "microstructure"
+        "base", "create", "extract", "Bezier", "RationalBezier", "BSpline",
+        "NURBS", "show", "from_mfem", "load_splines", "ffd", "microstructure"
 ]
