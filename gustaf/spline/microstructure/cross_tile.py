@@ -64,7 +64,8 @@ class CrossTile(base.GustafBase):
         parameters=None,
         closure=None,
         boundary_width=0.1,
-        filling_height=0.75
+        filling_height=0.5,
+        **kwargs
     ):
         """
         Create a closing tile to match with closed surface
@@ -113,7 +114,8 @@ class CrossTile(base.GustafBase):
 
         spline_list = []
         if closure == 2:
-            branch_thickness = parameters[4]
+            # The branch is located at zmin of current tile
+            branch_thickness = parameters[5]
             ctps_corner = np.array([
                 [0., 0., 0.],
                 [boundary_width, 0., 0.],
@@ -236,7 +238,8 @@ class CrossTile(base.GustafBase):
 
             return spline_list
         elif closure == -2:
-            branch_thickness = parameters[5]
+            # The branch is located at zmax of current tile
+            branch_thickness = parameters[4]
             ctps_corner = np.array([
                 [0., 0., inv_filling_height],
                 [boundary_width, 0., inv_filling_height],
@@ -367,7 +370,8 @@ class CrossTile(base.GustafBase):
     def create_tile(
         self,
         parameters=None,
-        center_expansion=1.
+        center_expansion=1.,
+        **kwargs
     ):
         """
         Create a microtile based on the parameters that describe the branch
@@ -634,7 +638,8 @@ class InverseCrossTile(base.GustafBase):
         closure=None,
         boundary_width=0.1,
         filling_height=0.5,
-        seperator_distance=None
+        seperator_distance=None,
+        **kwargs
     ):
         """
         Create a closing tile to match with closed surface
@@ -692,7 +697,7 @@ class InverseCrossTile(base.GustafBase):
 
         spline_list = []
         if closure == 2:
-            branch_thickness = parameters[4]
+            branch_thickness = parameters[5]
             branch_neighbor_x_min_ctps = np.array([
                 [-.5, -r_center, filling_height],
                 [-half_r_center, -r_center, filling_height],
@@ -967,7 +972,7 @@ class InverseCrossTile(base.GustafBase):
             return spline_list
 
         elif closure == -2:
-            branch_thickness = parameters[5]
+            branch_thickness = parameters[4]
             branch_neighbor_x_min_ctps = np.array([
                 [-.5, -aux_column_width, 0.],
                 [-seperator_distance, -aux_column_width, 0.],
@@ -1248,7 +1253,8 @@ class InverseCrossTile(base.GustafBase):
         self,
         parameters=None,
         seperator_distance=None,
-        center_expansion=1.
+        center_expansion=1.,
+        **kwargs
     ):
         """
         Create an inverse microtile based on the parameters that describe the

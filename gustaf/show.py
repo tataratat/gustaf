@@ -67,7 +67,6 @@ def show_vedo(
     cam = kwargs.get("cam", None)
     title = kwargs.get("title", "gustaf")
     return_show_list = kwargs.get("return_show_list", False)
-    title = kwargs.get("title", None)
 
     def clear_vedoplotter(plotter, numrenderers, skipcl=skip_clear):
         """enough said."""

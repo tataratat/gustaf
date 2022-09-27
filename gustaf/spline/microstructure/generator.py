@@ -259,15 +259,15 @@ class Generator(GustafBase):
                 )
 
         # Prepare the deformation function
-        # Transform into a non-uniform splinetype
+        # Transform into a non-uniform splinetype and make sure to work on copy
         if hasattr(self._deformation_function, "bspline"):
-            self._deformation_function = self._deformation_function.bspline
+            deformation_function_copy_ = self._deformation_function.bspline
         else:
-            self._deformation_function = self._deformation_function.nurbs
+            deformation_function_copy_ = self._deformation_function.nurbs
         # Create Spline that will be used to iterate over parametric space
-        ukvs = self._deformation_function.unique_knots
+        ukvs = deformation_function_copy_.unique_knots
         if self._tiling_per_knot_span:
-            for i_pd in range(self._deformation_function.para_dim):
+            for i_pd in range(deformation_function_copy_.para_dim):
                 if self.tiling[i_pd] == 1:
                     continue
                 inv_t = 1 / self.tiling[i_pd]
@@ -275,8 +275,8 @@ class Generator(GustafBase):
                              for i in range(1, len(ukvs[i_pd]))
                              for j in range(1, self.tiling[i_pd])]
                 # insert knots in both the deformation function
-                self._deformation_function.insert_knots(i_pd, new_knots)
-            def_fun_patches = self._deformation_function.extract.beziers()
+                deformation_function_copy_.insert_knots(i_pd, new_knots)
+            def_fun_patches = deformation_function_copy_.extract.beziers()
         else:
             raise NotImplementedError(
                 "Currently only knot-span wise insertion is implemented"
@@ -289,21 +289,22 @@ class Generator(GustafBase):
             para_space_dimensions = [[u[0], u[-1]] for u in ukvs]
             # Trust me @jl042
             def_fun_para_space = base.Bezier(
-                degrees=[1] * self._deformation_function.para_dim,
+                degrees=[1] * deformation_function_copy_.para_dim,
                 control_points=np.array(list(
                     itertools.product(*para_space_dimensions[::-1])
                 ))[:, ::-1]
             ).bspline
-            for i_pd in range(self._deformation_function.para_dim):
-                def_fun_para_space.insert_knots(
-                    i_pd,
-                    self._deformation_function.unique_knots[i_pd][1:-1]
-                )
+            for i_pd in range(deformation_function_copy_.para_dim):
+                if self.tiling[i_pd] != 1:
+                    def_fun_para_space.insert_knots(
+                        i_pd,
+                        deformation_function_copy_.unique_knots[i_pd][1:-1]
+                    )
             def_fun_para_space = def_fun_para_space.extract.beziers()
 
         # Determine element resolution
         element_resolutions = [len(c) - 1
-                               for c in self._deformation_function.unique_knots]
+                               for c in deformation_function_copy_.unique_knots]
 
         # Start actual composition
         microstructure = []
