@@ -2,7 +2,7 @@ import gustaf as gus
 import vedo
 
 # First Test
-generator = gus.spline.microstructure.generator.Generator()
+generator = gus.spline.microstructure.Generator()
 generator.deformation_function = gus.Bezier(
     degrees=[2, 1],
     control_points=[
@@ -29,7 +29,7 @@ gus.show.show_vedo(
 )
 
 # Second test
-generator = gus.spline.microstructure.generator.Generator()
+generator = gus.spline.microstructure.Generator()
 generator.deformation_function = gus.Bezier(
     degrees=[1, 1],
     control_points=[
@@ -82,7 +82,7 @@ generator.deformation_function = gus.Bezier(
         [0, 0], [1, 0], [0, 1], [1, 1]
     ]
 ).create.extruded(extrusion_vector=[0, 0, 1])
-generator.microtile = gus.spline.microstructure.cross_tile.CrossTile()
+generator.microtile = gus.spline.microstructure.tiles.CrossTile3D()
 generator.tiling = [2, 2, 3]
 gus.show.show_vedo(
     [*generator.create(), generator.deformation_function],
@@ -101,14 +101,14 @@ def foo(x):
     return tuple([(x[:, 2]) * .1+.1])
 
 
-generator = gus.spline.microstructure.generator.Generator()
+generator = gus.spline.microstructure.Generator()
 generator.deformation_function = gus.Bezier(
     degrees=[1, 1],
     control_points=[
         [0, 0], [1, 0], [0, 1], [1, 1]
     ]
 ).create.extruded(extrusion_vector=[0, 0, 1])
-generator.microtile = gus.spline.microstructure.cross_tile.InverseCrossTile()
+generator.microtile = gus.spline.microstructure.tiles.InverseCrossTile3D()
 generator.tiling = [2, 2, 3]
 generator.parametrization_function = foo
 
@@ -119,7 +119,7 @@ inverse_microstructure = generator.create(
 )
 
 # Corresponding Structure
-generator.microtile = gus.spline.microstructure.cross_tile.CrossTile()
+generator.microtile = gus.spline.microstructure.tiles.CrossTile3D()
 microstructure = generator.create(
     closing_faces=2,
     seperator_distance=0.4,

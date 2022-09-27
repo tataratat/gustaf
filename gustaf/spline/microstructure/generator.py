@@ -287,7 +287,7 @@ class Generator(GustafBase):
         is_parametrized = self.parametrization_function is not None
         if is_parametrized:
             para_space_dimensions = [[u[0], u[-1]] for u in ukvs]
-            # Trust me @jl042
+            # Trust me @j042
             def_fun_para_space = base.Bezier(
                 degrees=[1] * deformation_function_copy_.para_dim,
                 control_points=np.array(list(
