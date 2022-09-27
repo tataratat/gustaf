@@ -79,8 +79,8 @@ class Generator(GustafBase):
         """
         if not issubclass(type(deformation_function), base.GustafSpline):
             raise ValueError(
-                "Deformation function must be Gustaf-Spline."
-                " e.g. gustaf.NURBS"
+                    "Deformation function must be Gustaf-Spline."
+                    " e.g. gustaf.NURBS"
             )
         self._deformation_function = deformation_function
         self._sanity_check()
@@ -119,8 +119,8 @@ class Generator(GustafBase):
         if not isinstance(tiling, list):
             if not isinstance(tiling, int):
                 raise ValueError(
-                    "Tiling mus be either list of integers of integer "
-                    "value"
+                        "Tiling mus be either list of integers of integer "
+                        "value"
                 )
         self._tiling = tiling
         # Is defaulted to False using function arguments
@@ -249,13 +249,13 @@ class Generator(GustafBase):
             is_closed = True
             if closing_faces >= self._deformation_function.para_dim:
                 raise ValueError(
-                    "closing face must be smaller than the deformation "
-                    "function's parametric dimension"
+                        "closing face must be smaller than the deformation "
+                        "function's parametric dimension"
                 )
             if self._parametrization_function is None:
                 raise ValueError(
-                    "Faceclosure is currently only implemented for "
-                    "parametrized microstructures"
+                        "Faceclosure is currently only implemented for "
+                        "parametrized microstructures"
                 )
 
         # Prepare the deformation function
@@ -272,16 +272,16 @@ class Generator(GustafBase):
                     continue
                 inv_t = 1 / self.tiling[i_pd]
                 new_knots = [
-                    j * inv_t * (ukvs[i_pd][i] - ukvs[i_pd][i - 1])
-                    for i in range(1, len(ukvs[i_pd]))
-                    for j in range(1, self.tiling[i_pd])
+                        j * inv_t * (ukvs[i_pd][i] - ukvs[i_pd][i - 1])
+                        for i in range(1, len(ukvs[i_pd]))
+                        for j in range(1, self.tiling[i_pd])
                 ]
                 # insert knots in both the deformation function
                 deformation_function_copy_.insert_knots(i_pd, new_knots)
             def_fun_patches = deformation_function_copy_.extract.beziers()
         else:
             raise NotImplementedError(
-                "Currently only knot-span wise insertion is implemented"
+                    "Currently only knot-span wise insertion is implemented"
             )
 
         # Calculate parametric space representation for parametrized
@@ -291,26 +291,26 @@ class Generator(GustafBase):
             para_space_dimensions = [[u[0], u[-1]] for u in ukvs]
             # Trust me @j042
             def_fun_para_space = base.Bezier(
-                degrees=[1] * deformation_function_copy_.para_dim,
-                control_points=np.array(
-                    list(
-                        itertools.product(
-                            *para_space_dimensions[::-1]
-                        )
-                    )
-                )[:, ::-1]
+                    degrees=[1] * deformation_function_copy_.para_dim,
+                    control_points=np.array(
+                            list(
+                                    itertools.product(
+                                            *para_space_dimensions[::-1]
+                                    )
+                            )
+                    )[:, ::-1]
             ).bspline
             for i_pd in range(deformation_function_copy_.para_dim):
                 if self.tiling[i_pd] != 1:
                     def_fun_para_space.insert_knots(
-                        i_pd,
-                        deformation_function_copy_.unique_knots[i_pd][1:-1]
+                            i_pd,
+                            deformation_function_copy_.unique_knots[i_pd][1:-1]
                     )
             def_fun_para_space = def_fun_para_space.extract.beziers()
 
         # Determine element resolution
         element_resolutions = [
-            len(c) - 1 for c in deformation_function_copy_.unique_knots
+                len(c) - 1 for c in deformation_function_copy_.unique_knots
         ]
 
         # Start actual composition
@@ -321,7 +321,7 @@ class Generator(GustafBase):
             ):
                 # Evaluate tile parameters
                 positions = def_fun_para.evaluate(
-                    self._microtile.evaluation_points
+                        self._microtile.evaluation_points
                 )
                 tile_parameters = self._parametrization_function(positions)
 
@@ -336,24 +336,24 @@ class Generator(GustafBase):
                     if index == 0:
                         # Closure at minimum id
                         tile = self._microtile.closing_tile(
-                            parameters=tile_parameters,
-                            closure=closing_faces,
-                            **kwargs
+                                parameters=tile_parameters,
+                                closure=closing_faces,
+                                **kwargs
                         )
                     elif (index + 1) == element_resolutions[closing_faces]:
                         # Closure at minimum id
                         tile = self._microtile.closing_tile(
-                            parameters=tile_parameters,
-                            closure=-closing_faces,
-                            **kwargs
+                                parameters=tile_parameters,
+                                closure=-closing_faces,
+                                **kwargs
                         )
                     else:
                         tile = self._microtile.create_tile(
-                            parameters=tile_parameters, **kwargs
+                                parameters=tile_parameters, **kwargs
                         )
                 else:
                     tile = self._microtile.create_tile(
-                        parameters=tile_parameters, **kwargs
+                            parameters=tile_parameters, **kwargs
                     )
 
                 # Perform composition
@@ -386,29 +386,29 @@ class Generator(GustafBase):
                 or (self.microtile is None) or (self.tiling is None)
         ):
             self._logd(
-                "Current information not sufficient,"
-                " awaiting further assignments"
+                    "Current information not sufficient,"
+                    " awaiting further assignments"
             )
             return False
         # Check if microtile object fulfils requirements
         if not hasattr(self._microtile, "create_tile"):
             raise ValueError(
-                "Microtile class does not provide the necessary "
-                "attribute `create_tile`, that is required for microstructure"
-                " construction"
+                    "Microtile class does not provide the necessary "
+                    "attribute `create_tile`, that is required for "
+                    "microstructure construction"
             )
         if not hasattr(self._microtile, "dim"):
             raise ValueError(
-                "Microtile class does not provide the necessary "
-                "attribute `dim`, defining the dimensionality of "
-                "the created tile"
+                    "Microtile class does not provide the necessary "
+                    "attribute `dim`, defining the dimensionality of "
+                    "the created tile"
             )
 
         # Check if parametric dimensions are consistent
         if not self.deformation_function.para_dim == self._microtile.dim:
             raise ValueError(
-                "Microtile dimension must match parametric dimension of "
-                "deformation function to enable composition"
+                    "Microtile dimension must match parametric dimension of "
+                    "deformation function to enable composition"
             )
 
         # Check if tiling is consistent
@@ -416,35 +416,37 @@ class Generator(GustafBase):
             self.tiling = [self.tiling] * self.deformation_function.para_dim
         if len(self.tiling) != self.deformation_function.para_dim:
             raise ValueError(
-                "Tiling list must have one entry per parametric dimension of"
-                " the deformation function"
+                    "Tiling list must have one entry per parametric dimension"
+                    " of the deformation function"
             )
         if self.parametrization_function is not None:
             self._logd("Checking compatibility of parametrization function")
             if not hasattr(self._microtile, "evaluation_points"):
                 raise ValueError(
-                    "Microtile class does not provide the necessary "
-                    "attribute `evaluation_points`, that is required for a "
-                    "parametrized microstructure construction"
+                        "Microtile class does not provide the necessary "
+                        "attribute `evaluation_points`, that is required for"
+                        " a parametrized microstructure construction"
                 )
             if not hasattr(self._microtile, "parameter_space_dimension"):
                 raise ValueError(
-                    "Microtile class does not provide the necessary "
-                    "attribute `parameter_space_dimension`, that is required"
-                    " for a parametrized microstructure construction"
+                        "Microtile class does not provide the necessary "
+                        "attribute `parameter_space_dimension`, that is "
+                        "required for a parametrized microstructure "
+                        "construction"
                 )
             result = self._parametrization_function(
-                self._microtile.evaluation_points
+                    self._microtile.evaluation_points
             )
             if not isinstance(result, tuple):
                 raise ValueError(
-                    "Function outline of parametrization function must be "
-                    "`f(np.ndarray)->tuple`"
+                        "Function outline of parametrization function must be "
+                        "`f(np.ndarray)->tuple`"
                 )
             if not len(result) == self._microtile.parameter_space_dimension:
                 raise ValueError(
-                    "Return type of Parametrization function is insufficient, "
-                    "check documentation of Microtile for dimensionality"
+                        "Return type of Parametrization function is "
+                        "insufficient, check documentation of Microtile for "
+                        "dimensionality"
                 )
         # Complete check
         return True
@@ -478,8 +480,8 @@ class Generator(GustafBase):
                 for m in microtile:
                     if not issubclass(type(m), base.GustafSpline):
                         raise ValueError(
-                            "Microtiles must be (list of) "
-                            "gustaf.GustafSplines. e.g. gustaf.NURBS"
+                                "Microtiles must be (list of) "
+                                "gustaf.GustafSplines. e.g. gustaf.NURBS"
                         )
                     # Extract beziers for every non Bezier patch else this just
                     # returns itself
@@ -488,7 +490,7 @@ class Generator(GustafBase):
                 for m in microtile:
                     if m.dim != self._dim:
                         raise ValueError(
-                            "Dimensions of spline lists inconsistent"
+                                "Dimensions of spline lists inconsistent"
                         )
 
             @property

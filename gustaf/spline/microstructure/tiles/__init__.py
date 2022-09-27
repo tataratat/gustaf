@@ -10,6 +10,6 @@ from gustaf.spline.microstructure.tiles.inversecrosstile3d \
     import InverseCrossTile3D
 
 __all__ = [
-    "crosstile3d", "inversecrosstile3d", "CrossTile3D",
-    "InverseCrossTile3D"
+        "crosstile3d", "inversecrosstile3d", "CrossTile3D",
+        "InverseCrossTile3D"
 ]
