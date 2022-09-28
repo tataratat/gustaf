@@ -23,7 +23,7 @@ geometry_types = {
 }
 
 
-def load_mesh(fname):
+def load(fname):
     """
     Load mesh in MFEM format.
     Loads vertices and their connectivity.
@@ -106,7 +106,7 @@ def load_mesh(fname):
         return mesh
 
 
-def export_mesh(mesh, fname):
+def export(mesh, fname):
     """
     Export mesh in MFEM format.
     Supports 2D triangle and quadrilateral meshes.
