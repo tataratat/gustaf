@@ -74,6 +74,37 @@ gus.show.show_vedo(
 )
 
 # Fourth test
+# Non-uniform tiling
+generator = gus.spline.microstructure.generator.Generator()
+generator.deformation_function = gus.BSpline(
+        degrees=[2, 1],
+        control_points=[
+                [0, 0], [.1, 0], [.2, 0], [1, 0], [0, 1], [.1, 1], [.2, 2],
+                [1, 3]
+        ],
+        knot_vectors=[[0, 0, 0, 0.15, 1, 1, 1], [0, 0, 1, 1]]
+)
+generator.microtile = [
+        gus.Bezier(
+                degrees=[3],
+                control_points=[[0, .5], [.5, 1], [.5, 0], [1, .5]]
+        ),
+        gus.Bezier(
+                degrees=[3],
+                control_points=[[0.5, 0], [1, .5], [0, 0.5], [.5, 1]]
+        )
+]
+generator.tiling = [5, 1]
+gus.show.show_vedo(
+        [
+                *generator.create(knot_span_wise=False),
+                generator.deformation_function
+        ],
+        surface_alpha=0.3,
+        control_points=False
+)
+
+# Fifth test
 # A Parametrized microstructure and its respective inverse structure
 
 

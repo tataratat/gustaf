@@ -104,7 +104,7 @@ class Generator(GustafBase):
             return None
 
     @tiling.setter
-    def tiling(self, tiling, knot_span_wise=True):
+    def tiling(self, tiling):
         """
         Setter for the tiling attribute, defining the number of microtiles per
         parametric dimension
@@ -113,8 +113,9 @@ class Generator(GustafBase):
         ----------
         tiling : int / list<int>
           Number of tiles for each dimension respectively
-        knot_span_wise : bool
-          Insertion per knotspan vs. total number per paradim
+        Returns
+        -------
+        None
         """
         if not isinstance(tiling, list):
             if not isinstance(tiling, int):
@@ -124,7 +125,6 @@ class Generator(GustafBase):
                 )
         self._tiling = tiling
         # Is defaulted to False using function arguments
-        self._tiling_per_knot_span = bool(knot_span_wise)
         self._sanity_check()
         self._logd(f"Successfully set tiling to : {self.tiling}")
 
@@ -222,7 +222,7 @@ class Generator(GustafBase):
         self._parametrization_function = parametrization_function
         self._sanity_check()
 
-    def create(self, closing_faces=None, **kwargs):
+    def create(self, closing_faces=None, knot_span_wise=True, **kwargs):
         """
         Create a Microstructure
 
@@ -230,6 +230,8 @@ class Generator(GustafBase):
         ----------
         closing_faces : int
           If not None, Microtile must provide a function `closing_tile`
+        knot_span_wise : bool
+          Insertion per knotspan vs. total number per paradim
         **kwargs
           will be passed to `create_tile` function
 
@@ -266,7 +268,7 @@ class Generator(GustafBase):
             deformation_function_copy_ = self._deformation_function.nurbs
         # Create Spline that will be used to iterate over parametric space
         ukvs = deformation_function_copy_.unique_knots
-        if self._tiling_per_knot_span:
+        if knot_span_wise:
             for i_pd in range(deformation_function_copy_.para_dim):
                 if self.tiling[i_pd] == 1:
                     continue
@@ -278,11 +280,46 @@ class Generator(GustafBase):
                 ]
                 # insert knots in both the deformation function
                 deformation_function_copy_.insert_knots(i_pd, new_knots)
-            def_fun_patches = deformation_function_copy_.extract.beziers()
         else:
-            raise NotImplementedError(
-                    "Currently only knot-span wise insertion is implemented"
+            self._logd(
+                    "New knots will be inserted one by one with the objective"
+                    " to evenly distribute tiles within the parametric domain"
             )
+            for i_pd in range(deformation_function_copy_.para_dim):
+                n_current_spans = (len(ukvs[i_pd]) - 1)
+                if self.tiling[i_pd] == n_current_spans:
+                    continue
+                elif self.tiling[i_pd] < n_current_spans:
+                    self._logw(
+                            f"The requested tiling can not be provided, as "
+                            f"there are too many knotspans in the deformation"
+                            f" function. The tiling in parametric dimension "
+                            f"{i_pd} will be set to {n_current_spans}"
+                    )
+                    self.tiling[i_pd] = n_current_spans
+                else:
+                    # Determine new knots
+                    n_k_span = np.zeros(n_current_spans, dtype=int)
+                    span_measure = np.diff(ukvs[i_pd])
+                    for _ in range(self.tiling[i_pd] - n_current_spans):
+                        add_knot = np.argmax(span_measure)
+                        n_k_span[add_knot] += 1
+                        span_measure[add_knot] *= n_k_span[add_knot] / (
+                                n_k_span[add_knot] + 1
+                        )
+
+                    new_knots = []
+                    for i, nks in enumerate(n_k_span):
+                        new_knots.extend(
+                                np.linspace(
+                                        ukvs[i_pd][i], ukvs[i_pd][i + 1],
+                                        nks + 2
+                                )[1:-1]
+                        )
+                    deformation_function_copy_.insert_knots(i_pd, new_knots)
+
+        # Bezier Extraction for composition
+        def_fun_patches = deformation_function_copy_.extract.beziers()
 
         # Calculate parametric space representation for parametrized
         # microstructures
