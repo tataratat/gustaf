@@ -146,7 +146,7 @@ def export_mesh(mesh, fname):
     if dim == 2:
         # Elements
         element_attribute = 1  # Other numbers not yet supported
-        elements = mesh.elements()
+        elements = mesh.elements
         n_elements, n_element_vertices = elements.shape
         if n_element_vertices == 3:
             geometry_type = geometry_types["TRIANGLE"]
@@ -154,8 +154,8 @@ def export_mesh(mesh, fname):
             geometry_type = geometry_types["SQUARE"]
         else:
             raise NotImplementedError(
-                    f"Sorry, we cannot export mesh with elements \
-consisting of {n_element_vertices} vertices."
+                    "Sorry, we cannot export mesh with elements "
+                    f"with {n_element_vertices} vertices."
             )
         e = np.ones((n_elements, 1), dtype=settings.INT_DTYPE)
         elements_array = np.hstack(
@@ -166,7 +166,7 @@ consisting of {n_element_vertices} vertices."
         elements_string += f"{elements_array_string}\n\n"
 
         # Boundary
-        edges = mesh.get_edges()
+        edges = mesh.edges()
         nboundary_edges = sum(map(len, mesh.BC.values()))
         boundary_array = np.empty(
                 (nboundary_edges, 4), dtype=settings.INT_DTYPE
