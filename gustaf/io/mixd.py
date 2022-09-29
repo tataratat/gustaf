@@ -1,4 +1,4 @@
-"""gustaf/gustaf/io/mfem.py.
+"""gustaf/gustaf/io/mixd.py.
 
 io functions for mixd.
 """
