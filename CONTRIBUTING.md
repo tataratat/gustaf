@@ -10,7 +10,6 @@ git clone git@github.com:<path-to-your-fork>
 cd gustaf
 git checkout -b new-feature0
 python3 setup.py develop
-pip install yapf autopep8 flake8
 ```
 
 ## Style / implementation preferences
@@ -32,6 +31,7 @@ gustaf uses combination of [yapf](https://github.com/google/yapf) and [autopep8]
 
 To check the format and style of your code use the following commands:
 ```bash
+pip install yapf autopep8 flake8
 cd <gustaf-root>
 yapf -i -r gustaf examples tests 
 autopep8 --select=W291,W292,W293,W504,E265,E501,E711,E722 -r -i --aggressive gustaf examples tests

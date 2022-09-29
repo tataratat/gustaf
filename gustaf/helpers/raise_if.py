@@ -66,7 +66,7 @@ class ModuleImportRaiser():
         Will notify the user, that the functionality is not accessible and how
         to proceed to access the functionality.
         """
-        if __name == "_LibraryCanNotBeLoadedHelper__message":
+        if __name == "_ModuleImportRaiser__message":
             return object.__getattr__(self, __name[-8:])
         else:
             raise ImportError(self._message)
