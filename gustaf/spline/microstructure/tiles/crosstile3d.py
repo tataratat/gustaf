@@ -76,11 +76,9 @@ class CrossTile3D(base.GustafBase):
         ----------
         parameters : tuple(np.ndarray)
           radii of fitting cylinder at evaluation points
-        closure : int
-          parametric dimension that needs to be closed. Positiv values mean
-          that minimum parametric dimension is requested. That means,
-          i.e. -2 closes the tile at maximum z-coordinate.
-          (must currently be either -2 or 2)
+        closure : str
+          parametric dimension that needs to be closed.
+          Must be {"z_min", "z_max"}
         boundary_width : float
           with of the boundary surronding branch
         filling_height : float
@@ -115,7 +113,7 @@ class CrossTile3D(base.GustafBase):
         r_center = center_width * .5
 
         spline_list = []
-        if closure == 2:
+        if closure == "z_min":
             # The branch is located at zmin of current tile
             branch_thickness = parameters[5]
             ctps_corner = np.array(
@@ -266,7 +264,7 @@ class CrossTile3D(base.GustafBase):
             )
 
             return spline_list
-        elif closure == -2:
+        elif closure == "z_max":
             # The branch is located at zmax of current tile
             branch_thickness = parameters[4]
             ctps_corner = np.array(

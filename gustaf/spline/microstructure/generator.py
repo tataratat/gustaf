@@ -223,14 +223,15 @@ class Generator(GustafBase):
         self._parametrization_function = parametrization_function
         self._sanity_check()
 
-    def create(self, closing_faces=None, knot_span_wise=True, **kwargs):
+    def create(self, closing_face=None, knot_span_wise=True, **kwargs):
         """
         Create a Microstructure
 
         Parameters
         ----------
-        closing_faces : int
+        closing_face : string
           If not None, Microtile must provide a function `closing_tile`
+          Represents coordinate to be a closed surface {"x", "y", "z"}
         knot_span_wise : bool
           Insertion per knotspan vs. total number per paradim
         **kwargs
@@ -247,10 +248,18 @@ class Generator(GustafBase):
         if not self._sanity_check():
             raise ValueError("Not enough information provided, abort")
         # check if user wants closed structure
-        is_closed = closing_faces is not None
+        closing_face_dim = {"x": 0, "y": 1, "z": 2}.get(closing_face)
+        is_closed = closing_face_dim is not None
+        if not is_closed and (closing_face is not None):
+            raise ValueError(
+                    "Invalid format for closing_face argument, (handed: "
+                    f"{closing_face}), must be one of"
+                    "{'x', 'y', 'z'}"
+            )
+
         if is_closed:
             is_closed = True
-            if closing_faces >= self._deformation_function.para_dim:
+            if closing_face_dim >= self._deformation_function.para_dim:
                 raise ValueError(
                         "closing face must be smaller than the deformation "
                         "function's parametric dimension"
@@ -367,22 +376,22 @@ class Generator(GustafBase):
                 if is_closed:
                     # check index
                     index = i
-                    for ipd in range(closing_faces):
+                    for ipd in range(closing_face_dim):
                         index -= index % element_resolutions[ipd]
                         index /= element_resolutions[ipd]
-                    index = index % element_resolutions[closing_faces]
+                    index = index % element_resolutions[closing_face_dim]
                     if index == 0:
                         # Closure at minimum id
                         tile = self._microtile.closing_tile(
                                 parameters=tile_parameters,
-                                closure=closing_faces,
+                                closure=closing_face + "_min",
                                 **kwargs
                         )
-                    elif (index + 1) == element_resolutions[closing_faces]:
+                    elif (index + 1) == element_resolutions[closing_face_dim]:
                         # Closure at minimum id
                         tile = self._microtile.closing_tile(
                                 parameters=tile_parameters,
-                                closure=-closing_faces,
+                                closure=closing_face + "_max",
                                 **kwargs
                         )
                     else:

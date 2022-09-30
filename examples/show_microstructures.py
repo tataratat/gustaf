@@ -1,4 +1,5 @@
 import gustaf as gus
+import numpy as np
 
 # First Test
 generator = gus.spline.microstructure.Generator()
@@ -26,6 +27,27 @@ gus.show.show_vedo(
 )
 
 # Second test
+
+
+def parametrization_function(x):
+    return tuple([.3 - 0.4 * np.maximum(abs(.5 - x[:, 0]), abs(.5 - x[:, 1]))])
+
+
+generator = gus.spline.microstructure.Generator()
+generator.deformation_function = gus.Bezier(
+        degrees=[1, 1], control_points=[[0, 0], [1, 0], [0, 1], [1, 1]]
+)
+generator.microtile = gus.spline.microstructure.tiles.CrossTile2D()
+generator.tiling = [5, 5]
+generator.parametrization_function = parametrization_function
+gus.show.show_vedo(
+        generator.create(closing_face="x", center_expansion=1.3),
+        knots=True,
+        control_points=False,
+        title="2D Crosstile Parametrized Microstructure"
+)
+
+# Third test
 generator = gus.spline.microstructure.Generator()
 generator.deformation_function = gus.Bezier(
         degrees=[1, 1], control_points=[[0, 0], [1, 0], [0, 1], [1, 1]]
@@ -59,7 +81,7 @@ gus.show.show_vedo(
         title="3D Lattice Microstructure"
 )
 
-# Third test
+# Fourth test
 generator = gus.spline.microstructure.generator.Generator()
 generator.deformation_function = gus.Bezier(
         degrees=[1, 1], control_points=[[0, 0], [1, 0], [0, 1], [1, 1]]
@@ -73,7 +95,7 @@ gus.show.show_vedo(
         resolutions=2
 )
 
-# Fourth test
+# Fifth test
 # Non-uniform tiling
 generator = gus.spline.microstructure.generator.Generator()
 generator.deformation_function = gus.BSpline(
@@ -112,7 +134,7 @@ def foo(x):
     """
     Parametrization Function (determines thickness)
     """
-    return tuple([(x[:, 2]) * .1 + .1])
+    return tuple([(x[:, 0]) * .05 + (x[:, 1]) * .05 + (x[:, 2]) * .1 + .1])
 
 
 generator = gus.spline.microstructure.Generator()
@@ -124,13 +146,13 @@ generator.tiling = [2, 2, 3]
 generator.parametrization_function = foo
 
 inverse_microstructure = generator.create(
-        closing_faces=2, seperator_distance=0.4, center_expansion=1.3
+        closing_face="z", seperator_distance=0.4, center_expansion=1.3
 )
 
 # Corresponding Structure
 generator.microtile = gus.spline.microstructure.tiles.CrossTile3D()
 microstructure = generator.create(
-        closing_faces=2, seperator_distance=0.4, center_expansion=1.3
+        closing_face="z", seperator_distance=0.4, center_expansion=1.3
 )
 
 # Plot the results
