@@ -212,13 +212,14 @@ class Generator(GustafBase):
 
         Parameters
         ----------
-        Callable
+        parametrization_function: Callable
 
         Returns
+        --------
         None
         """
         if not callable(parametrization_function):
-            raise ("parametrization_function must be callable")
+            raise TypeError("parametrization_function must be callable")
         self._parametrization_function = parametrization_function
         self._sanity_check()
 
