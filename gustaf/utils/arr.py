@@ -106,10 +106,10 @@ def close_rows(arr, tolerance=None):
     Returns
     --------
     close_stuff: tuple
-      unique_arrays: (n, d) np.ndarray
-      unique_ids: (m) np.ndarray
-      inverse: (n) np.ndarray
-      overlapping: list(list)
+    unique_arrays: (n, d) np.ndarray
+    unique_ids: (m) np.ndarray
+    inverse: (n) np.ndarray
+    overlapping: list(list)
         id of neighbors within the tolerance.
     """
     from scipy.spatial import cKDTree as KDTree

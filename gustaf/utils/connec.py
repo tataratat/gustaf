@@ -257,17 +257,19 @@ def make_quad_faces(resolutions):
     """Given number of nodes per each dimension, returns connectivity
     information of a structured mesh. Counter clock wise connectivity.
 
-    (3)*------*(2)
-       |      |
-       |      |
-    (0)*------*(1)
+    .. code-block::
 
+        (3)*------*(2)
+           |      |
+           |      |
+        (0)*------*(1)
+    
     Parameters
-    -----------
+    ----------
     resolutions: list
 
     Returns
-    --------
+    -------
     faces: (n, 4) np.ndarray
     """
     nnpd = np.asarray(resolutions)  # number of nodes per dimension
@@ -292,14 +294,16 @@ def make_hexa_volumes(resolutions):
     information of structured hexahedron elements. Counter clock wise
     connectivity.
 
-       (7)*-------*(6)
-         /|      /|
-        / | (5) / |
-    (4)*-------*  |
-       |  *----|--*(2)
-       | /(3)  | /
-       |/      |/
-    (0)*-------*(1)
+    .. code-block::
+
+         (7)*-------*(6)
+           /|      /|
+          / | (5) / |
+      (4)*-------*  |
+         |  *----|--*(2)
+         | /(3)  | /
+         |/      |/
+      (0)*-------*(1)
 
     Parameters
     -----------

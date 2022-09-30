@@ -39,6 +39,13 @@ exclude_patterns = []
 pygments_style = "sphinx"
 
 
+# autodoc options
+autodoc_mock_imports = [
+    "numpy",
+    "splinepy",
+    "vedo",
+    ]
+
 
 # -- Options for HTML output -------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#options-for-html-output
