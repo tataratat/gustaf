@@ -154,10 +154,10 @@ def faces_to_edges(faces):
 
         Ref: (node_ind), edge_ind
 
-             (0)
-             /\
-          0 /  \2
-           /____\
+            (0)
+             /\\
+          0 /  \\2
+           /____\\
         (1)  1   (2)
 
               2
@@ -263,7 +263,7 @@ def make_quad_faces(resolutions):
            |      |
            |      |
         (0)*------*(1)
-    
+
     Parameters
     ----------
     resolutions: list

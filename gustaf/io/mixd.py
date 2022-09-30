@@ -35,7 +35,7 @@ def load(
     fname: str
       Default is None. Specify your mixd file names with ".xns" postfix.
       Ex) "gustaf.xns" will try to load "gustaf.mxyz", "gustaf.mien",
-          and "gustaf.mrng"
+      and "gustaf.mrng"
     mxyz: str
       Default is None.
     mien: str
