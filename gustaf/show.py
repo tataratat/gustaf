@@ -244,7 +244,10 @@ def _vedo_showable(obj, **kwargs):
             if value is not None:
                 local_options.update({key: value})
 
-        vobj = vedo.Points(obj.vertices, **local_options,)
+        vobj = vedo.Points(
+                obj.vertices,
+                **local_options,
+        )
 
     elif obj.kind == "edge":
         for key in ["c", "lw", "alpha"]:
@@ -255,7 +258,8 @@ def _vedo_showable(obj, **kwargs):
         # edges can be arrows if vis_dict["arrows"] is set True
         if not basic_options["arrows"]:
             vobj = vedo.Lines(
-                    obj.vertices[obj.edges], **local_options,
+                    obj.vertices[obj.edges],
+                    **local_options,
             )
 
         else:
@@ -281,7 +285,10 @@ def _vedo_showable(obj, **kwargs):
             if value is not None:
                 local_options.update({key: value})
 
-        vobj = vedo.Mesh([obj.vertices, obj.faces], **local_options,)
+        vobj = vedo.Mesh(
+                [obj.vertices, obj.faces],
+                **local_options,
+        )
 
     elif obj.kind == "volume":
         from vtk import VTK_TETRA as frau_tetra
