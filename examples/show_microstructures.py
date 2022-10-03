@@ -15,8 +15,10 @@ tile, derivs = microtile.create_tile(
 show_list = []
 res=[8,8]
 for t,d in zip(tile,derivs[0]):
-    arrows = np.hstack((t.sample(res), t.sample(
-        res) + d.sample(res))).reshape(-1, t.dim)
+    arrows = np.hstack((
+        t.sample(res),
+        t.sample(res) + d.sample(res)*0.1
+        )).reshape(-1, t.dim)
     es = gus.Edges(arrows, np.arange(len(arrows)).reshape(-1, 2))
     es.vis_dict["arrows"] = True
     show_list.extend([t,es])
