@@ -11,16 +11,18 @@ def invalid_inherited_attr(func, qualname, property_=False):
     would raise AttributeError. This needs to be defined in class level.
 
     Parameters
-    -----------
-    func: function
-    cls: class
-    property_: bool
-      is this function a property?
+    ----------
+    func: (function)
+        _description_
+    qualname: (class)
+        _description_
+    property_: (bool, optional)
+        is this function a property?. Defaults to False.
 
     Returns
-    --------
+    -------
     raiser: function
-       behaves same as func if property_ is correctly defined
+        behaves same as func if `property_` is correctly defined
     """
 
     def raiser(self):
@@ -37,14 +39,15 @@ def invalid_inherited_attr(func, qualname, property_=False):
 
 
 class ModuleImportRaiser():
-    """
+    """Mock imports optional modules if they are not installed
+
     Class used to have better import error handling in the case that a package
     package is not installed. This is necessary due to that some packages are
     not a dependency of `gustaf`, but some parts require them to function.
     Examples are `splinepy` and `vedo`.
     """
 
-    def __init__(self, lib_name: str) -> None:
+    def __init__(self, lib_name: str):
         self._message = str(
                 "Parts of the requested functionality in gustaf depend on the "
                 f"external `{lib_name}` package which could not be found on "

@@ -297,7 +297,7 @@ class ComputedData(DataHolder):
 
     ___slots___ = []
 
-    def __init__(self, helpee, **kwrags):
+    def __init__(self, helpee, **kwargs):
         """Stores last computed values. Keys are expected to be the same as
         helpee's function that computes the value.
 
@@ -308,8 +308,6 @@ class ComputedData(DataHolder):
         Parameters
         -----------
         helpee: GustafBase
-        kwrags: **kwrags
-          keys and str of attributes, on which this array depends
         """
         super().__init__(helpee)
 
@@ -319,9 +317,11 @@ class ComputedData(DataHolder):
 
         checks if the key should be computed. Two cases, where the answer is
         yes:
+
         1. there's modification on arrays that the key depend on.
-          -> erases all other
+            ->erases all other
         2. is corresponding value None?
+
         Supports multi-dependency
 
         Parameters
@@ -411,31 +411,34 @@ Unique2DFloats = namedtuple(
 namedtuple to hold unique information of float type arrays.
 Note that for float types, "close enough" might be a better name than unique.
 This way, all tracked arrays, as long as they are 2D, have a dot separated
-syntax to acces unique info. For example, `mesh.unique_vertices.ids`.
-
-Attributes
------------
-values: (n, d) np.ndarray
-ids: (n) np.ndarray
-inverse: (m) np.ndarray
-intersection: (m) list of list
+syntax to access unique info. For example, `mesh.unique_vertices.ids`.
+"""
+Unique2DFloats.values.__doc__ = """`(n, d) np.ndarray`
+    Field number 0"""
+Unique2DFloats.ids.__doc__ = """`(n, d) np.ndarray`
+    Field number 1"""
+Unique2DFloats.inverse.__doc__ = """`(n, d) np.ndarray`
+    Field number 2"""
+Unique2DFloats.intersection.__doc__ = """`(m) list of list`
   given original array's index, returns overlapping arrays, including itself.
+  Field number 3
 """
 
 Unique2DIntegers = namedtuple(
         "Unique2DIntegers", ["values", "ids", "inverse", "counts"]
 )
-"""
-namedtuple to hold unique information of integer type arrays.
+"""namedtuple to hold unique information of integer type arrays.
 Similar approach to Unique2DFloats.
-
-Attributes
------------
-values: (n, d) np.ndarray
-ids: (n) np.ndarray
-inverse: (m) np.ndarray
-counts: (n) np.ndarray
 """
+
+Unique2DIntegers.values.__doc__ = """`(n, d) np.ndarray`
+    Field number 0"""
+Unique2DIntegers.ids.__doc__ = """`(n) np.ndarray`
+    Field number 1"""
+Unique2DIntegers.inverse.__doc__ = """`(m) np.ndarray`
+    Field number 2"""
+Unique2DIntegers.counts.__doc__ = """`(n) np.ndarray`
+    Field number 3"""
 
 
 class ComputedMeshData(ComputedData):

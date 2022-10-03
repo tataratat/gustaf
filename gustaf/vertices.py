@@ -39,11 +39,6 @@ class Vertices(GustafBase):
         Returns
         --------
         None
-
-        Attributes
-        -----------
-        whatami: str
-        vertices: np.ndarray
         """
         if vertices is not None:
             self.vertices = vertices
@@ -378,7 +373,7 @@ class Vertices(GustafBase):
 
         Parameters
         -----------
-        *instances: *type(cls)
+        *instances: List[type(cls)]
           Allows one iterable object also.
 
         Returns

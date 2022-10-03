@@ -54,7 +54,7 @@ def show_vedo(
 
     Parameters
     -----------
-    *args: *list or *dict or gustaf_obj or vedo_obj
+    *args: Union[List[Union[gustaf_obj, vedo_obj]], Dict[str, Any]]]
     """
     # vedo plotter parameter
     N = len(args)

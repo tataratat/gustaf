@@ -36,7 +36,7 @@ def debug(*log):
 
     Parameters
     -----------
-    *log: *str
+    *log: Tuple[str]
 
     Returns
     --------
@@ -50,7 +50,7 @@ def info(*log):
 
     Parameters
     -----------
-    *log: *str
+    *log: Tuple[str]
 
     Returns
     --------
@@ -64,7 +64,7 @@ def warning(*log):
 
     Parameters
     -----------
-    *log: *str
+    *log: Tuple[str]
 
     Returns
     --------
