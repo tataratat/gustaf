@@ -244,7 +244,10 @@ def _vedo_showable(obj, **kwargs):
             if value is not None:
                 local_options.update({key: value})
 
-        vobj = vedo.Points(obj.vertices, **local_options,)
+        vobj = vedo.Points(
+                obj.vertices,
+                **local_options,
+        )
 
     elif obj.kind == "edge":
         for key in ["c", "lw", "alpha"]:
