@@ -10,15 +10,19 @@ def invalid_inherited_attr(func, qualname, property_=False):
     """Returns a function that would behave the same as given function, but
     would raise AttributeError. This needs to be defined in class level.
 
-    Args:
-        func (function): _description_
-        qualname (class): _description_
-        property_ (bool, optional):
-            is this function a property?. Defaults to False.
+    Parameters
+    ----------
+    func: (function)
+        _description_
+    qualname: (class)
+        _description_
+    property_: (bool, optional)
+        is this function a property?. Defaults to False.
 
-    Returns:
-        raiser: function
-            behaves same as func if `property_` is correctly defined
+    Returns
+    -------
+    raiser: function
+        behaves same as func if `property_` is correctly defined
     """
 
     def raiser(self):

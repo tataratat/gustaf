@@ -297,7 +297,7 @@ class ComputedData(DataHolder):
 
     ___slots___ = []
 
-    def __init__(self, helpee, **kwrags):
+    def __init__(self, helpee, **kwargs):
         """Stores last computed values. Keys are expected to be the same as
         helpee's function that computes the value.
 
@@ -308,8 +308,6 @@ class ComputedData(DataHolder):
         Parameters
         -----------
         helpee: GustafBase
-        kwrags: kwargs
-          keys and str of attributes, on which this array depends
         """
         super().__init__(helpee)
 
@@ -415,11 +413,15 @@ Note that for float types, "close enough" might be a better name than unique.
 This way, all tracked arrays, as long as they are 2D, have a dot separated
 syntax to access unique info. For example, `mesh.unique_vertices.ids`.
 """
-Unique2DFloats.values.__doc__ = "(n, d) np.ndarray"
-Unique2DFloats.ids.__doc__ = "(n, d) np.ndarray"
-Unique2DFloats.inverse.__doc__ = "(n, d) np.ndarray"
-Unique2DFloats.intersection.__doc__ = """(m) list of list
+Unique2DFloats.values.__doc__ = """`(n, d) np.ndarray`
+    Field number 0"""
+Unique2DFloats.ids.__doc__ = """`(n, d) np.ndarray`
+    Field number 1"""
+Unique2DFloats.inverse.__doc__ = """`(n, d) np.ndarray`
+    Field number 2"""
+Unique2DFloats.intersection.__doc__ = """`(m) list of list`
   given original array's index, returns overlapping arrays, including itself.
+  Field number 3
 """
 
 Unique2DIntegers = namedtuple(
@@ -429,10 +431,14 @@ Unique2DIntegers = namedtuple(
 Similar approach to Unique2DFloats.
 """
 
-Unique2DIntegers.values.__doc__ = "(n, d) np.ndarray"
-Unique2DIntegers.ids.__doc__ = "(n) np.ndarray"
-Unique2DIntegers.inverse.__doc__ = "(m) np.ndarray"
-Unique2DIntegers.counts.__doc__ = "(n) np.ndarray"
+Unique2DIntegers.values.__doc__ = """`(n, d) np.ndarray`
+    Field number 0"""
+Unique2DIntegers.ids.__doc__ = """`(n) np.ndarray`
+    Field number 1"""
+Unique2DIntegers.inverse.__doc__ = """`(m) np.ndarray`
+    Field number 2"""
+Unique2DIntegers.counts.__doc__ = """`(n) np.ndarray`
+    Field number 3"""
 
 
 class ComputedMeshData(ComputedData):

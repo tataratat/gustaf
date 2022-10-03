@@ -34,7 +34,6 @@ class Vertices(GustafBase):
 
         Parameters
         -----------
-        whatami: str
         vertices: (n, d) np.ndarray
 
         Returns
