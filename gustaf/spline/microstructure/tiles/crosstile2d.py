@@ -65,7 +65,7 @@ class CrossTile2D(base.GustafBase):
             closure=None,
             boundary_width=0.1,
             filling_height=0.5,
-            **kwargs
+            **kwargs,
     ):
         """
         Create a closing tile to match with closed surface
@@ -105,10 +105,14 @@ class CrossTile2D(base.GustafBase):
         if not (0. < float(filling_height) < 1.):
             raise ValueError("Filling must  be in (0,1)")
 
+        # Constant auxiliary values
         inv_boundary_width = 1. - boundary_width
         inv_filling_height = 1. - filling_height
         ctps_mid_height_top = (1 + filling_height) * .5
         ctps_mid_height_bottom = 1. - ctps_mid_height_top
+        v_one_half = .5
+        v_one = 1.
+        v_zero = 0.
 
         spline_list = []
         if closure == "x_min":
@@ -117,38 +121,42 @@ class CrossTile2D(base.GustafBase):
 
             block0_ctps = np.array(
                     [
-                            [0., 0.],
-                            [filling_height, 0.],
-                            [0., boundary_width],
+                            [v_zero, v_zero],
+                            [filling_height, v_zero],
+                            [v_zero, boundary_width],
                             [filling_height, boundary_width],
                     ]
             )
 
             block1_ctps = np.array(
                     [
-                            [0., boundary_width],
+                            [v_zero, boundary_width],
                             [filling_height, boundary_width],
-                            [0., inv_boundary_width],
+                            [v_zero, inv_boundary_width],
                             [filling_height, inv_boundary_width],
                     ]
             )
 
             block2_ctps = np.array(
                     [
-                            [0., inv_boundary_width],
-                            [filling_height, inv_boundary_width], [0., 1.],
-                            [filling_height, 1.]
+                            [v_zero, inv_boundary_width],
+                            [filling_height, inv_boundary_width],
+                            [v_zero, v_one], [filling_height, v_one]
                     ]
             )
 
             branch_ctps = np.array(
                     [
                             [filling_height, boundary_width],
-                            [ctps_mid_height_top, .5 - branch_thickness],
-                            [1., .5 - branch_thickness],
+                            [
+                                    ctps_mid_height_top,
+                                    v_one_half - branch_thickness
+                            ], [v_one, v_one_half - branch_thickness],
                             [filling_height, inv_boundary_width],
-                            [ctps_mid_height_top, .5 + branch_thickness],
-                            [1., .5 + branch_thickness]
+                            [
+                                    ctps_mid_height_top,
+                                    v_one_half + branch_thickness
+                            ], [v_one, v_one_half + branch_thickness]
                     ]
             )
 
@@ -174,38 +182,44 @@ class CrossTile2D(base.GustafBase):
 
             block0_ctps = np.array(
                     [
-                            [inv_filling_height, 0.],
-                            [1., 0.],
+                            [inv_filling_height, v_zero],
+                            [v_one, v_zero],
                             [inv_filling_height, boundary_width],
-                            [1., boundary_width],
+                            [v_one, boundary_width],
                     ]
             )
 
             block1_ctps = np.array(
                     [
                             [inv_filling_height, boundary_width],
-                            [1., boundary_width],
+                            [v_one, boundary_width],
                             [inv_filling_height, inv_boundary_width],
-                            [1., inv_boundary_width],
+                            [v_one, inv_boundary_width],
                     ]
             )
 
             block2_ctps = np.array(
                     [
                             [inv_filling_height, inv_boundary_width],
-                            [1., inv_boundary_width],
-                            [inv_filling_height, 1.],
-                            [1., 1.],
+                            [v_one, inv_boundary_width],
+                            [inv_filling_height, v_one],
+                            [v_one, v_one],
                     ]
             )
 
             branch_ctps = np.array(
                     [
-                            [0, .5 - branch_thickness],
-                            [ctps_mid_height_bottom, .5 - branch_thickness],
+                            [0, v_one_half - branch_thickness],
+                            [
+                                    ctps_mid_height_bottom,
+                                    v_one_half - branch_thickness
+                            ],
                             [inv_filling_height, boundary_width],
-                            [0., .5 + branch_thickness],
-                            [ctps_mid_height_bottom, .5 + branch_thickness],
+                            [v_zero, v_one_half + branch_thickness],
+                            [
+                                    ctps_mid_height_bottom,
+                                    v_one_half + branch_thickness
+                            ],
                             [inv_filling_height, inv_boundary_width],
                     ]
             )
@@ -232,17 +246,17 @@ class CrossTile2D(base.GustafBase):
 
             block0_ctps = np.array(
                     [
-                            [0., 0.],
-                            [boundary_width, 0.],
-                            [0., filling_height],
+                            [v_zero, v_zero],
+                            [boundary_width, v_zero],
+                            [v_zero, filling_height],
                             [boundary_width, filling_height],
                     ]
             )
 
             block1_ctps = np.array(
                     [
-                            [boundary_width, 0.],
-                            [inv_boundary_width, 0.],
+                            [boundary_width, v_zero],
+                            [inv_boundary_width, v_zero],
                             [boundary_width, filling_height],
                             [inv_boundary_width, filling_height],
                     ]
@@ -250,10 +264,10 @@ class CrossTile2D(base.GustafBase):
 
             block2_ctps = np.array(
                     [
-                            [inv_boundary_width, 0.],
-                            [1., 0.],
+                            [inv_boundary_width, v_zero],
+                            [v_one, v_zero],
                             [inv_boundary_width, filling_height],
-                            [1., filling_height],
+                            [v_one, filling_height],
                     ]
             )
 
@@ -261,10 +275,16 @@ class CrossTile2D(base.GustafBase):
                     [
                             [boundary_width, filling_height],
                             [inv_boundary_width, filling_height],
-                            [.5 - branch_thickness, ctps_mid_height_top],
-                            [.5 + branch_thickness, ctps_mid_height_top],
-                            [.5 - branch_thickness, 1.],
-                            [.5 + branch_thickness, 1.],
+                            [
+                                    v_one_half - branch_thickness,
+                                    ctps_mid_height_top
+                            ],
+                            [
+                                    v_one_half + branch_thickness,
+                                    ctps_mid_height_top
+                            ],
+                            [v_one_half - branch_thickness, v_one],
+                            [v_one_half + branch_thickness, v_one],
                     ]
             )
 
@@ -290,10 +310,10 @@ class CrossTile2D(base.GustafBase):
 
             block0_ctps = np.array(
                     [
-                            [0., inv_filling_height],
+                            [v_zero, inv_filling_height],
                             [boundary_width, inv_filling_height],
-                            [0., 1.],
-                            [boundary_width, 1.],
+                            [v_zero, v_one],
+                            [boundary_width, v_one],
                     ]
             )
 
@@ -301,26 +321,32 @@ class CrossTile2D(base.GustafBase):
                     [
                             [boundary_width, inv_filling_height],
                             [inv_boundary_width, inv_filling_height],
-                            [boundary_width, 1.],
-                            [inv_boundary_width, 1.],
+                            [boundary_width, v_one],
+                            [inv_boundary_width, v_one],
                     ]
             )
 
             block2_ctps = np.array(
                     [
                             [inv_boundary_width, inv_filling_height],
-                            [1., inv_filling_height],
-                            [inv_boundary_width, 1.],
-                            [1., 1.],
+                            [v_one, inv_filling_height],
+                            [inv_boundary_width, v_one],
+                            [v_one, v_one],
                     ]
             )
 
             branch_ctps = np.array(
                     [
-                            [.5 - branch_thickness, .5],
-                            [.5 + branch_thickness, .5],
-                            [.5 - branch_thickness, ctps_mid_height_bottom],
-                            [.5 + branch_thickness, ctps_mid_height_bottom],
+                            [v_one_half - branch_thickness, v_zero],
+                            [v_one_half + branch_thickness, v_zero],
+                            [
+                                    v_one_half - branch_thickness,
+                                    ctps_mid_height_bottom
+                            ],
+                            [
+                                    v_one_half + branch_thickness,
+                                    ctps_mid_height_bottom
+                            ],
                             [boundary_width, inv_filling_height],
                             [inv_boundary_width, inv_filling_height],
                     ]
@@ -339,7 +365,7 @@ class CrossTile2D(base.GustafBase):
             )
 
             spline_list.append(
-                    base.Bezier(degrees=[2, 1], control_points=branch_ctps)
+                    base.Bezier(degrees=[1, 2], control_points=branch_ctps)
             )
             return spline_list
         else:
