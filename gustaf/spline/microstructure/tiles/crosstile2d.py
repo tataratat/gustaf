@@ -59,8 +59,7 @@ class CrossTile2D(TileBase):
         if parameters is None:
             self._logd("Tile request is not parametrized, setting default 0.2")
             parameters = tuple([np.ones(6) * 0.2])
-        parameters = parameters[0]
-        if not (np.all(parameters > 0) and np.all(parameters < .5)):
+        if not (np.all(parameters[0] > 0) and np.all(parameters[0] < .5)):
             raise ValueError("Thickness out of range (0, .5)")
 
         if not (0. < float(boundary_width) < .5):
@@ -106,7 +105,7 @@ class CrossTile2D(TileBase):
                 v_one_half = 0.
                 v_one = 0.
                 v_zero = 0.
-                parameters = parameter_sensitivities[0]
+                parameters = parameter_sensitivities[i_derivative][0]
 
             spline_list = []
             if closure == "x_min":
@@ -401,7 +400,10 @@ class CrossTile2D(TileBase):
             else:
                 derivatives.append(spline_list)
         # Return results
-        return (splines, derivatives)
+        if i_derivative == 0:
+          return splines
+        else:
+          return (splines, derivatives)
 
     def create_tile(
             self,
@@ -419,8 +421,8 @@ class CrossTile2D(TileBase):
         Parameters
         ----------
         parameters : tuple(np.array)
-            only first entry is used, defines the internal radii of the
-            branches
+          only first entry is used, defines the internal radii of the
+          branches
         parameter_sensitivities: list(tuple(np.ndarray))
           Describes the parameter sensitivities with respect to some design
           variable. In case the design variables directly apply to the
@@ -565,4 +567,7 @@ class CrossTile2D(TileBase):
             else:
                 derivatives.append(spline_list)
         # Return results
-        return (splines, derivatives)
+        if i_derivative == 0:
+          return splines
+        else:
+          return (splines, derivatives)
