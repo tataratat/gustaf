@@ -336,7 +336,6 @@ class Generator(GustafBase):
         is_parametrized = self.parametrization_function is not None
         if is_parametrized:
             para_space_dimensions = [[u[0], u[-1]] for u in ukvs]
-            # Trust me @j042
             def_fun_para_space = base.Bezier(
                     degrees=[1] * deformation_function_copy_.para_dim,
                     control_points=np.array(
@@ -416,7 +415,7 @@ class Generator(GustafBase):
 
         return microstructure
 
-    def _sanity_check(self) -> bool:
+    def _sanity_check(self):
         """
         Check all members and consistency of user data
 
@@ -426,7 +425,7 @@ class Generator(GustafBase):
 
         Returns
         -------
-        None
+        passes: bool
         """
         if (
                 (self.deformation_function is None)
@@ -500,8 +499,8 @@ class Generator(GustafBase):
 
     def _make_microtilable(self, microtile):
         """
-        Private function that creates a Microtile object on the fly if user
-        only provides (a list of) splines
+        Creates a Microtile object on the fly if user
+        only provides (a list of) splines. Internal use only.
 
         Parameters
         ----------
