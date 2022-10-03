@@ -363,8 +363,9 @@ def rotation_matrix_around_axis(axis=None, rotation=None, degree=True):
         # See Rodrigues' formula
         rotation_matrix = np.array(
                 [
-                        [0, -axis[2], axis[1]], [axis[2], 0, -axis[0]],
-                        [axis[1], axis[0], 0]
+                        [0, -axis[2], axis[1]],
+                        [axis[2], 0, -axis[0]],
+                        [-axis[1], axis[0], 0],
                 ]
         )
         rotation_matrix = (
