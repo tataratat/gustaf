@@ -472,44 +472,44 @@ class Generator(GustafBase):
         microtile : spline / list<splines>
           Microtile definition of a spline
         """
-
-        class _UserTile():
-
-            def __init__(self, microtile):
-                """
-                On the fly created class of a user tile
-                Parameters
-                ----------
-                microtile : spline , list<splines>
-                """
-                # Assign microtiles
-                self._user_tile = []
-
-                if not isinstance(microtile, list):
-                    microtile = [microtile]
-
-                for m in microtile:
-                    if not issubclass(type(m), base.GustafSpline):
-                        raise ValueError(
-                                "Microtiles must be (list of) "
-                                "gustaf.GustafSplines. e.g. gustaf.NURBS"
-                        )
-                    # Extract beziers for every non Bezier patch else this just
-                    # returns itself
-                    self._user_tile.extend(m.extract.beziers())
-                self._dim = microtile[0].dim
-                for m in microtile:
-                    if m.dim != self._dim:
-                        raise ValueError(
-                                "Dimensions of spline lists inconsistent"
-                        )
-
-            @property
-            def dim(self):
-                return self._dim
-
-            def create_tile(self, *kwargs):
-                """Create a tile on the fly."""
-                return self._user_tile.copy()
-
         return _UserTile(microtile)
+
+
+class _UserTile():
+
+    def __init__(self, microtile):
+        """
+        On the fly created class of a user tile
+        Parameters
+        ----------
+        microtile : spline , list<splines>
+        """
+        # Assign microtiles
+        self._user_tile = []
+
+        if not isinstance(microtile, list):
+            microtile = [microtile]
+
+        for m in microtile:
+            if not issubclass(type(m), base.GustafSpline):
+                raise ValueError(
+                        "Microtiles must be (list of) "
+                        "gustaf.GustafSplines. e.g. gustaf.NURBS"
+                )
+            # Extract beziers for every non Bezier patch else this just
+            # returns itself
+            self._user_tile.extend(m.extract.beziers())
+        self._dim = microtile[0].dim
+        for m in microtile:
+            if m.dim != self._dim:
+                raise ValueError(
+                        "Dimensions of spline lists inconsistent"
+                )
+
+    @property
+    def dim(self):
+        return self._dim
+
+    def create_tile(self, *kwargs):
+        """Create a tile on the fly."""
+        return self._user_tile.copy()
