@@ -523,6 +523,7 @@ def pyramid(a, b, h):
 
     # Create box
     p = box(a, b, h)
+
     # Collapse all upper points on one control point
     p.control_points[np.isclose(p.control_points[:, -1], h)] = [a/2, b/2, h]
 
