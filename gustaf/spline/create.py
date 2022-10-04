@@ -575,6 +575,7 @@ def torus(
             degree=degree
     )
 
+<<<<<<< HEAD
 
 def sphere(
         outer_radius,
