@@ -502,9 +502,7 @@ class _UserTile():
         self._dim = microtile[0].dim
         for m in microtile:
             if m.dim != self._dim:
-                raise ValueError(
-                        "Dimensions of spline lists inconsistent"
-                )
+                raise ValueError("Dimensions of spline lists inconsistent")
 
     @property
     def dim(self):
