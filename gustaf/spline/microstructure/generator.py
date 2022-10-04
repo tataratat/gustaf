@@ -5,9 +5,7 @@ from gustaf.spline import base
 
 
 class Generator(GustafBase):
-    """
-    Helper class to facilitatae the construction of microstructures
-    """
+    """Helper class to facilitatae the construction of microstructures."""
 
     def __init__(
             self,
@@ -16,8 +14,7 @@ class Generator(GustafBase):
             microtile=None,
             parametrization_function=None
     ):
-        """
-        Helper class to facilitatae the construction of microstructures
+        """Helper class to facilitatae the construction of microstructures.
 
         Parameters
         ----------
@@ -45,8 +42,7 @@ class Generator(GustafBase):
 
     @property
     def deformation_function(self):
-        """
-        Deformation function defining the outer geometry (contour) of the
+        """Deformation function defining the outer geometry (contour) of the
         microstructure.
 
         Parameters
@@ -64,10 +60,9 @@ class Generator(GustafBase):
 
     @deformation_function.setter
     def deformation_function(self, deformation_function):
-        """
-        Deformation function setter defining the outer geometry of the
+        """Deformation function setter defining the outer geometry of the
         microstructure. Must be spline type and as such inherit from
-        gustaf.GustafSpline
+        gustaf.GustafSpline.
 
         Parameters
         ----------
@@ -87,8 +82,7 @@ class Generator(GustafBase):
 
     @property
     def tiling(self):
-        """
-        Number of microtiles per parametric dimension
+        """Number of microtiles per parametric dimension.
 
         Parameters
         ----------
@@ -105,9 +99,8 @@ class Generator(GustafBase):
 
     @tiling.setter
     def tiling(self, tiling):
-        """
-        Setter for the tiling attribute, defining the number of microtiles per
-        parametric dimension
+        """Setter for the tiling attribute, defining the number of microtiles
+        per parametric dimension.
 
         Parameters
         ----------
@@ -130,10 +123,8 @@ class Generator(GustafBase):
 
     @property
     def microtile(self):
-        """
-        Microtile that is either a spline, a list of splines, or a class that
-        provides a `create_tile` function.
-        """
+        """Microtile that is either a spline, a list of splines, or a class
+        that provides a `create_tile` function."""
         if hasattr(self, "_microtile"):
             return self._microtile
         else:
@@ -141,8 +132,7 @@ class Generator(GustafBase):
 
     @microtile.setter
     def microtile(self, microtile):
-        """
-        Setter for microtile
+        """Setter for microtile.
 
         Microtile must be either a spline, a list of splines, or a class that
         provides (at least) a `create_tile` function and a `dim` member.
@@ -169,17 +159,16 @@ class Generator(GustafBase):
 
     @property
     def parametrization_function(self):
-        """
-        Optional function, that - if required - parametrizes the microtiles
+        """Function, that - if required - parametrizes the microtiles.
 
         In order to use said function, the Microtile needs to provide a couple
-        of attributes
-          1. `evaluation_points` - a list of points defined in the unit cube
-             that will be evaluated in the parametrization function to provide
-             the required set of data points
-          2. `parameter_space_dimension` - dimensionality of the
-              parametrization function and number of design variables for said
-              microtile
+        of attributes:
+
+         - evaluation_points - a list of points defined in the unit cube
+           that will be evaluated in the parametrization function to provide
+           the required set of data points
+         - parameter_space_dimension - dimensionality of the parametrization
+           function and number of design variables for said microtile
 
         Parameters
         ----------
@@ -188,8 +177,7 @@ class Generator(GustafBase):
         Returns
         -------
         parametrization_function : Callable
-
-
+          Function that descibes the local tile parameters
         """
         if hasattr(self, "_parametrization_function"):
             return self._parametrization_function
@@ -198,34 +186,13 @@ class Generator(GustafBase):
 
     @parametrization_function.setter
     def parametrization_function(self, parametrization_function):
-        """
-        Optional function, that - if required - parametrizes the microtiles
-
-        In order to use said function, the Microtile needs to provide a couple
-        of attributes
-          1. `evaluation_points` - a list of points defined in the unit cube
-             that will be evaluated in the parametrization function to provide
-             the required set of data points
-          2. `parameter_space_dimension` - dimensionality of the
-              parametrization function and number of design variables for said
-              microtile
-
-        Parameters
-        ----------
-        parametrization_function: Callable
-
-        Returns
-        --------
-        None
-        """
         if not callable(parametrization_function):
             raise TypeError("parametrization_function must be callable")
         self._parametrization_function = parametrization_function
         self._sanity_check()
 
     def create(self, closing_face=None, knot_span_wise=True, **kwargs):
-        """
-        Create a Microstructure
+        """Create a Microstructure.
 
         Parameters
         ----------
@@ -273,13 +240,13 @@ class Generator(GustafBase):
         # Prepare the deformation function
         # Transform into a non-uniform splinetype and make sure to work on copy
         if hasattr(self._deformation_function, "bspline"):
-            deformation_function_copy_ = self._deformation_function.bspline
+            deformation_function_copy = self._deformation_function.bspline
         else:
-            deformation_function_copy_ = self._deformation_function.nurbs
+            deformation_function_copy = self._deformation_function.nurbs
         # Create Spline that will be used to iterate over parametric space
-        ukvs = deformation_function_copy_.unique_knots
+        ukvs = deformation_function_copy.unique_knots
         if knot_span_wise:
-            for i_pd in range(deformation_function_copy_.para_dim):
+            for i_pd in range(deformation_function_copy.para_dim):
                 if self.tiling[i_pd] == 1:
                     continue
                 inv_t = 1 / self.tiling[i_pd]
@@ -289,13 +256,13 @@ class Generator(GustafBase):
                         for j in range(1, self.tiling[i_pd])
                 ]
                 # insert knots in both the deformation function
-                deformation_function_copy_.insert_knots(i_pd, new_knots)
+                deformation_function_copy.insert_knots(i_pd, new_knots)
         else:
             self._logd(
                     "New knots will be inserted one by one with the objective"
                     " to evenly distribute tiles within the parametric domain"
             )
-            for i_pd in range(deformation_function_copy_.para_dim):
+            for i_pd in range(deformation_function_copy.para_dim):
                 n_current_spans = (len(ukvs[i_pd]) - 1)
                 if self.tiling[i_pd] == n_current_spans:
                     continue
@@ -326,10 +293,10 @@ class Generator(GustafBase):
                                         nks + 2
                                 )[1:-1]
                         )
-                    deformation_function_copy_.insert_knots(i_pd, new_knots)
+                    deformation_function_copy.insert_knots(i_pd, new_knots)
 
         # Bezier Extraction for composition
-        def_fun_patches = deformation_function_copy_.extract.beziers()
+        def_fun_patches = deformation_function_copy.extract.beziers()
 
         # Calculate parametric space representation for parametrized
         # microstructures
@@ -337,7 +304,7 @@ class Generator(GustafBase):
         if is_parametrized:
             para_space_dimensions = [[u[0], u[-1]] for u in ukvs]
             def_fun_para_space = base.Bezier(
-                    degrees=[1] * deformation_function_copy_.para_dim,
+                    degrees=[1] * deformation_function_copy.para_dim,
                     control_points=np.array(
                             list(
                                     itertools.product(
@@ -346,17 +313,17 @@ class Generator(GustafBase):
                             )
                     )[:, ::-1]
             ).bspline
-            for i_pd in range(deformation_function_copy_.para_dim):
+            for i_pd in range(deformation_function_copy.para_dim):
                 if self.tiling[i_pd] != 1:
                     def_fun_para_space.insert_knots(
                             i_pd,
-                            deformation_function_copy_.unique_knots[i_pd][1:-1]
+                            deformation_function_copy.unique_knots[i_pd][1:-1]
                     )
             def_fun_para_space = def_fun_para_space.extract.beziers()
 
         # Determine element resolution
         element_resolutions = [
-                len(c) - 1 for c in deformation_function_copy_.unique_knots
+                len(c) - 1 for c in deformation_function_copy.unique_knots
         ]
 
         # Start actual composition
@@ -416,8 +383,7 @@ class Generator(GustafBase):
         return microstructure
 
     def _sanity_check(self):
-        """
-        Check all members and consistency of user data
+        """Check all members and consistency of user data.
 
         Parameters
         ----------
@@ -498,9 +464,8 @@ class Generator(GustafBase):
         return True
 
     def _make_microtilable(self, microtile):
-        """
-        Creates a Microtile object on the fly if user
-        only provides (a list of) splines. Internal use only.
+        """Creates a Microtile object on the fly if user only provides (a list
+        of) splines. Internal use only.
 
         Parameters
         ----------
@@ -544,9 +509,7 @@ class Generator(GustafBase):
                 return self._dim
 
             def create_tile(self, *kwargs):
-                """
-                Create a tile on the fly
-                """
+                """Create a tile on the fly."""
                 return self._user_tile.copy()
 
         return _UserTile(microtile)

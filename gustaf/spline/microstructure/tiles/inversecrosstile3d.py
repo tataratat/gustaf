@@ -4,16 +4,12 @@ from gustaf.spline import base
 
 
 class InverseCrossTile3D(base.GustafBase):
-    """
-    Class that provides necessary functions to create inverse microtile, that
-    can be used to describe the domain within a microstructure
-    """
+    """Class that provides necessary functions to create inverse microtile,
+    that can be used to describe the domain within a microstructure."""
 
     def __init__(self):
-        """
-        Simple inverse crosstile to tile with linear-quadratic branches
-        and a trilinear center spline
-        """
+        """Simple inverse crosstile to tile with linear-quadratic branches and
+        a trilinear center spline."""
         self._dim = 3
         self._evaluation_points = np.array(
                 [
@@ -29,16 +25,13 @@ class InverseCrossTile3D(base.GustafBase):
 
     @property
     def parameter_space_dimension(self):
-        """
-        Number of parameters per evaluation point
-        """
+        """Number of parameters per evaluation point."""
         return self._parameter_space_dimension
 
     @property
     def evaluation_points(self):
-        """
-        Positions in the parametrization function to be evaluated when tile
-        is constructed prior to composition
+        """Positions in the parametrization function to be evaluated when tile
+        is constructed prior to composition.
 
         Parameters
         ----------
@@ -52,8 +45,7 @@ class InverseCrossTile3D(base.GustafBase):
 
     @property
     def dim(self):
-        """
-        Returns dimensionality in physical space of the inverse tile
+        """Returns dimensionality in physical space of the inverse tile.
 
         Parameters
         ----------
@@ -74,8 +66,7 @@ class InverseCrossTile3D(base.GustafBase):
             seperator_distance=None,
             **kwargs
     ):
-        """
-        Create a closing tile to match with closed surface
+        """Create a closing tile to match with closed surface.
 
         Parameters
         ----------
@@ -866,21 +857,22 @@ class InverseCrossTile3D(base.GustafBase):
             center_expansion=1.,
             **kwargs
     ):
-        """
-        Create an inverse microtile based on the parameters that describe the
-        branch thicknesses
+        """Create an inverse microtile based on the parameters that describe
+        the branch thicknesses.
 
         Thickness parameters are used to describe the inner radius of the
         outward facing branches
+
         Parameters
         ----------
         parameters : tuple(np.array)
-            only first entry is used, defines the internal radii of the
-            branches
+          only first entry is used, defines the internal radii of the
+          branches
         seperator_distance : float
-            position of the control points for higher order elements
+          position of the control points for higher order elements
         center_expansion : float
-            thickness of center is expanded by a factor
+          thickness of center is expanded by a factor
+
         Returns
         -------
         microtile_list : list(splines)

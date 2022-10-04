@@ -110,10 +110,8 @@ def load(
 
 
 def export(mesh, fname, space_time=False, boundary_default=False):
-    """
-    Export in mixd format.
-    Supports triangle, quadrilateral, tetrahedron, and hexahedron
-    semi-discrete and (flat) space-time mesh output.
+    """Export in mixd format. Supports triangle, quadrilateral, tetrahedron,
+    and hexahedron semi-discrete and (flat) space-time mesh output.
 
     Parameters
     -----------

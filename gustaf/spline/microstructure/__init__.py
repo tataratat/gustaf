@@ -1,4 +1,4 @@
-"""gustaf/spline/microstructure/__init__.py
+"""gustaf/spline/microstructure/__init__.py.
 
 Interface for tools and generators creating simple microstructures.
 """

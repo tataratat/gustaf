@@ -6,10 +6,8 @@ from gustaf.spline import base
 class CrossTile3D(base.GustafBase):
 
     def __init__(self):
-        """
-        Simple crosstile with linear-quadratic branches and a trilinear center
-        spline
-        """
+        """Simple crosstile with linear-quadratic branches and a trilinear
+        center spline."""
         self._dim = 3
         self._evaluation_points = np.array(
                 [
@@ -25,16 +23,13 @@ class CrossTile3D(base.GustafBase):
 
     @property
     def parameter_space_dimension(self):
-        """
-        Number of parameters per evaluation point
-        """
+        """Number of parameters per evaluation point."""
         return self._parameter_space_dimension
 
     @property
     def evaluation_points(self):
-        """
-        Positions in the parametrization function to be evaluated when tile "
-        "is constructed prior to composition
+        """Positions in the parametrization function to be evaluated when tile
+        " "is constructed prior to composition.
 
         Parameters
         ----------
@@ -48,8 +43,7 @@ class CrossTile3D(base.GustafBase):
 
     @property
     def dim(self):
-        """
-        Returns dimensionality in physical space of the Microtile
+        """Returns dimensionality in physical space of the Microtile.
 
         Parameters
         ----------
@@ -69,8 +63,7 @@ class CrossTile3D(base.GustafBase):
             filling_height=0.5,
             **kwargs
     ):
-        """
-        Create a closing tile to match with closed surface
+        """Create a closing tile to match with closed surface.
 
         Parameters
         ----------
@@ -426,9 +419,8 @@ class CrossTile3D(base.GustafBase):
             )
 
     def create_tile(self, parameters=None, center_expansion=1., **kwargs):
-        """
-        Create a microtile based on the parameters that describe the branch
-        thicknesses
+        """Create a microtile based on the parameters that describe the branch
+        thicknesses.
 
         Thickness parameters are used to describe the inner radius of the
         outward facing branches
@@ -436,10 +428,11 @@ class CrossTile3D(base.GustafBase):
         Parameters
         ----------
         parameters : tuple(np.array)
-            only first entry is used, defines the internal radii of the
-            branches
+          only first entry is used, defines the internal radii of the
+          branches
         center_expansion : float
-            thickness of center is expanded by a factor
+          thickness of center is expanded by a factor
+
         Returns
         -------
         microtile_list : list(splines)

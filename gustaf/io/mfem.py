@@ -1,9 +1,8 @@
-"""gustaf/gustaf/io/mfem.py
+"""gustaf/gustaf/io/mfem.py.
 
-io functions for mfem.
-Supports simple linear elements (straight meshes)
-For detailed information, see:
-https://mfem.org/mesh-format-v1.0/#straight-meshes
+io functions for mfem. Supports simple linear elements (straight meshes)
+For detailed information, see: https://mfem.org/mesh-
+format-v1.0/#straight-meshes
 """
 
 import numpy as np
@@ -24,9 +23,7 @@ geometry_types = {
 
 
 def load(fname):
-    """
-    Load mesh in MFEM format.
-    Loads vertices and their connectivity.
+    """Load mesh in MFEM format. Loads vertices and their connectivity.
     Currently cannot process boundary.
 
     Parameters
@@ -39,10 +36,9 @@ def load(fname):
     """
 
     def extract_values(fname, start_index, n_lines, total_lines, dtype):
-        """
-        Extract information from file.
-        Reads [n_lines] lines from file [fname] starting at line [start_index]
-        and returns array of type [dtype].
+        """Extract information from file. Reads [n_lines] lines from file
+        [fname] starting at line [start_index] and returns array of type
+        [dtype].
 
         Parameters
         ------------
@@ -107,11 +103,9 @@ def load(fname):
 
 
 def export(mesh, fname):
-    """
-    Export mesh in MFEM format.
-    Supports 2D triangle and quadrilateral meshes.
-    Does not support different element attributes or
-    difference in vertex dimension and mesh dimension
+    """Export mesh in MFEM format. Supports 2D triangle and quadrilateral
+    meshes. Does not support different element attributes or difference in
+    vertex dimension and mesh dimension.
 
     Parameters
     ------------
@@ -126,10 +120,8 @@ def export(mesh, fname):
     nvertices, dim = mesh.vertices.shape
 
     def format_array(array):
-        """
-        Format NumPy array into string.
-        Each entry in a row is separated by a blank space
-        and every row is separated by a new line.
+        """Format NumPy array into string. Each entry in a row is separated by
+        a blank space and every row is separated by a new line.
 
         Parameters
         ------------

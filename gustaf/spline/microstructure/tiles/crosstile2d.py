@@ -6,10 +6,8 @@ from gustaf.spline import base
 class CrossTile2D(base.GustafBase):
 
     def __init__(self):
-        """
-        Simple crosstile with linear-quadratic branches and a trilinear center
-        spline
-        """
+        """Simple crosstile with linear-quadratic branches and a trilinear
+        center spline."""
         self._dim = 2
         self._evaluation_points = np.array(
                 [
@@ -23,16 +21,13 @@ class CrossTile2D(base.GustafBase):
 
     @property
     def parameter_space_dimension(self):
-        """
-        Number of parameters per evaluation point
-        """
+        """Number of parameters per evaluation point."""
         return self._parameter_space_dimension
 
     @property
     def evaluation_points(self):
-        """
-        Positions in the parametrization function to be evaluated when tile "
-        "is constructed prior to composition
+        """Positions in the parametrization function to be evaluated when tile
+        " "is constructed prior to composition.
 
         Parameters
         ----------
@@ -46,8 +41,7 @@ class CrossTile2D(base.GustafBase):
 
     @property
     def dim(self):
-        """
-        Returns dimensionality in physical space of the Microtile
+        """Returns dimensionality in physical space of the Microtile.
 
         Parameters
         ----------
@@ -67,8 +61,7 @@ class CrossTile2D(base.GustafBase):
             filling_height=0.5,
             **kwargs,
     ):
-        """
-        Create a closing tile to match with closed surface
+        """Create a closing tile to match with closed surface.
 
         Parameters
         ----------
@@ -374,9 +367,8 @@ class CrossTile2D(base.GustafBase):
             )
 
     def create_tile(self, parameters=None, center_expansion=1., **kwargs):
-        """
-        Create a microtile based on the parameters that describe the branch
-        thicknesses
+        """Create a microtile based on the parameters that describe the branch
+        thicknesses.
 
         Thickness parameters are used to describe the inner radius of the
         outward facing branches

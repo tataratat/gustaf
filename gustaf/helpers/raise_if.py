@@ -39,12 +39,12 @@ def invalid_inherited_attr(func, qualname, property_=False):
 
 
 class ModuleImportRaiser():
-    """Mock imports optional modules if they are not installed
+    """Mock imports optional modules if they are not installed.
 
-    Class used to have better import error handling in the case that a package
-    package is not installed. This is necessary due to that some packages are
-    not a dependency of `gustaf`, but some parts require them to function.
-    Examples are `splinepy` and `vedo`.
+    Class used to have better import error handling in the case that a
+    package package is not installed. This is necessary due to that some
+    packages are not a dependency of `gustaf`, but some parts require
+    them to function. Examples are `splinepy` and `vedo`.
     """
 
     def __init__(self, lib_name: str):
@@ -56,18 +56,19 @@ class ModuleImportRaiser():
         )
 
     def __call__(self, *args: Any, **kwds: Any) -> Any:
-        """
-        Is called when the object is called by object(). Will notify the user,
-        that the functionality is not accessible and how to proceed to access
-        the functionality.
+        """Is called when the object is called by object().
+
+        Will notify the user, that the functionality is not accessible
+        and how to proceed to access the functionality.
         """
         raise ImportError(self._message)
 
     def __getattr__(self, __name: str) -> Any:
-        """
-        Is called when any attribute of the object is accessed by object.attr.
-        Will notify the user, that the functionality is not accessible and how
-        to proceed to access the functionality.
+        """Is called when any attribute of the object is accessed by
+        object.attr.
+
+        Will notify the user, that the functionality is not accessible
+        and how to proceed to access the functionality.
         """
         if __name == "_ModuleImportRaiser__message":
             return object.__getattr__(self, __name[-8:])
@@ -86,9 +87,9 @@ class ModuleImportRaiser():
             raise ImportError(self._message)
 
     def __getitem__(self, key):
-        """
-        Is called when the object is subscripted object[x]. Will notify the
-        user, that the functionality is not accessible and how to proceed to
-        access the functionality.
+        """Is called when the object is subscripted object[x].
+
+        Will notify the user, that the functionality is not accessible
+        and how to proceed to access the functionality.
         """
         raise ImportError(self._message)
