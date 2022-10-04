@@ -40,25 +40,25 @@ def extruded(spline, extrusion_vector=None):
         # one smaller dim is allowed
         # warn that we assume new dim is all zero
         utils.log.warning(
-            f"Given extrusion vector is {expansion_dimension} dimension "
-            "bigger than spline's dim. Assuming 0.0 entries for "
-            "new dimension.",
+                f"Given extrusion vector is {expansion_dimension} dimension "
+                "bigger than spline's dim. Assuming 0.0 entries for "
+                "new dimension.",
         )
         cps = np.hstack(
-            (
-                spline.control_points,
-                np.zeros(
-                        (
-                            len(spline.control_points),
-                            expansion_dimension
+                (
+                        spline.control_points,
+                        np.zeros(
+                                (
+                                        len(spline.control_points),
+                                        expansion_dimension
+                                )
                         )
                 )
-            )
         )
     else:
         raise ValueError(
-            "Dimension Mismatch between extrusion extrusion vector "
-            "and spline."
+                "Dimension Mismatch between extrusion extrusion vector "
+                "and spline."
         )
 
     # Start Extrusion
@@ -70,7 +70,7 @@ def extruded(spline, extrusion_vector=None):
         spline_dict["knot_vectors"] = spline.knot_vectors + [[0, 0, 1, 1]]
     if "weights" in _RequiredProperties.of(spline):
         spline_dict["weights"] = np.concatenate(
-            (spline.weights, spline.weights)
+                (spline.weights, spline.weights)
         )
 
     return type(spline)(**spline_dict)
@@ -84,6 +84,7 @@ def revolved(
         n_knot_spans=None,
         degree=True
 ):
+
     """Revolve spline around an axis and extend its parametric dimension.
 
     Parameters
@@ -104,6 +105,8 @@ def revolved(
     -------
     spline : GustafSpline
     """
+
+    
     from gustaf.spline.base import GustafSpline
 
     # Check input type
@@ -117,24 +120,24 @@ def revolved(
         # Check Axis dimension
         if (spline.control_points.shape[1] > axis.shape[0]):
             raise ValueError(
-                "Dimension Mismatch between extrusion axis and spline."
+                    "Dimension Mismatch between extrusion axis and spline."
             )
         elif (spline.control_points.shape[1] < axis.shape[0]):
             utils.log.warning(
-                "Control Point dimension is smaller than axis dimension,"
-                " filling with zeros"
+                    "Control Point dimension is smaller than axis dimension,"
+                    " filling with zeros"
             )
             expansion_dimension = axis.shape[0] - spline.dim
             cps = np.hstack(
-                (
-                    spline.control_points,
-                    np.zeros(
-                            (
-                                len(spline.control_points),
-                                expansion_dimension
+                    (
+                            spline.control_points,
+                            np.zeros(
+                                    (
+                                            len(spline.control_points),
+                                            expansion_dimension
+                                    )
                             )
                     )
-                )
             )
         else:
             cps = np.copy(spline.control_points)
@@ -168,7 +171,7 @@ def revolved(
         # Check Axis dimension
         if not (problem_dimension == center.shape[0]):
             raise ValueError(
-                "Dimension Mismatch between axis and center of rotation."
+                    "Dimension Mismatch between axis and center of rotation."
             )
         cps -= center
 
@@ -176,15 +179,15 @@ def revolved(
     # rotation-matrix is only implemented for 2D and 3D problems
     if not (cps.shape[1] == 2 or cps.shape[1] == 3):
         raise NotImplementedError(
-            "Sorry,"
-            "revolutions only implemented for 2D and 3D splines"
+                "Sorry,"
+                "revolutions only implemented for 2D and 3D splines"
         )
 
     # Angle must be (0, pi) non including
     # Rotation is always performed in half steps
     PI = np.pi
     minimum_n_knot_spans = int(
-        np.ceil(np.abs((angle + settings.TOLERANCE) / PI))
+            np.ceil(np.abs((angle + settings.TOLERANCE) / PI))
     )
     if (n_knot_spans) is None or (n_knot_spans < minimum_n_knot_spans):
         n_knot_spans = minimum_n_knot_spans
@@ -192,9 +195,9 @@ def revolved(
     if "Bezier" in spline.whatami:
         if n_knot_spans > 1:
             raise ValueError(
-                "Revolutions are only supported for angles up to 180 "
-                "degrees for Bezier type splines as they consist of only "
-                "one knot span"
+                    "Revolutions are only supported for angles up to 180 "
+                    "degrees for Bezier type splines as they consist of only "
+                    "one knot span"
             )
 
     # Determine auxiliary values
@@ -205,7 +208,7 @@ def revolved(
 
     # Determine rotation matrix
     rotation_matrix = utils.arr.rotation_matrix_around_axis(
-        axis=axis, rotation=rot_a, degree=False
+            axis=axis, rotation=rot_a, degree=False
     ).T
 
     # Start Extrusion
@@ -226,26 +229,26 @@ def revolved(
         else:
             mid_points *= factor
         spline_dict["control_points"] = np.concatenate(
-            (spline_dict["control_points"], mid_points, end_points)
+                (spline_dict["control_points"], mid_points, end_points)
         )
 
     if "knot_vectors" in _RequiredProperties.of(spline):
         kv = [0, 0, 0]
         [kv.extend([i + 1, i + 1]) for i in range(n_knot_spans - 1)]
         spline_dict["knot_vectors"] = spline.knot_vectors + [
-            kv + [n_knot_spans + 1] * 3
+                kv + [n_knot_spans + 1] * 3
         ]
     if "weights" in _RequiredProperties.of(spline):
         mid_weights = spline.weights * weight
         spline_dict["weights"] = spline.weights
         for i_segment in range(n_knot_spans):
             spline_dict["weights"] = np.concatenate(
-                (spline_dict["weights"], mid_weights, spline.weights)
+                    (spline_dict["weights"], mid_weights, spline.weights)
             )
     else:
         utils.log.warning(
-            "True revolutions are only possible for rational spline types."
-            "\nCreating Approximation."
+                "True revolutions are only possible for rational spline types."
+                "\nCreating Approximation."
         )
 
     if center is not None:
