@@ -2,7 +2,6 @@ import gustaf as gus
 import numpy as np
 from vedo import colors, Mesh
 
-
 # First Test
 generator = gus.spline.microstructure.Generator()
 generator.deformation_function = gus.Bezier(
