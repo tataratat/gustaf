@@ -300,15 +300,15 @@ def circle(r):
     from gustaf.spline import NURBS
 
     cps = np.array([
-        [r, 0.],
-        [r, -r],
-        [0., -r],
-        [-r, -r],
-        [-r, 0.],
-        [-r, r],
-        [0., r],
-        [r, r],
-        [r, 0.]])
+        [r, 0., 0.],
+        [r, -r, 0.],
+        [0., -r, 0.],
+        [-r, -r, 0.],
+        [-r, 0., 0.],
+        [-r, r, 0.],
+        [0., r, 0.],
+        [r, r, 0.],
+        [r, 0., 0.]])
 
     weights = np.tile([1.0, 1/np.sqrt(2)], 5)[:-1]
     knots = np.repeat([0.0, 0.25, 0.5, 0.75, 1.0], [3, 2, 2, 2, 3])
@@ -336,10 +336,10 @@ def rectangle(a, b):
     """
     from gustaf.spline import Bezier
 
-    cps = np.zeros([4, 2])
-    cps[1, :] = a, 0,
-    cps[2, :] = 0., b
-    cps[3, :] = a, b
+    cps = np.zeros([4, 3])
+    cps[1, 0] = a
+    cps[2, 1] = b
+    cps[3, :2] = a, b
 
     return Bezier(control_points=cps, degrees=[1, 1])
 
@@ -388,7 +388,7 @@ def disk(R, r0=0., angle=360., n_knot_spans=4):
     """
     from gustaf.spline import NURBS
 
-    cps = np.array([[r0, 0.], [R, 0.]])
+    cps = np.array([[r0, 0., 0.], [R, 0., 0.]])
     weights = np.ones([cps.shape[0]])
     knots = np.repeat([0., 1.], 2)
 
@@ -432,13 +432,15 @@ def torus(R, r, r0=0., angle=[360., 360.], n_knot_spans=[4, 4]):
                              n_knot_spans=n_knot_spans[0])
 
 
-def sphere(R, angle=[360., 360.], n_knot_spans=[4, 4]):
+def sphere(R, r=0., angle=[360., 360.], n_knot_spans=[4, 4]):
     """Creates a volumetric spline describing a sphere with radius R.
 
     Parameters
     ----------
     R : float
         Radius of the sphere
+    r : float
+        Inner radius of the potentially hollow sphere. 
     angle : list
         Rotational angle around 0: x-axis and 1: y-axis, by default each 360 
         (describing a complete revolution)
@@ -457,13 +459,10 @@ def sphere(R, angle=[360., 360.], n_knot_spans=[4, 4]):
     weights = np.ones([cps.shape[0]])
     knots = np.repeat([0., 1.], 2)
 
-    return NURBS(control_points=cps, knot_vectors=[knots], degrees=1,
-                 weights=weights).create.revolved(
+    return disk(R, r0=r,
+                angle=angle[0],
+                n_knot_spans=n_knot_spans[0]).create.revolved(
         axis=[1, 0, 0],
-        center=[0, 0, 0],
-        angle=angle[0],
-        n_knot_spans=n_knot_spans[0]).create.revolved(
-        axis=[0, 0, 1],
         center=[0, 0, 0],
         angle=angle[1],
         n_knot_spans=n_knot_spans[1])

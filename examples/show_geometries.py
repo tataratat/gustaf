@@ -3,27 +3,27 @@ import numpy as np
 
 if __name__ == '__main__':
 
-
     line = gus.spline.create.line(np.array([[0, 0, 0], [2, 5, 0], [4, 4, 2]]))
     rect = gus.spline.create.rectangle(5, 3)
     box = gus.spline.create.box(3, 2, 4)
-    pyramid = gus.spline.create.pyramid(2, 2, 6)
-    
+    pyramid = gus.spline.create.pyramid(1, 1, 2)
+
+    # Show objects
     gus.show.show_vedo(
-        ['Line' , line], 
-        ['Rectangle', rect], 
+        ['Line', line],
+        ['Rectangle', rect],
         ['Box', box],
-        ['Pyramid', pyramid], 
-        title='Rectangular objects')
+        ['Pyramid', pyramid],
+        title='Rectangular objects', resolution=50)
 
     circ = gus.spline.create.circle(5)
-    disk1 = gus.spline.create.disk(3, angle=100, n_knot_spans=2)
+    disk1 = gus.spline.create.disk(3, angle=100, n_knot_spans=4)
     disk2 = gus.spline.create.disk(5, r0=1., angle=360, n_knot_spans=10)
 
     gus.show.show_vedo(
-        ['Line Circle', circ], 
-        ['Disk, 2 knots spans', disk1], 
-        ['Disk, 10 knots spans', disk2])
+        ['Line Circle', circ],
+        ['Disk section', disk1],
+        ['Disk', disk2])
 
     cone = gus.spline.create.cone(5, 10, angle=180)
     gus.show.show_vedo(['Cone', cone])
@@ -32,8 +32,9 @@ if __name__ == '__main__':
     torus2 = gus.spline.create.torus(5, 2, r0=0.5, angle=[100, 210])
     gus.show.show_vedo(
         ['Torus', torus],
-        ['Incomplete torus', torus2]
+        ['Torus section', torus2],
+        resolution=50
     )
-    
+
     sphere = gus.spline.create.sphere(3)
-    gus.show.show_vedo(['Sphere', sphere])
+    gus.show.show_vedo(['Sphere', sphere], resolution=50)
