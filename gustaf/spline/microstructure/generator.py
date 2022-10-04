@@ -191,7 +191,9 @@ class Generator(GustafBase):
         self._parametrization_function = parametrization_function
         self._sanity_check()
 
-    def create(self, closing_face=None, knot_span_wise=True, **kwargs):
+    def get_microstructure(
+            self, closing_face=None, knot_span_wise=None, **kwargs
+    ):
         """Create a Microstructure.
 
         Parameters
@@ -209,11 +211,17 @@ class Generator(GustafBase):
         Microstructure : list<spline>
           finished microstructure based on object requirements
         """
+
         import itertools
 
         # Check if all information is gathered
         if not self._sanity_check():
             raise ValueError("Not enough information provided, abort")
+
+        # Set default values
+        if knot_span_wise is None:
+            knot_span_wise = True
+
         # check if user wants closed structure
         closing_face_dim = {"x": 0, "y": 1, "z": 2}.get(closing_face)
         is_closed = closing_face_dim is not None
@@ -327,7 +335,7 @@ class Generator(GustafBase):
         ]
 
         # Start actual composition
-        microstructure = []
+        self._microstructure = []
         if is_parametrized:
             for i, (def_fun, def_fun_para) in enumerate(
                     zip(def_fun_patches, def_fun_para_space)
@@ -371,23 +379,48 @@ class Generator(GustafBase):
 
                 # Perform composition
                 for tile_patch in tile:
-                    microstructure.append(def_fun.compose(tile_patch))
+                    self._microstructure.append(def_fun.compose(tile_patch))
         # Not parametrized
         else:
             # Tile can be computed once (prevent to many evaluations)
-            tile = self._microtile.create_tile(*kwargs)
+            tile = self._microtile.create_tile(**kwargs)
             for def_fun in def_fun_patches:
                 for t in tile:
-                    microstructure.append(def_fun.compose(t))
+                    self._microstructure.append(def_fun.compose(t))
 
-        return microstructure
+        # return copy of precomputed member
+        return self._microstructure.copy()
+
+    def show_vedo(self, use_saved=False, **kwargs):
+        if use_saved:
+            if hasattr(self, "_microstructure"):
+                microstructure = self._microstructure
+            else:
+                raise ValueError("No previous microstructure saved")
+        else:
+            # Create on the fly
+            microstructure = self.get_microstructure(**kwargs)
+
+        # Precompute splines
+        microtile = self.microtile.create_tile(**kwargs)
+        deformation_function = self.deformation_function
+
+        # Show in vedo
+        from gustaf.show import show_vedo
+        return show_vedo(
+                ['Deformation Function', deformation_function],
+                ['Microtile', microtile],
+                ['Composed Microstructure', microstructure], **kwargs
+        )
 
     def _sanity_check(self):
         """Check all members and consistency of user data.
 
         Parameters
         ----------
-        None
+        updated_properties : bool
+          Sets the updated_properties variable to value, which indicates,
+          wheither the microstructure needs to be rebuilt
 
         Returns
         -------
@@ -508,6 +541,6 @@ class _UserTile():
     def dim(self):
         return self._dim
 
-    def create_tile(self, *kwargs):
+    def create_tile(self, **kwargs):
         """Create a tile on the fly."""
         return self._user_tile.copy()
