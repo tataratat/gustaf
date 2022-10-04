@@ -11,11 +11,11 @@ if __name__ == '__main__':
 
     # Show objects
     gus.show.show_vedo(
-        ['Line', line],
-        ['Rectangle', rect],
-        ['Box', box],
-        ['Pyramid', pyramid],
-        title='Rectangular objects', resolution=50)
+            ['Line', line], ['Rectangle', rect], ['Box', box],
+            ['Pyramid', pyramid],
+            title='Rectangular objects',
+            resolution=50
+    )
 
     circ = gus.spline.create.circle(5)
     disk1 = gus.spline.create.disk(3, angle=100, n_knot_spans=4)
@@ -31,12 +31,14 @@ if __name__ == '__main__':
 
     torus = gus.spline.create.torus(5, 2, r0=0.5)
     torus2 = gus.spline.create.torus(5, 2, r0=0.5, angle=[100, 210])
+
+    torus2.show()
     gus.show.show_vedo(
         ['Torus', torus],
         ['Torus section', torus2],
         resolution=50
     )
-
+    
     sphere = gus.spline.create.sphere(3)
     gus.show.show_vedo(['Sphere', sphere], resolution=50)
     pyramid = gus.spline.create.pyramid(2, 2, 6)
