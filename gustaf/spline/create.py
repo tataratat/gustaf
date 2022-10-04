@@ -84,7 +84,6 @@ def revolved(
         n_knot_spans=None,
         degree=True
 ):
-
     """Revolve spline around an axis and extend its parametric dimension.
 
     Parameters
@@ -106,7 +105,6 @@ def revolved(
     spline : GustafSpline
     """
 
-    
     from gustaf.spline.base import GustafSpline
 
     # Check input type
