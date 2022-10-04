@@ -109,7 +109,7 @@ _, showables = gus.show.show_vedo(
         fanfare,
         knots=False,
         control_points=False,
-        return_show_list=True,
+        return_showable_list=True,
         resolutions=100
 )
 
