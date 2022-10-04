@@ -119,7 +119,7 @@ generator.show_vedo(
         title="2D Lattice with global tiling"
 )
 
-# Fifth test
+# Sixth test
 # A Parametrized microstructure and its respective inverse structure
 
 
