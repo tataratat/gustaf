@@ -1,4 +1,5 @@
 import gustaf as gus
+from gustaf import utils
 import numpy as np
 
 if __name__ == '__main__':
@@ -73,3 +74,7 @@ if __name__ == '__main__':
     
     sphere = gus.spline.create.sphere(3)
     gus.show.show_vedo(['Sphere', sphere])
+
+        # Sphere section
+        sec = gus.spline.create.sphere(3, inner_radius=1.0, angle=200)
+        gus.show.show_vedo(['Sphere', sec], resolution=50)
