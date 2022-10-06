@@ -401,9 +401,9 @@ class CrossTile2D(TileBase):
                 derivatives.append(spline_list)
         # Return results
         if i_derivative == 0:
-          return splines
+            return splines
         else:
-          return (splines, derivatives)
+            return (splines, derivatives)
 
     def create_tile(
             self,
@@ -482,8 +482,8 @@ class CrossTile2D(TileBase):
                 ) / 4. * center_expansion
                 hd_center = 0.5 * (0.5 + center_r)
             else:
-                [x_min_r, x_max_r, y_min_r,
-                 y_max_r] = parameter_sensitivities[i_derivative-1][0].tolist()
+                [x_min_r, x_max_r, y_min_r, y_max_r
+                 ] = parameter_sensitivities[i_derivative - 1][0].tolist()
                 parameters = parameters[0]
                 v_one_half = 0.
                 # center radius
@@ -568,6 +568,6 @@ class CrossTile2D(TileBase):
                 derivatives.append(spline_list)
         # Return results
         if i_derivative == 0:
-          return splines
+            return splines
         else:
-          return (splines, derivatives)
+            return (splines, derivatives)
