@@ -499,7 +499,7 @@ def spline(spline, para_dim, split_plane):
     return type(spline)(**spline_info)
 
 
-class _Extractor:
+class Extractor:
     """Helper class to allow direct extraction from spline obj (BSpline or
     NURBS). Internal use only.
 
@@ -559,7 +559,7 @@ class _Extractor:
         """
         if isinstance(splittin_plane, dict):
             if interval is not None:
-                raise Value("Arguments incompatible expect dictionary")
+                raise ValueError("Arguments incompatible expect dictionary")
             splittin_plane = dict(
                     sorted(splittin_plane.items(), key=lambda x: x[0])[::-1]
             )
