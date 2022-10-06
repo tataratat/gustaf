@@ -1,9 +1,11 @@
 *__pycache__*
 *.egg-info/
-<<<<<<< HEAD
 
 docs/build/
 docs/source/*rst
 !docs/source/index.rst
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> Revert "remove changes gitingore"
 !docs/source/CONTRIBUTING.rst
