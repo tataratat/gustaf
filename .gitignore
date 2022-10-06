@@ -1,7 +1,10 @@
 *__pycache__*
 *.egg-info/
+<<<<<<< HEAD
 
 docs/build/
 docs/source/*rst
 !docs/source/index.rst
 !docs/source/CONTRIBUTING.rst
+=======
+>>>>>>> remove changes gitingore
