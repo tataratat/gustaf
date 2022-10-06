@@ -21,7 +21,7 @@ generator.microtile = [
         )
 ]
 generator.tiling = [8, 8]
-generator.show_vedo(
+generator.show(
         knots=False, control_points=False, title="2D Lattice Microstructure"
 )
 
@@ -39,8 +39,8 @@ generator.deformation_function = gus.Bezier(
 generator.microtile = gus.spline.microstructure.tiles.CrossTile2D()
 generator.tiling = [5, 5]
 generator.parametrization_function = parametrization_function
-ms = generator.get_microstructure(closing_face="x", center_expansion=1.3)
-generator.show_vedo(
+ms = generator.create(closing_face="x", center_expansion=1.3)
+generator.show(
         use_saved=True,
         knots=True,
         control_points=False,
@@ -73,7 +73,7 @@ generator.microtile = [
         )
 ]
 generator.tiling = [1, 2, 3]
-generator.show_vedo(
+generator.show(
         knots=False, control_points=False, title="3D Lattice Microstructure"
 )
 
@@ -84,7 +84,7 @@ generator.deformation_function = gus.Bezier(
 ).create.extruded(extrusion_vector=[0, 0, 1])
 generator.microtile = gus.spline.microstructure.tiles.CrossTile3D()
 generator.tiling = [2, 2, 3]
-generator.show_vedo(
+generator.show(
         control_points=False,
         resolutions=2,
         title="3D Crosstile Microstructure"
@@ -112,7 +112,7 @@ generator.microtile = [
         )
 ]
 generator.tiling = [5, 1]
-generator.show_vedo(
+generator.show(
         knot_span_wise=False,
         control_points=False,
         resolutions=20,
@@ -138,12 +138,12 @@ generator.microtile = gus.spline.microstructure.tiles.InverseCrossTile3D()
 generator.tiling = [3, 3, 5]
 generator.parametrization_function = foo
 
-inverse_microstructure = generator.get_microstructure(
+inverse_microstructure = generator.create(
         closing_face="z", seperator_distance=0.4, center_expansion=1.3
 )
 
 # Plot the results
-_, showables_inverse = generator.show_vedo(
+_, showables_inverse = generator.show(
         closing_face="z",
         seperator_distance=0.4,
         center_expansion=1.3,
@@ -156,10 +156,10 @@ _, showables_inverse = generator.show_vedo(
 
 # Corresponding Structure
 generator.microtile = gus.spline.microstructure.tiles.CrossTile3D()
-microstructure = generator.get_microstructure(
+microstructure = generator.create(
         closing_face="z", seperator_distance=0.4, center_expansion=1.3
 )
-_, showables = generator.show_vedo(
+_, showables = generator.show(
         closing_face="z",
         center_expansion=1.3,
         title="Parametrized Microstructure",

@@ -191,9 +191,7 @@ class Generator(GustafBase):
         self._parametrization_function = parametrization_function
         self._sanity_check()
 
-    def get_microstructure(
-            self, closing_face=None, knot_span_wise=None, **kwargs
-    ):
+    def create(self, closing_face=None, knot_span_wise=None, **kwargs):
         """Create a Microstructure.
 
         Parameters
@@ -391,7 +389,8 @@ class Generator(GustafBase):
         # return copy of precomputed member
         return self._microstructure.copy()
 
-    def show_vedo(self, use_saved=False, **kwargs):
+    def show(self, use_saved=False, return_gustaf=False, **kwargs):
+
         if use_saved:
             if hasattr(self, "_microstructure"):
                 microstructure = self._microstructure
@@ -399,12 +398,18 @@ class Generator(GustafBase):
                 raise ValueError("No previous microstructure saved")
         else:
             # Create on the fly
-            microstructure = self.get_microstructure(**kwargs)
+            microstructure = self.create(**kwargs)
 
         # Precompute splines
         microtile = self.microtile.create_tile(**kwargs)
         deformation_function = self.deformation_function
 
+        if return_gustaf:
+            return dict(
+                    deformation_function=deformation_function,
+                    microtile=microtile,
+                    microstructure=microstructure
+            )
         # Show in vedo
         from gustaf.show import show_vedo
         return show_vedo(
