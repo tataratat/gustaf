@@ -1,7 +1,9 @@
 *__pycache__*
 *.egg-info/
+<<<<<<< HEAD
 
 docs/build/
 docs/source/*rst
 !docs/source/index.rst
+<<<<<<< HEAD
 !docs/source/CONTRIBUTING.rst
