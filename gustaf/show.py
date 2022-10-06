@@ -66,6 +66,7 @@ def show_vedo(
     size = kwargs.get("size", "auto")
     cam = kwargs.get("cam", None)
     title = kwargs.get("title", "gustaf")
+    return_show_list = kwargs.get("return_showable_list", False)
 
     def clear_vedoplotter(plotter, numrenderers, skipcl=skip_clear):
         """enough said."""
@@ -136,37 +137,31 @@ def show_vedo(
         # if gustaf, make it vedo-showable.
         # if there's spline, we need to pop the element and
         # extend showables to the list.
-        to_pop = []
-        to_extend = []
-        for j, sl in enumerate(showlist):
-            if isinstance(sl, GustafBase):
-                tmp_showable = sl.showable(backend="vedo", **kwargs)
-                # splines return dict
-                # - maybe it is time to do some typing..
-                if isinstance(tmp_showable, dict):
-                    # mark to pop later
-                    to_pop.append(j)
-                    # add to extend later
-                    to_extend.append(list(tmp_showable.values()))
+        # A showlist is a list to be plotted into a single subframe of the
+        # plot
+        list_of_showables = []
+        for sl in showlist:
+            if not isinstance(sl, list):
+                sl = [sl]
+            for k, item in enumerate(sl):
+                if isinstance(item, GustafBase):
+                    tmp_showable = item.showable(backend="vedo", **kwargs)
+                    # splines return dict
+                    # - maybe it is time to do some typing..
+                    if isinstance(tmp_showable, dict):
+                        # add to extend later
+                        list_of_showables.extend(list(tmp_showable.values()))
 
+                    else:
+                        # replace gustafobj with vedo_obj.
+                        list_of_showables.append(tmp_showable)
                 else:
-                    # replace gustafobj with vedo_obj.
-                    showlist[j] = tmp_showable
-
-        # extend and pop
-        if len(to_pop) == len(to_extend) != 0:
-            for te in to_extend:
-                showlist.extend(te)
-
-            # pop bigger indices first
-            to_pop.sort()
-            for tp in to_pop[::-1]:
-                showlist.pop(tp)
+                    list_of_showables.extend(sl)
 
         # set interactive to true at last element
         if int(i + 1) == len(args):
             plt.show(
-                    showlist,
+                    list_of_showables,
                     at=i,
                     interactive=interac,
                     camera=cam_tuple_to_list(cam),
@@ -175,7 +170,7 @@ def show_vedo(
 
         else:
             plt.show(
-                    showlist,
+                    list_of_showables,
                     at=i,
                     interactive=False,
                     camera=cam_tuple_to_list(cam),
@@ -189,9 +184,12 @@ def show_vedo(
         if close or close is None:  # explicitly given or None.
             # It seems to leak some memory, but here it goes.
             plt.close()  # if i close it, this cannot be reused...
-            return None
+            plt = None
 
-    return plt
+    if return_show_list:
+        return (plt, list_of_showables)
+    else:
+        return plt
 
 
 def _vedo_showable(obj, **kwargs):

@@ -387,7 +387,7 @@ def beziers(spline):
     from gustaf.spline.base import Bezier, RationalBezier
 
     if "Bezier" in spline.whatami:
-        return spline
+        return [spline]
     elif spline.whatami.startswith("BSpline"):
         return [
                 Bezier(**s.todict())

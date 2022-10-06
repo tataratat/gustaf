@@ -405,9 +405,8 @@ class GustafSpline(GustafBase):
         return show(self, **kwargs)
 
     def showable(self, **kwargs):
-        """
-        Equivalent to `gustaf.spline.base.show(return_showable=True,**kwargs)`
-        """
+        """Equivalent to
+        `gustaf.spline.base.show(return_showable=True,**kwargs)`"""
         return show(self, return_showable=True, **kwargs)
 
     def copy(self):

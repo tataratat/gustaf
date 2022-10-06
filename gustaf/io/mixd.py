@@ -109,7 +109,11 @@ def load(
     return mesh
 
 
-def export(mesh, fname, space_time=False):
+def export(
+        mesh,
+        fname,
+        space_time=False,
+):
     """Export in mixd format. Supports triangle, quadrilateral, tetrahedron,
     and hexahedron semi-discrete and (flat) space-time mesh output.
 
@@ -117,6 +121,8 @@ def export(mesh, fname, space_time=False):
     -----------
     mesh: Faces or Volumes
     fname: str
+    space_time : bool
+      Export Mesh as Space-Time Slab for discontinous space-time
 
     Returns
     --------
