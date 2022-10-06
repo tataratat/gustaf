@@ -255,10 +255,6 @@ def revolved(
     return type(spline)(**spline_dict)
 
 
-
-
-
-
 def line(points, degree=1):
     """Create a spline with the provided points as control points with given
     degree.
@@ -296,6 +292,7 @@ def line(points, degree=1):
         )
 
     return spline
+
 
 def arc(radius=1., angle=90., n_knot_spans=None, start_angle=0., degree=True):
     """Creates a 1-D arc as Rational Bezier or NURBS with given radius and
@@ -687,6 +684,7 @@ def pyramid(width, length, height):
     p.control_points[:, 4:] = [width / 2, length / 2, height]
 
     return p
+
 
 class Creator:
     """Helper class to build new splines from existing geometries.
