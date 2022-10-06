@@ -10,7 +10,6 @@ if __name__ == '__main__':
     box = gus.spline.create.box(3, 2, 4)
     pyramid = gus.spline.create.pyramid(1, 1, 2)
 
-    # Show objects
     gus.show.show_vedo(
             ['Line', line], ['Rectangle', rect], ['Box', box],
             ['Pyramid', pyramid],
@@ -76,6 +75,5 @@ if __name__ == '__main__':
     gus.show.show_vedo(['Sphere', sphere])
 
     # Sphere section
-    sec = gus.spline.create.sphere(3, inner_radius=1.0, angle=200)
-    gus.show.show_vedo(['Sphere', sec], resolution=50)
->>>>>>> Autopep
+    sec = gus.spline.create.sphere(3, inner_radius=1.0)
+    gus.show.show_vedo(['Hollow sphere', sec], resolution=50)
