@@ -293,6 +293,7 @@ def line(points, degree=1):
 
     return spline
 
+
 def arc(radius=1., angle=90., n_knot_spans=None, start_angle=0., degree=True):
     """Creates a 1-D arc as Rational Bezier or NURBS with given radius and
       angle. The arc lies in the x-y plane and rotates around the z-axis.
