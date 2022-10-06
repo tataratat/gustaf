@@ -293,16 +293,10 @@ def line(points, degree=1):
 
     return spline
 
-<<<<<<< HEAD
-
 def arc(radius=1., angle=90., n_knot_spans=None, start_angle=0., degree=True):
     """Creates a 1-D arc as Rational Bezier or NURBS with given radius and
       angle. The arc lies in the x-y plane and rotates around the z-axis.
-=======
-def circle(radius):
-    """Line circle with radius r in the x-y plane around the origin.
-    The spline has an open knot vector and degree 2.
->>>>>>> Update gustaf/spline/create.py
+
 
 
     Parameters
