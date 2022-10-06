@@ -4,7 +4,6 @@ Extract operations. Both discrete and spline extraction.
 """
 
 import itertools
-from multiprocessing.sharedctypes import Value
 
 import numpy as np
 
@@ -117,7 +116,7 @@ def faces(
 ):
     """Extract faces from spline. Valid iff para_dim is one of the followings:
     {2, 3}. In case of {3}, it will return only surfaces. If internal faces are
-    desired, used `spline.extract.volumes().get_faces()`. Note that dimension
+    desired, used `spline.extract.volumes().faces()`. Note that dimension
     higher than 3 is not showable.
 
     Parameters
@@ -239,7 +238,7 @@ def faces(
 
         # make faces and merge vertices before returning
         f = Faces(vertices=np.vstack(vertices), faces=np.vstack(faces))
-        f.merge_vertices(inplace=True)
+        f.merge_vertices()
 
         return f
 
