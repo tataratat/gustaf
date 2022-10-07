@@ -382,6 +382,10 @@ def beziers(spline):
   Parameters
   ----------
   spline : Gustaf-Spline
+
+  Returns
+  -------
+  bezier_list : list<bezier-types>
   """
     from gustaf.spline.base import Bezier, RationalBezier
 
