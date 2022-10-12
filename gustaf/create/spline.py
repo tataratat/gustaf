@@ -187,6 +187,6 @@ def parametric_view(spline):
 
     # loop through knot vectors and insert missing knots
     for i, kv in enumerate(spline.unique_knots):
-        para_spline.insert_knots(i, kv[1:-1])
+        if len(kv) > 2: para_spline.insert_knots(i, kv[1:-1])
 
     return para_spline
