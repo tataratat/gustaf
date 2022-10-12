@@ -393,7 +393,7 @@ def beziers(spline):
                 Bezier(**s.todict())
                 for s in super(type(spline), spline).extract_bezier_patches()
         ]
-    elif spline.whatami("BSpline"):
+    elif spline.whatami.startswith("NURBS"):
         return [
                 RationalBezier(**s.todict())
                 for s in super(type(spline), spline).extract_bezier_patches()
