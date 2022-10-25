@@ -203,7 +203,7 @@ def faces(
             index_order = np.argsort(
                     [extract_along[0], extract_along[1], extract]
             )
-            surface_point_queries = surface_point_queries[:, index_order]
+            surface_point_queries = surface_point_queries[:, sorted_ids]
 
             vertices.append(
                     spline.evaluate(
