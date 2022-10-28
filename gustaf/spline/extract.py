@@ -200,7 +200,7 @@ def faces(
                     spq,
                     dtype="float64",
             )
-            index_order = np.argsort(
+            sorted_ids = np.argsort(
                     [extract_along[0], extract_along[1], extract]
             )
             surface_point_queries = surface_point_queries[:, sorted_ids]
