@@ -17,7 +17,9 @@ if __name__ == '__main__':
 
     circ = gus.spline.create.circle(5)
     disk1 = gus.spline.create.disk(3, angle=100, n_knot_spans=4)
-    disk2 = gus.spline.create.disk(5, r0=1., angle=360, n_knot_spans=10)
+    disk2 = gus.spline.create.disk(
+            5, inner_radius=1., angle=360, n_knot_spans=10
+    )
 
     gus.show.show_vedo(
             ['Line Circle', circ], ['Disk section', disk1], ['Disk', disk2]
@@ -26,45 +28,14 @@ if __name__ == '__main__':
     cone = gus.spline.create.cone(5, 10, angle=180)
     gus.show.show_vedo(['Cone', cone])
 
-    torus = gus.spline.create.torus(5, 2, r0=0.5)
-    torus2 = gus.spline.create.torus(5, 2, r0=0.5, angle=[100, 210])
+    torus = gus.spline.create.torus(10, 2)
+    torus2 = gus.spline.create.torus(
+            5, 2, section_inner_radius=0.5, torus_angle=100, section_angle=210
+    )
 
-    torus2.show()
     gus.show.show_vedo(
             ['Torus', torus], ['Torus section', torus2], resolution=50
     )
 
     sphere = gus.spline.create.sphere(3)
     gus.show.show_vedo(['Sphere', sphere], resolution=50)
-    pyramid = gus.spline.create.pyramid(2, 2, 6)
-
-    gus.show.show_vedo(
-            ['Line', line], ['Rectangle', rect], ['Box', box],
-            ['Pyramid', pyramid],
-            title='Rectangular objects'
-    )
-
-    circ = gus.spline.create.circle(5)
-    disk1 = gus.spline.create.disk(3, angle=100, n_knot_spans=2)
-    disk2 = gus.spline.create.disk(5, r0=1., angle=360, n_knot_spans=10)
-
-    gus.show.show_vedo(
-            ['Line Circle', circ], ['Disk, 2 knots spans', disk1],
-            ['Disk, 10 knots spans', disk2]
-    )
-
-    cone = gus.spline.create.cone(5, 10, angle=180)
-    gus.show.show_vedo(['Cone', cone])
-
-    torus = gus.spline.create.torus(5, 2, r0=0.5)
-    torus2 = gus.spline.create.torus(5, 2, r0=0.5, angle=[100, 210])
-
-    torus2.show()
-    gus.show.show_vedo(['Torus', torus], ['Incomplete torus', torus2])
-
-    sphere = gus.spline.create.sphere(3)
-    gus.show.show_vedo(['Sphere', sphere])
-
-    # Sphere section
-    sec = gus.spline.create.sphere(3, inner_radius=1.0)
-    gus.show.show_vedo(['Hollow sphere', sec], resolution=50)
