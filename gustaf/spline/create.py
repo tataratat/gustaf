@@ -322,6 +322,7 @@ def arc(radius=1., angle=90., n_knot_spans=None, start_angle=0., degree=True):
     # Define point spline of degree 0 at starting point of the arc
     if degree is True:
         start_angle = np.radians(start_angle)
+        angle = np.radians(angle)
     start_point = [radius * np.cos(start_angle), radius * np.sin(start_angle)]
     point_spline = RationalBezier(
             degrees=[0], control_points=[start_point], weights=[1.]
