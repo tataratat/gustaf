@@ -330,10 +330,14 @@ def arc(radius=1., angle=90., n_knot_spans=None, start_angle=0., degree=True):
     )
     # Bezier splines only support angles lower than 180 degrees
 <<<<<<< HEAD
+<<<<<<< HEAD
     if abs(angle % (2 * np.pi)) >= np.pi or n_knot_spans > 1:
 =======
     if abs(angle % (2 * np.pi))  >= np.pi or n_knot_spans > 1:
 >>>>>>> Update gustaf/spline/create.py
+=======
+    if abs(angle % (2 * np.pi)) >= np.pi or n_knot_spans > 1:
+>>>>>>> Insert github comments
         point_spline = point_spline.nurbs
 
     # Revolve
