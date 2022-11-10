@@ -328,7 +328,7 @@ def arc(radius=1., angle=90., n_knot_spans=None, start_angle=0., degree=True):
             degrees=[0], control_points=[start_point], weights=[1.]
     )
     # Bezier splines only support angles lower than 180 degrees
-    if abs(angle % (2 * np.pi))  >= np.pi or n_knot_spans > 1:
+    if abs(angle % (2 * np.pi)) >= np.pi or n_knot_spans > 1:
         point_spline = point_spline.nurbs
 
     # Revolve
@@ -534,25 +534,34 @@ def torus(
 
     if torus_angle is None:
         torus_angle = 2 * np.pi
+        degree = False
+
     if section_angle is None:
         section_angle = 2 * np.pi
         section_angle_flag = False
+        degree = False
+    else:
+        section_angle_flag = True
+
     if section_inner_radius is None:
         section_inner_radius = 0
         section_inner_radius_flag = False
+    else:
+        section_inner_radius_flag = True
 
     # Create the cross-section
     if not section_angle_flag and not section_inner_radius_flag:
         cross_section = plate(section_outer_radius)
         # For more than 180 degree only NURBS can be used
-        if abs(torus_angle % (2 * np.pi)) >= np.pi:
+        if abs(torus_angle) >= np.pi:
             cross_section = cross_section.nurbs
     else:
         cross_section = disk(
                 outer_radius=section_outer_radius,
                 inner_radius=section_inner_radius,
                 n_knot_spans=section_n_knot_spans,
-                angle=section_angle
+                angle=section_angle,
+                degree=degree
         )
 
     # Create a surface spline representing a disk and move it from the origin
@@ -562,7 +571,8 @@ def torus(
             axis=[1., 0, 0],
             center=np.zeros(3),
             angle=torus_angle,
-            n_knot_spans=torus_n_knot_spans
+            n_knot_spans=torus_n_knot_spans,
+            degree=degree
     )
 
 
@@ -604,8 +614,8 @@ def sphere(
     else:
         inner_radius = float(inner_radius)
         sphere = disk(outer_radius, inner_radius).nurbs.create.revolved(
-                axis=[1, 0, 0],
-                center=[0, 0, 0],
+                # axis=[1, 0, 0],
+                # center=[0, 0, 0],
                 angle=angle,
                 n_knot_spans=n_knot_spans,
                 degree=degree
@@ -682,7 +692,7 @@ def pyramid(width, length, height):
     p = box(width, length, height)
 
     # Collapse all upper points on one control point
-    p.control_points[:, 4:] = [width / 2, length / 2, height]
+    p.control_points[4:, :] = [width / 2, length / 2, height]
 
     return p
 
