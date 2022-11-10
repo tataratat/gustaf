@@ -533,19 +533,19 @@ def torus(
     """
 
     if torus_angle is None:
-        torus_angle = 360
+        torus_angle = 2 * np.pi
     if section_angle is None:
-        section_angle = 360
+        section_angle = 2 * np.pi
         section_angle_flag = False
     if section_inner_radius is None:
         section_inner_radius = 0
         section_inner_radius_flag = False
 
     # Create the cross-section
-    if section_angle_flag is False and section_inner_radius_flag is False:
+    if not section_angle_flag and not section_inner_radius_flag:
         cross_section = plate(section_outer_radius)
         # For more than 180 degree only NURBS can be used
-        if torus_angle >= 180:
+        if abs(torus_angle % (2 * np.pi)) >= np.pi:
             cross_section = cross_section.nurbs
     else:
         cross_section = disk(
