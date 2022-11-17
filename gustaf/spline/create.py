@@ -104,6 +104,7 @@ def revolved(
     -------
     spline : GustafSpline
     """
+
     from gustaf.spline.base import GustafSpline
 
     # Check input type
@@ -252,6 +253,449 @@ def revolved(
         spline_dict["control_points"] += center
 
     return type(spline)(**spline_dict)
+
+
+def line(points, degree=1):
+    """Create a spline with the provided points as control points with given
+    degree.
+
+    Parameters
+    ----------
+    points : numpy.ndarray
+      npoints x ndims array of control points
+    degree : int, optional
+      Desired spline degree, by default 1
+
+    Returns
+    -------
+    gustaf.Bspline
+      Bspline with choosen control points and if necessary internal knots.
+    """
+    from gustaf import BSpline, Bezier
+
+    cps = np.array(points)
+    nknots = cps.shape[0] + degree + 1
+
+    knots = np.concatenate(
+            (
+                    np.full(degree, 0.),
+                    np.linspace(0., 1., nknots - 2 * degree),
+                    np.full(degree, 1.0),
+            )
+    )
+
+    if cps.shape[0] == degree + 1:
+        spline = Bezier(control_points=cps, degrees=[degree])
+    else:
+        spline = BSpline(
+                control_points=cps, knot_vectors=[knots], degrees=[degree]
+        )
+
+    return spline
+
+
+def arc(radius=1., angle=90., n_knot_spans=None, start_angle=0., degree=True):
+    """Creates a 1-D arc as Rational Bezier or NURBS with given radius and
+      angle. The arc lies in the x-y plane and rotates around the z-axis.
+
+
+
+    Parameters
+    ----------
+    radius : float, optional
+      radius of the arc, defaults to 1
+    angle : float, optional
+      angle of the section of the arc, defaults to 90 degrees
+    n_knot_spans : int
+      Number of knot spans, by default minimum number for angle is used.
+    start_angle : float, optional
+      starting point of the angle, by default 0.
+    degree: bool, optional
+      degrees for angle used, by default True
+
+    Returns
+    -------
+    gustaf.NURBS or gustaf.RationalBezier
+        Line spline describing an arc
+    """
+    from gustaf import RationalBezier
+
+    # Define point spline of degree 0 at starting point of the arc
+    if degree:
+        start_angle = np.radians(start_angle)
+        angle = np.radians(angle)
+    start_point = [radius * np.cos(start_angle), radius * np.sin(start_angle)]
+    point_spline = RationalBezier(
+            degrees=[0], control_points=[start_point], weights=[1.]
+    )
+    # Bezier splines only support angles lower than 180 degrees
+    if abs(angle) >= np.pi or n_knot_spans > 1:
+        point_spline = point_spline.nurbs
+
+    # Revolve
+    arc_attribs = point_spline.create.revolved(
+            angle=angle, n_knot_spans=n_knot_spans, degree=degree
+    ).todict()
+    # Remove the first parametric dimenions, which is only a point and
+    # only used for the revolution
+    arc_attribs['degrees'] = list(arc_attribs['degrees'])[1:]
+    if "knot_vectors" in _RequiredProperties.of(point_spline):
+        arc_attribs['knot_vectors'] = list(arc_attribs['knot_vectors'])[1:]
+
+    return type(point_spline)(**arc_attribs)
+
+
+def circle(radius=1., n_knot_spans=3):
+    """Line circle with radius r in the x-y plane around the origin.
+    The spline has an open knot vector and degree 2.
+
+    Parameters
+    ----------
+    radius : float, optional
+      radius, defaults to one
+    n_knots_spans : int, optional
+      number of knot spans, defaults to 3
+
+    Returns
+    -------
+    gustaf.NURBS
+      Line circle NURBS
+    """
+    return arc(radius=radius, angle=360, n_knot_spans=n_knot_spans)
+
+
+def rectangle(width, length):
+    """ Surface spline in rectangluar shape with linear degree.
+    The rectangle lies in the x-y plane with one corner in the origin.
+
+    Parameters
+    ----------
+    width : float
+      dimension of the rectangle in x-direction
+    length : float
+      dimension of the rectangle in y-direction
+
+    Returns
+    -------
+    gustaf.Bezier
+      Rectangluar Bezier spline with lengths of the sides a and b.
+    """
+    from gustaf.spline import Bezier
+
+    cps = np.zeros([4, 2])
+    cps[1, 0] = width
+    cps[2, 1] = length
+    cps[3, :] = width, length
+
+    return Bezier(control_points=cps, degrees=[1, 1])
+
+
+def box(width, length, height):
+    """Volumetric spline with linear degree and dimensions a,b,h in
+    x,y,z-direction
+
+    Parameters
+    ----------
+    width : float
+      dimension of the box in x-direction
+    length : float
+      dimension of the box in y-direction
+    height : float
+      dimension of the box in z-direction
+
+    Returns
+    -------
+    gustaf.Bezier
+      Volumetric linear Bezier spline
+    """
+    return rectangle(width, length).create.extruded([0., 0., height])
+
+
+def plate(radius=1.):
+    """Creates a biquadratic 2-D spline in the shape of a plate with given
+  radius.
+
+  Parameters
+  ----------
+  radius : float, optional
+    Radius of the plate, defaults to one
+
+  Returns
+  -------
+  gustaf.RationalBezier
+    Surface spline forming plate
+  """
+
+    from gustaf.spline import RationalBezier
+
+    degrees = [2, 2]
+    control_points = np.array(
+            [
+                    [-0.5, -0.5],
+                    [0., -1.],
+                    [0.5, -0.5],
+                    [-1., 0.],
+                    [0., 0.],
+                    [1., 0.],
+                    [-0.5, 0.5],
+                    [0., 1.],
+                    [0.5, 0.5],
+            ]
+    ) * radius
+    weights = np.tile([1., 1 / np.sqrt(2)], 5)[:-1]
+
+    return RationalBezier(
+            degrees=degrees, control_points=control_points, weights=weights
+    )
+
+
+def disk(
+        outer_radius,
+        inner_radius=None,
+        angle=360.,
+        n_knot_spans=None,
+        degree=True
+):
+    """Surface spline describing a potentially hollow disk with quadratic
+    degree along curved dimension and linear along thickness.
+    The angle describes the returned part of the disk.
+
+    Parameters
+    ----------
+    outer_radius : float
+      Outer radius of the disk
+    inner_radius : float, optional
+      Inner radius of the disk, in case of hollow disk, by default 0.
+    angle : float, optional
+      Rotational angle, by default 360. describing a complete revolution
+    n_knot_spans : int, optional
+      Number of knot spans, by default 4
+
+    Returns
+    -------
+    gustaf.NURBS
+      Surface NURBS of degrees (1,2)
+    """
+
+    from gustaf.spline import NURBS
+
+    if inner_radius is None:
+        inner_radius = 0.
+
+    cps = np.array([[inner_radius, 0.], [outer_radius, 0.]])
+    weights = np.ones([cps.shape[0]])
+    knots = np.repeat([0., 1.], 2)
+
+    return NURBS(
+            control_points=cps,
+            knot_vectors=[knots],
+            degrees=[1],
+            weights=weights
+    ).create.revolved(angle=angle, n_knot_spans=n_knot_spans, degree=degree)
+
+
+def torus(
+        torus_radius,
+        section_outer_radius,
+        section_inner_radius=None,
+        torus_angle=None,
+        section_angle=None,
+        section_n_knot_spans=4,
+        torus_n_knot_spans=4,
+        degree=True,
+):
+    """Creates a volumetric NURBS spline describing a torus revolved around
+    the x-axis.
+    Possible cross-sections are plate, disk (yielding a tube) and section of
+    a disk.
+
+    Parameters
+    ----------
+    torus_radius : float
+      Radius of the torus
+    section_outer_radius : float
+      Radius of the section of the torus
+    section_inner_radius : float, optional
+      Inner radius in case of hollow torus, by default 0.
+    torus_angle : float, optional
+      Rotational anlge of the torus, by default None, giving a complete
+      revolution
+    section_angle : float, optional
+      Rotational angle, by default None, yielding a complete revolution
+    section_n_knot_spans : float, optional
+      Number of knot spans along the cross-section, by default 4
+    torus_n_knot_spans : float, optional
+      Number of knot spans along the torus, by default 4
+
+    Returns
+    -------
+    gustaf.NURBS
+      Volumetric spline in the shape of a torus with degrees (1,2,2)
+    """
+
+    if torus_angle is None:
+        torus_angle = 2 * np.pi
+        degree = False
+
+    if section_angle is None:
+        section_angle = 2 * np.pi
+        section_angle_flag = False
+        degree = False
+    else:
+        section_angle_flag = True
+
+    if section_inner_radius is None:
+        section_inner_radius = 0
+        section_inner_radius_flag = False
+    else:
+        section_inner_radius_flag = True
+
+    # Create the cross-section
+    if not section_angle_flag and not section_inner_radius_flag:
+        cross_section = plate(section_outer_radius)
+        # For more than 180 degree only NURBS can be used
+        if abs(torus_angle) >= np.pi:
+            cross_section = cross_section.nurbs
+    else:
+        cross_section = disk(
+                outer_radius=section_outer_radius,
+                inner_radius=section_inner_radius,
+                n_knot_spans=section_n_knot_spans,
+                angle=section_angle,
+                degree=degree
+        )
+
+    # Create a surface spline representing a disk and move it from the origin
+    cross_section.control_points[:, 1] += torus_radius
+
+    return cross_section.create.revolved(
+            axis=[1., 0, 0],
+            center=np.zeros(3),
+            angle=torus_angle,
+            n_knot_spans=torus_n_knot_spans,
+            degree=degree
+    )
+
+
+def sphere(
+        outer_radius,
+        inner_radius=None,
+        angle=360.,
+        n_knot_spans=None,
+        degree=True
+):
+    """Creates a volumetric spline describing a sphere with radius R.
+
+    Parameters
+    ----------
+    outer_radius : float
+      Outer radius of the sphere
+    inner_radius : float, optional
+      Inner radius of the potentially hollow sphere.
+    angle : float
+      Rotational angle around x-axis, by default each 360
+      (describing a complete revolution)
+    n_knot_spans : int
+      Number of knot spans
+
+    Returns
+    -------
+    gustaf.NURBS
+      Volumetric NURBS with degrees (1,2,2)
+    """
+
+    if inner_radius is None:
+        sphere = plate(outer_radius).nurbs.create.revolved(
+                axis=[1, 0, 0],
+                center=[0, 0, 0],
+                angle=angle,
+                n_knot_spans=n_knot_spans,
+                degree=degree
+        )
+    else:
+        inner_radius = float(inner_radius)
+        sphere = disk(outer_radius, inner_radius).nurbs.create.revolved(
+                # axis=[1, 0, 0],
+                # center=[0, 0, 0],
+                angle=angle,
+                n_knot_spans=n_knot_spans,
+                degree=degree
+        )
+    return sphere
+
+
+def cone(
+        outer_radius,
+        height,
+        inner_radius=None,
+        volumetric=True,
+        angle=360.,
+        degree=True
+):
+    """Creates a cone with circular base.
+
+    Parameters
+    ----------
+    radius : float
+      Radius of the base
+    height : float
+      Height of the cone
+    volumetric : bool, optional
+      Parameter whether surface or volume spline, by default True
+    angle : float
+      Rotation angle in degrees, only used for solid model
+
+    Returns
+    -------
+    gustaf.NURBS
+      Volumetric or surface NURBS descibing a cone
+    """
+
+    if volumetric:
+        ground = disk(
+                outer_radius,
+                inner_radius=inner_radius,
+                angle=angle,
+                degree=degree
+        )
+    else:
+        ground = circle(outer_radius)
+
+    # Extrude in z
+    cone = ground.create.extruded([0, 0, height])
+    # Move all upper control points to one
+    cone.control_points[np.isclose(cone.control_points[:, -1],
+                                   height)] = [0, 0, height]
+
+    return cone
+
+
+def pyramid(width, length, height):
+    """Creates a volumetric spline in the shape of a pyramid with linear
+    degree in every direction.
+
+    Parameters
+    ----------
+    width : float
+      Dimension of base in x-axis
+    lenght : float
+      Dimension of base in y-axis
+    height : float
+      Height in z-direction
+
+    Returns
+    -------
+    gustaf.Bspline
+      Volumetric linear spline in the shape of a pyramid
+    """
+
+    # Create box
+    p = box(width, length, height)
+
+    # Collapse all upper points on one control point
+    p.control_points[4:, :] = [width / 2, length / 2, height]
+
+    return p
 
 
 class Creator:
