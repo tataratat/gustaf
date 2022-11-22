@@ -375,6 +375,35 @@ class GustafSpline(GustafBase):
 
         return super().derivative(*args, **kwargs)
 
+    def get_greville_points_coordinates(self) -> np.ndarray:
+        """Returns the coordinates of the Greville Points of the spline.
+
+        The Greville points mark the maxima of the basis function of the
+        spline.
+
+        Returns:
+            np.ndarray: Point coordinates. Can be directly used to sample the 
+            spline.
+        """
+        point_coords = []
+        # if the spline does not contain a knot_vector (example Bezier) it is 
+        #created b
+        if not hasattr(self, "knot_vectors"):
+            kvs = [
+                [0] * (self.degrees[i] + 1) + [1]
+                * (self.degrees[i] + 1) for i in range(self.para_dim)
+            ]
+        else:
+            kvs = self.knot_vectors
+        for i, kv in enumerate(kvs):
+            p = self.degrees[i]
+            point_coords.append(
+                [sum(kv[i:(i+p)])/p for i in range(1,len(kv)-p)]
+            )
+        return np.vstack(
+            [i.ravel() for i in np.meshgrid(*point_coords)]
+        ).T
+
     def sample(self, query_resolutions, n_threads=None):
         """Overwrite sample function to offer equivalent, but with multithread
         eval.
