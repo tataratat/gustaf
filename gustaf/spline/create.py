@@ -66,9 +66,9 @@ def extruded(spline, extrusion_vector=None):
 
     spline_dict["degrees"] = np.concatenate((spline.degrees, [1]))
     spline_dict["control_points"] = np.vstack((cps, cps + extrusion_vector))
-    if "knot_vectors" in _RequiredProperties.of(spline):
+    if "knot_vectors" in RequiredProperties.of(spline):
         spline_dict["knot_vectors"] = spline.knot_vectors + [[0, 0, 1, 1]]
-    if "weights" in _RequiredProperties.of(spline):
+    if "weights" in RequiredProperties.of(spline):
         spline_dict["weights"] = np.concatenate(
                 (spline.weights, spline.weights)
         )
@@ -230,13 +230,13 @@ def revolved(
                 (spline_dict["control_points"], mid_points, end_points)
         )
 
-    if "knot_vectors" in _RequiredProperties.of(spline):
+    if "knot_vectors" in RequiredProperties.of(spline):
         kv = [0, 0, 0]
         [kv.extend([i + 1, i + 1]) for i in range(n_knot_spans - 1)]
         spline_dict["knot_vectors"] = spline.knot_vectors + [
                 kv + [n_knot_spans + 1] * 3
         ]
-    if "weights" in _RequiredProperties.of(spline):
+    if "weights" in RequiredProperties.of(spline):
         mid_weights = spline.weights * weight
         spline_dict["weights"] = spline.weights
         for i_segment in range(n_knot_spans):
@@ -339,7 +339,7 @@ def arc(radius=1., angle=90., n_knot_spans=None, start_angle=0., degree=True):
     # Remove the first parametric dimenions, which is only a point and
     # only used for the revolution
     arc_attribs['degrees'] = list(arc_attribs['degrees'])[1:]
-    if "knot_vectors" in _RequiredProperties.of(point_spline):
+    if "knot_vectors" in RequiredProperties.of(point_spline):
         arc_attribs['knot_vectors'] = list(arc_attribs['knot_vectors'])[1:]
 
     return type(point_spline)(**arc_attribs)
