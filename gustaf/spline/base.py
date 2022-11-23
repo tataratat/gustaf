@@ -427,6 +427,63 @@ class GustafSpline(GustafBase):
                 np.linalg.det(np.einsum("...ji,...jk", jacobians, jacobians))
         )
 
+    def get_determinant_spline(self):
+        """Get determinant spline.
+
+        Should currently get the correct result for non rational spline. Will
+        need to be updated for rational splines. Since weights are currently
+        ignored.
+
+        Returns
+        -------
+        BSpline: BSpline describing the determinant spline
+        """
+        # if the spline does not contain a knot_vector (example Bezier) it is
+        # created
+        if not hasattr(self, "knot_vectors"):
+            kvs = [
+                    [0] * (self.degrees[i] + 1) + [1] * (self.degrees[i] + 1)
+                    for i in range(self.para_dim)
+            ]
+        else:
+            # preserve the original knot_vectors but keep a normalized copy
+            # to for easier computation
+            kvs = self.knot_vectors
+            self.normalize_knot_vectors()
+            self.knot_vectors, kvs = kvs, self.knot_vectors
+        new_degrees = self.degrees * self.dim - 1
+        unique_knots = [np.unique(k).tolist() for k in kvs]
+        new_kvs = []
+        d = self.para_dim
+        for i in range(d):
+            n_new_endknots = ((d - 1) * self.degrees[i] - 1)
+            nkv = [0] * n_new_endknots + kvs[i] + [1] * n_new_endknots
+            # Add interior knots
+            nkv += unique_knots[i][1:-1] * (self.degrees[i] * (d - 1))
+            nkv.sort()
+            new_kvs.append(nkv)
+
+        # create determinant spline
+        n_ctps = np.prod(
+                [len(new_kvs[i]) - new_degrees[i] - 1 for i in range(d)]
+        )
+        determinant_spline = BSpline(
+                degrees=new_degrees,
+                control_points=np.empty((n_ctps, 1)),
+                knot_vectors=new_kvs
+        )
+
+        # get spline derivative to determine control point positions
+        sample_points = determinant_spline.get_greville_points_coordinates()
+        det_vector = self.evaluate_jacobian_determinant(sample_points)
+        m, supports = determinant_spline.basis_functions(sample_points)
+        basis_functions = np.zeros((n_ctps, n_ctps))
+        np.put_along_axis(basis_functions, supports, m, axis=1)
+        determinant_spline.control_points[:, 0] = np.linalg.solve(
+                basis_functions, det_vector
+        )
+        return determinant_spline
+
     def derivative(self, *args, **kwargs):
         """derivative wrapper with n_threads default.
 
@@ -446,26 +503,29 @@ class GustafSpline(GustafBase):
         The Greville points mark the maxima of the basis function of the
         spline.
 
-        Returns:
-            np.ndarray: Point coordinates. Can be directly used to sample the
-            spline.
+        Returns
+        -------
+        np.ndarray: Point coordinates. Can be directly used to sample the
+        spline.
         """
         point_coords = []
         # if the spline does not contain a knot_vector (example Bezier) it is
         # created
         if not hasattr(self, "knot_vectors"):
-            kvs = [
-                    [0] * (self.degrees[i] + 1) + [1] * (self.degrees[i] + 1)
+            point_coords = [
+                    np.linspace(0, 1, self.degrees[i] + 1)
                     for i in range(self.para_dim)
             ]
         else:
-            kvs = self.knot_vectors
-        for i, kv in enumerate(kvs):
-            p = self.degrees[i]
-            point_coords.append(
-                    [sum(kv[i:(i + p)]) / p for i in range(1,
-                                                           len(kv) - p)]
-            )
+            for i, kv in enumerate(self.knot_vectors):
+                p = self.degrees[i]
+                point_coords.append(
+                        [
+                                sum(kv[i:(i + p)]) / p
+                                for i in range(1,
+                                               len(kv) - p)
+                        ]
+                )
         return np.vstack([i.ravel() for i in np.meshgrid(*point_coords)]).T
 
     def sample(self, query_resolutions, n_threads=None):
