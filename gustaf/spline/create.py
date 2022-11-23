@@ -4,7 +4,7 @@ Create operations for spline geometries
 """
 
 import numpy as np
-from splinepy._spline import _RequiredProperties
+from splinepy.spline import RequiredProperties
 
 from gustaf import utils
 from gustaf import settings
