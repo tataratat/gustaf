@@ -438,6 +438,7 @@ class GustafSpline(GustafBase):
         -------
         BSpline: BSpline describing the determinant spline
         """
+        # TODO add warning for rational 
         # if the spline does not contain a knot_vector (example Bezier) it is
         # created
         if not hasattr(self, "knot_vectors"):
