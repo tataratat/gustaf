@@ -2,13 +2,10 @@
 
 Useful base class for gustaf. Plus some useful decorators.
 """
-
-import abc
-
 from gustaf import utils
 
 
-class GustafBase(abc.ABC):
+class GustafBase:
     """Base class for gustaf, where logging is nicely wrapped, and some useful
     methods are defined as classmethods..
 
@@ -22,7 +19,7 @@ class GustafBase(abc.ABC):
     TODO: maybe add explicit `use_saved` switch to avoid recomputing
     """
 
-    __slots__ = []
+    __slots__ = ()
 
     def _logd(self, *log):
         """Debug logger wrapper for Mesh.
