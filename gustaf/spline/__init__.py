@@ -27,7 +27,6 @@ splinepy.settings.NAME_TO_TYPE = dict(
         NURBS=NURBS,
 )
 
-
 __all__ = [
         "base",
         "create",
