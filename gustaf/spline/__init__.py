@@ -17,6 +17,16 @@ from gustaf.spline import microstructure
 
 from splinepy import io
 
+
+# overwrite name to type map
+splinepy.settings.NAME_TO_TYPE = dict(
+        Bezier=Beizer,
+        RationalBezier=RationalBezier,
+        BSpline=BSpline,
+        NURBS=NURBS,
+)
+
+
 __all__ = [
         "base",
         "create",
