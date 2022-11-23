@@ -363,9 +363,10 @@ class GustafSpline(GustafBase):
         return super().evaluate(*args, **kwargs)
 
     def evaluate_jacobian(self, queries):
-        """Evaluate the jacobian at a set of query points
+        """Evaluate the jacobian at a set of query points.
 
-        This implementation is temporary and will be closed once the spline core PR is merged into main
+        This implementation is temporary and will be closed once the spline
+        core PR is merged into main
 
         Parameters
         ----------
@@ -377,19 +378,19 @@ class GustafSpline(GustafBase):
         """
         # Calculate derivatives for each parametric dimension
         queries = np.array(queries)
-        derivs = np.empty((queries.shape[0], self.para_dim*self.dim))
+        derivs = np.empty((queries.shape[0], self.para_dim * self.dim))
         for i in range(self.para_dim):
             derivT = [0] * self.para_dim
             derivT[i] = 1
-            derivs[:, (i*self.dim):((i+1) * self.dim)
-                       ] = self.derivative(queries, derivT)
-        return derivs.reshape(-1,self.dim,self.para_dim)
+            derivs[:, (i * self.dim):((i + 1) * self.dim
+                                      )] = self.derivative(queries, derivT)
+        return derivs.reshape(-1, self.dim, self.para_dim)
 
     def evaluate_jacobian_determinant(self, queries):
+        """Evaluate the jacobian determinant at a set of query points.
 
-        """Evaluate the jacobian at a set of query points
-
-        This implementation is temporary and will be closed once the spline core PR is merged into main
+        This implementation is temporary and will be closed once the spline
+        core PR is merged into main
 
         Parameters
         ----------
@@ -400,16 +401,18 @@ class GustafSpline(GustafBase):
         jacobians : (n) array-like
         """
         if not self.dim == self.para_dim:
-            raise ValueError("Mismatch between parametric and physical"
+            raise ValueError(
+                    "Mismatch between parametric and physical"
                     " dimension. If you want a measure for an embedded"
-                    " representation, try 'distortion_measure'")
+                    " representation, try 'distortion_measure'"
+            )
         return np.linalg.det(self.evaluate_jacobian(queries))
 
     def distortion_measure(self, queries):
+        """Evaluate the distortion measure of the spline given query points.
 
-        """Evaluate the jacobian at a set of query points
-
-        This implementation is temporary and will be closed once the spline core PR is merged into main
+        This implementation is temporary and will be closed once the spline
+        core PR is merged into main
 
         Parameters
         ----------
@@ -420,9 +423,9 @@ class GustafSpline(GustafBase):
         jacobians : (n) array-like
         """
         jacobians = self.evaluate_jacobian(queries)
-        return np.sqrt(np.linalg.det(
-            np.einsum("...ji,...jk", jacobians, jacobians)))
-
+        return np.sqrt(
+                np.linalg.det(np.einsum("...ji,...jk", jacobians, jacobians))
+        )
 
     def derivative(self, *args, **kwargs):
         """derivative wrapper with n_threads default.
@@ -444,27 +447,26 @@ class GustafSpline(GustafBase):
         spline.
 
         Returns:
-            np.ndarray: Point coordinates. Can be directly used to sample the 
+            np.ndarray: Point coordinates. Can be directly used to sample the
             spline.
         """
         point_coords = []
-        # if the spline does not contain a knot_vector (example Bezier) it is 
-        #created b
+        # if the spline does not contain a knot_vector (example Bezier) it is
+        # created
         if not hasattr(self, "knot_vectors"):
             kvs = [
-                [0] * (self.degrees[i] + 1) + [1]
-                * (self.degrees[i] + 1) for i in range(self.para_dim)
+                    [0] * (self.degrees[i] + 1) + [1] * (self.degrees[i] + 1)
+                    for i in range(self.para_dim)
             ]
         else:
             kvs = self.knot_vectors
         for i, kv in enumerate(kvs):
             p = self.degrees[i]
             point_coords.append(
-                [sum(kv[i:(i+p)])/p for i in range(1,len(kv)-p)]
+                    [sum(kv[i:(i + p)]) / p for i in range(1,
+                                                           len(kv) - p)]
             )
-        return np.vstack(
-            [i.ravel() for i in np.meshgrid(*point_coords)]
-        ).T
+        return np.vstack([i.ravel() for i in np.meshgrid(*point_coords)]).T
 
     def sample(self, query_resolutions, n_threads=None):
         """Overwrite sample function to offer equivalent, but with multithread
