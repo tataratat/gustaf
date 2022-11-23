@@ -17,7 +17,6 @@ from gustaf.spline.create import Creator
 from gustaf.spline.extract import Extractor
 from gustaf.spline.proximity import Proximity
 from gustaf.spline._utils import to_res_list
-from gustaf.create.vertices import raster
 
 
 def show(
