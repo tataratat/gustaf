@@ -349,57 +349,6 @@ class GustafSpline(GustafBase):
         """
         return self._proximity
 
-    def evaluate(self, *args, **kwargs):
-        """evaluate wrapper with n_threads default.
-
-        This takes 2 args with 1 required arg.
-        """
-        if len(args) != 2:
-            n_t = kwargs.get("n_threads")
-
-            if n_t is None:
-                kwargs.update(n_threads=settings.NTHREADS)
-
-        return super().evaluate(*args, **kwargs)
-
-    def derivative(self, *args, **kwargs):
-        """derivative wrapper with n_threads default.
-
-        This takes 3 args with 2 required args
-        """
-        if len(args) != 3:
-            n_t = kwargs.get("n_threads")
-
-            if n_t is None:
-                kwargs.update(n_threads=settings.NTHREADS)
-
-        return super().derivative(*args, **kwargs)
-
-    def sample(self, query_resolutions, n_threads=None):
-        """Overwrite sample function to offer equivalent, but with multithread
-        eval.
-
-        Parameters
-        -----------
-        query_resolutions: (n, m), array-like
-        n_thread: int
-
-        Returns
-        --------
-        results: (n*m, dim) np.ndarray
-        """
-        if n_threads is None:
-            n_threads = settings.NTHREADS
-
-        qr = to_res_list(query_resolutions, self.para_dim)
-
-        if n_threads == 1:
-            return super().sample(qr)
-
-        else:
-            q = raster(self.knot_vector_bounds, qr)
-            return self.evaluate(q.vertices, n_threads=n_threads)
-
     def show(self, **kwargs):
         """Equivalent to `gustaf.spline.base.show(**kwrags)`"""
         return show(self, **kwargs)
