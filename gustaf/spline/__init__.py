@@ -15,12 +15,13 @@ from gustaf.spline.base import (
 from gustaf.spline import ffd
 from gustaf.spline import microstructure
 
+import splinepy
 from splinepy import io
 
 
 # overwrite name to type map
 splinepy.settings.NAME_TO_TYPE = dict(
-        Bezier=Beizer,
+        Bezier=Bezier,
         RationalBezier=RationalBezier,
         BSpline=BSpline,
         NURBS=NURBS,
