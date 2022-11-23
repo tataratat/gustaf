@@ -26,6 +26,10 @@ splinepy.settings.NAME_TO_TYPE = dict(
         NURBS=NURBS,
 )
 
+# a shortcut
+NAME_TO_TYPE = splinepy.settings.NAME_TO_TYPE
+
+
 __all__ = [
         "base",
         "create",
