@@ -86,13 +86,6 @@ def show(
     if (spline.para_dim, spline.dim) not in allowed_dim_combo:
         raise ValueError("Sorry, can't show given spline.")
 
-    # During show process, spline won't change
-    original_skip_update = spline.skip_update
-    if not original_skip_update:
-        # update one last time else, it won't sync.
-        spline._check_and_update_c()
-        spline.skip_update = True
-
     # determine backend
     if backend is None:
         backend = settings.VISUALIZATION_BACKEND
@@ -149,9 +142,6 @@ def show(
 
     # Return here, if backend is not vedo
     if not backend.startswith("vedo"):
-        # reset skip_update option
-        spline.skip_update = original_skip_update
-
         # turn everything into backend showables
         if return_showable:
             for key, gusobj in things_to_show.items():
@@ -253,9 +243,6 @@ def show(
             para_showables.update(
                     axes=Axes(para_showables["spline"], **axes_config)
             )
-
-        # reset skip_update option
-        spline.skip_update = original_skip_update
 
         # showable return
         if return_showable:
