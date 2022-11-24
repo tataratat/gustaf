@@ -3,7 +3,7 @@
 Collection of wrapper functions/classes that raises Error with certain
 behavior
 """
-from typing import Any
+from typing import Any, Optional
 
 
 def invalid_inherited_attr(func, qualname, property_=False):
@@ -47,13 +47,15 @@ class ModuleImportRaiser():
     them to function. Examples are `splinepy` and `vedo`.
     """
 
-    def __init__(self, lib_name: str):
+    def __init__(self, lib_name: str, error_message: Optional[str] = None):
         self._message = str(
-                "Parts of the requested functionality in gustaf depend on the "
-                f"external `{lib_name}` package which could not be found on "
-                "your system. Please refer to the installation instructions "
-                "for more information."
+        "Parts of the requested functionality in gustaf depend on the "
+        f"external `{lib_name}` package which could not be found on "
+        "your system. Please refer to the installation instructions "
+        "for more information. "
+        f"{f'Original error message {error_message}' if error_message else ''}"
         )
+
 
     def __call__(self, *args: Any, **kwds: Any) -> Any:
         """Is called when the object is called by object().
