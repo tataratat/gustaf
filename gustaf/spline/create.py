@@ -1,6 +1,6 @@
 """gustaf/spline/create.py.
 
-Create operations for spline geometries.
+Creates splines.
 """
 
 import numpy as np
@@ -362,7 +362,7 @@ def box(*lengths):
 
     Parameters
     ----------
-    lengths: *lengths
+    lengths: \*lengths
 
     Returns
     -------
