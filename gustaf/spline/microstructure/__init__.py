@@ -3,8 +3,8 @@
 Interface for tools and generators creating simple microstructures.
 """
 
-from gustaf.spline.microstructure import tiles, generator
+from gustaf.spline.microstructure import tiles, microstructure
 
-from gustaf.spline.microstructure.generator import Generator
+from gustaf.spline.microstructure.microstructure import Microstructure
 
-__all__ = ["tiles", "generator", "Generator"]
+__all__ = ["tiles", "microstructure", "Microstructure"]
