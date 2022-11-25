@@ -293,9 +293,7 @@ def line(points):
 
 def arc(radius=1., angle=90., n_knot_spans=None, start_angle=0., degree=True):
     """Creates a 1-D arc as Rational Bezier or NURBS with given radius and
-      angle. The arc lies in the x-y plane and rotates around the z-axis.
-
-
+    angle. The arc lies in the x-y plane and rotates around the z-axis.
 
     Parameters
     ----------
@@ -360,8 +358,7 @@ def circle(radius=1., n_knot_spans=3):
 
 
 def box(*lengths):
-    """
-    ND box (hyperrectangle).
+    """ND box (hyperrectangle).
 
     Parameters
     ----------
@@ -386,7 +383,7 @@ def box(*lengths):
 
 def plate(radius=1.):
     """Creates a biquadratic 2-D spline in the shape of a plate with given
-  radius.
+    radius.
 
     Parameters
     ----------
@@ -428,8 +425,8 @@ def disk(
         degree=True
 ):
     """Surface spline describing a potentially hollow disk with quadratic
-    degree along curved dimension and linear along thickness.
-    The angle describes the returned part of the disk.
+    degree along curved dimension and linear along thickness. The angle
+    describes the returned part of the disk.
 
     Parameters
     ----------
@@ -475,10 +472,9 @@ def torus(
         torus_n_knot_spans=4,
         degree=True,
 ):
-    """Creates a volumetric NURBS spline describing a torus revolved around
-    the x-axis.
-    Possible cross-sections are plate, disk (yielding a tube) and section of
-    a disk.
+    """Creates a volumetric NURBS spline describing a torus revolved around the
+    x-axis. Possible cross-sections are plate, disk (yielding a tube) and
+    section of a disk.
 
     Parameters
     ----------
@@ -638,8 +634,8 @@ def cone(
 
 
 def pyramid(width, length, height):
-    """Creates a volumetric spline in the shape of a pyramid with linear
-    degree in every direction.
+    """Creates a volumetric spline in the shape of a pyramid with linear degree
+    in every direction.
 
     Parameters
     ----------
