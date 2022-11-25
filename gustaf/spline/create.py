@@ -1,6 +1,6 @@
 """gustaf/spline/create.py.
 
-Create operations for spline geometries
+Create operations for spline geometries.
 """
 
 import numpy as np
