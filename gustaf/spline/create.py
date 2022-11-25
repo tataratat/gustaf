@@ -362,7 +362,7 @@ def box(*lengths):
 
     Parameters
     ----------
-    lengths: \*lengths
+    *lengths: list(float)
 
     Returns
     -------
