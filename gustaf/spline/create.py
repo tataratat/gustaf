@@ -268,7 +268,7 @@ def line(points):
     line: BSpline
       Spline degree [1].
     """
-    from gustaf import BSpline, Bezier
+    from gustaf import BSpline
 
     # lines have degree 1
     degree = 1
@@ -376,7 +376,7 @@ def box(*lengths):
     # may dim check here?
 
     # starting point
-    ndbox = Bezier(degrees=[1], control_points=[[0,], [lengths[0],]])
+    ndbox = Bezier(degrees=[1], control_points=[[0], [lengths[0]]])
     # use extrude
     for i, l in enumerate(lengths[1:]):
         ndbox = ndbox.create.extruded([0] * int(i + 1) + [l])
@@ -586,9 +586,7 @@ def sphere(
     else:
         inner_radius = float(inner_radius)
         sphere = disk(outer_radius, inner_radius).nurbs.create.revolved(
-                angle=angle,
-                n_knot_spans=n_knot_spans,
-                degree=degree
+                angle=angle, n_knot_spans=n_knot_spans, degree=degree
         )
     return sphere
 
