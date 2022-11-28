@@ -141,7 +141,7 @@ class FFD(GustafBase):
         --------
         self._spline: Spline
         """
-        return self._spline if self._spline is not None else None
+        return self._spline
 
     @spline.setter
     def spline(self, spline: SPLINE_TYPES):
@@ -225,10 +225,10 @@ class FFD(GustafBase):
                     "Please set either spline or mesh."
             )
         if self._spline._data.get("gustaf_ffd_computed", False):
-           return 
+           return None
 
         spline = self._spline.copy()
-        if "knot_vectors" in spline.required_properties:
+        if spline.has_knot_vectors:
             spline.normalize_knot_vectors()
 
         self._check_dimensions()
