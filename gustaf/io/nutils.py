@@ -58,7 +58,7 @@ def load(fname):
     mesh.BC = btags
     return mesh
 
-def export(fname, mesh):
+def export(mesh, fname):
     """
     Export in Nutils format. Files are saved as np.savez().
     Supports triangle,and tetrahedron Meshes.
