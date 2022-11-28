@@ -1,4 +1,4 @@
-from gustaf.create import vertices
+from gustaf.create import vertices,faces,volumes
 
 try:
     from gustaf.create import spline
@@ -14,5 +14,7 @@ except ImportError:
 
 __all__ = [
         "vertices",
+        "faces",
+        "volumes",
         "spline",
 ]
