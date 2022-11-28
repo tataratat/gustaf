@@ -38,7 +38,7 @@ def invalid_inherited_attr(func, qualname, property_=False):
         return raiser
 
 
-class ModuleImportRaiser():
+class ModuleImportRaiser:
     """Mock imports optional modules if they are not installed.
 
     Class used to have better import error handling in the case that a
@@ -47,13 +47,16 @@ class ModuleImportRaiser():
     them to function. Examples are `splinepy` and `vedo`.
     """
 
-    def __init__(self, lib_name: str, error_message: Optional[str] = ""):
+    def __init__(self, lib_name: str, error_message: Optional[str] = None):
+        original_message = ""
+        if error_message is not None:
+            original_message = f"\nOriginal error message - {error_message}"
         self._message = str(
-                "Parts of the requested functionality in gustaf depend on the "
-                f"external `{lib_name}` package which could not be found on "
-                "your system. Please refer to the installation instructions "
-                "for more information. "
-                f"Original error message - {error_message}"
+                f"Cannot load {lib_name} package, on which requested "
+                "functionality depends. "
+                "Please refer to the installation instructions "
+                "[tataratat.github.io/gustaf] for more information."
+                f"{original_message}"
         )
 
     def __call__(self, *args: Any, **kwds: Any) -> Any:
