@@ -1,10 +1,9 @@
 """gustaf/gustaf/io/nutils.py
+
 io functions for nutils.
 """
 
 import os
-import struct
-
 import numpy as np
 
 from gustaf.vertices import Vertices
@@ -15,8 +14,7 @@ from gustaf.utils import log
 from gustaf.io import mixd
 
 def load(fname):
-    """
-    nutils load.
+    """nutils load.
     Loads a nutils (np.savez) file and returns a Gustaf Mesh.
 
     Parameters
@@ -59,8 +57,7 @@ def load(fname):
     return mesh
 
 def export(mesh, fname):
-    """
-    Export in Nutils format. Files are saved as np.savez().
+    """Export in Nutils format. Files are saved as np.savez().
     Supports triangle,and tetrahedron Meshes.
 
     Parameters
@@ -83,8 +80,7 @@ def export(mesh, fname):
 
 
 def to_nutils_simplex(mesh):
-    """
-    Converts a Gustaf_Mesh to a Dictionary, which can be interpreted
+    """Converts a Gustaf_Mesh to a Dictionary, which can be interpreted
     by nutils.mesh.simplex(**to_nutils_simplex(mesh)). Only work for 
     Triangles and Tetrahedrons!
 
