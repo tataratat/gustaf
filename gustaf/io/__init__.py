@@ -9,6 +9,12 @@ from gustaf.io import ioutils
 from gustaf.io import mfem
 from gustaf.io import meshio
 from gustaf.io import mixd
-from gustaf.io.default import load
+from gustaf.io import nutils
 
-__all__ = ["ioutils", "mfem", "meshio", "mixd", "load"]
+__all__ = [
+        "ioutils",
+        "mfem",
+        "meshio",
+        "mixd",
+        "nutils",
+]
