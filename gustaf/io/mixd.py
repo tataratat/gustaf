@@ -213,6 +213,7 @@ def export(
         # signature
         infof.write("\n\n\n# MIXD generated using `gustaf`.\n")
 
+
 def make_mrng(mesh):
     """
     Builds and return mrng array based on `mesh.BC`
@@ -237,7 +238,7 @@ def make_mrng(mesh):
         nbelem += 1
     elif whatami.startswith("hexa"):
         nbelem += 3
-        
+
     # init boundaries with -1, as it is the value for non-boundary.
     # alternatively, they could be (-1 * neighbor_elem_id).
     # But they aren't.
@@ -245,6 +246,6 @@ def make_mrng(mesh):
     boundaries[:] = -1
 
     for i, belem_ids in enumerate(mesh.BC.values()):
-        boundaries[belem_ids] = i + 1 # bid starts at 1
+        boundaries[belem_ids] = i + 1  # bid starts at 1
 
     return boundaries

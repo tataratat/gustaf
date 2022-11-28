@@ -1,28 +1,28 @@
 import gustaf as gus
 import numpy as np
-from nutils import mesh
+
 
 def main():
-
-    #Creates a gustaf volume.
+    # Creates a gustaf volume.
     mesh = create_mesh()
 
-    #Export it as .mixd-file and .npz-file
+    # Export it as .mixd-file and .npz-file
     gus.io.mixd.export(mesh, "export/export_mixd.xns")
     gus.io.nutils.export(mesh, "export/export_npz.npz")
 
-    #Load the mixd-file and the .npz-file
+    # Load the mixd-file and the .npz-file
     mesh_mixd = gus.io.mixd.load(
-        volume=True,
-        mxyz="export/export_mixd.mxyz",
-        mien="export/export_mixd.mien",
-        mrng="export/export_mixd.mrng"
+            volume=True,
+            mxyz="export/export_mixd.mxyz",
+            mien="export/export_mixd.mien",
+            mrng="export/export_mixd.mrng"
     )
     mesh_npz = gus.io.nutils.load("export/export_npz.npz")
 
     mesh.show()
-    mesh_mixd.show()  
+    mesh_mixd.show()
     mesh_npz.show()
+
 
 def create_mesh():
     # define coordinates
@@ -49,8 +49,6 @@ def create_mesh():
                     [7, 0, 3, 1],
             ]
     )
-    # define hexa connectivity
-    hv = np.array([[0, 1, 3, 2, 4, 5, 7, 6]])
 
     # init tet
     tet = gus.Volumes(
@@ -59,7 +57,6 @@ def create_mesh():
     )
 
     return tet
-
 
 
 if __name__ == "__main__":
