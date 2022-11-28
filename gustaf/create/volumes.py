@@ -3,16 +3,15 @@ Routines to create volumes.
 """
 
 import numpy as np
-import random
 
 from gustaf.volumes import Volumes
 from gustaf import utils
 from gustaf import create
 
+
 def hexa_block_mesh(
-        bounds = [[0., 0., 0.], [1., 1., 1.]],
-        resolutions = [2, 2, 2]
-        ):
+        bounds=[[0., 0., 0.], [1., 1., 1.]], resolutions=[2, 2, 2]
+):
     """
     Create structured hexahedron block mesh.
     Parameters
@@ -28,11 +27,11 @@ def hexa_block_mesh(
     volume_mesh: Volumes
     """
     assert np.array(bounds).shape == (2, 3), \
-            "bounds array must have 2x3 entries."
+        "bounds array must have 2x3 entries."
     assert len(resolutions) == 3, \
-            "resolutions array must have three entries."
+        "resolutions array must have three entries."
     assert np.greater(resolutions, 1).all(), \
-            "All resolutions must be at least 2."
+        "All resolutions must be at least 2."
 
     vertex_mesh = create.vertices.raster(bounds, resolutions)
 
