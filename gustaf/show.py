@@ -11,14 +11,14 @@ from gustaf._base import GustafBase
 # @linux it raises error if vedo is imported inside the function.
 try:
     import vedo
-except ImportError:
+except ImportError as err:
     # overwrites the vedo module with an object which will throw an error
     # as soon as it is used the first time. This means that any non vedo
     # functionality works as before, but as soon as vedo is used a
     # comprehensive exception will be raised which is understandable in
     # contrast to the possible errors previously possible
     from gustaf.helpers.raise_if import ModuleImportRaiser
-    vedo = ModuleImportRaiser("vedo")
+    vedo = ModuleImportRaiser("vedo", err)
 
 
 def show(*gusobj, **kwargs):
