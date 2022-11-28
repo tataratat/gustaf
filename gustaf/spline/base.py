@@ -355,6 +355,7 @@ class Bezier(GustafSpline, splinepy.Bezier):
             self,
             degrees=None,
             control_points=None,
+            spline=None,
     ):
         """Bezier of gustaf. Inherited from splinepy.Bezier and GustafSpline.
 
@@ -373,8 +374,9 @@ class Bezier(GustafSpline, splinepy.Bezier):
         --------
         None
         """
-        super(splinepy.Bezier,
-              self).__init__(degrees=degrees, control_points=control_points)
+        super(splinepy.Bezier, self).__init__(
+                degrees=degrees, control_points=control_points, spline=spline
+        )
 
         self._extractor = Extractor(self)
         self._proximity = Proximity(self)
@@ -455,6 +457,7 @@ class RationalBezier(GustafSpline, splinepy.RationalBezier):
             degrees=None,
             control_points=None,
             weights=None,
+            spline=None,
     ):
         """Rational Bezier of gustaf. Inherited from splinepy.RationalBezier
         and GustafSpline.
@@ -478,7 +481,8 @@ class RationalBezier(GustafSpline, splinepy.RationalBezier):
         super(splinepy.RationalBezier, self).__init__(
                 degrees=degrees,
                 control_points=control_points,
-                weights=weights
+                weights=weights,
+                spline=spline,
         )
 
         self._extractor = Extractor(self)
@@ -529,6 +533,7 @@ class BSpline(GustafSpline, splinepy.BSpline):
             degrees=None,
             knot_vectors=None,
             control_points=None,
+            spline=None,
     ):
         """BSpline of gustaf. Inherited from splinepy.BSpline and GustafSpline.
 
@@ -551,7 +556,8 @@ class BSpline(GustafSpline, splinepy.BSpline):
         super(splinepy.BSpline, self).__init__(
                 degrees=degrees,
                 knot_vectors=knot_vectors,
-                control_points=control_points
+                control_points=control_points,
+                spline=spline,
         )
 
         self._extractor = Extractor(self)
@@ -622,6 +628,7 @@ class NURBS(GustafSpline, splinepy.NURBS):
             knot_vectors=None,
             control_points=None,
             weights=None,
+            spline=None,
     ):
         """NURBS of gustaf. Inherited from splinepy.NURBS.
 
@@ -647,6 +654,7 @@ class NURBS(GustafSpline, splinepy.NURBS):
                 knot_vectors=knot_vectors,
                 control_points=control_points,
                 weights=weights,
+                spline=spline,
         )
 
         self._extractor = Extractor(self)
