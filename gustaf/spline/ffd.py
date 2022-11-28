@@ -160,7 +160,7 @@ class FFD(GustafBase):
         self._spline = spline
 
     def _check_dimensions(self) -> bool:
-        """Checks if the dimension of the spline and the mesh match and 
+        """Checks if the dimension of the spline and the mesh match and
 
         Returns:
             bool: _description_
@@ -169,21 +169,23 @@ class FFD(GustafBase):
         # Checks dimensions and ranges critical for a correct FFD calculation
         if self._spline and not self._spline.para_dim == self._spline.dim:
             messages.append(
-                "The parametric and geometric dimensions of the "
-                "spline are not the same.")
+                    "The parametric and geometric dimensions of the "
+                    "spline are not the same."
+            )
         if (
-            self._spline and self._mesh 
-            and not self._spline.dim == self._mesh.vertices.shape[1]
+                self._spline and self._mesh
+                and not self._spline.dim == self._mesh.vertices.shape[1]
         ):
             messages.append(
-                "The geometric dimensions of the spline and the "
-                "dimension of the mesh are not the same."
+                    "The geometric dimensions of the spline and the "
+                    "dimension of the mesh are not the same."
             )
         if len(messages) > 0:
             raise RuntimeError(
-                "Can not perform FFD due to spline and mesh "
-                "dimension mismatch. The following dimension mismatches exist:"
-                f"{messages}.")
+                    "Can not perform FFD due to spline and mesh "
+                    "dimension mismatch. The following dimension mismatches:"
+                    f"{messages}."
+            )
 
     def _scale_mesh_vertices(self):
         """Scales the mesh vertices into the dimension of a hypercube and save
@@ -225,7 +227,7 @@ class FFD(GustafBase):
                     "Please set either spline or mesh."
             )
         if self._spline._data.get("gustaf_ffd_computed", False):
-           return None
+            return None
 
         spline = self._spline.copy()
         if spline.has_knot_vectors:
