@@ -1,4 +1,4 @@
-"""gustaf/gustaf/io/nutils.py
+"""gustaf/gustaf/io/nutils.py.
 
 io functions for nutils.
 """
@@ -80,7 +80,7 @@ def export(mesh, fname):
 
 def to_nutils_simplex(mesh):
     """Converts a Gustaf_Mesh to a Dictionary, which can be interpreted
-    by nutils.mesh.simplex(**to_nutils_simplex(mesh)). Only work for
+    by ``nutils.mesh.simplex(**to_nutils_simplex(mesh))``. Only work for
     Triangles and Tetrahedrons!
 
     Parameters
