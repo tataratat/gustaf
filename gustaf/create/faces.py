@@ -22,11 +22,11 @@ def box(bounds=[[0, 0], [1, 1]], resolutions=[2, 2]):
     face_mesh: Volumes
     """
     if np.array(bounds).shape != (2, 2):
-        raise ValueException("Bounds must have a dimension of (2, 2).")
+        raise ValueError("Bounds must have a dimension of (2, 2).")
     if len(resolutions) !=2:
-        raise ValueException("Resolutions must have two entries.")
+        raise ValueError("Resolutions must have two entries.")
     if not np.greater(resolutions, 1).all():
-        raise ValueException("All resolution values must be at least 2.")
+        raise ValueError("All resolution values must be at least 2.")
 
     vertex_mesh = create.vertices.raster(bounds, resolutions)
     connectivity = utils.connec.make_quad_faces(resolutions)

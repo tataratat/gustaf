@@ -24,11 +24,11 @@ def box(bounds = [[0., 0., 0.], [1., 1., 1.]],
     volume_mesh: Volumes
     """
     if np.array(bounds).shape != (2, 3):
-        raise ValueException("Bounds must have a dimension of (2, 3).")
+        raise ValueError("Bounds must have a dimension of (2, 3).")
     if len(resolutions) !=3:
-        raise ValueException("Resolutions must have three entries.")
+        raise ValueError("Resolutions must have three entries.")
     if not np.greater(resolutions, 1).all():
-        raise ValueException("All resolution values must be at least 2.")
+        raise ValueError("All resolution values must be at least 2.")
 
     vertex_mesh = create.vertices.raster(bounds, resolutions)
 
