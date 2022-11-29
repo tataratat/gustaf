@@ -25,7 +25,6 @@ Followings are covered by [auto formatting](https://github.com/tataratat/gustaf/
 - put closing brackets on a separate line, dedented
 
 
-
 ### Automatic formatting / style check
 gustaf uses combination of [yapf](https://github.com/google/yapf) and [autopep8](https://github.com/hhatto/autopep8) for automatic formatting. Then [flake8](https://github.com/pycqa/flake8) to double check everything.
 
@@ -56,3 +55,19 @@ Followings are gentle suggestions for PRs, so that the pre-alpha phase can end a
 - small, separable features
 - unit tests  
 On the other hand, it is perfect time for suggestions / requests / feedbacks, so let us know!
+
+### Automated format and docu checking
+Please check your PR for documentation and formatting error before you request a review. If all checking dependencies are installed the following bash function can be used.
+
+```bash
+function gustaf_commit() {
+    yapf -i -r gustaf examples tests
+    autopep8 --select=W291,W292,W293,W504,E265,E501,E711,E722 -r -i --aggressive gustaf examples tests
+    flake8 --extend-ignore=D gustaf examples tests
+    rm -r docs/build
+    rm docs/source/*.*.rst docs/source/gustaf.rst docs/source/modules.rst
+    sphinx-apidoc -f -t docs/source/_templates -o docs/source gustaf
+    sphinx-build -b html docs/source docs/build
+}
+```
+The function needs to be called from the repositories base folder.
