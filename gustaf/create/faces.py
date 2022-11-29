@@ -8,7 +8,7 @@ from gustaf.faces import Faces
 from gustaf import utils, create
 
 
-def quad_block_mesh(bounds=[[0, 0], [1, 1]], resolutions=[2, 2]):
+def box(bounds=[[0, 0], [1, 1]], resolutions=[2, 2]):
     """
     Create structured quadrangle block mesh.
     Parameters
@@ -21,12 +21,12 @@ def quad_block_mesh(bounds=[[0, 0], [1, 1]], resolutions=[2, 2]):
     --------
     face_mesh: Volumes
     """
-    assert np.array(bounds).shape == (2, 2), \
-        "bounds array must have 2x2 entries."
-    assert len(resolutions) == 2, \
-        "resolutions array must have two entries."
-    assert np.greater(resolutions, 1).all(), \
-        "All resolutions must be at least 2."
+    if np.array(bounds).shape != (2, 2):
+        raise ValueException("Bounds must have a dimension of (2, 2).")
+    if len(resolutions) !=2:
+        raise ValueException("Resolutions must have two entries.")
+    if not np.greater(resolutions, 1).all():
+        raise ValueException("All resolution values must be at least 2.")
 
     vertex_mesh = create.vertices.raster(bounds, resolutions)
     connectivity = utils.connec.make_quad_faces(resolutions)
