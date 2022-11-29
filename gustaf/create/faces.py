@@ -23,7 +23,7 @@ def box(bounds=[[0, 0], [1, 1]], resolutions=[2, 2]):
     """
     if np.array(bounds).shape != (2, 2):
         raise ValueError("Bounds must have a dimension of (2, 2).")
-    if len(resolutions) !=2:
+    if len(resolutions) != 2:
         raise ValueError("Resolutions must have two entries.")
     if not np.greater(resolutions, 1).all():
         raise ValueError("All resolution values must be at least 2.")
