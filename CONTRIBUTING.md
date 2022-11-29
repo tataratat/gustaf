@@ -56,11 +56,7 @@ Followings are gentle suggestions for PRs, so that the pre-alpha phase can end a
 - unit tests  
 On the other hand, it is perfect time for suggestions / requests / feedbacks, so let us know!
 
-<<<<<<< HEAD
 ### Script for format and docu checking
-=======
-### Automated format and docu checking
->>>>>>> Add bash function for docu and format checking
 Please check your PR for documentation and formatting error before you request a review. If all checking dependencies are installed the following bash function can be used.
 
 ```bash
