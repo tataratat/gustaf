@@ -29,27 +29,30 @@ def load(fname):
     btags = npzfile['btags'].item()
     _ = npzfile['ptags'].item()
 
+    if nodes.shape[0] == 0:
+        raise TypeError("Can not find nodes. Check nutils mesh description.")
+    if coords.shape[0] == 0:
+        raise TypeError("Can not find coords. Check nutils mesh description.")
+
     vertices = coords
 
     # connec
     simplex = True
-    connec = None
+    connec = nodes
 
     if vertices.shape[1] == 2:
         volume = False
     else:
         volume = True
 
-    try:
-        connec = nodes
-    except BaseException:
-        log.debug("Error")
-
     # reshape connec
-    if connec is not None:
+    try:
         ncol = int(3) if simplex and not volume else int(4)
         connec = connec.reshape(-1, ncol)
         mesh = Volumes(vertices, connec) if volume else Faces(vertices, connec)
+    except:
+        raise RuntimeError("""Can not generate a mesh from the nutils input. 
+            Check nutils mesh description.""")
 
     mesh.BC = btags
     return mesh
@@ -80,7 +83,7 @@ def export(mesh, fname):
 
 def to_nutils_simplex(mesh):
     """Converts a Gustaf_Mesh to a Dictionary, which can be interpreted
-    by ``nutils.mesh.simplex(**to_nutils_simplex(mesh))``. Only work for
+    by ``nutils.mesh.simplex(**to_nutils_simplex(mesh))``. Only works for
     Triangles and Tetrahedrons!
 
     Parameters
@@ -112,7 +115,8 @@ def to_nutils_simplex(mesh):
     dic_to_nutils = dict()
 
     # Sort the Node IDs for each Element.
-    elements_sorted = np.sort(elements, axis=1)
+    sort_array = np.argsort(elements, axis=1)
+    elements_sorted = np.take_along_axis(elements, sort_array, axis=1)
 
     # Let`s get the Boundaries
     bcs = dict()
@@ -128,7 +132,7 @@ def to_nutils_simplex(mesh):
     bcs_in[:, :] = bcs_in[:, permutation]
 
     # Let's reorder the bcs file with the sort_array
-    bcs_sorted = np.sort(bcs_in, axis=1)
+    bcs_sorted = np.take_along_axis(bcs_in, sort_array, axis=1)
 
     for bi in bound_id:
         bcs[str(bi)] = np.argwhere(bcs_sorted == bi)
