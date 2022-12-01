@@ -25,7 +25,11 @@ conda install numpy
 
 1. `splinepy`: All Spline functionalities are dependent on this package. You can install this package via pip `pip install splinepy`.
 2. `vedo`: The main visualization backend. This package can be installed with:
-
+```
+conda install -c conda-forge vedo
+# or 
+pip install vedo
+```
 If you install `gustaf` from source we recommend to also install `splinepy` from source, see the install instructions for this in the [splinepy docs](tataratat.github.io/splinepy).
 
 

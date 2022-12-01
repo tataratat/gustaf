@@ -25,7 +25,7 @@ Followings are covered by [auto formatting](https://github.com/tataratat/gustaf/
 - put closing brackets on a separate line, dedented
 
 
-### Automatic formatting / style check
+### Formatting and style check
 gustaf uses combination of [yapf](https://github.com/google/yapf) and [autopep8](https://github.com/hhatto/autopep8) for automatic formatting. Then [flake8](https://github.com/pycqa/flake8) to double check everything.
 
 To check the format and style of your code use the following commands:
@@ -56,7 +56,7 @@ Followings are gentle suggestions for PRs, so that the pre-alpha phase can end a
 - unit tests  
 On the other hand, it is perfect time for suggestions / requests / feedbacks, so let us know!
 
-### Automated format and docu checking
+### Script for format and docu checking
 Please check your PR for documentation and formatting error before you request a review. If all checking dependencies are installed the following bash function can be used.
 
 ```bash
