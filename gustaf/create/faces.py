@@ -85,11 +85,14 @@ def tosimplex(quad, backslash=False):
     Parameters
     ----------
     quad: Faces
+        Faces representation which is to be converted from a cubic mesh into a
+        simplex mesh.
     backslash: bool
 
     Returns
     --------
     tri: Faces
+        Simplexifyed mesh.
     """
 
     if not isinstance(quad, Faces):
