@@ -732,7 +732,7 @@ class NURBS(GustafSpline, splinepy.NURBS):
         """
         if self.para_dim != 2:
             raise NotImplementedError(
-                    "Sorry, only avilable for para_dim = 2 splines"
+                    "Sorry, only available for para_dim = 2 splines"
             )
 
         gustaf2mfem, mfem2gustaf = splinepy.io.mfem.mfem_index_mapping(

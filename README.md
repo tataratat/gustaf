@@ -11,21 +11,25 @@ pip install git+https://github.com/tataratat/gustaf.git@main
 ```
 
 ### Dependencies
-`numpy` is the only strict dependency of `gustaf`.  
-Followings are optional library for more functionalities!
-```
-pip install vedo scipy splinepy
-```
-you could also install dependencies using `conda`. (`splinepy` is only available through pip right now)
-```
-conda install -c anaconda numpy scipy
-conda install -c conda-forge vedo 
-```
+
+Gustaf has the following dependencies, while default dependencies will be installed directly during installation of the package, the optional dependencies must be installed by hand if the functionalities they provide are necessary.
+
+|Package|Optional|pip|conda|Description|
+|-------|:---:|---|-----|-----------|
+|numpy|no|`pip install numpy`|`conda install numpy`|Necessary for computation|
+|splinepy|yes|`pip install splinepy`|-|Necessary for any spline based functionality|
+|vedo|yes|`pip install vedo`|`conda install -c conda-forge vedo`|Default renderer of gustaf, only needed if visualization is performed|
+
+If you install `gustaf` from source we recommend to also install `splinepy` from source, see the install instructions for this in the [splinepy docs](tataratat.github.io/splinepy).
+
 
 ## Quick Start
 ```
 comming soon!
 ```
+
+**But until then check out the `examples` folder, where some functionality is already shown.**
+
 Test version of documentations are available [here](https://tataratat.github.io/gustaf/)
 
 ### Notes
