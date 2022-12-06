@@ -1,7 +1,6 @@
 name: docs build test
 on:
-  pull_request:
-    branches: ["main"]
+  push
 
 jobs:
   docs:
