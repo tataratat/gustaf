@@ -17,7 +17,6 @@ from gustaf.spline.create import Creator
 from gustaf.spline.extract import Extractor
 from gustaf.spline.proximity import Proximity
 from gustaf.spline._utils import to_res_list
-from gustaf.create.vertices import raster
 
 
 def show(
@@ -86,13 +85,6 @@ def show(
     if (spline.para_dim, spline.dim) not in allowed_dim_combo:
         raise ValueError("Sorry, can't show given spline.")
 
-    # During show process, spline won't change
-    original_skip_update = spline.skip_update
-    if not original_skip_update:
-        # update one last time else, it won't sync.
-        spline._check_and_update_c()
-        spline.skip_update = True
-
     # determine backend
     if backend is None:
         backend = settings.VISUALIZATION_BACKEND
@@ -149,9 +141,6 @@ def show(
 
     # Return here, if backend is not vedo
     if not backend.startswith("vedo"):
-        # reset skip_update option
-        spline.skip_update = original_skip_update
-
         # turn everything into backend showables
         if return_showable:
             for key, gusobj in things_to_show.items():
@@ -254,9 +243,6 @@ def show(
                     axes=Axes(para_showables["spline"], **axes_config)
             )
 
-        # reset skip_update option
-        spline.skip_update = original_skip_update
-
         # showable return
         if return_showable:
             if parametric_space:
@@ -349,57 +335,6 @@ class GustafSpline(GustafBase):
         """
         return self._proximity
 
-    def evaluate(self, *args, **kwargs):
-        """evaluate wrapper with n_threads default.
-
-        This takes 2 args with 1 required arg.
-        """
-        if len(args) != 2:
-            n_t = kwargs.get("n_threads")
-
-            if n_t is None:
-                kwargs.update(n_threads=settings.NTHREADS)
-
-        return super().evaluate(*args, **kwargs)
-
-    def derivative(self, *args, **kwargs):
-        """derivative wrapper with n_threads default.
-
-        This takes 3 args with 2 required args
-        """
-        if len(args) != 3:
-            n_t = kwargs.get("n_threads")
-
-            if n_t is None:
-                kwargs.update(n_threads=settings.NTHREADS)
-
-        return super().derivative(*args, **kwargs)
-
-    def sample(self, query_resolutions, n_threads=None):
-        """Overwrite sample function to offer equivalent, but with multithread
-        eval.
-
-        Parameters
-        -----------
-        query_resolutions: (n, m), array-like
-        n_thread: int
-
-        Returns
-        --------
-        results: (n*m, dim) np.ndarray
-        """
-        if n_threads is None:
-            n_threads = settings.NTHREADS
-
-        qr = to_res_list(query_resolutions, self.para_dim)
-
-        if n_threads == 1:
-            return super().sample(qr)
-
-        else:
-            q = raster(self.knot_vector_bounds, qr)
-            return self.evaluate(q.vertices, n_threads=n_threads)
-
     def show(self, **kwargs):
         """Equivalent to `gustaf.spline.base.show(**kwrags)`"""
         return show(self, **kwargs)
@@ -420,6 +355,7 @@ class Bezier(GustafSpline, splinepy.Bezier):
             self,
             degrees=None,
             control_points=None,
+            spline=None,
     ):
         """Bezier of gustaf. Inherited from splinepy.Bezier and GustafSpline.
 
@@ -438,8 +374,9 @@ class Bezier(GustafSpline, splinepy.Bezier):
         --------
         None
         """
-        super(splinepy.Bezier,
-              self).__init__(degrees=degrees, control_points=control_points)
+        super(splinepy.Bezier, self).__init__(
+                degrees=degrees, control_points=control_points, spline=spline
+        )
 
         self._extractor = Extractor(self)
         self._proximity = Proximity(self)
@@ -520,6 +457,7 @@ class RationalBezier(GustafSpline, splinepy.RationalBezier):
             degrees=None,
             control_points=None,
             weights=None,
+            spline=None,
     ):
         """Rational Bezier of gustaf. Inherited from splinepy.RationalBezier
         and GustafSpline.
@@ -543,7 +481,8 @@ class RationalBezier(GustafSpline, splinepy.RationalBezier):
         super(splinepy.RationalBezier, self).__init__(
                 degrees=degrees,
                 control_points=control_points,
-                weights=weights
+                weights=weights,
+                spline=spline,
         )
 
         self._extractor = Extractor(self)
@@ -594,6 +533,7 @@ class BSpline(GustafSpline, splinepy.BSpline):
             degrees=None,
             knot_vectors=None,
             control_points=None,
+            spline=None,
     ):
         """BSpline of gustaf. Inherited from splinepy.BSpline and GustafSpline.
 
@@ -616,7 +556,8 @@ class BSpline(GustafSpline, splinepy.BSpline):
         super(splinepy.BSpline, self).__init__(
                 degrees=degrees,
                 knot_vectors=knot_vectors,
-                control_points=control_points
+                control_points=control_points,
+                spline=spline,
         )
 
         self._extractor = Extractor(self)
@@ -687,6 +628,7 @@ class NURBS(GustafSpline, splinepy.NURBS):
             knot_vectors=None,
             control_points=None,
             weights=None,
+            spline=None,
     ):
         """NURBS of gustaf. Inherited from splinepy.NURBS.
 
@@ -712,6 +654,7 @@ class NURBS(GustafSpline, splinepy.NURBS):
                 knot_vectors=knot_vectors,
                 control_points=control_points,
                 weights=weights,
+                spline=spline,
         )
 
         self._extractor = Extractor(self)

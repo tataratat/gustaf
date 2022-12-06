@@ -62,16 +62,6 @@ class FFD(GustafBase):
             unscaled base mesh
         _q_vertices: np.ndarray (n, dim)
             Scaled vertices of the base mesh
-        _is_calculated: bool
-            Attribute tracking if changes are present since last calculation
-        _is_calculated_trackable: bool
-            Getter for cp was called. Cps can be changed without knowledge
-            need to recalculate every time.
-        _orig_para_dim_ranges: np.ndarray:
-            Original spline parametric dimension boundaries, used in
-            knot_insertion to scale the knots to be inserted into the same
-            scale as the internal spline (which has a hypercubic parametric
-            dimensional space)
 
         Returns
         -------
@@ -82,16 +72,13 @@ class FFD(GustafBase):
         self._mesh: MESH_TYPES = None
         self._o_mesh: MESH_TYPES = None
         self._q_vertices: np.ndarray = None
-        self._is_calculated: bool = False
-        self._is_calculated_trackable: bool = True
-        self._orig_para_dim_ranges: np.ndarray = None
 
         if spline is not None:
             self.spline = spline
         if mesh is not None:
             self.mesh = mesh
 
-        self._is_calculated = False
+        # self._is_calculated = False
 
     @property
     def mesh(self, ) -> MESH_TYPES:
@@ -132,25 +119,14 @@ class FFD(GustafBase):
         self._logi("Mesh Info:")
         self._logi("  Vertices: {v}.".format(v=mesh.vertices.shape))
         self._logi("  Bounds: {b}.".format(b=mesh.bounds()))
-        self._o_mesh = mesh.copy()  # we keep original copy for visulization
+        self._o_mesh = mesh.copy()  # we keep original copy for visualization
         self._mesh = mesh.copy()  # another copy for current status.
 
-        # Checks dimensions and ranges critical for a correct FFD calculation
-        if not self._spline.para_dim == self._spline.dim:
-            self._logw(
-                    "The parametric and geometric dimensions of the "
-                    "spline are not the same."
-            )
-        if not self._spline.dim == self._mesh.vertices.shape[1]:
-            self._logw(
-                    "The geometric dimensions of the spline and the "
-                    "dimension of the mesh are not the same."
-            )
+        self._check_dimensions()
 
         self._scale_mesh_vertices()
-        self._is_calculated = False
-        # trackable true since cp overwritten since last getter call
-        self._is_calculated_trackable = True
+        if self._spline:
+            self._spline._data["gustaf_ffd_computed"] = False
 
     @property
     def spline(self):
@@ -165,8 +141,7 @@ class FFD(GustafBase):
         --------
         self._spline: Spline
         """
-        self._logd("Returning copy of current spline.")
-        return self._spline.copy() if self._spline is not None else None
+        return self._spline
 
     @spline.setter
     def spline(self, spline: SPLINE_TYPES):
@@ -182,17 +157,35 @@ class FFD(GustafBase):
         --------
         None
         """
-        self._spline = spline.copy()
-        if "knot_vectors" in spline.required_properties:
-            self._orig_para_dim_ranges = spline.parametric_bounds.T
-            self._spline.normalize_knot_vectors()
-        else:
-            self._orig_para_dim_ranges = [[0, 1]] * spline.para_dim
+        self._spline = spline
 
-        self._logi("Setting Spline.")
-        self._logi("Spline Info:")
-        self._logi(f"  Parametric dimensions: {spline.para_dim}.")
-        self._is_calculated = False
+    def _check_dimensions(self) -> bool:
+        """Checks if the dimension of the spline and the mesh match and
+
+        Returns:
+            bool: _description_
+        """
+        messages = []
+        # Checks dimensions and ranges critical for a correct FFD calculation
+        if self._spline and not self._spline.para_dim == self._spline.dim:
+            messages.append(
+                    "The parametric and geometric dimensions of the "
+                    "spline are not the same."
+            )
+        if (
+                self._spline and self._mesh
+                and not self._spline.dim == self._mesh.vertices.shape[1]
+        ):
+            messages.append(
+                    "The geometric dimensions of the spline and the "
+                    "dimension of the mesh are not the same."
+            )
+        if len(messages) > 0:
+            raise RuntimeError(
+                    "Can not perform FFD due to spline and mesh "
+                    "dimension mismatch. The following dimension mismatches:"
+                    f"{messages}."
+            )
 
     def _scale_mesh_vertices(self):
         """Scales the mesh vertices into the dimension of a hypercube and save
@@ -233,29 +226,32 @@ class FFD(GustafBase):
                     "spline or(and) the mesh are not yet defined. "
                     "Please set either spline or mesh."
             )
-        if self._is_calculated and self._is_calculated_trackable:
+        if self._spline._data.get("gustaf_ffd_computed", False):
             return None
+
+        spline = self._spline.copy()
+        if spline.has_knot_vectors:
+            spline.normalize_knot_vectors()
+
+        self._check_dimensions()
 
         self._logd("Applying FFD: Transforming vertices")
 
         # Here, we take _q_vertices, due to possible scale/offset.
-        self._mesh.vertices = self._spline.evaluate(self._q_vertices)
+        self._mesh.vertices = spline.evaluate(self._q_vertices)
         self._logd("FFD successful.")
 
-        self._is_calculated = True
+        self._spline._data["gustaf_ffd_computed"] = True
 
     @property
     def control_points(self):
         """Returns current spline's control points. The control points can be
-        directly updated with this. Please use carefully! After calling this
-        'self._is_calculated' is not trackable anymore so deformation
-        calculation is performed every time.
+        directly updated with this.
 
         Returns
         --------
         self._spline.control_points: np.ndarray
         """
-        self._is_calculated_trackable = False
         return self._spline.control_points
 
     @control_points.setter
@@ -277,9 +273,6 @@ class FFD(GustafBase):
 
         self._spline.control_points = control_points.copy()
         self._logd("Set new control points.")
-        self._is_calculated = False
-        # trackable true since cp overwritten since last getter call
-        self._is_calculated_trackable = True
 
     def elevate_degree(self, *args, **kwargs):
         """Wrapper for Spline.elevate_degree.
@@ -311,12 +304,6 @@ class FFD(GustafBase):
             raise NotImplementedError(
                     "Can not perform knot insertion on Bezier spline."
             )
-        # scale knots from the original bounds into the new bounds
-        dim_bounds = self._orig_para_dim_ranges[parametric_dimension]
-        knots = (
-                (np.array(knots) - dim_bounds[0])
-                / (dim_bounds[-1] - dim_bounds[0])
-        )
         self._spline.insert_knots(parametric_dimension, knots)
 
     def remove_knots(self, parametric_dimension, knots, tolerance=1e-8):
@@ -335,16 +322,9 @@ class FFD(GustafBase):
             raise NotImplementedError(
                     "Can not perform knot insertion on Bezier spline."
             )
-        # scale knots from the original bounds into the new bounds
-        dim_bounds = self._orig_para_dim_ranges[parametric_dimension]
-        knots = (
-                (np.array(knots) - dim_bounds[0])
-                / (dim_bounds[-1] - dim_bounds[0])
-        )
         self._spline.remove_knots(
                 parametric_dimension, knots, tolerance=tolerance
         )
-        self._is_calculated = False
 
     def reduce_degree(self, *args, **kwargs):
         """Wrapper for Spline.reduce_degree.
@@ -359,7 +339,6 @@ class FFD(GustafBase):
         None
         """
         self._spline.reduce_degree(*args, **kwargs)
-        self._is_calculated = False
 
     def show(self, **kwargs) -> Any:
         """Visualize. Shows the deformed mesh and the current spline. Currently

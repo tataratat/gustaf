@@ -3,7 +3,7 @@ import numpy as np
 from vedo import colors, Mesh
 
 # First Test
-generator = gus.spline.microstructure.Generator()
+generator = gus.spline.microstructure.Microstructure()
 generator.deformation_function = gus.Bezier(
         degrees=[2, 1],
         control_points=[[0, 0], [1, 0], [2, -1], [-1, 1], [1, 1], [3, 2]]
@@ -32,7 +32,7 @@ def parametrization_function(x):
     return tuple([.3 - 0.4 * np.maximum(abs(.5 - x[:, 0]), abs(.5 - x[:, 1]))])
 
 
-generator = gus.spline.microstructure.Generator()
+generator = gus.spline.microstructure.Microstructure()
 generator.deformation_function = gus.Bezier(
         degrees=[1, 1], control_points=[[0, 0], [1, 0], [0, 1], [1, 1]]
 )
@@ -48,7 +48,7 @@ generator.show(
 )
 
 # Third test
-generator = gus.spline.microstructure.Generator()
+generator = gus.spline.microstructure.Microstructure()
 generator.deformation_function = gus.Bezier(
         degrees=[1, 1], control_points=[[0, 0], [1, 0], [0, 1], [1, 1]]
 ).create.extruded(extrusion_vector=[0, 0, 1])
@@ -78,7 +78,7 @@ generator.show(
 )
 
 # Fourth test
-generator = gus.spline.microstructure.generator.Generator()
+generator = gus.spline.microstructure.microstructure.Microstructure()
 generator.deformation_function = gus.Bezier(
         degrees=[1, 1], control_points=[[0, 0], [1, 0], [0, 1], [1, 1]]
 ).create.extruded(extrusion_vector=[0, 0, 1])
@@ -92,7 +92,7 @@ generator.show(
 
 # Fifth test
 # Non-uniform tiling
-generator = gus.spline.microstructure.generator.Generator()
+generator = gus.spline.microstructure.microstructure.Microstructure()
 generator.deformation_function = gus.BSpline(
         degrees=[2, 1],
         control_points=[
@@ -130,7 +130,7 @@ def foo(x):
     return tuple([(x[:, 0]) * .05 + (x[:, 1]) * .05 + (x[:, 2]) * .1 + .1])
 
 
-generator = gus.spline.microstructure.Generator()
+generator = gus.spline.microstructure.Microstructure()
 generator.deformation_function = gus.Bezier(
         degrees=[1, 1], control_points=[[0, 0], [1, 0], [0, 1], [1, 1]]
 ).create.extruded(extrusion_vector=[0, 0, 1])

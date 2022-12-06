@@ -4,7 +4,7 @@ from gustaf._base import GustafBase
 from gustaf.spline import base
 
 
-class Generator(GustafBase):
+class Microstructure(GustafBase):
     """Helper class to facilitatae the construction of microstructures."""
 
     def __init__(

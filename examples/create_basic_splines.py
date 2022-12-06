@@ -4,7 +4,7 @@ import numpy as np
 if __name__ == '__main__':
 
     line = gus.spline.create.line(np.array([[0, 0, 0], [2, 5, 0], [4, 4, 2]]))
-    rect = gus.spline.create.rectangle(5, 3)
+    rect = gus.spline.create.box(5, 3)
     box = gus.spline.create.box(3, 2, 4)
     pyramid = gus.spline.create.pyramid(1, 1, 2)
 

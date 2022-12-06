@@ -179,7 +179,7 @@ def export(
 
     # write connec
     with open(connec_file, "wb") as cf:
-        for c in (mesh.elements().ravel() + 1):
+        for c in (mesh.elements.ravel() + 1):
             cf.write(struct.pack(big_endian_int, c))
 
     # write bc
@@ -194,7 +194,7 @@ def export(
         # init boundaries with -1, as it is the value for non-boundary.
         # alternatively, they could be (-1 * neighbor_elem_id).
         # But they aren't.
-        boundaries = np.empty(mesh.elements().shape[0] * nbelem, dtype=int)
+        boundaries = np.empty(mesh.elements.shape[0] * nbelem, dtype=int)
         boundaries[:] = -1
 
         for i, belem_ids in enumerate(mesh.BC.values()):
@@ -210,9 +210,9 @@ def export(
 
         st_factor = 2 if space_time else 1
         infof.write(f"nn {int(mesh.vertices.shape[0] * st_factor)}\n")
-        infof.write(f"ne {int(mesh.elements().shape[0])}\n")
+        infof.write(f"ne {int(mesh.elements.shape[0])}\n")
         infof.write(f"nsd {dim}\n")
-        infof.write(f"nen {int(mesh.elements().shape[1] * st_factor)}\n")
+        infof.write(f"nen {int(mesh.elements.shape[1] * st_factor)}\n")
 
         if space_time:
             infof.write("space-time on\n\n\n")
