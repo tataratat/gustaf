@@ -77,7 +77,7 @@ def tosimplex(quad, backslash=False):
             | \\ |
             |  \\|
         (0) *---* (1)
-        
+
     resembling 'backslash'.
 
     If you want to diagonalize the other way, set `backslash=True`.
