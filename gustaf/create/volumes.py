@@ -10,8 +10,7 @@ from gustaf import create
 
 
 def box(bounds=[[0., 0., 0.], [1., 1., 1.]], resolutions=[2, 2, 2]):
-    """
-    Create structured hexahedron block mesh.
+    """Create structured hexahedron block mesh.
 
     Parameters
     -----------
@@ -24,6 +23,7 @@ def box(bounds=[[0., 0., 0.], [1., 1., 1.]], resolutions=[2, 2, 2]):
     --------
     volume_mesh: Volumes
     """
+
     if np.array(bounds).shape != (2, 3):
         raise ValueError("Bounds must have a dimension of (2, 3).")
     if len(resolutions) != 3:

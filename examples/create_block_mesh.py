@@ -12,9 +12,9 @@ def main():
     )
 
     gus.show.show_vedo(
-        ["faces-box", mesh_faces_box], 
-        ["volumes-box", mesh_volumes_box],
-        )
+            ["faces-box", mesh_faces_box],
+            ["volumes-box", mesh_volumes_box],
+    )
 
 
 if __name__ == "__main__":
