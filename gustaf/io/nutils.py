@@ -7,7 +7,6 @@ import numpy as np
 from gustaf.faces import Faces
 from gustaf.volumes import Volumes
 from gustaf.io.ioutils import abs_fname, check_and_makedirs
-from gustaf.utils import log
 from gustaf.io import mixd
 
 
@@ -20,6 +19,10 @@ def load(fname):
     fname: str
       The npz file needs the following keys:
       nodes, cnodes, coords, tags, btags, ptags.
+
+    Returns
+    --------
+    mesh: Faces or Volumes
     """
     npzfile = np.load(fname, allow_pickle=True)
     nodes = npzfile['nodes']
@@ -50,9 +53,11 @@ def load(fname):
         ncol = int(3) if simplex and not volume else int(4)
         connec = connec.reshape(-1, ncol)
         mesh = Volumes(vertices, connec) if volume else Faces(vertices, connec)
-    except:
-        raise RuntimeError("""Can not generate a mesh from the nutils input. 
-            Check nutils mesh description.""")
+    except BaseException:
+        raise RuntimeError(
+                "Can not generate a mesh from the nutils input."
+                "Check nutils mesh description."
+        )
 
     mesh.BC = btags
     return mesh

@@ -42,6 +42,10 @@ def load(
       Default is None.
     mrng: str
       Default is None. This is optional.
+
+    Returns
+    --------
+    mesh: Faces or Volumes
     """
     # figure out input type
     specified_input = mxyz is not None  # bare minimum input

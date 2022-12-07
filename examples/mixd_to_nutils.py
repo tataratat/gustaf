@@ -20,10 +20,10 @@ def main():
     mesh_npz = gus.io.nutils.load("export/export_npz.npz")
 
     gus.show.show_vedo(
-        ["gustaf-mesh", mesh], 
-        ["mixd-mesh", mesh_mixd], 
-        ["npz-mesh", mesh_npz],
-        )
+            ["gustaf-mesh", mesh],
+            ["mixd-mesh", mesh_mixd],
+            ["npz-mesh", mesh_npz],
+    )
 
 
 def create_mesh():
