@@ -27,11 +27,6 @@ from gustaf.edges import Edges
 
 class HMLine:
     """Parse a line from an HMASCII file.
-
-    Attributes
-    -----------
-    name: str
-    values: str
     """
 
     __slots__ = ["name", "values"]
@@ -60,14 +55,6 @@ class HMLine:
 
 class HMElementType:
     """Store HyperMesh element type information.
-    
-    Attributes
-    -----------
-    number_of_nodes: int
-    subelement: str
-        This does not need to be specified for element types that only
-        occur as boundary elements.
-    MeshType: Mesh
     """
 
     __slots__ = ["number_of_nodes", "subelement", "MeshType"]
@@ -91,11 +78,6 @@ class HMElementType:
 
 class HMComponent:
     """Create a component from an HMASCII line.
-
-    Attributes
-    -----------
-    name: str
-    elements: dict
     """
     __slots__ = ["name", "elements"]
 
@@ -148,7 +130,7 @@ class HMModel:
     """Create a representation of a HyperMesh model from the HMASCII file
     specified by `filename`.
 
-    Attributes
+    Parameters
     -----------
     node_ids: dict
     node_coordinates: list
@@ -162,7 +144,7 @@ class HMModel:
     __slots__ = ["node_ids", "node_coordinates", "components"]
 
     def __init__(self, filename):
-        """.
+        """
         Parameters
         -----------
         filename: str
@@ -220,6 +202,10 @@ def load(fname, element_type=''):
     -----------
     mesh: Mesh
     """
+
+    if not fname.endswith(".hmascii"):
+        raise TypeError("Input file must be of Type .hmascii .")
+
     hm_model = HMModel(fname)
 
     if not element_type:
@@ -284,7 +270,7 @@ def load(fname, element_type=''):
                     + hm_volume_elements_nonunique.shape[0]
             )
         else:
-            raise ValueError('Can`t find any Bounds.')
+            logging.info("Can`t find any bounds.")
 
     # create unique element list
     hm_volume_elements_sorted = np.sort(hm_volume_elements_nonunique, axis=1)
