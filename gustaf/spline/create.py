@@ -8,6 +8,7 @@ from splinepy.spline import RequiredProperties
 
 from gustaf import utils
 from gustaf import settings
+from gustaf.create.vertices import raster
 
 
 def extruded(spline, extrusion_vector=None):
@@ -282,6 +283,8 @@ def with_bounds(
     spline: BSpline or NURBS
       If `spline` is not availabe, will return dict of corresponding
     """
+    from gustaf import BSpline
+
     # First, prepare for degree 1 spline.
     # KV
     l_bound, u_bound = parametric_bounds

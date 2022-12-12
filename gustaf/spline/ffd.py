@@ -11,7 +11,7 @@ import numpy as np
 from gustaf._base import GustafBase
 from gustaf.show import show_vedo
 from gustaf._typing import SPLINE_TYPES, MESH_TYPES
-from gustaf.create.spline import with_bounds
+from gustaf.spline.create import with_bounds
 from gustaf import settings
 
 
