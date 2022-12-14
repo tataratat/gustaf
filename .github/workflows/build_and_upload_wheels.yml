@@ -1,4 +1,4 @@
-name: build full and pypi upload
+name: pypi upload
 
 on:
   push:
@@ -6,19 +6,16 @@ on:
 
 jobs:
   wheel_build_full:
-    runs-on: ${{ matrix.os }}
-    strategy:
-      matrix:
-        os: [macos-latest, ubuntu-latest]
+    runs-on: ubuntu-latest
 
     steps:
       - uses: actions/checkout@v3
-      - name: build wheels
-        uses: pypa/cibuildwheel@v2.11.1
+      - name: build wheels and sdist
+        run: pipx run build
 
       - uses: actions/upload-artifact@v3
         with:
-          path: ./wheelhouse/*.whl
+          path: ./dist/*
 
   upload_pypi:
     needs: [wheel_build_full]
