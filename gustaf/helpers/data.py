@@ -3,9 +3,10 @@
 Helps helpee to manage data. Some useful data structures.
 """
 
-import abc
+
 from collections import namedtuple
 from functools import wraps
+
 
 import numpy as np
 
@@ -179,11 +180,11 @@ def make_tracked_array(array, dtype=None, copy=True):
     return tracked
 
 
-class DataHolder(abc.ABC):
-    __slots__ = [
+class DataHolder:
+    __slots__ = (
         "_helpee",
         "_saved",
-    ]
+    )
 
     def __init__(self, helpee):
         """Base class for any data holder. Behaves similar to dict.
@@ -297,7 +298,7 @@ class ComputedData(DataHolder):
     _depends = None
     _inv_depends = None
 
-    ___slots___ = []
+    __slots__ = ()
 
     def __init__(self, helpee, **kwargs):
         """Stores last computed values. Keys are expected to be the same as
