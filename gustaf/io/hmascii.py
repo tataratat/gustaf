@@ -15,12 +15,13 @@ An initial surface component can be created in HyperMesh using:
 tools -> faces
 """
 
-import logging
 import numpy as np
+import pathlib
 
 from gustaf.faces import Faces
 from gustaf.volumes import Volumes
 from gustaf.edges import Edges
+from gustaf import utils
 
 
 class HMLine:
@@ -55,22 +56,22 @@ class HMElementType:
     """Store HyperMesh element type information.
     """
 
-    __slots__ = ["number_of_nodes", "subelement", "MeshType"]
+    __slots__ = ["number_of_nodes", "subelement", "mesh_type"]
 
-    def __init__(self, number_of_nodes, MeshType, subelement=''):
+    def __init__(self, number_of_nodes, mesh_type, subelement=''):
         """
         Parameters
         -----------
         number_of_nodes: int
         subelement: str
-        MeshType: Mesh
+        mesh_type: Mesh
 
         Returns
         --------
         None
         """
         self.number_of_nodes = int(number_of_nodes)
-        self.MeshType = MeshType
+        self.mesh_type = mesh_type
         self.subelement = str(subelement)
 
 
@@ -200,8 +201,9 @@ def load(fname, element_type=''):
     -----------
     mesh: Mesh
     """
+    f_name = pathlib.Path(fname)
 
-    if not fname.endswith(".hmascii"):
+    if not f_name.suffix.endswith(".hmascii"):
         raise TypeError("Input file must be of Type .hmascii .")
 
     hm_model = HMModel(fname)
@@ -224,7 +226,7 @@ def load(fname, element_type=''):
             )
 
         element_type = preferred_element_types[0]
-        logging.info(f"Selected volume element type '{element_type}'.")
+        utils.log.info(f"Selected volume element type '{element_type}'.")
 
     # determine subelement type
     subelement_type = HMComponent.element_types[element_type].subelement
@@ -243,7 +245,7 @@ def load(fname, element_type=''):
                 {element_type, subelement_type}
         )
         if len(ignored_element_types) > 0:
-            logging.warning(
+            utils.log.warning(
                     f"Component '{hm_component.name}' contains "
                     f"unkown element types {ignored_element_types}. "
                     "They will be ignored."
@@ -268,7 +270,7 @@ def load(fname, element_type=''):
                     + hm_volume_elements_nonunique.shape[0]
             )
         else:
-            logging.info("Can`t find any bounds.")
+            utils.log.info("Can`t find any bounds.")
 
     # create unique element list
     hm_volume_elements_sorted = np.sort(hm_volume_elements_nonunique, axis=1)
@@ -303,8 +305,8 @@ def load(fname, element_type=''):
         for volume_node_index, hm_node_id in enumerate(hm_node_ids):
             hm_node_ids[volume_node_index] = node_perm[hm_node_id]
 
-    MeshType = HMComponent.element_types[element_type].MeshType
-    mesh = MeshType(vertices=vertices, elements=volumes)
+    mesh_type = HMComponent.element_types[element_type].mesh_type
+    mesh = mesh_type(vertices=vertices, elements=volumes)
 
     # bc
     if len(bcs) != 0:
