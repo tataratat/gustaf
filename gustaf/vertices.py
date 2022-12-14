@@ -11,6 +11,26 @@ from gustaf import helpers, settings, show, utils
 from gustaf._base import GustafBase
 
 
+class VerticesShowOption(helpers.options.ShowOption):
+    """
+    Show options for vertices.
+    """
+    _valid_options = helpers.options.make_valid_options(
+            Option(
+                    "vedo", "r", "Radius of vertices in units of pixels.",
+                    (int,)
+            ),
+            Option(
+                    "vedo", "alpha",
+                    "Transparency of v ertices  in range [0, 1].", (float,)
+            ),
+            Option("vedo", "dataname",
+                    "Name of the vertexdata to show. Vertexdata with "
+                    "the same name should be .", (str,)
+            ),
+    )
+
+
 class Vertices(GustafBase):
 
     kind = "vertex"
@@ -105,9 +125,7 @@ class Vertices(GustafBase):
         return self._const_vertices
 
     @property
-    def whatami(
-        self,
-    ):
+    def whatami(self):
         """Answers deep philosophical question: "what am i"?
 
         Parameters
@@ -300,9 +318,7 @@ class Vertices(GustafBase):
         mask = np.ones(len(self.vertices), dtype=bool)
         mask[ids] = False
 
-        return self.update_vertices(
-            mask,
-        )
+        return self.update_vertices(mask)
 
     def merge_vertices(self, tolerance=None):
         """Based on unique vertices, merge vertices if it is mergeable.
@@ -437,9 +453,7 @@ class Vertices(GustafBase):
             )
 
         else:
-            return Vertices(
-                vertices=np.vstack(vertices),
-            )
+            return Vertices(vertices=np.vstack(vertices))
 
     def __add__(self, to_add):
         """Concat in form of +.
