@@ -1,7 +1,7 @@
 name: build docs
 on:
   push:
-    branches: ["main", "docs"]
+    branches: ["main"]
 
 jobs:
   docs:

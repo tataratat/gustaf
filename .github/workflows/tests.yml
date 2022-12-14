@@ -3,8 +3,6 @@ name: format check and runs tests
 on:
   pull_request:
     branches: ["main"]
-  push:
-    branches: ["main"]
 
 jobs:
   build_and_tests:
@@ -12,7 +10,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        python-version: [3.8, 3.9]
+        python-version: ["3.7", "3.8", "3.9", "3.10", "3.11" ]
         os: [ubuntu-latest, macos-latest]
 
     steps:
@@ -42,7 +40,9 @@ jobs:
         message: formatting suggestions
  
     - name: install gustaf
-      run: python3 setup.py install
+      run: |
+        python3 -m pip install numpy
+        python3 setup.py install
 
     - name: prepare test and test
       run: |
