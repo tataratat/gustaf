@@ -5,7 +5,8 @@ Routines to create faces.
 import numpy as np
 
 from gustaf.faces import Faces
-from gustaf import utils, create
+from gustaf import utils
+from gustaf import create
 from gustaf import settings
 
 
@@ -122,5 +123,9 @@ def tosimplex(quad, backslash=False):
         )
     else:
         tri = quad
+        utils.log.debug(
+                "Non quadrilateral mesh provided, return original"
+                " mesh."
+        )
 
     return tri
