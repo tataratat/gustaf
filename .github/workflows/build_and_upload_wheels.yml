@@ -2,7 +2,7 @@ name: pypi upload
 
 on:
   push:
-    branches: ["main", "fix-wheel-dist"]
+    branches: ["main"]
 
 jobs:
   wheel_build_full:
