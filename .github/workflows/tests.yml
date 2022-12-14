@@ -40,7 +40,9 @@ jobs:
         message: formatting suggestions
  
     - name: install gustaf
-      run: python3 setup.py install
+      run: |
+        python3 -m pip install numpy
+        python3 setup.py install
 
     - name: prepare test and test
       run: |
