@@ -306,22 +306,16 @@ class Microstructure(GustafBase):
         is_parametrized = self.parametrization_function is not None
         if is_parametrized:
             para_space_dimensions = [[u[0], u[-1]] for u in ukvs]
+            parametric_corners = np.reshape(
+                                    np.meshgrid(*para_space_dimensions),
+                                    (deformation_function_copy.para_dim, -1)
+                            ).T
             def_fun_para_space = base.Bezier(
                     degrees=[1] * deformation_function_copy.para_dim,
                     control_points=np.ascontiguousarray(
-                            np.reshape(
-                                    np.meshgrid(*para_space_dimensions),
-                                    (deformation_function_copy.para_dim, -1)
-                            ).T,
+                            parametric_corners
                     )
             ).bspline
-            print(
-                    np.reshape(
-                            np.meshgrid(*para_space_dimensions),
-                            (deformation_function_copy.para_dim, -1)
-                    ).T
-            )
-            print(def_fun_para_space.cps)
             for i_pd in range(deformation_function_copy.para_dim):
                 if self.tiling[i_pd] != 1:
                     def_fun_para_space.insert_knots(
