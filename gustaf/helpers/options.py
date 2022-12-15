@@ -110,7 +110,7 @@ class ShowOption:
         self._helpee = helpee  # maybe won't save
         if not type(helpee).__qualname__.startswith(self._helps):
             raise TypeError(
-                    f"This show option is for {type(self._helps)}. "
+                    f"This show option is for {self._helps}. "
                     f"Given helpee is {type(helpee)}."
             )
         self._options = dict()
