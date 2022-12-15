@@ -308,11 +308,13 @@ class Microstructure(GustafBase):
             para_space_dimensions = [[u[0], u[-1]] for u in ukvs]
             def_fun_para_space = base.Bezier(
                     degrees=[1] * deformation_function_copy.para_dim,
-                    control_points=np.reshape(
-                            np.meshgrid(*para_space_dimensions),
-                            (deformation_function_copy.para_dim, -1)
-                    ).T
-            )
+                    control_points=np.ascontiguousarray(
+                            np.reshape(
+                                    np.meshgrid(*para_space_dimensions),
+                                    (deformation_function_copy.para_dim, -1)
+                            ).T,
+                    )
+            ).bspline
             print(
                     np.reshape(
                             np.meshgrid(*para_space_dimensions),
