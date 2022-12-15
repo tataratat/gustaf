@@ -7,7 +7,11 @@ import copy
 
 import numpy as np
 
-from gustaf import helpers, settings, show, utils
+from gustaf import settings
+from gustaf import utils
+from gustaf import show
+from gustaf import helpers
+from gustaf.helpers.options import Option
 from gustaf._base import GustafBase
 
 
@@ -16,32 +20,31 @@ class VerticesShowOption(helpers.options.ShowOption):
     Show options for vertices.
     """
     _valid_options = helpers.options.make_valid_options(
+            *helpers.options.vedo_common_options,
             Option(
                     "vedo", "r", "Radius of vertices in units of pixels.",
                     (int,)
             ),
-            Option(
-                    "vedo", "alpha",
-                    "Transparency of v ertices  in range [0, 1].", (float,)
-            ),
-            Option("vedo", "dataname",
-                    "Name of the vertexdata to show. Vertexdata with "
-                    "the same name should be .", (str,)
-            ),
     )
+
+    _helps = "Vertices"
 
 
 class Vertices(GustafBase):
 
     kind = "vertex"
 
-    __slots__ = [
+    __slots__ = (
         "_vertices",
         "_const_vertices",
         "_computed",
-        "vis_dict",
+        "_show_options",
         "vertexdata",
-    ]
+    )
+
+    # define freuqently used types as dunder variable
+    __show_option__ = VerticesShowOption
+    __parent__ = GustafBase
 
     def __init__(
         self,
@@ -61,7 +64,7 @@ class Vertices(GustafBase):
             self.vertices = vertices
 
         self._computed = helpers.data.ComputedMeshData(self)
-        self._show_options = VerticesShowOption(self)
+        self._show_options = self.__show_option__(self)
 
         self.vertexdata = dict()
 
