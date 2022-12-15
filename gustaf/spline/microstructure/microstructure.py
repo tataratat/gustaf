@@ -307,11 +307,19 @@ class Microstructure(GustafBase):
         if is_parametrized:
             para_space_dimensions = [[u[0], u[-1]] for u in ukvs]
             def_fun_para_space = base.Bezier(
-                degrees=[1] * deformation_function_copy.para_dim,
-                control_points=np.array(
-                    list(itertools.product(*para_space_dimensions[::-1]))
-                )[:, ::-1],
-            ).bspline
+                    degrees=[1] * deformation_function_copy.para_dim,
+                    control_points=np.reshape(
+                            np.meshgrid(*para_space_dimensions),
+                            (deformation_function_copy.para_dim, -1)
+                    ).T
+            )
+            print(
+                    np.reshape(
+                            np.meshgrid(*para_space_dimensions),
+                            (deformation_function_copy.para_dim, -1)
+                    ).T
+            )
+            print(def_fun_para_space.cps)
             for i_pd in range(deformation_function_copy.para_dim):
                 if self.tiling[i_pd] != 1:
                     def_fun_para_space.insert_knots(
@@ -371,6 +379,7 @@ class Microstructure(GustafBase):
                 # Perform composition
                 for tile_patch in tile:
                     self._microstructure.append(def_fun.compose(tile_patch))
+
         # Not parametrized
         else:
             # Tile can be computed once (prevent to many evaluations)
