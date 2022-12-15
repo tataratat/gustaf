@@ -1,0 +1,3 @@
+[submodule "examples/samples"]
+	path = examples/samples
+	url = git@github.com:tataratat/samples.git
