@@ -61,8 +61,7 @@ class Vertices(GustafBase):
             self.vertices = vertices
 
         self._computed = helpers.data.ComputedMeshData(self)
-
-        self.vis_dict = dict()
+        self._show_options = VerticesShowOption(self)
         self.vertexdata = dict()
 
     @property
@@ -123,6 +122,41 @@ class Vertices(GustafBase):
         """
         self._logd("returning const_vertices")
         return self._const_vertices
+
+    @property
+    def show_options(self):
+        """
+        Returns a show option manager for this object. Behaves similar to
+        dict.
+
+        Parameters
+        ----------
+        None
+
+        Returns
+        -------
+        show_options: ShowOption
+          A derived class that's suitable for current class.
+        """
+        self._logd("returning show_options")
+        return self._show_options
+
+    @property
+    def vis_dict(self):
+        """
+        Temporary backward compatibility 
+        """
+        self._logw("`vis_dict` is deprecated. Please use `show_options`")
+        return self.show_options
+
+    @vis_dict.setter
+    def vis_dict(self, vd):
+        """
+        Tmp
+        """
+        self._logw("`vis_dict` is deprecated. Please use `show_options`")
+        self._show_options = vd
+
 
     @property
     def whatami(self):
