@@ -55,13 +55,13 @@ def load(fname: Union[str, pathlib.Path]) -> MESH_TYPES:
     cells = meshio_mesh.get_cells_type('triangle')
     # If  no triangle elements, try for square
     if len(cells) == 0:
-        cells = meshio_mesh.get_cells_type('square')
+        cells = meshio_mesh.get_cells_type('quad')
     if not len(cells) > 0:
         # 3D mesh
         mesh_type = Volumes
         cells = meshio_mesh.get_cells_type('tetra')
         if len(cells) == 0:
-            cells = meshio_mesh.get_cells_type('hexa')
+            cells = meshio_mesh.get_cells_type('hexahedron')
 
     for i, cell in enumerate(cells):
         if i == 0:
