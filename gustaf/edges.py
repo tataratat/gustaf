@@ -9,6 +9,37 @@ from gustaf import helpers, settings, utils
 from gustaf.vertices import Vertices
 
 
+class EdgesShowOption(helpers.options.ShowOption):
+    """
+    Show options for vertices.
+    """
+    _valid_options = helpers.options.make_valid_options(
+            *helpers.options.vedo_common_options,
+            Option(
+                    "vedo", "lw", "Width of edges (lines) in pixel units.",
+                    (int, )
+            ),
+            Option("vedo", "as_arrows", "Show edges as arrows.", (bool, )),
+            Option(
+                    "vedo", "arrow_head_radius",
+                    "Radius of arrow head. Applicable if as_arrows is True",
+                    (float, int)
+            ),
+            Option(
+                    "vedo", "arrow_head_length",
+                    "Length of arrow head. Applicable if as_arrows is True",
+                    (float, int)
+            ),
+            Option(
+                    "vedo", "arrow_shaft_radius",
+                    "Radius of arrow shaft. Applicable if as_arrows is True",
+                    (float, int)
+            ),
+    )
+
+    _helps = "Vertices"
+
+
 class Edges(Vertices):
 
     kind = "edge"
@@ -17,6 +48,9 @@ class Edges(Vertices):
         "_edges",
         "_const_edges",
     )
+
+    __show_option__ = EdgesShowOption
+    __parent__ = Vertices
 
     def __init__(
         self,
