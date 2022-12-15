@@ -62,7 +62,9 @@ class Vertices(GustafBase):
 
         self._computed = helpers.data.ComputedMeshData(self)
         self._show_options = VerticesShowOption(self)
+
         self.vertexdata = dict()
+
 
     @property
     def vertices(self):
