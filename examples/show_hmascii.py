@@ -2,10 +2,25 @@ import gustaf as gus
 
 
 def main():
-    hm_tet = gus.io.hmascii.load("data/hm_tet.hmascii")
-    hm_hex = gus.io.hmascii.load("data/hm_hex.hmascii")
+    try:
+        hm_tet = gus.io.hmascii.load(
+            "../../samples/volumes/tet/3DPipeCorner90Tet.hmascii"
+        )
+        hm_hex = gus.io.hmascii.load(
+            "../../samples/volumes/hex/3DPipeCorner90Hex.hmascii"
+        )
 
-    gus.show.show_vedo(["hm_tet", hm_tet], ["hm_hex", hm_hex])
+    except:
+        raise RuntimeError(
+            'Can`t find mesh in sample files. '
+            'Make sure that ``gustaf`` and ``samples`` directory are on '
+            'the same level!'
+        )
+
+    gus.show.show_vedo(
+        ["3DPipeCorner90Tet", hm_tet], 
+        ["3DPipeCorner90Hex", hm_hex]
+    )
 
 
 if __name__ == "__main__":
