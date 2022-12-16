@@ -71,9 +71,9 @@ def main():
     # (we get simplices, so take number of simplex nodes minus 1)
     n_axes = element_nodes.shape[1] - 1
 
-    # faces or volumes?
-    MeshType = {1: gus.Edges, 2: gus.Faces, 3: gus.Volumes}[n_axes]
-    gustaf_mesh = MeshType(elements=element_nodes, vertices=coordinates)
+    # generate gustaf mesh using information given by nutils
+    mesh_type = {1: gus.Edges, 2: gus.Faces, 3: gus.Volumes}[n_axes]
+    gustaf_mesh = mesh_type(elements=element_nodes, vertices=coordinates)
 
     # with lhs
     deformation = lhs.reshape(m.vertices.shape)
