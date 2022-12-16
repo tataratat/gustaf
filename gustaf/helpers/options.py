@@ -59,6 +59,12 @@ vedo_common_options = (
                 "{title: str, pos: tuple, title_yoffset: int, font_size: int, "
                 "nlabels: int, c: str, horizontal: bool, use_alpha: bool, "
                 "label_format: str}", (dict, )
+        ),
+        Option(
+                "vedo", "extra",
+                "Additional kwargs to be applied during showable "
+                "initialization. For example ones that're not provided by gustaf.",
+                (dict, )
         )
 )
 
@@ -145,7 +151,7 @@ class ShowOption:
                 )
 
             # types are valid. let's add
-            self._options[key] = value
+            self._options[self._backend][key] = value
 
         elif key.startswith("backend"):
             # special keyword.
@@ -161,7 +167,9 @@ class ShowOption:
             pass
 
     def __getitem__(self, key):
-        pass
+        """
+        """
+        return self._options[self._backend][key]
 
     def get(self, key, default):
         return self._options[self._backend].get(key, default)
