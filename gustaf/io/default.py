@@ -22,9 +22,9 @@ def load(fname: Union[str, pathlib.Path]) -> MESH_TYPES:
         Loaded mesh.
     """
     extensions_to_load_functions = {
-            ".mixd": mixd.load ,
-            ".mfem": mfem.load ,
-            ".msh" : meshio.load ,
+            ".mixd": mixd.load,
+            ".mfem": mfem.load,
+            ".msh": meshio.load,
     }
 
     fname = pathlib.Path(fname).resolve()
