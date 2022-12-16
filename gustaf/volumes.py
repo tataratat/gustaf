@@ -4,6 +4,27 @@ import numpy as np
 
 from gustaf import helpers, settings, utils
 from gustaf.faces import Faces
+from gustaf.helpers.options import Option
+
+
+
+class VolumesShowOption(helpers.options.ShowOption):
+    """
+    Show options for vertices.
+    """
+    _valid_options = helpers.options.make_valid_options(
+            *helpers.options.vedo_common_options,
+            Option(
+                    "vedo", "lw", "Width of edges (lines) in pixel units.",
+                    (int, )
+            ),
+            Option(
+                    "vedo", "lc", "Color of edges (lines).",
+                    (int, str, tuple, list)
+            ),
+    )
+
+    _helps = "Volumes"
 
 
 class Volumes(Faces):
@@ -25,6 +46,9 @@ class Volumes(Faces):
         "_volumes",
         "_const_volumes",
     )
+
+    __show_option__ = VolumesShowOption
+    __parent__ = Faces
 
     def __init__(
         self,
