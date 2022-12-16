@@ -77,11 +77,15 @@ def load(fname: Union[str, pathlib.Path]) -> MESH_TYPES:
 def export(mesh: MESH_TYPES, fname: Union[str, pathlib.Path]):
     """Currently not implemented function.
 
-    Args:
-        mesh (MESH_TYPES): Mesh to be exported.
-        fname (Union[str, pathlib.Path]): File to save the mesh in.
+    Parameters
+    ------------
+    mesh: MESH_TYPES
+      Mesh to be exported.
+    fname: Union[str, pathlib.Path]
+      File to save the mesh in.
 
-    Raises:
-        NotImplementedError: This method is currently not implemented.
+    Raises
+    -------
+    NotImplementedError: This method is currently not implemented.
     """
     raise NotImplementedError
