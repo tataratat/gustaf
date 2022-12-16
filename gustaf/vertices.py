@@ -23,7 +23,7 @@ class VerticesShowOption(helpers.options.ShowOption):
             *helpers.options.vedo_common_options,
             Option(
                     "vedo", "r", "Radius of vertices in units of pixels.",
-                    (int,)
+                    (int, )
             ),
     )
 
@@ -67,7 +67,6 @@ class Vertices(GustafBase):
         self._show_options = self.__show_option__(self)
 
         self.vertexdata = dict()
-
 
     @property
     def vertices(self):
@@ -149,7 +148,7 @@ class Vertices(GustafBase):
     @property
     def vis_dict(self):
         """
-        Temporary backward compatibility 
+        Temporary backward compatibility
         """
         self._logw("`vis_dict` is deprecated. Please use `show_options`")
         return self.show_options
@@ -161,7 +160,6 @@ class Vertices(GustafBase):
         """
         self._logw("`vis_dict` is deprecated. Please use `show_options`")
         self._show_options = vd
-
 
     @property
     def whatami(self):

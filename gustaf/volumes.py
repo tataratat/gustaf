@@ -7,7 +7,6 @@ from gustaf.faces import Faces
 from gustaf.helpers.options import Option
 
 
-
 class VolumesShowOption(helpers.options.ShowOption):
     """
     Show options for vertices.
