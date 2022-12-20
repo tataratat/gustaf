@@ -1,5 +1,3 @@
-import itertools
-
 import numpy as np
 
 from gustaf._base import GustafBase
@@ -192,6 +190,44 @@ class Microstructure(GustafBase):
         self._parametrization_function = parametrization_function
         self._sanity_check()
 
+    @property
+    def parameter_sensitivity_function(self):
+        """Function, that - if required - determines the parameter sensitivity
+        of a set of microtiles
+
+        In order to use said function, the Microtile needs to provide a couple
+        of attributes:
+
+         - evaluation_points - a list of points defined in the unit cube
+           that will be evaluated in the parametrization function to provide
+           the required set of data points
+         - parameter_space_dimension - dimensionality of the parametrization
+           function and number of design variables for said microtile
+         - parametrization_function - a function that calculates the microtile
+           parameters based on the position of the tile within the deformation
+           functions parametric space
+
+        Parameters
+        ----------
+        None
+
+        Returns
+        -------
+        parameter_sensitivity_function : Callable
+          Function that descibes the local tile parameters
+        """
+        if hasattr(self, "_parameter_sensitivity_function"):
+            return self._parameter_sensitivity_function
+        else:
+            return None
+
+    @parameter_sensitivity_function.setter
+    def parameter_sensitivity_function(self, parameter_sensitivity_function):
+        if not callable(parameter_sensitivity_function):
+            raise TypeError("parametrization_function must be callable")
+        self._parameter_sensitivity_function = parameter_sensitivity_function
+        self._sanity_check()
+
     def create(self, closing_face=None, knot_span_wise=None, **kwargs):
         """Create a Microstructure.
 
@@ -307,14 +343,12 @@ class Microstructure(GustafBase):
         if is_parametrized:
             para_space_dimensions = [[u[0], u[-1]] for u in ukvs]
             parametric_corners = np.reshape(
-                                    np.meshgrid(*para_space_dimensions),
-                                    (deformation_function_copy.para_dim, -1)
-                            ).T
+                    np.meshgrid(*para_space_dimensions),
+                    (deformation_function_copy.para_dim, -1)
+            ).T
             def_fun_para_space = base.Bezier(
                     degrees=[1] * deformation_function_copy.para_dim,
-                    control_points=np.ascontiguousarray(
-                            parametric_corners
-                    )
+                    control_points=np.ascontiguousarray(parametric_corners)
             ).bspline
             for i_pd in range(deformation_function_copy.para_dim):
                 if self.tiling[i_pd] != 1:
@@ -329,8 +363,19 @@ class Microstructure(GustafBase):
             len(c) - 1 for c in deformation_function_copy.unique_knots
         ]
 
-        # Start actual composition
+        # Initialize return values
+        if self.parameter_sensitivity_function is not None:
+            n_sensitivities = len(
+                    self.parameter_sensitivity_function(
+                            self._microtile.evaluation_points
+                    )
+            )
+            self._microstructure_derivatives = [
+                    [] for i in range(n_sensitivities)
+            ]
         self._microstructure = []
+
+        # Start actual composition
         if is_parametrized:
             for i, (def_fun, def_fun_para) in enumerate(
                 zip(def_fun_patches, def_fun_para_space)
@@ -339,7 +384,14 @@ class Microstructure(GustafBase):
                 positions = def_fun_para.evaluate(
                     self._microtile.evaluation_points
                 )
-                tile_parameters = self._parametrization_function(positions)
+                tile_parameters = self.parametrization_function(positions)
+
+                if self.parameter_sensitivity_function is not None:
+                    tile_sensitivities = self.parameter_sensitivity_function(
+                            positions
+                    )
+                else:
+                    tile_sensitivities = None
 
                 # Check if center or closing tile
                 if is_closed:
@@ -352,29 +404,52 @@ class Microstructure(GustafBase):
                     if index == 0:
                         # Closure at minimum id
                         tile = self._microtile.closing_tile(
-                            parameters=tile_parameters,
-                            closure=closing_face + "_min",
-                            **kwargs,
+                                parameters=tile_parameters,
+                                parameter_sensitivities=tile_sensitivities,
+                                closure=closing_face + "_min",
+                                **kwargs
                         )
                     elif (index + 1) == element_resolutions[closing_face_dim]:
                         # Closure at minimum id
                         tile = self._microtile.closing_tile(
-                            parameters=tile_parameters,
-                            closure=closing_face + "_max",
-                            **kwargs,
+                                parameters=tile_parameters,
+                                parameter_sensitivities=tile_sensitivities,
+                                closure=closing_face + "_max",
+                                **kwargs
                         )
                     else:
                         tile = self._microtile.create_tile(
-                            parameters=tile_parameters, **kwargs
+                                parameters=tile_parameters,
+                                parameter_sensitivities=tile_sensitivities,
+                                **kwargs,
                         )
                 else:
                     tile = self._microtile.create_tile(
-                        parameters=tile_parameters, **kwargs
+                            parameters=tile_parameters,
+                            parameter_sensitivities=tile_sensitivities,
+                            **kwargs
                     )
 
-                # Perform composition
-                for tile_patch in tile:
-                    self._microstructure.append(def_fun.compose(tile_patch))
+                if isinstance(tile, tuple):
+                    # Returned tile and derivatives
+                    (splines, derivatives) = tile
+                    for tile_patch in splines:
+                        self._microstructure.append(
+                                def_fun.compose(tile_patch)
+                        )
+                    for i, deris in enumerate(derivatives):
+                        for tile_v, tile_deriv in zip(splines, deris):
+                            (self._microstructure_derivatives[i]).append(
+                                    def_fun.composition_derivative(
+                                            tile_v, tile_deriv
+                                    )
+                            )
+                else:
+                    # Perform composition
+                    for tile_patch in tile:
+                        self._microstructure.append(
+                                def_fun.compose(tile_patch)
+                        )
 
         # Not parametrized
         else:
@@ -385,7 +460,11 @@ class Microstructure(GustafBase):
                     self._microstructure.append(def_fun.compose(t))
 
         # return copy of precomputed member
-        return self._microstructure.copy()
+        if len(self._microstructure_derivatives) == 0:
+            return self._microstructure.copy()
+        else:
+            return self._microstructure.copy(
+            ), self._microstructure_derivatives.copy()
 
     def show(self, use_saved=False, return_gustaf=False, **kwargs):
         """
@@ -486,36 +565,64 @@ class Microstructure(GustafBase):
                 "Tiling list must have one entry per parametric dimension"
                 " of the deformation function"
             )
-        if self.parametrization_function is not None:
-            self._logd("Checking compatibility of parametrization function")
-            if not hasattr(self._microtile, "evaluation_points"):
-                raise ValueError(
+
+        if self.parametrization_function is None:
+            # All checks have passed
+            return True
+
+        self._logd("Checking compatibility of parametrization function")
+        if not hasattr(self._microtile, "evaluation_points"):
+            raise ValueError(
                     "Microtile class does not provide the necessary "
                     "attribute `evaluation_points`, that is required for"
                     " a parametrized microstructure construction"
-                )
-            if not hasattr(self._microtile, "parameter_space_dimension"):
-                raise ValueError(
+            )
+        if not hasattr(self._microtile, "parameter_space_dimension"):
+            raise ValueError(
                     "Microtile class does not provide the necessary "
                     "attribute `parameter_space_dimension`, that is "
                     "required for a parametrized microstructure "
                     "construction"
-                )
-            result = self._parametrization_function(
-                self._microtile.evaluation_points
             )
-            if not isinstance(result, tuple):
-                raise ValueError(
+        result = self._parametrization_function(
+                self._microtile.evaluation_points
+        )
+        if not isinstance(result, tuple):
+            raise ValueError(
                     "Function outline of parametrization function must be "
                     "`f(np.ndarray)->tuple`"
-                )
-            if not len(result) == self._microtile.parameter_space_dimension:
-                raise ValueError(
+            )
+        if not len(result) == self._microtile.parameter_space_dimension:
+            raise ValueError(
                     "Return type of Parametrization function is "
                     "insufficient, check documentation of Microtile for "
                     "dimensionality"
-                )
-        # Complete check
+            )
+        if self.parameter_sensitivity_function is None:
+            # All checks have passed
+            return True
+
+        # Check sensitivity function
+        result = self.parameter_sensitivity_function(
+                self._microtile.evaluation_points
+        )
+        if (
+                (not isinstance(result, list))
+                or (not isinstance(result[0], tuple))
+        ):
+            raise ValueError(
+                    "Function outline of parameter sensitivity function must "
+                    "be `f(np.ndarray)->list(tuple)`, where every entry of the"
+                    " tuple represents the sensitivity parameters with respect"
+                    " to one parameter of the function"
+            )
+        if not len(result[0]) == self._microtile.parameter_space_dimension:
+            raise ValueError(
+                    "Return type of Parametrization function is "
+                    "insufficient, check documentation of Microtile for "
+                    "dimensionality"
+            )
+
         return True
 
     def _make_microtilable(self, microtile):
