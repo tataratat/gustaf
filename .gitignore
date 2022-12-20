@@ -3,11 +3,12 @@
 .coverage
 *cov/**
 
-.vscode/
-
 docs/build/
 docs/source/*rst
 !docs/source/index.rst
 !docs/source/show_options.rst
 !docs/source/details.rst
 !docs/source/CONTRIBUTING.rst
+
+# Ignore IDE settings
+**/.vscode/*
