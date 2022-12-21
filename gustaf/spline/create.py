@@ -95,6 +95,7 @@ def revolved(
     center : np.ndarray
       Center of revolution
     angle : float
+      angle of the revolution.
     n_knot_spans : int
       number of non-zero knot-elements for result-spline (if applicable)
     degree : bool
@@ -160,6 +161,10 @@ def revolved(
         axis = None
 
     # Update angle
+    if angle is None:
+        spline._logd("No angle given for the revolution. Using 360 degrees.")
+        angle = 360
+
     if degree:
         angle = np.radians(angle)
 
