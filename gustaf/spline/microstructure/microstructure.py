@@ -1,7 +1,10 @@
+import itertools
+
 import numpy as np
 
 from gustaf._base import GustafBase
 from gustaf.spline import base
+from gustaf.show import show_vedo
 
 
 class Microstructure(GustafBase):
@@ -209,9 +212,6 @@ class Microstructure(GustafBase):
         Microstructure : list<spline>
           finished microstructure based on object requirements
         """
-
-        import itertools
-
         # Check if all information is gathered
         if not self._sanity_check():
             raise ValueError("Not enough information provided, abort")
@@ -390,7 +390,24 @@ class Microstructure(GustafBase):
         return self._microstructure.copy()
 
     def show(self, use_saved=False, return_gustaf=False, **kwargs):
+        """
+        Shows microstructure. Consists of deformation_function, microtile, and
+        microstructure. Supported only by vedo.
 
+        Parameters
+        ----------
+        use_saved: bool
+        return_gustaf: bool
+        **kwargs: kwargs
+          Will be passed to show function
+
+        Returns
+        -------
+        gustaf_obj: dict
+          keys are deformation_function, microtile, and microstructure.
+          Iff return_gustaf is True.
+        plt: vedo.Plotter
+        """
         if use_saved:
             if hasattr(self, "_microstructure"):
                 microstructure = self._microstructure
@@ -410,8 +427,8 @@ class Microstructure(GustafBase):
                     microtile=microtile,
                     microstructure=microstructure
             )
+
         # Show in vedo
-        from gustaf.show import show_vedo
         return show_vedo(
                 ['Deformation Function', deformation_function],
                 ['Microtile', microtile],
