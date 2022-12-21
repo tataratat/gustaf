@@ -8,64 +8,62 @@ import vedo
 # for backward compatibility, we keep this one.
 vedo.settings.screenshotTransparentBackground = 1
 
-
 if __name__ == "__main__":
     arg_parser = argparse.ArgumentParser(
-        description=(
-                "Creates a fanfare. Default option corresponds to "
-                "the tataratat logo."
-        )
+            description=(
+                    "Creates a fanfare. Default option corresponds to "
+                    "the tataratat logo."
+            )
     )
     arg_parser.add_argument(
-        "--r_mouth",
-        dest="r_mouth",
-        default=0.2,
-        help="Mouth radius for mouth piece.",
+            "--r_mouth",
+            dest="r_mouth",
+            default=0.2,
+            help="Mouth radius for mouth piece.",
     )
     arg_parser.add_argument(
-        "--r_shaft",
-        dest="r_shaft",
-        default=0.1,
-        help="Shaft radius for mouth piece.",
+            "--r_shaft",
+            dest="r_shaft",
+            default=0.1,
+            help="Shaft radius for mouth piece.",
     )
     arg_parser.add_argument(
-        "--r_rounding",
-        dest="r_rounding",
-        default=0.05,
-        help="Radius offset for mouth piece rounding.",
+            "--r_rounding",
+            dest="r_rounding",
+            default=0.05,
+            help="Radius offset for mouth piece rounding.",
     )
     arg_parser.add_argument(
-        "--l_mouth",
-        dest="l_mouth",
-        default=0.4,
-        help="Length of the mouth piece.",
+            "--l_mouth",
+            dest="l_mouth",
+            default=0.4,
+            help="Length of the mouth piece.",
     )
     arg_parser.add_argument(
-        "--l_cone",
-        dest="l_cone",
-        default=1.2,
-        help="Length of the cone.",
+            "--l_cone",
+            dest="l_cone",
+            default=1.2,
+            help="Length of the cone.",
     )
     arg_parser.add_argument(
-        "--r_cone",
-        dest="r_cone",
-        default=0.8,
-        help="Radius of the cone.",
+            "--r_cone",
+            dest="r_cone",
+            default=0.8,
+            help="Radius of the cone.",
     )
     arg_parser.add_argument(
-        "--l_shaft",
-        dest="l_shaft",
-        default=4.0,
-        help="Length of the shaft.",
+            "--l_shaft",
+            dest="l_shaft",
+            default=4.0,
+            help="Length of the shaft.",
     )
     arg_parser.add_argument(
-        "--r_curve",
-        dest="r_curve",
-        default=0.3,
-        help="Radius of connecting curves.",
+            "--r_curve",
+            dest="r_curve",
+            default=0.3,
+            help="Radius of connecting curves.",
     )
     args = arg_parser.parse_args()
-
 
     # Let's draw a fanfare
     fanfare = []
@@ -185,9 +183,7 @@ if __name__ == "__main__":
     face_showables = []
     spline_showables = []
     for f in fanfare:
-        showables = f.showable(
-                resolutions=500, color=(255, 215, 0)
-        )
+        showables = f.showable(resolutions=500, color=(255, 215, 0))
         faces = showables["spline"]
         face_showables.append(faces)
         spline_showables.extend(list(showables.values()))
