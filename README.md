@@ -21,6 +21,7 @@ Gustaf has the following dependencies, while default dependencies will be instal
 |vedo|yes|`pip install vedo`|`conda install -c conda-forge vedo`|Default renderer of gustaf, only needed if visualization is performed|
 |scipy|yes|`pip install scipy`|`conda install scipy`|Necessary for vertex operations|
 |meshio|yes|`pip install meshio`|`conda install -c conda-forge meshio`|Necessary for meshio mesh imports|
+|pytest|yes|`pip install pytest`|`conda install pytest`|Necessary for testing of the package. Not needed for normal usage.|
 
 If you install `gustaf` from source we recommend to also install `splinepy` from source, see the install instructions for this in the [splinepy docs](https://tataratat.github.io/splinepy).
 
