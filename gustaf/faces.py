@@ -27,17 +27,17 @@ class FacesShowOption(helpers.options.ShowOption):
             *helpers.options.vedo_common_options,
             Option(
                     "vedo", "lw", "Width of edges (lines) in pixel units.",
-                    (int, )
+                    (int, ), False
             ),
             Option(
                     "vedo", "lc", "Color of edges (lines).",
-                    (int, str, tuple, list)
+                    (int, str, tuple, list), False
             ),
             Option(
                     "vedo", "texture",
                     "Texture of faces in array, vedo.Picture, vtk.vtkTexture, "
                     "or path to an image.",
-                    (np.ndarray, tuple, list, str, vedoPicture, vtkTexture)
+                    (np.ndarray, tuple, list, str, vedoPicture, vtkTexture), False
             )
     )
 

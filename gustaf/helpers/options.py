@@ -14,13 +14,17 @@ class Option:
             "key",
             "description",
             "allowed_types",
+            "is_init_param",
     )
 
-    def __init__(self, backend, key, description, allowed_types):
+    def __init__(self, backend, key, description, allowed_types, is_init_param):
         self.backend = backend
         self.key = key
         self.description = description
         self.allowed_types = allowed_types
+        # for summarizing init options
+        self.is_init_param = is_init_param
+ 
 
     def __repr__(self):
         specific = "\n".join(
@@ -39,18 +43,18 @@ class Option:
 vedo_common_options = (
         Option(
                 "vedo", "c", "Color in {rgb, RGB, str of (hex, name), int}",
-                (str, tuple, list, int)
+                (str, tuple, list, int), True
         ),
-        Option("vedo", "alpha", "Transparency in range [0, 1].", (float, int)),
+        Option("vedo", "alpha", "Transparency in range [0, 1].", (float, int), True),
         Option(
                 "vedo", "dataname", "Name of vertexdata to show. "
-                "Object must have vertexdata with the same name.", (str, )
-        ), Option("vedo", "cmap", "Colormap for vertexdata plots.", (str, )),
-        Option("vedo", "vmin", "Minimum value for cmap", (float, int)),
-        Option("vedo", "vmax", "Maximum value for cmap", (float, int)),
+                "Object must have vertexdata with the same name.", (str, ), False
+        ), Option("vedo", "cmap", "Colormap for vertexdata plots.", (str, ), False),
+        Option("vedo", "vmin", "Minimum value for cmap", (float, int), False),
+        Option("vedo", "vmax", "Maximum value for cmap", (float, int), False),
         Option(
                 "vedo", "cmapalpha", "Colormap Transparency in range [0, 1].",
-                (float, int)
+                (float, int), False
         ),
         Option(
                 "vedo", "scalarbar",
@@ -58,13 +62,13 @@ vedo_common_options = (
                 "dict with following items are accepted: "
                 "{title: str, pos: tuple, title_yoffset: int, font_size: int, "
                 "nlabels: int, c: str, horizontal: bool, use_alpha: bool, "
-                "label_format: str}", (dict, )
+                "label_format: str}", (dict, ), False
         ),
         Option(
                 "vedo", "extra",
                 "Additional kwargs to be applied during showable "
                 "initialization. For example ones that're not provided by gustaf.",
-                (dict, )
+                (dict, ), True
         )
 )
 
@@ -246,3 +250,25 @@ class ShowOption:
         self._options.clear()
         # put back default backend option dict
         self._options[self._backend] = dict()
+
+    def split_options(self):
+        """
+        Returns 2 dicts of options key and values only required for init and
+        that requires further processing
+
+        Parameters
+        ----------
+        None
+
+        Returns
+        -------
+        init_options: dict
+        after_init_options: dict
+        """
+        init_options = dict()
+        after_init_options = dict()
+        for key, value in self._options[self._backend].items():
+            if value.is_init_param:
+                init_options[key] = value
+            else:
+                after_init_options[key] = value
