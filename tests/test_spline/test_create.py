@@ -1,29 +1,31 @@
 import gustaf as gus
-import numpy as np
 
 import pytest
 
-@pytest.mark.parametrize("values", [0,1,{"hallo":1},[1,2,3],"test"])
+
+@pytest.mark.parametrize("values", [0, 1, {"hallo": 1}, [1, 2, 3], "test"])
 def test_extrude_error_on_not_spline_given(values):
     with pytest.raises(NotImplementedError):
         gus.spline.create.extruded(values)
 
+
 @pytest.mark.parametrize(
-    "axis,error",
-    [
-        (None, True),
-        (1, True),
-        ([1], True),
-    ]
-    )
+        "axis,error", [
+                (None, True),
+                (1, True),
+                ([1], True),
+        ]
+)
 def test_extrude_BSpline_error_on_no_axis(
-        bspline_2d: gus.BSpline, axis, error):
-    #create BSpline which is used
+        bspline_2d: gus.BSpline, axis, error
+):
+    # create BSpline which is used
     if error:
         with pytest.raises(ValueError):
             bspline_2d.create.extruded(extrusion_vector=axis)
     else:
         bspline_2d.create.extruded(extrusion_vector=axis)
+
 
 # def test_extrude_BSpline_error_on_axis_format_wrong(
 #         bspline_2d: gus.BSpline):
@@ -142,13 +144,13 @@ def test_extrude_BSpline_error_on_no_axis(
 #         )
 
 #         # Make some lines
-#         bezier_line = gus.Bezier(control_points=[[1, 0], [2, 1]], degrees=[1])
+#        bezier_line = gus.Bezier(control_points=[[1, 0], [2, 1]], degrees=[1])
 #         nurbs_line = bezier_line.nurbs
 
 #         # Make a cuboid
 #         cuboid = gus.Bezier(
 #                 control_points=[
-#                         [0, 0, 0], [1, 0, 0], [0, 1, 0], [1, 1, 0], [0, 0, 1],
+#                        [0, 0, 0], [1, 0, 0], [0, 1, 0], [1, 1, 0], [0, 0, 1],
 #                         [1, 0, 1], [0, 1, 1], [1, 1, 1]
 #                 ],
 #                 degrees=[1, 1, 1]
@@ -221,7 +223,6 @@ def test_extrude_BSpline_error_on_no_axis(
 #                             + r_center
 #                     ), f"{spline_g.whatami} failed revolution around center"
 #             )
-
 
 # if __name__ == "__main__":
 #     c.unittest.main()
