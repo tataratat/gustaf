@@ -22,8 +22,8 @@ def test_extrude_error_on_no_spline_given(values):
         ]
 )
 def test_extrude(spline_name: str, axis, error, request):
+    # get the correct spline from the provided fixtures
     spline: gus.spline.base.GustafSpline = request.getfixturevalue(spline_name)
-    # create BSpline which is used
     if error:
         with pytest.raises(ValueError):
             spline.create.extruded(extrusion_vector=axis)
@@ -50,7 +50,7 @@ def test_revolved_error_on_no_spline_given(values):
 @pytest.mark.parametrize(
         "axis,center,angle,n_knot_span,degree,error",
         [
-                (None, None, None, None, True, False),
+                # (None, None, None, None, True, True),
                 tuple([1]) + tuple([None] * 3) + tuple([True, True]),
                 tuple([[1]]) + tuple([None] * 3) + tuple([True, True]),
                 tuple([[0, 0, 1e-18]]) + tuple([None] * 3)
@@ -62,31 +62,34 @@ def test_revolved_error_on_no_spline_given(values):
                 # (np.random.rand(3))+tuple([None]*4)+tuple((False))
         ]
 )
-def test_revolved_2d(
+def test_revolved_3d(
         spline_name: str, axis, center, angle, n_knot_span, degree, error,
         request
 ):
+    # get the correct spline from the provided fixtures
     spline: gus.spline.base.GustafSpline = request.getfixturevalue(spline_name)
-    # create BSpline which is used
     if error:
         with pytest.raises(ValueError):
             spline.create.revolved(axis, center, angle, n_knot_span, degree)
     else:
-        pass
-        # rotated = spline.create.revolved(
-        #         axis, center, angle, n_knot_span, degree
-        # )
-        # x, y, z = np.random.rand(3).tolist()
-        # assert np.allclose(
-        #         extrudate.evaluate([[x, y, z]]),
-        #         np.hstack(
-        #                 (
-        #                         spline.evaluate([[x, y]]),
-        #                         np.zeros((1, 1))
-        #                 )
-        #         ) + z * axis
-        # )
+        if angle is None:
+            angle = 360
+        cc, ss = np.cos(angle), np.sin(angle)
+        r = np.array([[cc, -ss, 0], [ss, cc, 0], [0, 0, 1]])
+        revolved = spline.create.revolved(
+            axis, center, angle, n_knot_span, degree)
+    
+        dim_bumped_cps = np.zeros((spline.control_points.shape[0], 1))
 
+        ref_sol = np.matmul(
+                np.hstack((spline.control_points, dim_bumped_cps)), r.T
+        )
+
+        assert np.allclose(
+                    revolved.control_points[-10:, :],
+                    ref_sol,
+            ), f"{spline.whatami} failed revolution"
+    
 
 #     # Test Revolution Routine
 #     def test_create_revolution(self):
