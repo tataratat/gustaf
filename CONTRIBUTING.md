@@ -53,7 +53,7 @@ gustaf is a successor of gustav, which was an internal/experimental library.
 Until all the functionalities are fully transferred, it may go through several dramatic changes.
 Followings are gentle suggestions for PRs, so that the pre-alpha phase can end as soon as possible:
 - small, separable features
-- unit tests  
+- unit tests (in `pytest`)
 On the other hand, it is perfect time for suggestions / requests / feedbacks, so let us know!
 
 ### Script for format and docu checking
@@ -68,6 +68,7 @@ function gustaf_commit() {
     rm docs/source/*.*.rst docs/source/gustaf.rst docs/source/modules.rst
     sphinx-apidoc -f -t docs/source/_templates -o docs/source gustaf
     sphinx-build -b html docs/source docs/build
+    pytest
 }
 ```
-The function needs to be called from the repositories base folder.
+The function needs to be called from the repositories base folder. It would also be great if the test suite would be called before committing.
