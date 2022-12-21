@@ -15,11 +15,11 @@ class VolumesShowOption(helpers.options.ShowOption):
             *helpers.options.vedo_common_options,
             Option(
                     "vedo", "lw", "Width of edges (lines) in pixel units.",
-                    (int, )
+                    (int, ), False,
             ),
             Option(
                     "vedo", "lc", "Color of edges (lines).",
-                    (int, str, tuple, list)
+                    (int, str, tuple, list), False
             ),
     )
 
