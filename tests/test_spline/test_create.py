@@ -77,8 +77,9 @@ def test_revolved_3d(
         cc, ss = np.cos(angle), np.sin(angle)
         r = np.array([[cc, -ss, 0], [ss, cc, 0], [0, 0, 1]])
         revolved = spline.create.revolved(
-            axis, center, angle, n_knot_span, degree)
-    
+                axis, center, angle, n_knot_span, degree
+        )
+
         dim_bumped_cps = np.zeros((spline.control_points.shape[0], 1))
 
         ref_sol = np.matmul(
@@ -86,10 +87,10 @@ def test_revolved_3d(
         )
 
         assert np.allclose(
-                    revolved.control_points[-10:, :],
-                    ref_sol,
-            ), f"{spline.whatami} failed revolution"
-    
+                revolved.control_points[-10:, :],
+                ref_sol,
+        ), f"{spline.whatami} failed revolution"
+
 
 #     # Test Revolution Routine
 #     def test_create_revolution(self):
