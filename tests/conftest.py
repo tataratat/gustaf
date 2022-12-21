@@ -70,7 +70,7 @@ def edges():
 
 
 @pytest.fixture
-def faces_tetra():
+def faces_tri():
     TF = np.array(
             [
                     [1, 0, 2],
@@ -108,7 +108,7 @@ def faces_quad():
 
 
 @pytest.fixture
-def volume_tetra():
+def volume_tet():
     TV = np.array(
             [
                     [0, 2, 7, 3],
@@ -124,7 +124,7 @@ def volume_tetra():
 
 
 @pytest.fixture
-def volume_hex():
+def volume_hexa():
     HV = np.array([[0, 1, 3, 2, 4, 5, 7, 6]], dtype=np.int32)
     return HV
 
@@ -194,3 +194,40 @@ def bspline_2d(control_points_2d, degrees_2d_nu, knot_vector_2d):
             degrees=degrees_2d_nu,
             knot_vectors=knot_vector_2d
     )
+
+
+@pytest.fixture
+def nurbs_2d(control_points_2d, degrees_2d_nu, knot_vector_2d, weights_2d):
+    return gus.NURBS(
+            control_points=control_points_2d,
+            degrees=degrees_2d_nu,
+            knot_vectors=knot_vector_2d,
+            weights=weights_2d
+    )
+
+
+@pytest.fixture
+def bezier_2d(control_points_2d, degrees_2d_u):
+    return gus.Bezier(control_points=control_points_2d, degrees=degrees_2d_u)
+
+
+@pytest.fixture
+def rationalbezier_2d(control_points_2d, degrees_2d_u, weights_2d):
+    return gus.RationalBezier(
+            control_points=control_points_2d,
+            degrees=degrees_2d_u,
+            weights=weights_2d
+    )
+
+
+@pytest.fixture
+def provide_data_to_unittest(
+        request, vertices_3d, edges, faces_tri, faces_quad, volume_tet,
+        volume_hexa
+):
+    request.cls.V = vertices_3d
+    request.cls.E = edges
+    request.cls.TF = faces_tri
+    request.cls.QF = faces_quad
+    request.cls.TV = volume_tet
+    request.cls.HV = volume_hexa

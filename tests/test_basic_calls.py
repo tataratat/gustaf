@@ -1,11 +1,10 @@
 import gustaf as gus
-try:
-    from . import common as c
-except BaseException:
-    import common as c
+import unittest
+import pytest
 
 
-class BasicCallsTest(c.unittest.TestCase):
+@pytest.mark.usefixtures("provide_data_to_unittest")
+class BasicCallsTest(unittest.TestCase):
     """
     Checks basic calls - calls without specific arguments + without further
     dependencies.
@@ -16,7 +15,7 @@ class BasicCallsTest(c.unittest.TestCase):
         """
         Call available properties/methods-without-args of Vertices.
         """
-        v = gus.Vertices(c.V)
+        v = gus.Vertices(self.V)
         v.vertices = v.vertices
         v.const_vertices
         v.whatami
@@ -37,7 +36,7 @@ class BasicCallsTest(c.unittest.TestCase):
     def test_edges_basics(self):
         """
         """
-        es = gus.Edges(c.V, c.E)
+        es = gus.Edges(self.V, self.E)
         es.edges = es.edges
         es.const_edges
         es.whatami
@@ -58,7 +57,7 @@ class BasicCallsTest(c.unittest.TestCase):
         # es.update_edges()
 
     def test_faces_basics(self):
-        for fs in (gus.Faces(c.V, c.TF), gus.Faces(c.V, c.QF)):
+        for fs in (gus.Faces(self.V, self.TF), gus.Faces(self.V, self.QF)):
             fs.edges()
             fs.whatami
             fs.faces = fs.faces
@@ -80,7 +79,7 @@ class BasicCallsTest(c.unittest.TestCase):
             # gus.Faces.whatareyou()
 
     def test_volumes_bascis(self):
-        for vs in (gus.Volumes(c.V, c.TV), gus.Volumes(c.V, c.HV)):
+        for vs in (gus.Volumes(self.V, self.TV), gus.Volumes(self.V, self.HV)):
             vs.faces()
             vs.whatami
             vs.volumes = vs.volumes
@@ -102,7 +101,3 @@ class BasicCallsTest(c.unittest.TestCase):
             vs.unique_faces()
             vs.single_faces()
             # gus.Faces.whatareyou()
-
-
-if __name__ == "__main__":
-    c.unittest.main()
