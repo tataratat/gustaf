@@ -23,6 +23,7 @@ setup(
         "gustaf.create",
         "gustaf.helpers",
         "gustaf.spline.microstructure",
+        "gustaf.spline.microstructure.tiles",
     ],
     install_requires=[
         "numpy",
