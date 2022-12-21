@@ -6,6 +6,7 @@ from gustaf._base import GustafBase
 from gustaf.spline import base
 from gustaf.show import show_vedo
 
+
 class Microstructure(GustafBase):
     """Helper class to facilitatae the construction of microstructures."""
 
