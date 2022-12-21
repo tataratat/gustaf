@@ -1,114 +1,96 @@
-import gustaf as gus
+import pytest
 import numpy as np
 
-import pytest
+import gustaf as gus
 
-@pytest.mark.parametrize("values", [0,1,{"hallo":1},[1,2,3],"test"])
-def test_extrude_error_on_not_spline_given(values):
+
+@pytest.mark.parametrize("values", [0, 1, {"hallo": 1}, [1, 2, 3], "test"])
+def test_extrude_error_on_no_spline_given(values):
     with pytest.raises(NotImplementedError):
         gus.spline.create.extruded(values)
 
+
 @pytest.mark.parametrize(
-    "axis,error",
-    [
-        (None, True),
-        (1, True),
-        ([1], True),
-    ]
-    )
-def test_extrude_BSpline_error_on_no_axis(
-        bspline_2d: gus.BSpline, axis, error):
-    #create BSpline which is used
+        "spline_name",
+        ["bspline_2d", "nurbs_2d", "bezier_2d", "rationalbezier_2d"]
+)
+@pytest.mark.parametrize(
+        "axis,error", [
+                (None, True), (1, True), ([1], True), ({
+                        "hallo": 1
+                }, True), ("hallo", True), (np.random.rand(3), False)
+        ]
+)
+def test_extrude(spline_name: str, axis, error, request):
+    # get the correct spline from the provided fixtures
+    spline: gus.spline.base.GustafSpline = request.getfixturevalue(spline_name)
     if error:
         with pytest.raises(ValueError):
-            bspline_2d.create.extruded(extrusion_vector=axis)
+            spline.create.extruded(extrusion_vector=axis)
     else:
-        bspline_2d.create.extruded(extrusion_vector=axis)
+        extrudate = spline.create.extruded(extrusion_vector=axis)
+        x, y, z = np.random.rand(3).tolist()
+        assert np.allclose(
+                extrudate.evaluate([[x, y, z]]),
+                np.hstack((spline.evaluate([[x, y]]), np.zeros((1, 1))))
+                + z * axis
+        )
 
-# def test_extrude_BSpline_error_on_axis_format_wrong(
-#         bspline_2d: gus.BSpline):
-#     #create BSpline which is used
-#     with pytest.raises(ValueError):
-#         bspline_2d.create.extruded()
 
-#     # Test Extrusion routines
-#     def test_create_extrude(self):
-#         """
-#         Test extrusion for different input types and arguments
-#         """
-#         if not gus.has_spline:
-#             print("gustaf cannot load spline ext. skipping test.")
-#             return None
+@pytest.mark.parametrize("values", [0, 1, {"hallo": 1}, [1, 2, 3], "test"])
+def test_revolved_error_on_no_spline_given(values):
+    with pytest.raises(NotImplementedError):
+        gus.spline.create.revolved(values)
 
-#         # make a couple of 2D splines
-#         bspline = gus.BSpline(
-#                 control_points=c.CPS_2D,
-#                 degrees=c.DEGREES_2D_NU,
-#                 knot_vectors=c.KVS_2D
-#         )
-#         nurbs = gus.NURBS(
-#                 control_points=c.CPS_2D,
-#                 degrees=c.DEGREES_2D_NU,
-#                 knot_vectors=c.KVS_2D,
-#                 weights=c.WEIGHTS_2D
-#         )
-#         bezier = gus.Bezier(
-#                 control_points=c.CPS_2D,
-#                 degrees=c.DEGREES_2D_U,
-#         )
-#         rationalbezier = gus.RationalBezier(
-#                 control_points=c.CPS_2D,
-#                 degrees=c.DEGREES_2D_U,
-#                 weights=c.WEIGHTS_2D
-#         )
 
-#         # Expect Failure - not a spline
-#         with self.assertRaises(NotImplementedError):
-#             gus.spline.create.extruded([4])
-#         # Expect Failure - no axis given
-#         with self.assertRaises(ValueError):
-#             bspline.create.extruded()
-#         # Expect Failure - axis wrong format
-#         with self.assertRaises(ValueError):
-#             bspline.create.extruded(extrusion_vector=[1])
+@pytest.mark.parametrize(
+        "spline_name",
+        ["bspline_2d", "nurbs_2d", "bezier_2d", "rationalbezier_2d"]
+)
+@pytest.mark.parametrize(
+        "axis,center,angle,n_knot_span,degree,error",
+        [
+                # (None, None, None, None, True, True),
+                tuple([1]) + tuple([None] * 3) + tuple([True, True]),
+                tuple([[1]]) + tuple([None] * 3) + tuple([True, True]),
+                tuple([[0, 0, 1e-18]]) + tuple([None] * 3)
+                + tuple([True, True]),
+                tuple([{
+                        "hallo": 1
+                }]) + tuple([None] * 3) + tuple([True, True]),
+                tuple(["hallo"]) + tuple([None] * 3) + tuple([True, True]),
+                # (np.random.rand(3))+tuple([None]*4)+tuple((False))
+        ]
+)
+def test_revolved_3d(
+        spline_name: str, axis, center, angle, n_knot_span, degree, error,
+        request
+):
+    # get the correct spline from the provided fixtures
+    spline: gus.spline.base.GustafSpline = request.getfixturevalue(spline_name)
+    if error:
+        with pytest.raises(ValueError):
+            spline.create.revolved(axis, center, angle, n_knot_span, degree)
+    else:
+        if angle is None:
+            angle = 360
+        cc, ss = np.cos(angle), np.sin(angle)
+        r = np.array([[cc, -ss, 0], [ss, cc, 0], [0, 0, 1]])
+        revolved = spline.create.revolved(
+                axis, center, angle, n_knot_span, degree
+        )
 
-#         # Create a random axis
-#         axis = np.random.rand(3)
-#         x, y, z = np.random.rand(3).tolist()
+        dim_bumped_cps = np.zeros((spline.control_points.shape[0], 1))
 
-#         # Test results
-#         for spline_g in (bspline, nurbs, rationalbezier, bezier):
-#             self.assertTrue(
-#                     np.allclose(
-#                             bspline.create.extruded(extrusion_vector=axis
-#                                                     ).evaluate([[x, y, z]]),
-#                             np.hstack(
-#                                     (
-#                                             bspline.evaluate([[x, y]]),
-#                                             np.zeros((1, 1))
-#                                     )
-#                             ) + z * axis
-#                     )
-#             )
+        ref_sol = np.matmul(
+                np.hstack((spline.control_points, dim_bumped_cps)), r.T
+        )
 
-#         # Create a random axis
-#         axis = np.random.rand(3)
-#         x, y, z = np.random.rand(3).tolist()
+        assert np.allclose(
+                revolved.control_points[-10:, :],
+                ref_sol,
+        ), f"{spline.whatami} failed revolution"
 
-#         # Test results
-#         for spline_g in (bspline, nurbs, rationalbezier, bezier):
-#             self.assertTrue(
-#                     np.allclose(
-#                             spline_g.create.extruded(extrusion_vector=axis
-#                                                      ).evaluate([[x, y, z]]),
-#                             np.hstack(
-#                                     (
-#                                             spline_g.evaluate([[x, y]]),
-#                                             np.zeros((1, 1))
-#                                     )
-#                             ) + z * axis
-#                     )
-#             )
 
 #     # Test Revolution Routine
 #     def test_create_revolution(self):
@@ -142,13 +124,13 @@ def test_extrude_BSpline_error_on_no_axis(
 #         )
 
 #         # Make some lines
-#         bezier_line = gus.Bezier(control_points=[[1, 0], [2, 1]], degrees=[1])
+#        bezier_line = gus.Bezier(control_points=[[1, 0], [2, 1]], degrees=[1])
 #         nurbs_line = bezier_line.nurbs
 
 #         # Make a cuboid
 #         cuboid = gus.Bezier(
 #                 control_points=[
-#                         [0, 0, 0], [1, 0, 0], [0, 1, 0], [1, 1, 0], [0, 0, 1],
+#                        [0, 0, 0], [1, 0, 0], [0, 1, 0], [1, 1, 0], [0, 0, 1],
 #                         [1, 0, 1], [0, 1, 1], [1, 1, 1]
 #                 ],
 #                 degrees=[1, 1, 1]
@@ -221,7 +203,6 @@ def test_extrude_BSpline_error_on_no_axis(
 #                             + r_center
 #                     ), f"{spline_g.whatami} failed revolution around center"
 #             )
-
 
 # if __name__ == "__main__":
 #     c.unittest.main()
