@@ -42,6 +42,10 @@ def load(
       Default is None.
     mrng: str
       Default is None. This is optional.
+
+    Returns
+    --------
+    mesh: Faces or Volumes
     """
     # figure out input type
     specified_input = mxyz is not None  # bare minimum input
@@ -184,21 +188,7 @@ def export(
 
     # write bc
     with open(bc_file, "wb") as bf:
-        nbelem = 3
-
-        if whatami.startswith("quad") or whatami.startswith("tet"):
-            nbelem += 1
-        elif whatami.startswith("hexa"):
-            nbelem += 3
-
-        # init boundaries with -1, as it is the value for non-boundary.
-        # alternatively, they could be (-1 * neighbor_elem_id).
-        # But they aren't.
-        boundaries = np.empty(mesh.elements.shape[0] * nbelem, dtype=int)
-        boundaries[:] = -1
-
-        for i, belem_ids in enumerate(mesh.BC.values()):
-            boundaries[belem_ids] = i + 1  # bid starts at 1
+        boundaries = make_mrng(mesh)
 
         for b in boundaries:
             bf.write(struct.pack(big_endian_int, b))
@@ -226,3 +216,40 @@ def export(
 
         # signature
         infof.write("\n\n\n# MIXD generated using `gustaf`.\n")
+
+
+def make_mrng(mesh):
+    """
+    Builds and return mrng array based on `mesh.BC`
+    Supports `Faces` and `Volumes`.
+
+    Parameters
+    -----------
+    mesh: Faces or Volumes
+      Number of participating elements
+
+    Returns
+    --------
+    boundaries : ndarray
+      The mrng-array.
+    """
+
+    # determine number of subelements
+    whatami = mesh.whatami
+    nbelem = 3
+
+    if whatami.startswith("quad") or whatami.startswith("tet"):
+        nbelem += 1
+    elif whatami.startswith("hexa"):
+        nbelem += 3
+
+    # init boundaries with -1, as it is the value for non-boundary.
+    # alternatively, they could be (-1 * neighbor_elem_id).
+    # But they aren't.
+    boundaries = np.empty(mesh.elements.shape[0] * nbelem, dtype=int)
+    boundaries[:] = -1
+
+    for i, belem_ids in enumerate(mesh.BC.values()):
+        boundaries[belem_ids] = i + 1  # bid starts at 1
+
+    return boundaries
