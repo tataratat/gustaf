@@ -37,7 +37,7 @@ def volumes_hexa333():
 
 
 update_elements_params = (
-        *all_grids[1:-1],  #  without vertices and simple hexa
+        *all_grids[1:-1],  # without vertices and simple hexa
         "volumes_hexa333"
 )
 
