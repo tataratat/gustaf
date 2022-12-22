@@ -161,6 +161,70 @@ def control_points_2d():
 
 
 @pytest.fixture
+def control_points_3d():
+    control_points = list()
+    for i in range(3):
+        for j in range(3):
+            for k in range(3):
+                control_points.append([i * 0.5, j * 0.5, k * 0.5])
+    return control_points
+
+
+@pytest.fixture
+def control_points_3d_deformed(control_points_3d):
+    # change a control point so that there is a deformation
+    control_points_3d[22] = [1.5, .5, .5]
+    control_points_3d[2] = [0.25, .25, .75]
+    return control_points_3d
+
+
+@pytest.fixture
+def knot_vector_3d():
+    kv_3d = [
+            [0, 0, 0, 4, 4, 4],
+            [0, 0, 0, 1, 1, 1],
+            [5, 5, 5, 10, 10, 10],
+    ]
+    return kv_3d
+
+
+@pytest.fixture
+def degrees_3d():
+    d_3d = [2, 2, 2]
+    return d_3d
+
+
+@pytest.fixture
+def bspline_3d(control_points_3d, knot_vector_3d, degrees_3d):
+    spline_3d = gus.BSpline(
+            degrees_3d,
+            knot_vector_3d,
+            control_points_3d,
+    )
+    return spline_3d
+
+
+@pytest.fixture
+def bspline_3d_deformed(
+        control_points_3d_deformed, knot_vector_3d, degrees_3d
+):
+    spline_3d = gus.BSpline(
+            degrees_3d,
+            knot_vector_3d,
+            control_points_3d_deformed,
+    )
+    return spline_3d
+
+
+@pytest.fixture
+def bspline_para_1_dim_2():
+    spline_miss_match = gus.BSpline(
+            [2], [[0, 0, 0, 1, 1, 1]], [[0, 0], [1, 1], [2, 0]]
+    )
+    return spline_miss_match
+
+
+@pytest.fixture
 def knot_vector_2d():
     KVS_2D = [[0, 0, 0, .3, .7, 1, 1, 1], [0, 0, 1, 1]]
     return KVS_2D
