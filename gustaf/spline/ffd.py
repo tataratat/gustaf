@@ -6,7 +6,7 @@ Freeform Deformation!
 Adaptation of previous implementation in internal python package gustav by
 Jaewook Lee.
 """
-from typing import Any, List, Optional, Union
+from typing import Any, List, Optional, Union, get_args
 import numpy as np
 from gustaf._base import GustafBase
 from gustaf.show import show_vedo
@@ -74,9 +74,22 @@ class FFD(GustafBase):
         self._q_vertices: np.ndarray = None
 
         if spline is not None:
-            self.spline = spline
+            if isinstance(spline, get_args(SPLINE_TYPES)):
+                print(type(spline))
+                self.spline = spline
+            else:
+                raise ValueError(
+                    "Spline definition does not conform. Please provide a "
+                    "correct spline definition."
+                )
         if mesh is not None:
-            self.mesh = mesh
+            if isinstance(mesh, get_args(MESH_TYPES)):
+                self.mesh = mesh
+            else:
+                raise ValueError(
+                    "Spline definition does not conform. Please provide a "
+                    "correct spline definition."
+                )
 
         # self._is_calculated = False
 
@@ -115,6 +128,11 @@ class FFD(GustafBase):
                     [[0] * par_dim, [1] * par_dim], mesh.bounds()
             )
 
+        if not isinstance(mesh, get_args(MESH_TYPES)):
+            raise ValueError(
+                "Mesh definition does not conform. Please provide a "
+                "correct mesh definition."
+            )
         self._logi("Setting mesh.")
         self._logi("Mesh Info:")
         self._logi("  Vertices: {v}.".format(v=mesh.vertices.shape))
@@ -157,6 +175,11 @@ class FFD(GustafBase):
         --------
         None
         """
+        if not isinstance(spline, get_args(SPLINE_TYPES)):
+            raise ValueError(
+                "Spline definition does not conform. Please provide a "
+                "correct spline definition."
+            )
         self._spline = spline
 
     def _check_dimensions(self) -> bool:
