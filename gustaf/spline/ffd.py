@@ -10,7 +10,7 @@ from typing import Any, List, Optional, Union
 import numpy as np
 from gustaf._base import GustafBase
 from gustaf.show import show_vedo
-from gustaf._typing import SPLINE_TYPES, MESH_TYPES
+from gustaf._typing import SPLINE_TYPES, MESH_TYPES, is_mesh, is_gustaf_spline
 from gustaf.create.spline import with_bounds
 from gustaf import settings
 
@@ -79,7 +79,7 @@ class FFD(GustafBase):
             self.mesh = mesh
 
     @property
-    def mesh(self, ) -> MESH_TYPES:
+    def mesh(self) -> MESH_TYPES:
         """Returns copy of current mesh. Before copying, it applies
         deformation.
 
@@ -106,7 +106,7 @@ class FFD(GustafBase):
         --------
         None
         """
-        if not isinstance(mesh, MESH_TYPES.__args__):
+        if not is_mesh(mesh):
             raise ValueError(
                     "Mesh definition does not conform. Please provide a "
                     "correct mesh definition."
@@ -131,7 +131,7 @@ class FFD(GustafBase):
             self._spline._data["gustaf_ffd_computed"] = False
 
     @property
-    def spline(self):
+    def spline(self) -> SPLINE_TYPES:
         """Returns a copy of the spline. Please use the setter to explicitly
         make changes to the spline.
 
@@ -159,7 +159,7 @@ class FFD(GustafBase):
         --------
         None
         """
-        if not isinstance(spline, SPLINE_TYPES.__args__):
+        if not is_gustaf_spline(spline):
             raise ValueError(
                     "Spline definition does not conform. Please provide a "
                     "correct spline definition."
