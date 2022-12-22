@@ -2,7 +2,7 @@ name: format check and runs tests
 
 on:
   pull_request:
-    branches: ["main", "ft-testing"]
+    branches: ["main"]
 
 jobs:
   build_and_tests:
