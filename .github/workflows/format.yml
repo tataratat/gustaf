@@ -18,9 +18,6 @@ jobs:
       - name: check formats
         run: |
           pip install flake8 autopep8 yapf toml
-          flake8 gustaf
-          flake8 examples
-          flake8 tests
           # actually apply in place to check diff later.
           # yapf is great, but skips a few checks
           yapf -r -i gustaf examples tests
