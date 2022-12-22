@@ -54,3 +54,49 @@ def test_unique_vertices(grid, request):
             [i, i + n_expected_unique] for i in range(n_expected_unique)
     ] * 2
     assert intersection_list == intersection_ref
+
+
+@pytest.mark.parameterize("grid", all_grids)
+def test_bounds(grid, request):
+    """bounds should give you AABB"""
+    grid = request.getfixturevalue(grid)
+
+    # [0, 1]^3 cube
+    ref = [[0,0,0], [1,1,1]]
+
+    # same?
+    assert np.allclose(ref, grid.bounds())
+
+    # add some random values of [0, 1)
+    n_orignal_vs = len(grid.vertices)
+    n_ran = 50
+    random_vertices = np.random.random((n_ran, grid.vertices.shape[1]))
+    grid.vertices = np.vstack((grid.vertices, random_vertices))
+
+    # bound shouldn't change
+    assert np.allclose(ref, grid.bounds())
+
+    # remove unreferenced if they are elements
+    if not grid.kind.startswith("vertex")
+        grid.remove_unreferenced_vertices()
+        assert len(grid.vertices) == n_original_vs
+        assert np.allclose(ref, grid.bounds())
+
+
+@pytest.mark.parametersize("grid", all_grids)
+def test_update_vertices(grid, request):
+    """update vertices should keep only masked values"""
+    grid = request.getfixturevalue(grid)
+
+    # make a copy
+    test_grid = grid.copy()
+
+    # int based mask - let's keep 3 vertices
+    n_original_vs = len(grid.vertices)
+    n_vertices_to_keep = 3
+    int_mask = np.random.choice(np.arange(n_original_vs), n_vertices_to_keep)
+
+    # update_vertices
+    test_grid.update_vertices(int_mask)
+
+    assert len(grid.vertices) == n_vertices_to_keep
