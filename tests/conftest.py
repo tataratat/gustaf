@@ -364,3 +364,33 @@ def expected_quad_faces():
 @pytest.fixture
 def sample_1d_array():
     return np.array([0, 5, 4, 4, 6, 8, 8, 9])
+
+
+@pytest.fixture
+def sample_c_contiguous_data_array():
+    return np.array([0, 5, 4, 4, 6, 8, 8, 9])
+
+
+@pytest.fixture
+def sample_c_contiguous_nd_array():
+    return np.array([[1, 2, 3], [4, 5, 6], [7, 8, 9]])
+
+
+@pytest.fixture
+def sample_c_contiguous_2d_array():
+    return np.array([[1, 2, 3], [4, 5, 6]])
+
+
+@pytest.fixture
+def expected_c_contiguous_con(sample_c_contiguous_data_array):
+    return np.ascontiguousarray(sample_c_contiguous_data_array)
+
+
+@pytest.fixture
+def expected_c_contiguous_con_nd(sample_c_contiguous_nd_array):
+    return np.ascontiguousarray(sample_c_contiguous_nd_array)
+
+
+@pytest.fixture
+def sample_c_contiguous_non_con(sample_c_contiguous_data_array):
+    return sample_c_contiguous_data_array.reshape(2, 4).transpose()

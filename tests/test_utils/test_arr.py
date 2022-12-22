@@ -1,61 +1,47 @@
-import unittest
 import numpy as np
-from gustaf.utils.arr import make_c_contiguous, unique_rows
-
-data_array = np.array([0, 5, 4, 4, 6, 8, 8, 9])
-data_nd_array = np.array([[1, 2, 3], [4, 5, 6], [7, 8, 9]])
-data_2d_array = np.array([[1, 2, 3], [4, 5, 6]])
+from gustaf.utils.arr import make_c_contiguous
 
 
-class TestUtilsMakeCContingouosFunction(unittest.TestCase):
-
-    def test_make_c_contiguous_forNoneValues(self):
-        self.assertEqual(None, make_c_contiguous(None))
-
-    def test_make_c_contiguous_for1dArray(self):
-        expected_array = np.ascontiguousarray(data_array)
-        generated_array = make_c_contiguous(data_array)
-
-        # check if items in array does not change
-        self.assertEqual(expected_array.all(), generated_array.all())
-        # test if returned array is c-contiguous
-        self.assertTrue(generated_array.flags.c_contiguous)
-
-    def test_make_c_contiguous_forNdArrays(self):
-        expected_array = np.ascontiguousarray(data_nd_array)
-        generated_array = make_c_contiguous(data_nd_array)
-
-        # check if items in array does not change
-        self.assertEqual(expected_array.all(), generated_array.all())
-        # test if returned array is c-contiguous
-        self.assertTrue(generated_array.flags.c_contiguous)
-
-    def test_make_c_contiguous_changeDtype(self):
-        # test if dtype of array can be change
-        self.assertEqual(float, make_c_contiguous(data_nd_array, float).dtype)
-        self.assertEqual(int, make_c_contiguous(data_nd_array, int).dtype)
-        self.assertEqual(int, make_c_contiguous(data_nd_array).dtype)
-
-    def test_make_c_contiguous_nonContiguousArray(self):
-        # test if non contiguous arrays are converting
-        non_con = data_array.reshape(2, 4).transpose()
-        self.assertFalse(non_con.flags.c_contiguous)
-        self.assertTrue(make_c_contiguous(non_con).flags.c_contiguous)
-
-        # test convert non contiguous into contiguous float array
-        self.assertEqual(float, make_c_contiguous(non_con, float).dtype)
-        self.assertTrue(make_c_contiguous(non_con, float).flags.c_contiguous)
-
-        # test convert non contiguous into contiguous int array
-        self.assertEqual(int, make_c_contiguous(non_con, int).dtype)
-        self.assertTrue(make_c_contiguous(non_con, int).flags.c_contiguous)
+def test_make_c_contiguous_forNoneValues():
+    assert make_c_contiguous(None) is None
 
 
-class TestUniqueRows(unittest.TestCase):
+def test_make_c_contiguous_for1dArray(
+        sample_c_contiguous_data_array, expected_c_contiguous_con
+):
+    generated_array = make_c_contiguous(sample_c_contiguous_data_array)
+    assert np.equal(expected_c_contiguous_con, generated_array).all()
+    assert generated_array.flags.c_contiguous
 
-    def test_unique_rows_throwValueError(self):
-        self.assertRaises(ValueError, unique_rows, data_array)
+
+def test_make_c_contiguous_forNdArrays(
+        sample_c_contiguous_nd_array, expected_c_contiguous_con_nd
+):
+    generated_array = make_c_contiguous(sample_c_contiguous_nd_array)
+    # check if items in array does not change
+    assert np.equal(expected_c_contiguous_con_nd, generated_array).all()
+    # test if returned array is c-contiguous
+    assert generated_array.flags.c_contiguous
 
 
-if __name__ == '__main__':
-    unittest.main()
+def test_make_c_contiguous_changeDtype(sample_c_contiguous_nd_array):
+    # test if dtype of array can be change
+    assert make_c_contiguous(sample_c_contiguous_nd_array, float).dtype\
+           == float
+    assert make_c_contiguous(sample_c_contiguous_nd_array, int).dtype == int
+    assert make_c_contiguous(sample_c_contiguous_nd_array).dtype == int
+
+
+def test_make_c_contiguous_nonContiguousArray(sample_c_contiguous_non_con):
+    # test if non contiguous arrays are converting
+    assert not sample_c_contiguous_non_con.flags.c_contiguous
+    assert make_c_contiguous(sample_c_contiguous_non_con).flags.c_contiguous
+
+    # test convert non contiguous into contiguous float array
+    assert float == make_c_contiguous(sample_c_contiguous_non_con, float).dtype
+    assert make_c_contiguous(sample_c_contiguous_non_con, float)\
+        .flags.c_contiguous
+
+    assert int == make_c_contiguous(sample_c_contiguous_non_con, int).dtype
+    assert make_c_contiguous(sample_c_contiguous_non_con, int)\
+        .flags.c_contiguous
