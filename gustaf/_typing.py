@@ -36,7 +36,7 @@ def is_mesh(candidate: Any) -> bool:
         return issubclass(type(candidate), MESH_TYPES)
 
 
-def is_gustaf_spline(candidate: Any) -> bool:
+def is_spline(candidate: Any) -> bool:
     """This function checks if the candidate is a spline.
 
     Parameters

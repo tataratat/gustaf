@@ -10,7 +10,7 @@ from typing import Any, List, Optional, Union
 import numpy as np
 from gustaf._base import GustafBase
 from gustaf.show import show_vedo
-from gustaf._typing import SPLINE_TYPES, MESH_TYPES, is_mesh, is_gustaf_spline
+from gustaf._typing import SPLINE_TYPES, MESH_TYPES, is_mesh, is_spline
 from gustaf.create.spline import with_bounds
 from gustaf import settings
 
@@ -159,7 +159,7 @@ class FFD(GustafBase):
         --------
         None
         """
-        if not is_gustaf_spline(spline):
+        if not is_spline(spline):
             raise ValueError(
                     "Spline definition does not conform. Please provide a "
                     "correct spline definition."
