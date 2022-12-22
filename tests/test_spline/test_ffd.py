@@ -101,16 +101,24 @@ def test_mesh(bspline_2d):
 
 
 @pytest.mark.parametrize(
-        "spline_str, error", ((None, True), ("bspline_para_1_dim_2", False))
+        "spline_str, value_error, notimplemented_error", (
+                (None, True, False), ("bspline_para_1_dim_2", False, False),
+                ("bezier_2d", False, True)
+        )
 )
-def test_elevate_degree(spline_str, error, request):
+def test_elevate_degree(
+        spline_str, value_error, notimplemented_error, request
+):
     a = FFD()
 
     if spline_str:
         spline = request.getfixturevalue(spline_str)
         a.spline = spline.copy()
-    if error:
+    if value_error:
         with pytest.raises(ValueError):
+            a.elevate_degree()
+    elif notimplemented_error:
+        with pytest.raises(NotImplementedError):
             a.elevate_degree()
     else:
         spline.elevate_degree(0)
@@ -184,7 +192,8 @@ def test_remove_knots(spline_str, value_error, notimplemented_error, request):
     "spline_str, value_error, notimplemented_error",
     (   # only one error type can be checked
         (None, True, False),
-        ("bspline_para_1_dim_2", False, False)
+        ("bspline_para_1_dim_2", False, False),
+        ("bezier_2d", False, True)
     )
 )
 def test_rreduce_degree(

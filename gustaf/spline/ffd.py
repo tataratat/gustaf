@@ -6,7 +6,7 @@ Freeform Deformation!
 Adaptation of previous implementation in internal python package gustav by
 Jaewook Lee.
 """
-from typing import Any, List, Optional, Union, get_args
+from typing import Any, List, Optional, Union
 import numpy as np
 from gustaf._base import GustafBase
 from gustaf.show import show_vedo
@@ -106,7 +106,7 @@ class FFD(GustafBase):
         --------
         None
         """
-        if not isinstance(mesh, get_args(MESH_TYPES)):
+        if not isinstance(mesh, MESH_TYPES.__args__):
             raise ValueError(
                     "Mesh definition does not conform. Please provide a "
                     "correct mesh definition."
@@ -159,7 +159,7 @@ class FFD(GustafBase):
         --------
         None
         """
-        if not isinstance(spline, get_args(SPLINE_TYPES)):
+        if not isinstance(spline, SPLINE_TYPES.__args__):
             raise ValueError(
                     "Spline definition does not conform. Please provide a "
                     "correct spline definition."
@@ -302,6 +302,10 @@ class FFD(GustafBase):
         """
         if self._spline is None:
             raise ValueError("Please set a spline before using this function.")
+        if "knot_vectors" not in self._spline.required_properties:
+            raise NotImplementedError(
+                    "Can not perform knot insertion on Bezier spline."
+            )
         self._spline.elevate_degree(*args, **kwargs)
 
     def insert_knots(self, parametric_dimension, knots):
@@ -360,6 +364,10 @@ class FFD(GustafBase):
         """
         if self._spline is None:
             raise ValueError("Please set a spline before using this function.")
+        if "knot_vectors" not in self._spline.required_properties:
+            raise NotImplementedError(
+                    "Can not perform knot insertion on Bezier spline."
+            )
         self._spline.reduce_degree(*args, **kwargs)
 
     def show(self, **kwargs) -> Any:
