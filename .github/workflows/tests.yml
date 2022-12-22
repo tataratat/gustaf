@@ -3,8 +3,6 @@ name: format check and runs tests
 on:
   pull_request:
     branches: ["main", "ft-testing"]
-  push:
-    branches: ["ft-testing"]
 
 jobs:
   build_and_tests:
