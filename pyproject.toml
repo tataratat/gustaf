@@ -1,4 +1,4 @@
-[yapf]
+[tool.yapf]
 based_on_style = pep8
 coalesce_brackets = false
 continuation_align_style = space
@@ -6,3 +6,9 @@ split_before_arithmetic_operator = true
 continuation_indent_width = 8
 dedent_closing_brackets = true
 split_complex_comprehension = true
+
+[tool.autopep8]
+select="W291,W292,W293,W504,E265,E501,E711,E722"
+recursive = true
+in-place = true
+aggressive = 1
