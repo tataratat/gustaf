@@ -74,24 +74,9 @@ class FFD(GustafBase):
         self._q_vertices: np.ndarray = None
 
         if spline is not None:
-            if isinstance(spline, get_args(SPLINE_TYPES)):
-                print(type(spline))
-                self.spline = spline
-            else:
-                raise ValueError(
-                    "Spline definition does not conform. Please provide a "
-                    "correct spline definition."
-                )
+            self.spline = spline
         if mesh is not None:
-            if isinstance(mesh, get_args(MESH_TYPES)):
-                self.mesh = mesh
-            else:
-                raise ValueError(
-                    "Spline definition does not conform. Please provide a "
-                    "correct spline definition."
-                )
-
-        # self._is_calculated = False
+            self.mesh = mesh
 
     @property
     def mesh(self, ) -> MESH_TYPES:
@@ -121,17 +106,16 @@ class FFD(GustafBase):
         --------
         None
         """
+        if not isinstance(mesh, get_args(MESH_TYPES)):
+            raise ValueError(
+                "Mesh definition does not conform. Please provide a "
+                "correct mesh definition."
+            )
         if self._spline is None:
             # Define a default spline if mesh is given but no spline
             par_dim = mesh.vertices.shape[1]
             self.spline = with_bounds(
                     [[0] * par_dim, [1] * par_dim], mesh.bounds()
-            )
-
-        if not isinstance(mesh, get_args(MESH_TYPES)):
-            raise ValueError(
-                "Mesh definition does not conform. Please provide a "
-                "correct mesh definition."
             )
         self._logi("Setting mesh.")
         self._logi("Mesh Info:")
