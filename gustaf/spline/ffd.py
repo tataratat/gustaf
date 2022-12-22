@@ -279,10 +279,11 @@ class FFD(GustafBase):
         """
         if self._spline is None:
             raise ValueError(
-                "Please set a spline before setting new control points.")
+                    "Please set a spline before setting new control points."
+            )
         if self._spline.control_points.shape != np.array(control_points).shape:
             raise ValueError(
-                "Given control points' shape does not match current ones!"
+                    "Given control points' shape does not match current ones!"
             )
         self._spline.control_points = control_points.copy()
         self._logd("Set new control points.")
@@ -300,8 +301,7 @@ class FFD(GustafBase):
         None
         """
         if self._spline is None:
-            raise ValueError(
-                "Please set a spline before using this function.")
+            raise ValueError("Please set a spline before using this function.")
         self._spline.elevate_degree(*args, **kwargs)
 
     def insert_knots(self, parametric_dimension, knots):
@@ -317,9 +317,8 @@ class FFD(GustafBase):
         None
         """
         if self._spline is None:
-            raise ValueError(
-                "Please set a spline before using this function.")
-        if "knot_vectors" in self._spline.required_properties:
+            raise ValueError("Please set a spline before using this function.")
+        if "knot_vectors" not in self._spline.required_properties:
             raise NotImplementedError(
                     "Can not perform knot insertion on Bezier spline."
             )
@@ -338,9 +337,8 @@ class FFD(GustafBase):
         None
         """
         if self._spline is None:
-            raise ValueError(
-                "Please set a spline before using this function.")
-        if "knot_vectors" in self._spline.required_properties:
+            raise ValueError("Please set a spline before using this function.")
+        if "knot_vectors" not in self._spline.required_properties:
             raise NotImplementedError(
                     "Can not perform knot insertion on Bezier spline."
             )
@@ -361,8 +359,7 @@ class FFD(GustafBase):
         None
         """
         if self._spline is None:
-            raise ValueError(
-                "Please set a spline before using this function.")
+            raise ValueError("Please set a spline before using this function.")
         self._spline.reduce_degree(*args, **kwargs)
 
     def show(self, **kwargs) -> Any:
@@ -391,8 +388,7 @@ class FFD(GustafBase):
             to get the plotter.
         """
         if not (self._spline is None or self._mesh is None):
-            raise ValueError(
-                "Please set a spline before using this function.")
+            raise ValueError("Please set a spline before using this function.")
         backend = kwargs.pop("backend", None)
         return_showable = kwargs.pop("return_showable", False)
         return_discrete = kwargs.pop("return_discrete", False)

@@ -217,6 +217,14 @@ def bspline_3d_deformed(
 
 
 @pytest.fixture
+def bspline_para_1_dim_2():
+    spline_miss_match = gus.BSpline(
+            [2], [[0, 0, 0, 1, 1, 1]], [[0, 0], [1, 1], [2, 0]]
+    )
+    return spline_miss_match
+
+
+@pytest.fixture
 def knot_vector_2d():
     KVS_2D = [[0, 0, 0, .3, .7, 1, 1, 1], [0, 0, 1, 1]]
     return KVS_2D
