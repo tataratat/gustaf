@@ -1,7 +1,7 @@
 [tool.yapf]
-based_on_style = pep8
+based_on_style = "pep8"
 coalesce_brackets = false
-continuation_align_style = space
+continuation_align_style = "space"
 split_before_arithmetic_operator = true
 continuation_indent_width = 8
 dedent_closing_brackets = true
