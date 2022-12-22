@@ -1,5 +1,7 @@
-from tests.fixtures.fixtures_connec import *
+import numpy as np
+
 from gustaf.utils.connec import tet_to_tri, hexa_to_quad, faces_to_edges, make_quad_faces, make_hexa_volumes
+import pytest
 
 
 def test_tet_to_tri_throwException(sample_1d_array):
