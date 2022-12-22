@@ -32,5 +32,73 @@ def test_init_error(init_values: List, throw_error, request):
         FFD(*init_values)
 
 
-def test_mesh_with_empty_init():
+def test_mesh_with_empty_init(faces_quad):
     a = FFD()
+
+    a.mesh = faces_quad
+
+    assert np.allclose(
+        a.mesh.vertices,
+        faces_quad.vertices
+    )
+
+    assert np.allclose(
+        a.spline.dim,
+        faces_quad.vertices.shape[1]
+    )
+
+    assert np.allclose(
+        a.spline.dim,
+        a.spline.para_dim
+    )
+    
+    assert a._spline._data.get("gustaf_ffd_computed", False)
+
+    a.mesh
+
+
+def test_spline_with_empty_init(bspline_2d):
+    a = FFD()
+
+    a.spline = bspline_2d
+
+    with pytest.raises(RuntimeError):
+        a.mesh
+    
+    assert np.allclose(
+        a.control_points,
+        bspline_2d.control_points
+    )
+
+
+def test_control_point_setter_with_empty_init(bspline_2d):
+    a = FFD()
+
+    # can not set control points if spline is not set
+    with pytest.raises(ValueError):
+        a.control_points = [1,2,3,4]
+    
+
+    a.spline = bspline_2d
+
+    # can not set control points with other shape than previous 
+    with pytest.raises(ValueError):
+        a.control_points = [[1,2,3,2,3],[1,2,3,2,3],[1,2,3,2,3]]
+    
+    a.control_points = bspline_2d.control_points * 2
+
+    assert np.allclose(
+        a.control_points,
+        bspline_2d.control_points
+    )
+
+
+
+
+def test_spline_with_empty_init(bspline_2d):
+    a = FFD()
+
+    a.spline = bspline_2d
+
+    with pytest.raises(RuntimeError):
+        a.mesh
