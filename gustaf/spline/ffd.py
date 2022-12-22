@@ -108,8 +108,8 @@ class FFD(GustafBase):
         """
         if not isinstance(mesh, get_args(MESH_TYPES)):
             raise ValueError(
-                "Mesh definition does not conform. Please provide a "
-                "correct mesh definition."
+                    "Mesh definition does not conform. Please provide a "
+                    "correct mesh definition."
             )
         if self._spline is None:
             # Define a default spline if mesh is given but no spline
@@ -161,8 +161,8 @@ class FFD(GustafBase):
         """
         if not isinstance(spline, get_args(SPLINE_TYPES)):
             raise ValueError(
-                "Spline definition does not conform. Please provide a "
-                "correct spline definition."
+                    "Spline definition does not conform. Please provide a "
+                    "correct spline definition."
             )
         self._spline = spline
 
@@ -184,8 +184,9 @@ class FFD(GustafBase):
                 and not self._spline.dim == self._mesh.vertices.shape[1]
         ):
             messages.append(
-                    "The geometric dimensions of the spline and the "
-                    "dimension of the mesh are not the same."
+                    "The geometric dimensions of the spline "
+                    f"({self._spline.dim}) and the dimension of the mesh"
+                    f"({self._mesh.vertices.shape[1]}) are not the same."
             )
         if len(messages) > 0:
             raise RuntimeError(
