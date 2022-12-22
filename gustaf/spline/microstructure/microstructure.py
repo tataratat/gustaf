@@ -351,11 +351,10 @@ class Microstructure(GustafBase):
                     control_points=np.ascontiguousarray(parametric_corners)
             ).bspline
             for i_pd in range(deformation_function_copy.para_dim):
-                if self.tiling[i_pd] != 1:
-                    def_fun_para_space.insert_knots(
+                def_fun_para_space.insert_knots(
                         i_pd,
-                        deformation_function_copy.unique_knots[i_pd][1:-1],
-                    )
+                        deformation_function_copy.unique_knots[i_pd][1:-1]
+                )
             def_fun_para_space = def_fun_para_space.extract.beziers()
 
         # Determine element resolution
