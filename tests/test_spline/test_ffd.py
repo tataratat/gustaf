@@ -91,7 +91,7 @@ def test_check_dimensions(faces_quad, bspline_para_1_dim_2):
     assert "mesh" in str(err)  # mesh dimension to spline miss match
 
 
-def test_spline_with_empty_init(bspline_2d):
+def test_mesh(bspline_2d):
     a = FFD()
 
     a.spline = bspline_2d
