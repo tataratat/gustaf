@@ -196,10 +196,7 @@ def test_remove_knots(spline_str, value_error, notimplemented_error, request):
         ("bezier_2d", False, True)
     )
 )
-def test_reduce_degree(
-        spline_str, value_error, notimplemented_error, request
-):
-    a = FFD()
+def test_reduce_degree(spline_str, value_error, notimplemented_error, request):
 
     if spline_str:
         spline = request.getfixturevalue(spline_str)
