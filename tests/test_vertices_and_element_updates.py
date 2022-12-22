@@ -1,9 +1,6 @@
 import numpy as np
 import pytest
 
-import gustaf as gus
-
-
 # frequently used fixtures
 all_grids = (
         "vertices",
@@ -42,10 +39,7 @@ def test_unique_vertices(grid, request):
     n_expected_unique = int(n_original_vertices + n_ran)
 
     # value check
-    assert np.allclose(
-            grid.vertices[:n_expected_unique],
-            unique_vs.values
-    )
+    assert np.allclose(grid.vertices[:n_expected_unique], unique_vs.values)
 
     # ids check
     assert all(np.arange(n_expected_unique) == unique_vs.ids)
@@ -59,4 +53,4 @@ def test_unique_vertices(grid, request):
     intersection_ref = [
             [i, i + n_expected_unique] for i in range(n_expected_unique)
     ] * 2
-    assert intersection_list == intersection_ref 
+    assert intersection_list == intersection_ref
