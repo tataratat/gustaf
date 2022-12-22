@@ -23,7 +23,7 @@ class VerticesShowOption(helpers.options.ShowOption):
             *helpers.options.vedo_common_options,
             Option(
                     "vedo", "r", "Radius of vertices in units of pixels.",
-                    (int, ), True
+                    (int, )
             ),
     )
 
