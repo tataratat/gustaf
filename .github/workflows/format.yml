@@ -1,0 +1,31 @@
+name: format
+
+on:
+  pull_request
+
+jobs:
+  format:
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout git
+        uses: actions/checkout@v3
+
+      - name: setup python
+        uses: actions/setup-python@v3
+        with:
+          python-version: 3.9
+
+      - name: check formats
+        run: |
+          pip install flake8 autopep8 yapf toml
+          # actually apply in place to check diff later.
+          # yapf is great, but skips a few checks
+          yapf -r -i gustaf examples tests
+          autopep8 --select=W291,W292,W293,W504,E265,E501,E711,E722 -r -i --aggressive gustaf examples tests
+          # double check
+          flake8 gustaf examples tests
+
+      - name: push diff
+        uses: getsentry/action-git-diff-suggestions@main
+        with:
+          message: formatting suggestions

@@ -10,7 +10,7 @@ from typing import Any, List, Optional, Union
 import numpy as np
 from gustaf._base import GustafBase
 from gustaf.show import show_vedo
-from gustaf._typing import SPLINE_TYPES, MESH_TYPES
+from gustaf._typing import SPLINE_TYPES, MESH_TYPES, is_mesh, is_spline
 from gustaf.create.spline import with_bounds
 from gustaf import settings
 
@@ -78,10 +78,8 @@ class FFD(GustafBase):
         if mesh is not None:
             self.mesh = mesh
 
-        # self._is_calculated = False
-
     @property
-    def mesh(self, ) -> MESH_TYPES:
+    def mesh(self) -> MESH_TYPES:
         """Returns copy of current mesh. Before copying, it applies
         deformation.
 
@@ -108,13 +106,17 @@ class FFD(GustafBase):
         --------
         None
         """
+        if not is_mesh(mesh):
+            raise ValueError(
+                    "Mesh definition does not conform. Please provide a "
+                    "correct mesh definition."
+            )
         if self._spline is None:
             # Define a default spline if mesh is given but no spline
             par_dim = mesh.vertices.shape[1]
             self.spline = with_bounds(
                     [[0] * par_dim, [1] * par_dim], mesh.bounds()
             )
-
         self._logi("Setting mesh.")
         self._logi("Mesh Info:")
         self._logi("  Vertices: {v}.".format(v=mesh.vertices.shape))
@@ -129,7 +131,7 @@ class FFD(GustafBase):
             self._spline._data["gustaf_ffd_computed"] = False
 
     @property
-    def spline(self):
+    def spline(self) -> SPLINE_TYPES:
         """Returns a copy of the spline. Please use the setter to explicitly
         make changes to the spline.
 
@@ -157,6 +159,11 @@ class FFD(GustafBase):
         --------
         None
         """
+        if not is_spline(spline):
+            raise ValueError(
+                    "Spline definition does not conform. Please provide a "
+                    "correct spline definition."
+            )
         self._spline = spline
 
     def _check_dimensions(self) -> bool:
@@ -169,7 +176,8 @@ class FFD(GustafBase):
         # Checks dimensions and ranges critical for a correct FFD calculation
         if self._spline and not self._spline.para_dim == self._spline.dim:
             messages.append(
-                    "The parametric and geometric dimensions of the "
+                    f"The parametric ({self._spline.para_dim}) and geometric "
+                    f"({self._spline.dim}) dimensions of the "
                     "spline are not the same."
             )
         if (
@@ -177,8 +185,9 @@ class FFD(GustafBase):
                 and not self._spline.dim == self._mesh.vertices.shape[1]
         ):
             messages.append(
-                    "The geometric dimensions of the spline and the "
-                    "dimension of the mesh are not the same."
+                    "The geometric dimensions of the spline "
+                    f"({self._spline.dim}) and the dimension of the mesh"
+                    f"({self._mesh.vertices.shape[1]}) are not the same."
             )
         if len(messages) > 0:
             raise RuntimeError(
@@ -268,9 +277,14 @@ class FFD(GustafBase):
         --------
         None
         """
-        assert self._spline.control_points.shape == control_points.shape,\
-            "Given control points' shape does not match current ones!"
-
+        if self._spline is None:
+            raise ValueError(
+                    "Please set a spline before setting new control points."
+            )
+        if self._spline.control_points.shape != np.array(control_points).shape:
+            raise ValueError(
+                    "Given control points' shape does not match current ones!"
+            )
         self._spline.control_points = control_points.copy()
         self._logd("Set new control points.")
 
@@ -286,6 +300,12 @@ class FFD(GustafBase):
         --------
         None
         """
+        if self._spline is None:
+            raise ValueError("Please set a spline before using this function.")
+        if "knot_vectors" not in self._spline.required_properties:
+            raise NotImplementedError(
+                    "Can not perform knot insertion on Bezier spline."
+            )
         self._spline.elevate_degree(*args, **kwargs)
 
     def insert_knots(self, parametric_dimension, knots):
@@ -300,7 +320,9 @@ class FFD(GustafBase):
         --------
         None
         """
-        if "knot_vectors" in self._spline.required_properties:
+        if self._spline is None:
+            raise ValueError("Please set a spline before using this function.")
+        if "knot_vectors" not in self._spline.required_properties:
             raise NotImplementedError(
                     "Can not perform knot insertion on Bezier spline."
             )
@@ -318,7 +340,9 @@ class FFD(GustafBase):
         --------
         None
         """
-        if "knot_vectors" in self._spline.required_properties:
+        if self._spline is None:
+            raise ValueError("Please set a spline before using this function.")
+        if "knot_vectors" not in self._spline.required_properties:
             raise NotImplementedError(
                     "Can not perform knot insertion on Bezier spline."
             )
@@ -338,6 +362,12 @@ class FFD(GustafBase):
         --------
         None
         """
+        if self._spline is None:
+            raise ValueError("Please set a spline before using this function.")
+        if "knot_vectors" not in self._spline.required_properties:
+            raise NotImplementedError(
+                    "Can not perform knot insertion on Bezier spline."
+            )
         self._spline.reduce_degree(*args, **kwargs)
 
     def show(self, **kwargs) -> Any:
@@ -365,6 +395,8 @@ class FFD(GustafBase):
             Returns, if applicable, the vedo plotter. 'close=False' as argument
             to get the plotter.
         """
+        if not (self._spline is None or self._mesh is None):
+            raise ValueError("Please set a spline before using this function.")
         backend = kwargs.pop("backend", None)
         return_showable = kwargs.pop("return_showable", False)
         return_discrete = kwargs.pop("return_discrete", False)
