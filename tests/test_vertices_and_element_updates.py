@@ -3,43 +3,15 @@ import pytest
 
 import gustaf as gus
 
-@pytest.fixture
-def sample_vertices(vertices_3d):
-    return gus.Vertices(vertices_3d)
 
-
-@pytest.fixture
-def sample_edges(edges):
-    return gus.Edges(edges)
-
-
-@pytest.fixture
-def sample_tri(vertices_3d, faces_tri):
-    return gus.Faces(vertices_3d, faces_tri)
-
-
-@pytest.fixture
-def sample_quad(vertices_3d, faces_quad):
-    return gus.Faces(vertices_3d, faces_quad)
-
-
-@pytest.fixture
-def sample_tet(vertices_3d, volume_tet):
-    return gus.Volumes(vertices_3d, volume_tet)
-
-
-@pytest.fixture
-def sample_hexa(vertices_3d, volume_hexa):
-    return gus.Volumes(vertices_3d, volume_hexa)
-
-
+# frequently used fixtures
 all_grids = (
-        "sample_vertices",
-        "sample_edges",
-        "sample_tri",
-        "sample_quad",
-        "sample_tet",
-        "sample_hexa",
+        "vertices",
+        "edges",
+        "faces_tri",
+        "faces_quad",
+        "volumes_tet",
+        "volumes_hexa",
 )
 
 
