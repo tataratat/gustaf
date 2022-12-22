@@ -1,4 +1,3 @@
-import gustaf as gus
 """In this example, four seperate meshes are created.
 
 mesh_faces_box: creates a quadrilateral 2D-face-mesh with quadrilateral
@@ -30,6 +29,7 @@ is created.
 mesh_faces_triangle_bs: Similar to mesh_faces_triangle, but with
 diagonalization in the other direction.
 """
+import gustaf as gus
 
 
 def main():

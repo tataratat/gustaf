@@ -409,7 +409,7 @@ class ComputedData(DataHolder):
 Unique2DFloats = namedtuple(
         "Unique2DFloats", ["values", "ids", "inverse", "intersection"]
 )
-"""
+Unique2DFloats.__doc__ = """
 namedtuple to hold unique information of float type arrays.
 Note that for float types, "close enough" might be a better name than unique.
 This way, all tracked arrays, as long as they are 2D, have a dot separated
@@ -429,7 +429,8 @@ Unique2DFloats.intersection.__doc__ = """`(m) list of list`
 Unique2DIntegers = namedtuple(
         "Unique2DIntegers", ["values", "ids", "inverse", "counts"]
 )
-"""namedtuple to hold unique information of integer type arrays.
+Unique2DIntegers.__doc__ = """
+namedtuple to hold unique information of integer type arrays.
 Similar approach to Unique2DFloats.
 """
 

@@ -1,16 +1,16 @@
+"""This example shows the functionality of gustaf.io.nutils.
+
+A 2-dimensional plate with fixed edges on the left and right edges is
+exposed to Gravitation.
+The plate consists of 20 triangular elements and is created with gustaf.
+One can either add the displacements directly to gustaf.vertices or evaluate
+the new coordinates and create a new gustaf.mesh.
+"""
 from nutils import mesh, function, solver
 from nutils.expression_v2 import Namespace
 
 import gustaf as gus
 import numpy as np
-"""This example shows the funtionality of gustaf.io.nutils.
-
-A 2-dimensional plate with fixed edges on the left and right edges is
-exposed to Gravitation.
-The plate consists of 20 triangular elements and is created with gustaf.
-One can either add the displacements directly to gustaf.vertices or evalute
-the new coordinates and create a new gustaf.mesh.
-"""
 
 
 def main():
