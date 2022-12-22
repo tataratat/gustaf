@@ -9,25 +9,6 @@ import numpy as np
 
 import gustaf as gus
 
-# # try to satisfy flake8 F401
-# __all__ = [
-#         "unittest",
-#         "np",
-#         "V",
-#         "E",
-#         "TF",
-#         "QF",
-#         "TV",
-#         "HV",
-#         "CPS_2D",
-#         "KVS_2D",
-#         "DEGREES_2D_NU",
-#         "DEGREES_2D_U",
-#         "WEIGHTS_2D",
-# ]
-
-# Mesh Stuff
-
 
 @pytest.fixture
 def vertices_3d():
@@ -48,7 +29,12 @@ def vertices_3d():
 
 
 @pytest.fixture
-def edges():
+def vertices(vertices_3d):
+    return gus.Vertices(vertices_3d)
+
+
+@pytest.fixture
+def edge_connec():
     E = np.array(
             [
                     [0, 1],
@@ -70,7 +56,12 @@ def edges():
 
 
 @pytest.fixture
-def faces_tri():
+def edges(vertices_3d, edge_connec):
+    return gus.Edges(vertices_3d, edge_connec)
+
+
+@pytest.fixture
+def tri_connec():
     TF = np.array(
             [
                     [1, 0, 2],
@@ -92,7 +83,12 @@ def faces_tri():
 
 
 @pytest.fixture
-def faces_quad():
+def faces_tri(vertices_3d, tri_connec):
+    return gus.Faces(vertices_3d, tri_connec)
+
+
+@pytest.fixture
+def quad_connec():
     QF = np.array(
             [
                     [1, 0, 2, 3],
@@ -108,7 +104,12 @@ def faces_quad():
 
 
 @pytest.fixture
-def volume_tet():
+def faces_quad(vertices_3d, quad_connec):
+    return gus.Faces(vertices_3d, quad_connec)
+
+
+@pytest.fixture
+def tet_connec():
     TV = np.array(
             [
                     [0, 2, 7, 3],
@@ -124,9 +125,19 @@ def volume_tet():
 
 
 @pytest.fixture
-def volume_hexa():
+def volumes_tet(vertices_3d, tet_connec):
+    return gus.Volumes(vertices_3d, tet_connec)
+
+
+@pytest.fixture
+def hexa_connec():
     HV = np.array([[0, 1, 3, 2, 4, 5, 7, 6]], dtype=np.int32)
     return HV
+
+
+@pytest.fixture
+def volumes_hexa(vertices_3d, hexa_connec):
+    return gus.Volumes(vertices_3d, hexa_connec)
 
 
 @pytest.fixture
@@ -222,12 +233,12 @@ def rationalbezier_2d(control_points_2d, degrees_2d_u, weights_2d):
 
 @pytest.fixture
 def provide_data_to_unittest(
-        request, vertices_3d, edges, faces_tri, faces_quad, volume_tet,
-        volume_hexa
+        request, vertices_3d, edge_connec, tri_connec, quad_connec, tet_connec,
+        hexa_connec
 ):
     request.cls.V = vertices_3d
-    request.cls.E = edges
-    request.cls.TF = faces_tri
-    request.cls.QF = faces_quad
-    request.cls.TV = volume_tet
-    request.cls.HV = volume_hexa
+    request.cls.E = edge_connec
+    request.cls.TF = tri_connec
+    request.cls.QF = quad_connec
+    request.cls.TV = tet_connec
+    request.cls.HV = hexa_connec
