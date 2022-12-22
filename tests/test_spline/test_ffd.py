@@ -197,7 +197,7 @@ def test_remove_knots(spline_str, value_error, notimplemented_error, request):
     )
 )
 def test_reduce_degree(spline_str, value_error, notimplemented_error, request):
-
+    a = FFD()
     if spline_str:
         spline = request.getfixturevalue(spline_str)
         a.spline = spline.copy()
