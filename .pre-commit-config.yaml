@@ -2,7 +2,7 @@
 #   $ pre-commit install
 #
 # manual
-#   $ pre-commit run -a 
+#   $ pre-commit run -a
 
 repos:
 - repo: https://github.com/pre-commit/pre-commit-hooks
@@ -25,6 +25,7 @@ repos:
   rev: v0.32.0
   hooks:
   - id: yapf
+    additional_dependencies: [toml]
 
 - repo: https://github.com/pre-commit/mirrors-autopep8
   rev: v1.7.0
