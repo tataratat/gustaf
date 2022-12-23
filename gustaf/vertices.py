@@ -29,6 +29,25 @@ class VerticesShowOption(helpers.options.ShowOption):
 
     _helps = "Vertices"
 
+    def _initialize_vedo_showable(self):
+        """
+        Initialize Vertices showable for vedo.
+
+        Parameters
+        ----------
+        None
+
+        Returns
+        -------
+        initialized_showable: vedo.Points
+        """
+        init_options = ("r")
+
+        return show.vedo.Points(
+                self.helpee.const_vertices,
+                **self[init_optionis]
+        )
+
 
 class Vertices(GustafBase):
 

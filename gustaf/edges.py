@@ -8,6 +8,8 @@ import numpy as np
 from gustaf import settings
 from gustaf import utils
 from gustaf import helpers
+from gustaf import show
+from gustaf.helpers.options import Option
 from gustaf.vertices import Vertices
 
 
@@ -21,19 +23,19 @@ class EdgesShowOption(helpers.options.ShowOption):
                     "vedo", "lw", "Width of edges (lines) in pixel units.",
                     (int, )
             ),
-            Option("vedo", "as_arrows", "Show edges as arrows.", (bool, ), False),
+            Option("vedo", "as_arrows", "Show edges as arrows.", (bool, )),
             Option(
-                    "vedo", "arrow_head_radius",
+                    "vedo", "head_radius",
                     "Radius of arrow head. Applicable if as_arrows is True",
                     (float, int)
             ),
             Option(
-                    "vedo", "arrow_head_length",
+                    "vedo", "head_length",
                     "Length of arrow head. Applicable if as_arrows is True",
                     (float, int)
             ),
             Option(
-                    "vedo", "arrow_shaft_radius",
+                    "vedo", "shaft_radius",
                     "Radius of arrow shaft. Applicable if as_arrows is True",
                     (float, int)
             ),
@@ -41,6 +43,31 @@ class EdgesShowOption(helpers.options.ShowOption):
 
     _helps = "Edges"
 
+    def _initialize_vedo_showable(self):
+        """
+        Initializes edges as either vedo.Lines or vedo.Arrows
+
+        Parameters
+        ----------
+        None
+
+        Returns
+        -------
+        edges: vedo.Lines or vedo.Arrows
+        """
+        if self.get("as_arrwos", False):
+            init_options = ("head_radius", "head_length", "shaft_radius")
+            return show.vedo.Arrows(
+                    self.helpee.const_vertices[self.helpee.edges],
+                    **self[init_options]
+            )
+
+        else:
+            init_options = ("lw")
+            return show.vedo.Lines(
+                    self.helpee.const_vertices[self.helpee.edges],
+                    **self[init_options],
+            )
 
 class Edges(Vertices):
 
