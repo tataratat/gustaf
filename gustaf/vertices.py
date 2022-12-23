@@ -44,7 +44,7 @@ class VerticesShowOption(helpers.options.ShowOption):
         init_options = ("r")
 
         return show.vedo.Points(
-                self.helpee.const_vertices,
+                self._helpee.const_vertices,
                 **self[init_optionis]
         )
 

@@ -58,14 +58,14 @@ class EdgesShowOption(helpers.options.ShowOption):
         if self.get("as_arrwos", False):
             init_options = ("head_radius", "head_length", "shaft_radius")
             return show.vedo.Arrows(
-                    self.helpee.const_vertices[self.helpee.edges],
+                    self._helpee.const_vertices[self._helpee.edges],
                     **self[init_options]
             )
 
         else:
             init_options = ("lw")
             return show.vedo.Lines(
-                    self.helpee.const_vertices[self.helpee.edges],
+                    self._helpee.const_vertices[self._helpee.edges],
                     **self[init_options],
             )
 
