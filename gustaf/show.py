@@ -4,7 +4,8 @@ Everything related to show/visualization.
 """
 import numpy as np
 
-from gustaf import settings, utils
+from gustaf import settings
+from gustaf import utils
 from gustaf._base import GustafBase
 
 # @linux it raises error if vedo is imported inside the function.
@@ -17,7 +18,6 @@ except ImportError as err:
     # comprehensive exception will be raised which is understandable in
     # contrast to the possible errors previously possible
     from gustaf.helpers.raise_if import ModuleImportRaiser
-
     vedo = ModuleImportRaiser("vedo", err)
 
 
@@ -46,8 +46,8 @@ def show(*gusobj, **kwargs):
 
 
 def show_vedo(
-    *args,
-    **kwargs,
+        *args,
+        **kwargs,
 ):
     """`vedo.show` wrapper. Each args represent one section of window. In other
     words len(args) == N, where N corresponds to the parameter for vedo.show().
@@ -93,7 +93,7 @@ def show_vedo(
     # get plotter
     if plt is None:
         plt = vedo.Plotter(
-            N=N, sharecam=False, offscreen=offs, size=size, title=title
+                N=N, sharecam=False, offscreen=offs, size=size, title=title
         )
 
     else:
@@ -102,15 +102,19 @@ def show_vedo(
         clear_vedoplotter(plt, trueN)  # always clear.
         if trueN != N:
             utils.log.warning(
-                "Number of args exceed given vedo.Plotter's capacity.",
-                "Assigning a new one",
+                    "Number of args exceed given vedo.Plotter's capacity.",
+                    "Assigning a new one",
             )
             title = plt.title
             if close:  # only if it is explicitly stated
                 plt.close()  # Hope that this truely releases..
             # assign a new one
             plt = vedo.Plotter(
-                N=N, sharecam=False, offscreen=offs, size=size, title=title
+                    N=N,
+                    sharecam=False,
+                    offscreen=offs,
+                    size=size,
+                    title=title
             )
 
     # loop and plot
@@ -124,8 +128,8 @@ def show_vedo(
             # raise TypeError(
             #     "For vedo_show, only list or dict is valid input")
             utils.log.debug(
-                "one of args for show_vedo is neither `dict` nor",
-                "`list`. Putting it naively into a list.",
+                    "one of args for show_vedo is neither `dict` nor",
+                    "`list`. Putting it naively into a list."
             )
             showlist = [arg]
 
@@ -157,20 +161,20 @@ def show_vedo(
         # set interactive to true at last element
         if int(i + 1) == len(args):
             plt.show(
-                list_of_showables,
-                at=i,
-                interactive=interac,
-                camera=cam_tuple_to_list(cam),
-                # offscreen=offs,
+                    list_of_showables,
+                    at=i,
+                    interactive=interac,
+                    camera=cam_tuple_to_list(cam),
+                    # offscreen=offs,
             )
 
         else:
             plt.show(
-                list_of_showables,
-                at=i,
-                interactive=False,
-                camera=cam_tuple_to_list(cam),
-                # offscreen=offs,
+                    list_of_showables,
+                    at=i,
+                    interactive=False,
+                    camera=cam_tuple_to_list(cam),
+                    # offscreen=offs,
             )
 
     if interac and not offs:
@@ -199,157 +203,48 @@ def _vedo_showable(obj, **kwargs):
     --------
     vedo_obj: vedo obj
     """
-    # parse from vis_dict
-    # NOTE: maybe we can make a helper class to organize this nicely
-    basic_options = dict(
-        c=obj.vis_dict.get("c", None),
-        r=obj.vis_dict.get("r", None),
-        lw=obj.vis_dict.get("lw", None),
-        alpha=obj.vis_dict.get("alpha", None),
-        cmap=obj.vis_dict.get("cmap", None),
-        # > followings are cmap options
-        vmin=obj.vis_dict.get("vmin", None),
-        vmax=obj.vis_dict.get("vmax", None),
-        cmapalpha=obj.vis_dict.get("cmapalpha", 1),
-        # > takes scalarbar options as dict.
-        scalarbar=obj.vis_dict.get("scalarbar", None),
-        dataname=obj.vis_dict.get("dataname", None),
-        # <
-        arrows=obj.vis_dict.get("arrows", None),  # only for edges
-        # >only for edges internally treated same as `lw`,
-        # but higher priority
-        thickness=obj.vis_dict.get("thickness", None),
-        title=obj.vis_dict.get("title", "gustaf"),
-    )
-    # loop once more to extract basics from kwargs
-    # done after vis_dict, so that this overpowers
-    keys = list(kwargs.keys())  # to pop dict during loop
-    for key in keys:
-        if key in basic_options.keys():
-            basic_options[key] = kwargs[key]
-            kwargs.pop(key)
+    # minimal-initalization of vedo objects
+    vedo_obj = obj.show_options._initialize_showable()
+    # set common values. Could be a perfect place to try :=, but we want to
+    # support p3.6.
+    c = obj.show_options.get("c", None)
+    if c is not None:
+        vedo_obj.c(c)
+    alpha = obj.show_options.get("alpha", None)
+    if alpha is not None:
+        vedo_obj.alpha(alpha)
 
-    utils.log.debug("making vedo-showable obj")
-    local_options = dict()
-
-    if obj.kind == "vertex":
-        for key in ["c", "r", "alpha"]:
-            value = basic_options[key]
-            if value is not None:
-                local_options.update({key: value})
-
-        vobj = vedo.Points(
-            obj.vertices,
-            **local_options,
-        )
-
-    elif obj.kind == "edge":
-        for key in ["c", "lw", "alpha"]:
-            value = basic_options[key]
-            if value is not None:
-                local_options.update({key: value})
-
-        # edges can be arrows if vis_dict["arrows"] is set True
-        if not basic_options["arrows"]:
-            vobj = vedo.Lines(
-                obj.vertices[obj.edges],
-                **local_options,
-            )
-
-        else:
-            if basic_options.get("thickness", False):
-                local_options.update({"thickness": basic_options["thickness"]})
-
-            # turn lw into thickness if there's no thickness
-            elif local_options.get("lw", False):
-                thickness = local_options.pop("lw")
-                local_options.update({"thickness": thickness})
-
-            # `s` is another param for arrows
-            local_options.update({"s": obj.vis_dict.get("s", None)})
-
-            vobj = vedo.Arrows(
-                obj.vertices[obj.edges],
-                **local_options,
-            )
-
-    elif obj.kind == "face":
-        for key in ["c", "alpha"]:
-            value = basic_options[key]
-            if value is not None:
-                local_options.update({key: value})
-
-        vobj = vedo.Mesh(
-            [obj.vertices, obj.faces],
-            **local_options,
-        )
-
-    elif obj.kind == "volume":
-        from vtk import VTK_HEXAHEDRON as herr_hexa
-        from vtk import VTK_TETRA as frau_tetra
-
-        whatami = obj.whatami
-        if whatami.startswith("tet"):
-            grid_type = frau_tetra
-        elif whatami.startswith("hexa"):
-            grid_type = herr_hexa
-        else:
-            return None  # get_whatami should've rasied error..
-
-        if basic_options["dataname"]:
-            from gustaf.faces import Faces
-
-            # UGrid would be politically correct,
-            # but currently it can't show field
-            # so, extract only surface mesh
-            surf_ids = obj.single_faces()  # gets faces too
-            sfaces = Faces(obj.vertices, obj.faces()[surf_ids])
-            sfaces.remove_unreferenced_vertices()
-
-            vobj = sfaces.showable(backend="vedo")  # recursive alert
-
-        else:
-            vobj = vedo.UGrid(
-                [
-                    obj.vertices,
-                    obj.volumes,
-                    np.repeat([grid_type], len(obj.volumes)),
-                ]
-            )
-
-            if basic_options["c"] is None:
-                basic_options["c"] = "hotpink"
-
-            vobj.color(basic_options["c"])
-            vobj.alpha(basic_options["alpha"])
-
-    # this sets vedo v2021.0.6+ requirement
-    dname = basic_options["dataname"]
-    if dname is not None:
+    # data plotting
+    dataname = obj.show_options.get("dataname", None)
+    vertexdata = obj.vertexdata.get(dataname, None)
+    if dataname is not None and vertexdata is not None:
         # transfer data
-        vobj.pointdata[dname] = obj.vertexdata[dname]
+        vedo_obj.pointdata[dataname] = vertexdata
 
-        # default cmap is jet.
-        if basic_options["cmap"] is None:
-            basic_options["cmap"] = "jet"
+        # form cmap kwargs for init
+        cmap_keys = ("vmin", "vmax")
+        cmap_kwargs = obj.show_options[cmap_keys]
+        # set adefault cmap if needed
+        cmap_kwargs["cname"] = obj.show_options.get("cmap", "turbo")
+        cmap_kwargs["alpha"] = obj.show_options.get("cmapalpha", 1)
+        # add dataname
+        cmap_kwargs["input_array"] = dataname
 
-        # register cmap and data
-        vobj.cmap(
-            basic_options["cmap"],
-            input_array=dname,
-            on="points",  # hardcoded since yet, we don't have cell field
-            vmin=basic_options["vmin"],
-            vmax=basic_options["vmax"],
-            alpha=basic_options["cmapalpha"],
+        # set cmap
+        vedo_obj.cmap(**cmap_kwargs)
+
+        # at last, scalarbar
+        # deprecated function name, keeep it for now for backward compat
+        sb_kwargs = obj.show_options.get("scalarbar", None)
+        if sb_kwargs is not None:
+            vedo_obj.addScalarBar(**sb_kwargs)
+
+    elif dataname and not vertexdata:
+        utils.log.debug(
+                f"No vertexdata named '{dataname}' for {obj}. Skipping"
         )
-
-        # scalarbar?
-        scalarbar_dict = basic_options["scalarbar"]
-        if scalarbar_dict is not None:
-            # if horizontal==True, size doesnt really matter
-            vobj.addScalarBar(**scalarbar_dict)
-
-    return vobj
+        
+    return vedo_obj
 
 
 def _trimesh_showable(obj):
@@ -410,7 +305,6 @@ def interpolate_vedo_dictcam(cameras, resolutions, spline_degree=1):
     """
     try:
         import splinepy
-
         spp = True
 
     except ImportError:
@@ -425,7 +319,7 @@ def interpolate_vedo_dictcam(cameras, resolutions, spline_degree=1):
             for key in camkeys:
                 if cam[key] is None:
                     raise ValueError(
-                        f"One of the camera does not contain `{key}` info"
+                            f"One of the camera does not contain `{key}` info"
                     )
 
     interpolated_cams = []
@@ -434,8 +328,8 @@ def interpolate_vedo_dictcam(cameras, resolutions, spline_degree=1):
     if spp and spline_degree > 1 and len(cameras) > 2:
         if spline_degree > len(cameras):
             raise ValueError(
-                "Not enough camera to interpolate with "
-                f"spline degree {spline_degree}"
+                    "Not enough camera to interpolate with "
+                    f"spline degree {spline_degree}"
             )
 
         ps = []
@@ -454,21 +348,22 @@ def interpolate_vedo_dictcam(cameras, resolutions, spline_degree=1):
         for i, prop in enumerate([ps, fs, vs, ds, cs]):
             ispline = splinepy.BSpline()
             ispline.interpolate_curve(
-                query_points=prop,
-                degree=spline_degree,
-                save_query=False,
+                    query_points=prop,
+                    degree=spline_degree,
+                    save_query=False,
             )
             interpolated[camkeys[i]] = ispline.sample([total_cams])
 
         for i in range(total_cams):
             interpolated_cams.append(
-                {
-                    camkeys[0]: interpolated[camkeys[0]][i].tolist(),
-                    camkeys[1]: interpolated[camkeys[1]][i].tolist(),
-                    camkeys[2]: interpolated[camkeys[2]][i].tolist(),
-                    camkeys[3]: interpolated[camkeys[3]][i][0],  # float?
-                    camkeys[4]: interpolated[camkeys[4]][i].tolist(),
-                }
+                    {
+                            camkeys[0]: interpolated[camkeys[0]][i].tolist(),
+                            camkeys[1]: interpolated[camkeys[1]][i].tolist(),
+                            camkeys[2]: interpolated[camkeys[2]][i].tolist(),
+                            camkeys[3]:
+                            interpolated[camkeys[3]][i][0],  # float?
+                            camkeys[4]: interpolated[camkeys[4]][i].tolist(),
+                    }
             )
 
     else:
@@ -476,35 +371,33 @@ def interpolate_vedo_dictcam(cameras, resolutions, spline_degree=1):
         for startcam, endcam in zip(cameras[:-1], cameras[1:]):
             if i == 0:
                 interpolated = [
-                    np.linspace(
-                        startcam[ckeys],
-                        endcam[ckeys],
-                        resolutions,
-                    ).tolist()
-                    for ckeys in camkeys
+                        np.linspace(
+                                startcam[ckeys],
+                                endcam[ckeys],
+                                resolutions,
+                        ).tolist() for ckeys in camkeys
                 ]
 
             else:
                 interpolated = [
-                    np.linspace(
-                        startcam[ckeys],
-                        endcam[ckeys],
-                        int(resolutions + 1),
-                    )[1:].tolist()
-                    for ckeys in camkeys
+                        np.linspace(
+                                startcam[ckeys],
+                                endcam[ckeys],
+                                int(resolutions + 1),
+                        )[1:].tolist() for ckeys in camkeys
                 ]
 
             i += 1
 
             for j in range(resolutions):
                 interpolated_cams.append(
-                    {
-                        camkeys[0]: interpolated[0][j],
-                        camkeys[1]: interpolated[1][j],
-                        camkeys[2]: interpolated[2][j],
-                        camkeys[3]: interpolated[3][j],  # float?
-                        camkeys[4]: interpolated[4][j],
-                    }
+                        {
+                                camkeys[0]: interpolated[0][j],
+                                camkeys[1]: interpolated[1][j],
+                                camkeys[2]: interpolated[2][j],
+                                camkeys[3]: interpolated[3][j],  # float?
+                                camkeys[4]: interpolated[4][j],
+                        }
                 )
 
     return interpolated_cams
