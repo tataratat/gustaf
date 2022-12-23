@@ -2,7 +2,10 @@
 
 Classes to help organize options.
 """
+from copy import deepcopy
+
 from gustaf import settings
+from gustaf.utils import log
 
 
 class Option:
@@ -99,6 +102,8 @@ class ShowOption:
     applicable to the helpee class. Intented use is to create a
     subclass that would define valid options for helpee.
     Options should be described by Option object.
+    Helps all the way up to initializing backend showables up to their backend
+    specific common routines. ShowOption and ShowManager in a sense.
     """
     __slots__ = ("_helpee", "_options", "_backend")
 
@@ -163,15 +168,43 @@ class ShowOption:
                 self._options[self._backend] = dict()
 
         else:
-            pass
+            raise ValueError(f"{key} is an invalid option for {self._helps}.") 
 
     def __getitem__(self, key):
         """
+        operator[]
+
+        Parameters
+        ----------
+        key: str or iterable
+
+        Returns
+        -------
+        items: object or dict
         """
-        return self._options[self._backend][key]
+        if isinstance(key, str):
+            return self._options[self._backend][key]
+        elif hasattr(key, "__iter__"):
+            items = dict()
+            for k in key:
+                if k in self._options[self._backend]:
+                    items[k] = self._options[self._backend][k]
+            return items
+        else:
+            raise TypeError(f"Invalid key type for {type(self)}")
 
     def get(self, key, default):
         """
+        Gets value from key and default. Similar to dict.get()
+
+        Parameters
+        ----------
+        key: stir
+        default: object
+
+        Returns
+        -------
+        values: object
         """
         return self._options[self._backend].get(key, default)
 
@@ -189,6 +222,22 @@ class ShowOption:
         """
         for k, v in kwargs.items():
             self.__setitem__(k, v)
+
+    def valid_keys(self, backend=None):
+        """
+        Returns valid keys. Can directly specify backend. If not, returns
+        valid_keys for currently selected backend.
+
+        Parameters
+        ----------
+        backend: str
+
+        Returns
+        -------
+        valid_keys: dict_keys
+        """
+        backend = self._backend if backend is None else backend
+        return self._valid_options[backend].keys()
 
     def keys(self):
         """
@@ -248,7 +297,26 @@ class ShowOption:
         # put back default backend option dict
         self._options[self._backend] = dict()
 
-    def initialize_showable(self):
+    def copy_valid_options(self, copy_to):
+        """
+        Copies valid option to other showopts. Simply iterates and treis.
+
+        Parameters
+        ----------
+        copy_to: ShowOption
+
+        Returns
+        -------
+        None
+        """
+        if not isinstance(copy_to, ShowOption):
+            raise TypeError(f"copy_to should be a ShowOption")
+        valid_keys = copy_to.valid_keys()
+        for key, value in self.items():
+            if key in valid_keys:
+                copy_to[key] = deepcopy(value) # is deepcopy necessary?
+
+    def _initialize_showable(self):
         """
         Creates basic showable all the way up to backend common procedures.
 
@@ -260,4 +328,4 @@ class ShowOption:
         -------
         showable: object
         """
-        raise NotImplementedError
+        return eval(f"self._initialize_{self._backend}_showable()")
