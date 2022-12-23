@@ -4,8 +4,9 @@ import numpy as np
 from gustaf import settings
 from gustaf import utils
 from gustaf import show
-from gustaf.edges import Edges
 from gustaf import helpers
+from gustaf import show
+from gustaf.edges import Edges
 from gustaf.helpers.options import Option
 
 # special types for face texture option
@@ -42,6 +43,31 @@ class FacesShowOption(helpers.options.ShowOption):
     )
 
     _helps = "Faces"
+
+    def _initialize_vedo_showable(self):
+        """
+        Initializes Faces as vedo.Mesh
+
+        Parameters
+        ----------
+        None
+
+        Returns
+        -------
+        faces: vedo.Mesh
+        """
+        init_options = ("lw", "lc")
+        faces = show.vedo.Mesh(
+                [self._helpee.const_vertices, self._helpee.const_faces],
+                **self[init_options],
+        )
+
+        # forward texture if there's any
+        texture = self.get("texture", False)
+        if texture:
+            faces.texture(texture)
+
+        return faces
 
 
 class Faces(Edges):
