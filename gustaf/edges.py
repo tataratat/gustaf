@@ -69,6 +69,7 @@ class EdgesShowOption(helpers.options.ShowOption):
                     **self[init_options],
             )
 
+
 class Edges(Vertices):
 
     kind = "edge"
