@@ -41,10 +41,10 @@ class VerticesShowOption(helpers.options.ShowOption):
         -------
         initialized_showable: vedo.Points
         """
-        init_options = ("r")
+        init_options = ("r",)
 
         return show.vedo.Points(
-                self._helpee.const_vertices, **self[init_optionis]
+                self._helpee.const_vertices, **self[init_options]
         )
 
 

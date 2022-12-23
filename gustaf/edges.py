@@ -2,6 +2,7 @@
 
 Edges. Also known as lines.
 """
+from copy import deepcopy
 
 import numpy as np
 
@@ -55,7 +56,7 @@ class EdgesShowOption(helpers.options.ShowOption):
         -------
         edges: vedo.Lines or vedo.Arrows
         """
-        if self.get("as_arrwos", False):
+        if self.get("as_arrows", False):
             init_options = ("head_radius", "head_length", "shaft_radius")
             return show.vedo.Arrows(
                     self._helpee.const_vertices[self._helpee.edges],
@@ -63,7 +64,7 @@ class EdgesShowOption(helpers.options.ShowOption):
             )
 
         else:
-            init_options = ("lw")
+            init_options = ("lw",)
             return show.vedo.Lines(
                     self._helpee.const_vertices[self._helpee.edges],
                     **self[init_options],
@@ -445,7 +446,7 @@ class Edges(Vertices):
                 s_elements.vertexdata[key] = value[elements_flat]
 
             # probably wanna take visulation options too
-            s_elements.vis_dict = self.vis_dict
+            s_elements._show_options = deepcopy(self.show_options)
 
         return s_elements
 
