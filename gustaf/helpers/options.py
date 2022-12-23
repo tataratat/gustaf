@@ -24,7 +24,6 @@ class Option:
         self.key = key
         self.description = description
         self.allowed_types = allowed_types
- 
 
     def __repr__(self):
         specific = "\n".join(
@@ -49,7 +48,8 @@ vedo_common_options = (
         Option(
                 "vedo", "dataname", "Name of vertexdata to show. "
                 "Object must have vertexdata with the same name.", (str, )
-        ), Option("vedo", "cmap", "Colormap for vertexdata plots.", (str, )),
+        ),
+        Option("vedo", "cmap", "Colormap for vertexdata plots.", (str, )),
         Option("vedo", "vmin", "Minimum value for cmap", (float, int)),
         Option("vedo", "vmax", "Maximum value for cmap", (float, int)),
         Option(
@@ -65,7 +65,6 @@ vedo_common_options = (
                 "label_format: str}", (dict, )
         ),
 )
-
 
 # summarize vedo common keys for convenience
 vedo_common_keys = (vopt.key for vopt in vedo_common_options)
@@ -168,7 +167,7 @@ class ShowOption:
                 self._options[self._backend] = dict()
 
         else:
-            raise ValueError(f"{key} is an invalid option for {self._helps}.") 
+            raise ValueError(f"{key} is an invalid option for {self._helps}.")
 
     def __getitem__(self, key):
         """
@@ -314,7 +313,7 @@ class ShowOption:
         valid_keys = copy_to.valid_keys()
         for key, value in self.items():
             if key in valid_keys:
-                copy_to[key] = deepcopy(value) # is deepcopy necessary?
+                copy_to[key] = deepcopy(value)  # is deepcopy necessary?
 
     def _initialize_showable(self):
         """

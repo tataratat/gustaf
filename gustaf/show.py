@@ -243,7 +243,7 @@ def _vedo_showable(obj, **kwargs):
         utils.log.debug(
                 f"No vertexdata named '{dataname}' for {obj}. Skipping"
         )
-        
+
     return vedo_obj
 
 

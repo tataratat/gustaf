@@ -50,7 +50,7 @@ if __name__ == "__main__":
     tet.show()
 
     # display vertexdata
-    # assign values to vertexdata 
+    # assign values to vertexdata
     hexa.vertexdata["arange"] = np.arange(len(v))
     # set vertexdata to plot
     hexa.show_options["dataname"] = "arange"
