@@ -4,9 +4,6 @@ Spline visualization module. Supports visualization of following spline
 (para_dim, dim) pairs: ((1, 2), (1, 3), (2, 2), (2, 3), (3, 3)
 """
 
-from gustaf import settings
-from gustaf import show as showmodule
-from gustaf import helpers
 from gustaf.helpers import options
 
 
@@ -17,7 +14,7 @@ class SplineShowOption(options.ShowOption):
 
     # if we start to support more backends, most of this options should become
     # some sort of spline common.
-    _valid_options = helpers.options.make_valid_options(
+    _valid_options = options.make_valid_options(
         *options.vedo_common_options,
         options.Option(
             "vedo",
@@ -51,4 +48,3 @@ class SplineShowOption(options.ShowOption):
 
 def _vedo_show_para_dim_1():
     pass
-

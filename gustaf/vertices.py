@@ -121,7 +121,6 @@ class Vertices(GustafBase):
         # shape check
         utils.arr.is_shape(vs, (-1, -1), strict=True)
 
-
         # exact same, but not tracked.
         self._const_vertices = self._vertices.view()
         self._const_vertices.flags.writeable = False
