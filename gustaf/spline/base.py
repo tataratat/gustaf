@@ -3,19 +3,16 @@
 Base for splines. Contains show and inherited classes from `spline`.
 """
 
-import abc
-import logging
-
 import numpy as np
 import splinepy
 
 from gustaf import settings
 from gustaf import show as showmodule
 from gustaf._base import GustafBase
-from gustaf.utils.arr import enforce_len
 from gustaf.spline.create import Creator
 from gustaf.spline.extract import Extractor
 from gustaf.spline.proximity import Proximity
+from gustaf.utils.arr import enforce_len
 from gustaf.vertices import Vertices
 
 
@@ -262,14 +259,13 @@ def show(
 
 
 class GustafSpline(GustafBase):
-    @abc.abstractmethod
     def __init__(self):
         """Contructor as abstractmethod.
 
         This needs to be inherited first to make sure duplicating
         functions properly override splinepy.Spline
         """
-        pass
+        raise NotImplementedError
 
     @property
     def extract(self):
@@ -597,24 +593,6 @@ class BSpline(GustafSpline, splinepy.BSpline):
             weights=np.ones(self.control_points.shape[0], dtype="float64"),
         )
 
-    def extract_bezier_patches(self):
-        """Overwrites splinepy-parent's function to ensure the conversion of
-        Splines into a usable gustaf format.
-
-        Parameters
-        ----------
-        None
-
-        Returns
-        -------
-        None
-        """
-        logging.warning(
-            "Functionality not supported, please use:\n"
-            "<BSpline>.extract.beziers()"
-        )
-        return None
-
 
 class NURBS(GustafSpline, splinepy.NURBS):
     def __init__(
@@ -680,24 +658,6 @@ class NURBS(GustafSpline, splinepy.NURBS):
         )
 
         return gustaf2mfem, mfem2gustaf
-
-    def extract_bezier_patches(self):
-        """Overwrites splinepy-parent's function to ensure the conversion of
-        Splines into a usable gustaf format.
-
-        Parameters
-        ----------
-        None
-
-        Returns
-        -------
-        None
-        """
-        logging.warning(
-            "Functionality not supported, please use:\n"
-            "<NURBS>.extract.beziers()"
-        )
-        return None
 
     @property
     def nurbs(self):
