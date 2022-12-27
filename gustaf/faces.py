@@ -209,6 +209,10 @@ class Faces(Edges):
         """
         self._logd("setting faces")
 
+        self._faces = helpers.data.make_tracked_array(
+            fs,
+            settings.INT_DTYPE,
+        )
         # shape check
         if fs is not None:
             utils.arr.is_one_of_shapes(
@@ -217,10 +221,6 @@ class Faces(Edges):
                 strict=True,
             )
 
-        self._faces = helpers.data.make_tracked_array(
-            fs,
-            settings.INT_DTYPE,
-        )
         # same, but non-writeable view of tracekd array
         self._const_faces = self._faces.view()
         self._const_faces.flags.writeable = False
