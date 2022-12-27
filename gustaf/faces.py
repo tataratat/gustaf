@@ -1,10 +1,8 @@
 """gustaf/gustaf/faces.py."""
 import numpy as np
 
-from gustaf import settings
-from gustaf import utils
+from gustaf import helpers, settings, utils
 from gustaf.edges import Edges
-from gustaf import helpers
 
 
 class Faces(Edges):

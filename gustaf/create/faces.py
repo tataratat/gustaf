@@ -4,10 +4,8 @@ Routines to create faces.
 
 import numpy as np
 
+from gustaf import create, settings, utils
 from gustaf.faces import Faces
-from gustaf import utils
-from gustaf import create
-from gustaf import settings
 
 
 def box(

@@ -3,7 +3,7 @@ from setuptools import setup
 with open("gustaf/_version.py") as f:
     version = eval(f.read().strip().split("=")[-1])
 
-with open("README.md", "r") as f:
+with open("README.md") as f:
     readme = f.read()
 
 setup(

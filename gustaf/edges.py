@@ -5,9 +5,7 @@ Edges. Also known as lines.
 
 import numpy as np
 
-from gustaf import settings
-from gustaf import utils
-from gustaf import helpers
+from gustaf import helpers, settings, utils
 from gustaf.vertices import Vertices
 
 

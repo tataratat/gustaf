@@ -3,9 +3,8 @@
 Common imports/routines needed for testing.
 """
 
-import pytest
-
 import numpy as np
+import pytest
 
 import gustaf as gus
 

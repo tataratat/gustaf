@@ -7,8 +7,7 @@ even cooler, if it was palindrome.
 
 import numpy as np
 
-from gustaf import settings
-from gustaf import helpers
+from gustaf import helpers, settings
 from gustaf.utils import arr
 
 

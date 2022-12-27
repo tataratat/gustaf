@@ -1,4 +1,5 @@
 import numpy as np
+
 from gustaf.utils.arr import make_c_contiguous
 
 

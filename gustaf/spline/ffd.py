@@ -7,12 +7,14 @@ Adaptation of previous implementation in internal python package gustav by
 Jaewook Lee.
 """
 from typing import Any, List, Optional, Union
+
 import numpy as np
-from gustaf._base import GustafBase
-from gustaf.show import show_vedo
-from gustaf._typing import SPLINE_TYPES, MESH_TYPES, is_mesh, is_spline
-from gustaf.create.spline import with_bounds
+
 from gustaf import settings
+from gustaf._base import GustafBase
+from gustaf._typing import MESH_TYPES, SPLINE_TYPES, is_mesh, is_spline
+from gustaf.create.spline import with_bounds
+from gustaf.show import show_vedo
 
 
 class FFD(GustafBase):
@@ -118,8 +120,8 @@ class FFD(GustafBase):
             )
         self._logi("Setting mesh.")
         self._logi("Mesh Info:")
-        self._logi("  Vertices: {v}.".format(v=mesh.vertices.shape))
-        self._logi("  Bounds: {b}.".format(b=mesh.bounds()))
+        self._logi(f"  Vertices: {mesh.vertices.shape}.")
+        self._logi(f"  Bounds: {mesh.bounds()}.")
         self._o_mesh = mesh.copy()  # we keep original copy for visualization
         self._mesh = mesh.copy()  # another copy for current status.
 

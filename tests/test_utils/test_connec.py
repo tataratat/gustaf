@@ -1,13 +1,13 @@
 import numpy as np
+import pytest
 
 from gustaf.utils.connec import (
-    tet_to_tri,
-    hexa_to_quad,
     faces_to_edges,
-    make_quad_faces,
+    hexa_to_quad,
     make_hexa_volumes,
+    make_quad_faces,
+    tet_to_tri,
 )
-import pytest
 
 
 def test_tet_to_tri_throwException(sample_1d_array):

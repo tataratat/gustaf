@@ -1,8 +1,9 @@
 import argparse
 
 import numpy as np
-import gustaf as gus
 import vedo
+
+import gustaf as gus
 
 # this will cause a deprecated warning for newer version of vedo.
 # for backward compatibility, we keep this one.

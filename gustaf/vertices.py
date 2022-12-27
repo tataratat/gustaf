@@ -7,10 +7,7 @@ import copy
 
 import numpy as np
 
-from gustaf import settings
-from gustaf import utils
-from gustaf import show
-from gustaf import helpers
+from gustaf import helpers, settings, show, utils
 from gustaf._base import GustafBase
 
 

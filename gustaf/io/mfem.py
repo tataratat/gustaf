@@ -62,16 +62,16 @@ def load(fname):
             dtype=dtype,
         )
 
-    with open(fname, "r") as f:
+    with open(fname) as f:
         lines = f.readlines()
         total_lines = len(lines)
 
         # Read values of keywords
         keywords = ["dimension", "elements", "boundary", "vertices"]
         indices = [lines.index(f"{keyword}\n") for keyword in keywords]
-        dimension, n_elements, n_boundaries, n_vertices = [
+        dimension, n_elements, n_boundaries, n_vertices = (
             int(lines[index + 1]) for index in indices
-        ]
+        )
         vdim = int(lines[indices[-1] + 2])
         # Extract values
         elements = extract_values(

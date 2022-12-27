@@ -3,8 +3,8 @@ import itertools
 import numpy as np
 
 from gustaf._base import GustafBase
-from gustaf.spline import base
 from gustaf.show import show_vedo
+from gustaf.spline import base
 
 
 class Microstructure(GustafBase):

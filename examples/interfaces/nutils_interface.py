@@ -1,8 +1,8 @@
-from nutils import mesh, function, solver
+import numpy as np
+from nutils import function, mesh, solver
 from nutils.expression_v2 import Namespace
 
 import gustaf as gus
-import numpy as np
 
 """This example shows the functionality of gustaf.io.nutils.
 

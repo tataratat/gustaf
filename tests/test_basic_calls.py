@@ -1,6 +1,8 @@
-import gustaf as gus
 import unittest
+
 import pytest
+
+import gustaf as gus
 
 
 @pytest.mark.usefixtures("provide_data_to_unittest")

@@ -2,9 +2,7 @@
 
 import numpy as np
 
-from gustaf import utils
-from gustaf import helpers
-from gustaf import settings
+from gustaf import helpers, settings, utils
 from gustaf.faces import Faces
 
 

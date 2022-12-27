@@ -9,9 +9,9 @@ import struct
 import numpy as np
 
 from gustaf.faces import Faces
-from gustaf.volumes import Volumes
 from gustaf.io.ioutils import abs_fname, check_and_makedirs
 from gustaf.utils import log
+from gustaf.volumes import Volumes
 
 
 def load(

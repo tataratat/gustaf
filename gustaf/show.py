@@ -4,8 +4,7 @@ Everything related to show/visualization.
 """
 import numpy as np
 
-from gustaf import settings
-from gustaf import utils
+from gustaf import settings, utils
 from gustaf._base import GustafBase
 
 # @linux it raises error if vedo is imported inside the function.
@@ -286,8 +285,8 @@ def _vedo_showable(obj, **kwargs):
         )
 
     elif obj.kind == "volume":
-        from vtk import VTK_TETRA as frau_tetra
         from vtk import VTK_HEXAHEDRON as herr_hexa
+        from vtk import VTK_TETRA as frau_tetra
 
         whatami = obj.whatami
         if whatami.startswith("tet"):

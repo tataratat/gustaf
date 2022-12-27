@@ -6,17 +6,17 @@ Base for splines. Contains show and inherited classes from `spline`.
 import abc
 import logging
 
-import splinepy
 import numpy as np
+import splinepy
 
 from gustaf import settings
 from gustaf import show as showmodule
 from gustaf._base import GustafBase
-from gustaf.vertices import Vertices
+from gustaf.spline._utils import to_res_list
 from gustaf.spline.create import Creator
 from gustaf.spline.extract import Extractor
 from gustaf.spline.proximity import Proximity
-from gustaf.spline._utils import to_res_list
+from gustaf.vertices import Vertices
 
 
 def show(
@@ -197,6 +197,7 @@ def show(
         # generate parametric view of spline
         if parametric_space and spline.para_dim > 1:
             from vedo.addons import Axes
+
             from gustaf.create.spline import parametric_view
             from gustaf.utils.arr import bounds
 

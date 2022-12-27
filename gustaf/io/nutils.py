@@ -5,9 +5,9 @@ io functions for nutils.
 import numpy as np
 
 from gustaf.faces import Faces
-from gustaf.volumes import Volumes
-from gustaf.io.ioutils import abs_fname, check_and_makedirs
 from gustaf.io import mixd
+from gustaf.io.ioutils import abs_fname, check_and_makedirs
+from gustaf.volumes import Volumes
 
 
 def load(fname):

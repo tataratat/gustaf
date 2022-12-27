@@ -1,6 +1,7 @@
-import gustaf as gus
 import numpy as np
-from vedo import colors, Mesh
+from vedo import Mesh, colors
+
+import gustaf as gus
 
 # First Test
 generator = gus.spline.microstructure.Microstructure()

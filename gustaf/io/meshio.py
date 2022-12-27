@@ -9,8 +9,8 @@ from typing import Union
 import numpy as np
 
 from gustaf._typing import MESH_TYPES
-from gustaf.helpers.raise_if import ModuleImportRaiser
 from gustaf.faces import Faces
+from gustaf.helpers.raise_if import ModuleImportRaiser
 from gustaf.volumes import Volumes
 
 try:

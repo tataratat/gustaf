@@ -1,5 +1,6 @@
-import gustaf as gus
 import numpy as np
+
+import gustaf as gus
 
 if __name__ == "__main__":
 

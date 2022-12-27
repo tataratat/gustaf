@@ -8,12 +8,11 @@ import itertools
 import numpy as np
 
 from gustaf import utils
-from gustaf.vertices import Vertices
 from gustaf.edges import Edges
 from gustaf.faces import Faces
-from gustaf.volumes import Volumes
-
 from gustaf.spline._utils import to_res_list
+from gustaf.vertices import Vertices
+from gustaf.volumes import Volumes
 
 
 def edges(

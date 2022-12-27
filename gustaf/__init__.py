@@ -1,23 +1,25 @@
-from gustaf import _version
-from gustaf import settings
-from gustaf import vertices
-from gustaf import edges
-from gustaf import faces
-from gustaf import volumes
-from gustaf import show
-from gustaf import utils
-from gustaf import create
-from gustaf import io
-from gustaf import helpers
-from gustaf.vertices import Vertices
+from gustaf import (
+    _version,
+    create,
+    edges,
+    faces,
+    helpers,
+    io,
+    settings,
+    show,
+    utils,
+    vertices,
+    volumes,
+)
 from gustaf.edges import Edges
 from gustaf.faces import Faces
+from gustaf.vertices import Vertices
 from gustaf.volumes import Volumes
 
 has_spline = False
 try:
     from gustaf import spline
-    from gustaf.spline.base import BSpline, NURBS, Bezier, RationalBezier
+    from gustaf.spline.base import NURBS, Bezier, BSpline, RationalBezier
     from gustaf.spline.ffd import FFD
 
     has_spline = True

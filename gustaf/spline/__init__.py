@@ -6,23 +6,19 @@ However, since create.spline does not rely on `splinepy`, it is not
 here.
 """
 
-from gustaf.spline import base
-from gustaf.spline import create
-from gustaf.spline import extract
-from gustaf.spline.base import (
-    Bezier,
-    RationalBezier,
-    BSpline,
-    NURBS,
-    show,
-    from_mfem,
-    load_splines,
-)
-from gustaf.spline import ffd
-from gustaf.spline import microstructure
-
 import splinepy
 from splinepy import io
+
+from gustaf.spline import base, create, extract, ffd, microstructure
+from gustaf.spline.base import (
+    NURBS,
+    Bezier,
+    BSpline,
+    RationalBezier,
+    from_mfem,
+    load_splines,
+    show,
+)
 
 # overwrite name to type map
 splinepy.settings.NAME_TO_TYPE = dict(

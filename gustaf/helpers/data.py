@@ -4,8 +4,8 @@ Helps helpee to manage data. Some useful data structures.
 """
 
 import abc
-from functools import wraps
 from collections import namedtuple
+from functools import wraps
 
 import numpy as np
 

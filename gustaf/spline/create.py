@@ -6,8 +6,7 @@ Creates splines.
 import numpy as np
 from splinepy.spline import RequiredProperties
 
-from gustaf import utils
-from gustaf import settings
+from gustaf import settings, utils
 
 
 def extruded(spline, extrusion_vector=None):
@@ -364,7 +363,6 @@ def box(*lengths):
     from gustaf import Bezier
 
     # may dim check here?
-
     # starting point
     ndbox = Bezier(degrees=[1], control_points=[[0], [lengths[0]]])
     # use extrude

@@ -1,6 +1,5 @@
-from typing import Union
-
 import pathlib
+from typing import Union
 
 from gustaf._typing import MESH_TYPES
 from gustaf.io import meshio, mfem, mixd
