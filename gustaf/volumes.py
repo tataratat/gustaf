@@ -2,10 +2,7 @@
 
 import numpy as np
 
-from gustaf import utils
-from gustaf import helpers
-from gustaf import settings
-from gustaf import show
+from gustaf import helpers, settings, show, utils
 from gustaf.faces import Faces
 from gustaf.helpers.options import Option
 
@@ -14,16 +11,13 @@ class VolumesShowOption(helpers.options.ShowOption):
     """
     Show options for vertices.
     """
+
     _valid_options = helpers.options.make_valid_options(
-            *helpers.options.vedo_common_options,
-            Option(
-                    "vedo", "lw", "Width of edges (lines) in pixel units.",
-                    (int, )
-            ),
-            Option(
-                    "vedo", "lc", "Color of edges (lines).",
-                    (int, str, tuple, list)
-            ),
+        *helpers.options.vedo_common_options,
+        Option("vedo", "lw", "Width of edges (lines) in pixel units.", (int,)),
+        Option(
+            "vedo", "lc", "Color of edges (lines).", (int, str, tuple, list)
+        ),
     )
 
     _helps = "Volumes"
@@ -42,17 +36,17 @@ class VolumesShowOption(helpers.options.ShowOption):
         """
         # without a data to plot on the surface, return vedo.UGrid
         if self.get("dataname", None) is None:
-            from vtk import VTK_TETRA as frau_tetra
             from vtk import VTK_HEXAHEDRON as herr_hexa
+            from vtk import VTK_TETRA as frau_tetra
 
             to_vtktype = {"tet": frau_tetra, "hexa": herr_hexa}
             grid_type = to_vtktype[self._helpee.whatami]
             ugrid = show.vedo.UGrid(
-                    [
-                            self._helpee.const_vertices,
-                            self._helpee.const_volumes,
-                            [grid_type] * len(self._helpee.const_volumes),
-                    ]
+                [
+                    self._helpee.const_vertices,
+                    self._helpee.const_volumes,
+                    [grid_type] * len(self._helpee.const_volumes),
+                ]
             )
             return ugrid.c("hotpink")
 
@@ -71,29 +65,29 @@ class Volumes(Faces):
     kind = "volume"
 
     const_faces = helpers.raise_if.invalid_inherited_attr(
-            Faces.const_faces,
-            __qualname__,
-            property_=True,
+        Faces.const_faces,
+        __qualname__,
+        property_=True,
     )
     update_faces = helpers.raise_if.invalid_inherited_attr(
-            Faces.update_edges,
-            __qualname__,
-            property_=False,
+        Faces.update_edges,
+        __qualname__,
+        property_=False,
     )
 
     __slots__ = (
-            "_volumes",
-            "_const_volumes",
+        "_volumes",
+        "_const_volumes",
     )
 
     __show_option__ = VolumesShowOption
     __parent__ = Faces
 
     def __init__(
-            self,
-            vertices=None,
-            volumes=None,
-            elements=None,
+        self,
+        vertices=None,
+        volumes=None,
+        elements=None,
     ):
         """Volumes. It has vertices and volumes. Volumes could be tetrahedrons
         or hexahedrons.
@@ -154,8 +148,8 @@ class Volumes(Faces):
 
         else:
             raise ValueError(
-                    "Invalid volumes connectivity shape. It should be (n, 4) "
-                    f"or (n, 8), but given: {volume_obj.volumes.shape}"
+                "Invalid volumes connectivity shape. It should be (n, 4) "
+                f"or (n, 8), but given: {volume_obj.volumes.shape}"
             )
 
     @property
@@ -186,14 +180,14 @@ class Volumes(Faces):
         """
         if vols is not None:
             utils.arr.is_one_of_shapes(
-                    vols,
-                    ((-1, 4), (-1, 8)),
-                    strict=True,
+                vols,
+                ((-1, 4), (-1, 8)),
+                strict=True,
             )
 
         self._volumes = helpers.data.make_tracked_array(
-                vols,
-                settings.INT_DTYPE,
+            vols,
+            settings.INT_DTYPE,
         )
         # same, but non-writeable view of tracked array
         self._const_volumes = self._volumes.view()
@@ -244,8 +238,8 @@ class Volumes(Faces):
           valid attribut4es are {values, ids, inverse, counts}
         """
         unique_info = utils.connec.sorted_unique(
-                self.sorted_volumes(),
-                sorted_=True,
+            self.sorted_volumes(),
+            sorted_=True,
         )
 
         volumes = self._get_attr("volumes")
@@ -271,6 +265,6 @@ class Volumes(Faces):
         faces: Faces
         """
         return Faces(
-                self.vertices,
-                faces=self.unique_faces().values if unique else self.faces()
+            self.vertices,
+            faces=self.unique_faces().values if unique else self.faces(),
         )
