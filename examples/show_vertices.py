@@ -22,3 +22,8 @@ if __name__ == "__main__":
 
     # show
     vert.show()
+
+    # bigger and id labels
+    vert.show_options["r"] = 10
+    vert.show_options["vertex_ids"] = True
+    vert.show()
