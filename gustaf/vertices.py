@@ -34,7 +34,7 @@ class VerticesShowOption(helpers.options.ShowOption):
 
         Returns
         -------
-        initialized_showable: vedo.Points
+        vertices: vedo.Points
         """
         init_options = ("r",)
 
