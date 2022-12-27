@@ -397,8 +397,8 @@ class FFD(GustafBase):
             Returns, if applicable, the vedo plotter. 'close=False' as argument
             to get the plotter.
         """
-        if not (self._spline is None or self._mesh is None):
-            raise ValueError("Please set a spline before using this function.")
+        if (self._spline is None and self._mesh is None):
+            raise ValueError("Please set a mesh before calling show()")
         backend = kwargs.pop("backend", None)
         return_showable = kwargs.pop("return_showable", False)
         return_discrete = kwargs.pop("return_discrete", False)
