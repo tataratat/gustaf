@@ -2,7 +2,7 @@
 
 Useful base class for gustaf. Plus some useful decorators.
 """
-from gustaf import utils
+from gustaf.utils import log
 
 
 class GustafBase:
@@ -21,41 +21,13 @@ class GustafBase:
 
     __slots__ = ()
 
-    def _logd(self, *log):
-        """Debug logger wrapper for Mesh.
-
-        Parameters
-        -----------
-        *log: *str
-
-        Returns
-        --------
-        None
+    def __new__(cls, *args, **kwargs):
         """
-        utils.log.debug(type(self).__qualname__, "-", *log)
-
-    def _logi(self, *log):
-        """Info logger wrapper for Mesh.
-
-        Parameters
-        -----------
-        *log: *str
-
-        Returns
-        --------
-        None
+        Add logger shortcut.
         """
-        utils.log.info(type(self).__qualname__, "-", *log)
-
-    def _logw(self, *log):
-        """Warning logger wrapper for Mesh.
-
-        Parameters
-        -----------
-        *log: *str
-
-        Returns
-        --------
-        None
-        """
-        utils.log.warning(type(self).__qualname__, "-", *log)
+        cls._logi = log.prepended_log("<" + cls.__qualname__ + ">", log.info)
+        cls._logd = log.prepended_log("<" + cls.__qualname__ + ">", log.debug)
+        cls._logw = log.prepended_log(
+            "<" + cls.__qualname__ + ">", log.warning
+        )
+        return super().__new__(cls)
