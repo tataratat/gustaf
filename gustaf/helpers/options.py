@@ -61,6 +61,13 @@ vedo_common_options = (
     ),
     Option("vedo", "vertex_ids", "Show ids of vertices", (bool,)),
     Option("vedo", "element_ids", "Show ids of elements", (bool,)),
+    Option(
+        "vedo",
+        "lighting",
+        "Lighting options {'default', 'metallic', 'plastic', 'shiny', "
+        "'glossy', 'ambient', 'off'}",
+        (str,),
+    ),
     Option("vedo", "cmap", "Colormap for vertexdata plots.", (str,)),
     Option("vedo", "vmin", "Minimum value for cmap", (float, int)),
     Option("vedo", "vmax", "Maximum value for cmap", (float, int)),
@@ -79,6 +86,25 @@ vedo_common_options = (
         "nlabels: int, c: str, horizontal: bool, use_alpha: bool, "
         "label_format: str}",
         (dict,),
+    ),
+    Option(
+        "vedo",
+        "arrowdata",
+        "Name of vertexdata to plot as arrow. Corresponding data should be "
+        "at least 2D.",
+        (str,),
+    ),
+    Option(
+        "vedo",
+        "arrowdata_scale",
+        "Scaling factor for arrow data. Default is 1.",
+        (float,),
+    ),
+    Option(
+        "vedo",
+        "arrowdata_color",
+        "Color of arrowdata. Can be either cmap or any vedo acceptable color.",
+        (str, tuple, list, int),
     ),
 )
 
