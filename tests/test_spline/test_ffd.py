@@ -1,24 +1,25 @@
+from typing import List
+
 import numpy as np
 import pytest
-from typing import List
 
 from gustaf.spline.ffd import FFD
 
 
 @pytest.mark.parametrize(
-        "init_values, throw_error",
-        [
-                ([], False),  # test empty input
-                (["jallo"], True),
-                ([1], True),
-                (["fixture_bspline_2d"], True),
-                (["fixture_faces_tri"], False),
-                (["fixture_faces_quad"], False),
-                (["fixture_faces_tri", "fixture_bspline_3d"], False),
-                (["fixture_faces_tri", "fixture_bspline_3d_deformed"], False),
-                (["fixture_faces_tri", 1], True),
-                (["fixture_faces_tri", "testing"], True),
-        ]
+    "init_values, throw_error",
+    [
+        ([], False),  # test empty input
+        (["jallo"], True),
+        ([1], True),
+        (["fixture_bspline_2d"], True),
+        (["fixture_faces_tri"], False),
+        (["fixture_faces_quad"], False),
+        (["fixture_faces_tri", "fixture_bspline_3d"], False),
+        (["fixture_faces_tri", "fixture_bspline_3d_deformed"], False),
+        (["fixture_faces_tri", 1], True),
+        (["fixture_faces_tri", "testing"], True),
+    ],
 )
 def test_init_error(init_values: List, throw_error, request):
     for idx, value in enumerate(init_values):
@@ -101,13 +102,15 @@ def test_mesh(bspline_2d):
 
 
 @pytest.mark.parametrize(
-        "spline_str, value_error, notimplemented_error", (
-                (None, True, False), ("bspline_para_1_dim_2", False, False),
-                ("bezier_2d", False, True)
-        )
+    "spline_str, value_error, notimplemented_error",
+    (
+        (None, True, False),
+        ("bspline_para_1_dim_2", False, False),
+        ("bezier_2d", False, True),
+    ),
 )
 def test_elevate_degree(
-        spline_str, value_error, notimplemented_error, request
+    spline_str, value_error, notimplemented_error, request
 ):
     a = FFD()
 
@@ -130,12 +133,11 @@ def test_elevate_degree(
 
 @pytest.mark.parametrize(
     "spline_str, value_error, notimplemented_error",
-    (   # only one error type can be checked
+    (  # only one error type can be checked
         (None, True, False),
         ("bspline_para_1_dim_2", False, False),
-        ("bezier_2d", False, True)
-
-    )
+        ("bezier_2d", False, True),
+    ),
 )
 def test_insert_knots(spline_str, value_error, notimplemented_error, request):
     a = FFD()
@@ -145,13 +147,13 @@ def test_insert_knots(spline_str, value_error, notimplemented_error, request):
         a.spline = spline.copy()
     if value_error:
         with pytest.raises(ValueError):
-            a.insert_knots(0, [.5])
+            a.insert_knots(0, [0.5])
     elif notimplemented_error:
         with pytest.raises(NotImplementedError):
-            a.insert_knots(0, [.5])
+            a.insert_knots(0, [0.5])
     else:
         for current in [spline, a]:
-            current.insert_knots(0, [.5])
+            current.insert_knots(0, [0.5])
         assert np.allclose(spline.degrees, a.spline.degrees)
         assert np.allclose(spline.knot_vectors, a.spline.knot_vectors)
         assert np.allclose(spline.control_points, a.spline.control_points)
@@ -159,12 +161,11 @@ def test_insert_knots(spline_str, value_error, notimplemented_error, request):
 
 @pytest.mark.parametrize(
     "spline_str, value_error, notimplemented_error",
-    (   # only one error type can be checked
+    (  # only one error type can be checked
         (None, True, False),
         ("bspline_para_1_dim_2", False, False),
-        ("bezier_2d", False, True)
-
-    )
+        ("bezier_2d", False, True),
+    ),
 )
 def test_remove_knots(spline_str, value_error, notimplemented_error, request):
     a = FFD()
@@ -174,15 +175,15 @@ def test_remove_knots(spline_str, value_error, notimplemented_error, request):
         a.spline = spline.copy()
     if value_error:
         with pytest.raises(ValueError):
-            a.remove_knots(0, [.5])
+            a.remove_knots(0, [0.5])
     elif notimplemented_error:
         with pytest.raises(NotImplementedError):
-            a.remove_knots(0, [.5])
+            a.remove_knots(0, [0.5])
     else:
         for current in [spline, a]:
-            current.insert_knots(0, [.5])
+            current.insert_knots(0, [0.5])
         for current in [spline, a]:
-            current.remove_knots(0, [.5])
+            current.remove_knots(0, [0.5])
         assert np.allclose(spline.degrees, a.spline.degrees)
         assert np.allclose(spline.knot_vectors, a.spline.knot_vectors)
         assert np.allclose(spline.control_points, a.spline.control_points)
@@ -190,11 +191,11 @@ def test_remove_knots(spline_str, value_error, notimplemented_error, request):
 
 @pytest.mark.parametrize(
     "spline_str, value_error, notimplemented_error",
-    (   # only one error type can be checked
+    (  # only one error type can be checked
         (None, True, False),
         ("bspline_para_1_dim_2", False, False),
-        ("bezier_2d", False, True)
-    )
+        ("bezier_2d", False, True),
+    ),
 )
 def test_reduce_degree(spline_str, value_error, notimplemented_error, request):
     a = FFD()

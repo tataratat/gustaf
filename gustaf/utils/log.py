@@ -28,7 +28,9 @@ def configure(debug=False, logfile=None):
     if logfile is not None:
         file_logger_handler = logging.FileHandler(logfile)
         logger.addHandler(file_logger_handler)
-    logging.basicConfig(format="%(asctime)-15s [%(levelname)s]: %(message)s", )
+    logging.basicConfig(
+        format="%(asctime)-15s [%(levelname)s]: %(message)s",
+    )
 
 
 def debug(*log):

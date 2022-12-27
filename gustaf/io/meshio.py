@@ -9,8 +9,8 @@ from typing import Union
 import numpy as np
 
 from gustaf._typing import MESH_TYPES
-from gustaf.helpers.raise_if import ModuleImportRaiser
 from gustaf.faces import Faces
+from gustaf.helpers.raise_if import ModuleImportRaiser
 from gustaf.volumes import Volumes
 
 try:
@@ -43,8 +43,8 @@ def load(fname: Union[str, pathlib.Path]) -> MESH_TYPES:
     fname = pathlib.Path(fname)
     if not (fname.exists() and fname.is_file()):
         raise ValueError(
-                "The given file does not point to file. The given path is: "
-                f"{fname.resolve()}"
+            "The given file does not point to file. The given path is: "
+            f"{fname.resolve()}"
         )
 
     meshio_mesh: meshio.Mesh = meshio.read(fname)
@@ -52,16 +52,16 @@ def load(fname: Union[str, pathlib.Path]) -> MESH_TYPES:
 
     # check for 2D mesh
     # Try for triangle grid
-    cells = meshio_mesh.get_cells_type('triangle')
+    cells = meshio_mesh.get_cells_type("triangle")
     # If  no triangle elements, try for square
     if len(cells) == 0:
-        cells = meshio_mesh.get_cells_type('quad')
+        cells = meshio_mesh.get_cells_type("quad")
     if not len(cells) > 0:
         # 3D mesh
         mesh_type = Volumes
-        cells = meshio_mesh.get_cells_type('tetra')
+        cells = meshio_mesh.get_cells_type("tetra")
         if len(cells) == 0:
-            cells = meshio_mesh.get_cells_type('hexahedron')
+            cells = meshio_mesh.get_cells_type("hexahedron")
 
     for i, cell in enumerate(cells):
         if i == 0:

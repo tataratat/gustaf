@@ -3,19 +3,19 @@ import itertools
 import numpy as np
 
 from gustaf._base import GustafBase
-from gustaf.spline import base
 from gustaf.show import show_vedo
+from gustaf.spline import base
 
 
 class Microstructure(GustafBase):
     """Helper class to facilitatae the construction of microstructures."""
 
     def __init__(
-            self,
-            deformation_function=None,
-            tiling=None,
-            microtile=None,
-            parametrization_function=None
+        self,
+        deformation_function=None,
+        tiling=None,
+        microtile=None,
+        parametrization_function=None,
     ):
         """Helper class to facilitatae the construction of microstructures.
 
@@ -77,8 +77,8 @@ class Microstructure(GustafBase):
         """
         if not issubclass(type(deformation_function), base.GustafSpline):
             raise ValueError(
-                    "Deformation function must be Gustaf-Spline."
-                    " e.g. gustaf.NURBS"
+                "Deformation function must be Gustaf-Spline."
+                " e.g. gustaf.NURBS"
             )
         self._deformation_function = deformation_function
         self._sanity_check()
@@ -116,8 +116,7 @@ class Microstructure(GustafBase):
         if not isinstance(tiling, list):
             if not isinstance(tiling, int):
                 raise ValueError(
-                        "Tiling mus be either list of integers of integer "
-                        "value"
+                    "Tiling mus be either list of integers of integer " "value"
                 )
         self._tiling = tiling
         # Is defaulted to False using function arguments
@@ -150,9 +149,8 @@ class Microstructure(GustafBase):
         None
         """
         # place single tiles into a list to provide common interface
-        if (
-                isinstance(microtile, list)
-                or issubclass(type(microtile), base.GustafSpline)
+        if isinstance(microtile, list) or issubclass(
+            type(microtile), base.GustafSpline
         ):
             microtile = self._make_microtilable(microtile)
         # Assign Microtile object to member variable
@@ -225,22 +223,22 @@ class Microstructure(GustafBase):
         is_closed = closing_face_dim is not None
         if not is_closed and (closing_face is not None):
             raise ValueError(
-                    "Invalid format for closing_face argument, (handed: "
-                    f"{closing_face}), must be one of"
-                    "{'x', 'y', 'z'}"
+                "Invalid format for closing_face argument, (handed: "
+                f"{closing_face}), must be one of"
+                "{'x', 'y', 'z'}"
             )
 
         if is_closed:
             is_closed = True
             if closing_face_dim >= self._deformation_function.para_dim:
                 raise ValueError(
-                        "closing face must be smaller than the deformation "
-                        "function's parametric dimension"
+                    "closing face must be smaller than the deformation "
+                    "function's parametric dimension"
                 )
             if self._parametrization_function is None:
                 raise ValueError(
-                        "Faceclosure is currently only implemented for "
-                        "parametrized microstructures"
+                    "Faceclosure is currently only implemented for "
+                    "parametrized microstructures"
                 )
 
         # Prepare the deformation function
@@ -257,27 +255,27 @@ class Microstructure(GustafBase):
                     continue
                 inv_t = 1 / self.tiling[i_pd]
                 new_knots = [
-                        j * inv_t * (ukvs[i_pd][i] - ukvs[i_pd][i - 1])
-                        for i in range(1, len(ukvs[i_pd]))
-                        for j in range(1, self.tiling[i_pd])
+                    j * inv_t * (ukvs[i_pd][i] - ukvs[i_pd][i - 1])
+                    for i in range(1, len(ukvs[i_pd]))
+                    for j in range(1, self.tiling[i_pd])
                 ]
                 # insert knots in both the deformation function
                 deformation_function_copy.insert_knots(i_pd, new_knots)
         else:
             self._logd(
-                    "New knots will be inserted one by one with the objective"
-                    " to evenly distribute tiles within the parametric domain"
+                "New knots will be inserted one by one with the objective"
+                " to evenly distribute tiles within the parametric domain"
             )
             for i_pd in range(deformation_function_copy.para_dim):
-                n_current_spans = (len(ukvs[i_pd]) - 1)
+                n_current_spans = len(ukvs[i_pd]) - 1
                 if self.tiling[i_pd] == n_current_spans:
                     continue
                 elif self.tiling[i_pd] < n_current_spans:
                     self._logw(
-                            f"The requested tiling can not be provided, as "
-                            f"there are too many knotspans in the deformation"
-                            f" function. The tiling in parametric dimension "
-                            f"{i_pd} will be set to {n_current_spans}"
+                        f"The requested tiling can not be provided, as "
+                        f"there are too many knotspans in the deformation"
+                        f" function. The tiling in parametric dimension "
+                        f"{i_pd} will be set to {n_current_spans}"
                     )
                     self.tiling[i_pd] = n_current_spans
                 else:
@@ -288,16 +286,15 @@ class Microstructure(GustafBase):
                         add_knot = np.argmax(span_measure)
                         n_k_span[add_knot] += 1
                         span_measure[add_knot] *= n_k_span[add_knot] / (
-                                n_k_span[add_knot] + 1
+                            n_k_span[add_knot] + 1
                         )
 
                     new_knots = []
                     for i, nks in enumerate(n_k_span):
                         new_knots.extend(
-                                np.linspace(
-                                        ukvs[i_pd][i], ukvs[i_pd][i + 1],
-                                        nks + 2
-                                )[1:-1]
+                            np.linspace(
+                                ukvs[i_pd][i], ukvs[i_pd][i + 1], nks + 2
+                            )[1:-1]
                         )
                     deformation_function_copy.insert_knots(i_pd, new_knots)
 
@@ -310,37 +307,33 @@ class Microstructure(GustafBase):
         if is_parametrized:
             para_space_dimensions = [[u[0], u[-1]] for u in ukvs]
             def_fun_para_space = base.Bezier(
-                    degrees=[1] * deformation_function_copy.para_dim,
-                    control_points=np.array(
-                            list(
-                                    itertools.product(
-                                            *para_space_dimensions[::-1]
-                                    )
-                            )
-                    )[:, ::-1]
+                degrees=[1] * deformation_function_copy.para_dim,
+                control_points=np.array(
+                    list(itertools.product(*para_space_dimensions[::-1]))
+                )[:, ::-1],
             ).bspline
             for i_pd in range(deformation_function_copy.para_dim):
                 if self.tiling[i_pd] != 1:
                     def_fun_para_space.insert_knots(
-                            i_pd,
-                            deformation_function_copy.unique_knots[i_pd][1:-1]
+                        i_pd,
+                        deformation_function_copy.unique_knots[i_pd][1:-1],
                     )
             def_fun_para_space = def_fun_para_space.extract.beziers()
 
         # Determine element resolution
         element_resolutions = [
-                len(c) - 1 for c in deformation_function_copy.unique_knots
+            len(c) - 1 for c in deformation_function_copy.unique_knots
         ]
 
         # Start actual composition
         self._microstructure = []
         if is_parametrized:
             for i, (def_fun, def_fun_para) in enumerate(
-                    zip(def_fun_patches, def_fun_para_space)
+                zip(def_fun_patches, def_fun_para_space)
             ):
                 # Evaluate tile parameters
                 positions = def_fun_para.evaluate(
-                        self._microtile.evaluation_points
+                    self._microtile.evaluation_points
                 )
                 tile_parameters = self._parametrization_function(positions)
 
@@ -355,24 +348,24 @@ class Microstructure(GustafBase):
                     if index == 0:
                         # Closure at minimum id
                         tile = self._microtile.closing_tile(
-                                parameters=tile_parameters,
-                                closure=closing_face + "_min",
-                                **kwargs
+                            parameters=tile_parameters,
+                            closure=closing_face + "_min",
+                            **kwargs,
                         )
                     elif (index + 1) == element_resolutions[closing_face_dim]:
                         # Closure at minimum id
                         tile = self._microtile.closing_tile(
-                                parameters=tile_parameters,
-                                closure=closing_face + "_max",
-                                **kwargs
+                            parameters=tile_parameters,
+                            closure=closing_face + "_max",
+                            **kwargs,
                         )
                     else:
                         tile = self._microtile.create_tile(
-                                parameters=tile_parameters, **kwargs
+                            parameters=tile_parameters, **kwargs
                         )
                 else:
                     tile = self._microtile.create_tile(
-                            parameters=tile_parameters, **kwargs
+                        parameters=tile_parameters, **kwargs
                     )
 
                 # Perform composition
@@ -423,16 +416,17 @@ class Microstructure(GustafBase):
 
         if return_gustaf:
             return dict(
-                    deformation_function=deformation_function,
-                    microtile=microtile,
-                    microstructure=microstructure
+                deformation_function=deformation_function,
+                microtile=microtile,
+                microstructure=microstructure,
             )
 
         # Show in vedo
         return show_vedo(
-                ['Deformation Function', deformation_function],
-                ['Microtile', microtile],
-                ['Composed Microstructure', microstructure], **kwargs
+            ["Deformation Function", deformation_function],
+            ["Microtile", microtile],
+            ["Composed Microstructure", microstructure],
+            **kwargs,
         )
 
     def _sanity_check(self):
@@ -449,33 +443,34 @@ class Microstructure(GustafBase):
         passes: bool
         """
         if (
-                (self.deformation_function is None)
-                or (self.microtile is None) or (self.tiling is None)
+            (self.deformation_function is None)
+            or (self.microtile is None)
+            or (self.tiling is None)
         ):
             self._logd(
-                    "Current information not sufficient,"
-                    " awaiting further assignments"
+                "Current information not sufficient,"
+                " awaiting further assignments"
             )
             return False
         # Check if microtile object fulfils requirements
         if not hasattr(self._microtile, "create_tile"):
             raise ValueError(
-                    "Microtile class does not provide the necessary "
-                    "attribute `create_tile`, that is required for "
-                    "microstructure construction"
+                "Microtile class does not provide the necessary "
+                "attribute `create_tile`, that is required for "
+                "microstructure construction"
             )
         if not hasattr(self._microtile, "dim"):
             raise ValueError(
-                    "Microtile class does not provide the necessary "
-                    "attribute `dim`, defining the dimensionality of "
-                    "the created tile"
+                "Microtile class does not provide the necessary "
+                "attribute `dim`, defining the dimensionality of "
+                "the created tile"
             )
 
         # Check if parametric dimensions are consistent
         if not self.deformation_function.para_dim == self._microtile.dim:
             raise ValueError(
-                    "Microtile dimension must match parametric dimension of "
-                    "deformation function to enable composition"
+                "Microtile dimension must match parametric dimension of "
+                "deformation function to enable composition"
             )
 
         # Check if tiling is consistent
@@ -483,37 +478,37 @@ class Microstructure(GustafBase):
             self.tiling = [self.tiling] * self.deformation_function.para_dim
         if len(self.tiling) != self.deformation_function.para_dim:
             raise ValueError(
-                    "Tiling list must have one entry per parametric dimension"
-                    " of the deformation function"
+                "Tiling list must have one entry per parametric dimension"
+                " of the deformation function"
             )
         if self.parametrization_function is not None:
             self._logd("Checking compatibility of parametrization function")
             if not hasattr(self._microtile, "evaluation_points"):
                 raise ValueError(
-                        "Microtile class does not provide the necessary "
-                        "attribute `evaluation_points`, that is required for"
-                        " a parametrized microstructure construction"
+                    "Microtile class does not provide the necessary "
+                    "attribute `evaluation_points`, that is required for"
+                    " a parametrized microstructure construction"
                 )
             if not hasattr(self._microtile, "parameter_space_dimension"):
                 raise ValueError(
-                        "Microtile class does not provide the necessary "
-                        "attribute `parameter_space_dimension`, that is "
-                        "required for a parametrized microstructure "
-                        "construction"
+                    "Microtile class does not provide the necessary "
+                    "attribute `parameter_space_dimension`, that is "
+                    "required for a parametrized microstructure "
+                    "construction"
                 )
             result = self._parametrization_function(
-                    self._microtile.evaluation_points
+                self._microtile.evaluation_points
             )
             if not isinstance(result, tuple):
                 raise ValueError(
-                        "Function outline of parametrization function must be "
-                        "`f(np.ndarray)->tuple`"
+                    "Function outline of parametrization function must be "
+                    "`f(np.ndarray)->tuple`"
                 )
             if not len(result) == self._microtile.parameter_space_dimension:
                 raise ValueError(
-                        "Return type of Parametrization function is "
-                        "insufficient, check documentation of Microtile for "
-                        "dimensionality"
+                    "Return type of Parametrization function is "
+                    "insufficient, check documentation of Microtile for "
+                    "dimensionality"
                 )
         # Complete check
         return True
@@ -530,8 +525,7 @@ class Microstructure(GustafBase):
         return _UserTile(microtile)
 
 
-class _UserTile():
-
+class _UserTile:
     def __init__(self, microtile):
         """
         On the fly created class of a user tile
@@ -548,8 +542,8 @@ class _UserTile():
         for m in microtile:
             if not issubclass(type(m), base.GustafSpline):
                 raise ValueError(
-                        "Microtiles must be (list of) "
-                        "gustaf.GustafSplines. e.g. gustaf.NURBS"
+                    "Microtiles must be (list of) "
+                    "gustaf.GustafSplines. e.g. gustaf.NURBS"
                 )
             # Extract beziers for every non Bezier patch else this just
             # returns itself

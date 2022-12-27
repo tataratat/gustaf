@@ -41,11 +41,11 @@ def make_c_contiguous(array, dtype=None):
 
 
 def unique_rows(
-        in_arr,
-        return_index=True,
-        return_inverse=True,
-        return_counts=True,
-        dtype_name=None,
+    in_arr,
+    return_index=True,
+    return_inverse=True,
+    return_counts=True,
+    dtype_name=None,
 ):
     """
     Find unique rows using np.unique, but apply tricks. Adapted from
@@ -78,10 +78,10 @@ def unique_rows(
     in_arr_row_view = in_arr.view(f"|S{in_arr.itemsize * in_arr.shape[1]}")
 
     unique_stuff = np.unique(
-            in_arr_row_view,
-            return_index=True,
-            return_inverse=return_inverse,
-            return_counts=return_counts,
+        in_arr_row_view,
+        return_index=True,
+        return_inverse=return_inverse,
+        return_counts=return_counts,
     )
     unique_stuff = list(unique_stuff)  # list, to allow item assignment
 
@@ -123,23 +123,23 @@ def close_rows(arr, tolerance=None):
 
     # Ball point query, taking tolerance as radius
     neighbors = kdt.query_ball_point(
-            arr,
-            tolerance,
-            # workers=workers,
-            # return_sorted=True # new in 1.6, but default is True, so pass.
+        arr,
+        tolerance,
+        # workers=workers,
+        # return_sorted=True # new in 1.6, but default is True, so pass.
     )
 
     # inverse based on original vertices.
     o_inverse = np.array(
-            [n[0] for n in neighbors],
-            dtype=settings.INT_DTYPE,
+        [n[0] for n in neighbors],
+        dtype=settings.INT_DTYPE,
     )
 
     # unique of o_inverse, and inverse based on that
     (_, uniq_id, inv) = np.unique(
-            o_inverse,
-            return_index=True,
-            return_inverse=True,
+        o_inverse,
+        return_index=True,
+        return_inverse=True,
     )
 
     return (arr[uniq_id], uniq_id, inv, neighbors)
@@ -157,10 +157,10 @@ def bounds(arr):
     bounds: (2, d) np.ndarray
     """
     return np.vstack(
-            (
-                    np.min(arr, axis=0).ravel(),
-                    np.max(arr, axis=0).ravel(),
-            )
+        (
+            np.min(arr, axis=0).ravel(),
+            np.max(arr, axis=0).ravel(),
+        )
     )
 
 
@@ -302,8 +302,9 @@ def rotate(arr, rotation, rotation_axis=None, degree=True):
     """
     arr = make_c_contiguous(arr, settings.FLOAT_DTYPE)
     if rotation_axis is not None:
-        rotation_axis = make_c_contiguous(rotation_axis,
-                                          settings.FLOAT_DTYPE).ravel()
+        rotation_axis = make_c_contiguous(
+            rotation_axis, settings.FLOAT_DTYPE
+        ).ravel()
 
     if rotation_axis is None:
         return np.matmul(arr, rotation_matrix(rotation, degree))
@@ -355,25 +356,27 @@ def rotation_matrix_around_axis(axis=None, rotation=None, degree=True):
     # Assemble rotation matrix
     if problem_dimension == 2:
         rotation_matrix = np.array(
-                [
-                        [np.cos(rotation), -np.sin(rotation)],
-                        [np.sin(rotation), np.cos(rotation)]
-                ]
+            [
+                [np.cos(rotation), -np.sin(rotation)],
+                [np.sin(rotation), np.cos(rotation)],
+            ]
         )
     else:
         # See Rodrigues' formula
         rotation_matrix = np.array(
-                [
-                        [0, -axis[2], axis[1]],
-                        [axis[2], 0, -axis[0]],
-                        [-axis[1], axis[0], 0],
-                ]
+            [
+                [0, -axis[2], axis[1]],
+                [axis[2], 0, -axis[0]],
+                [-axis[1], axis[0], 0],
+            ]
         )
         rotation_matrix = (
-                np.eye(3) + np.sin(rotation) * rotation_matrix + (
-                        (1 - np.cos(rotation))
-                        * np.matmul(rotation_matrix, rotation_matrix)
-                )
+            np.eye(3)
+            + np.sin(rotation) * rotation_matrix
+            + (
+                (1 - np.cos(rotation))
+                * np.matmul(rotation_matrix, rotation_matrix)
+            )
         )
 
     return rotation_matrix
@@ -436,7 +439,7 @@ def is_one_of_shapes(arr, shapes, strict=False):
     if not matches:
         if strict:
             raise ValueError(
-                    f"array's shape {arr.shape} is not one of f{shapes}"
+                f"array's shape {arr.shape} is not one of f{shapes}"
             )
         return False
 

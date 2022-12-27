@@ -1,6 +1,8 @@
-import gustaf as gus
 import unittest
+
 import pytest
+
+import gustaf as gus
 
 
 @pytest.mark.usefixtures("provide_data_to_unittest")
@@ -23,7 +25,7 @@ class BasicCallsTest(unittest.TestCase):
         v.bounds()
         v.bounds_diagonal()
         v.bounds_diagonal_norm()
-        v.select_vertices([[-1, .5], [-1, .5], [-1, .5]])
+        v.select_vertices([[-1, 0.5], [-1, 0.5], [-1, 0.5]])
         v.copy()
 
         # v.update_vertices()
@@ -34,8 +36,7 @@ class BasicCallsTest(unittest.TestCase):
         # gus.Vertices.concat()
 
     def test_edges_basics(self):
-        """
-        """
+        """ """
         es = gus.Edges(self.V, self.E)
         es.edges = es.edges
         es.const_edges

@@ -5,9 +5,9 @@ Closest what?
 
 
 def closest_control_points(
-        spline,
-        query_points,
-        return_distances=False,
+    spline,
+    query_points,
+    return_distances=False,
 ):
     """Returns indices of closest control points.
 
@@ -41,8 +41,8 @@ def closest_control_points(
 
 
 def closest_parametric_coordinate(
-        spline,
-        query_points,
+    spline,
+    query_points,
 ):
     """Finds closest points using."""
     pass

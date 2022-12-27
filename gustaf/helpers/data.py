@@ -4,8 +4,8 @@ Helps helpee to manage data. Some useful data structures.
 """
 
 import abc
-from functools import wraps
 from collections import namedtuple
+from functools import wraps
 
 import numpy as np
 
@@ -39,7 +39,7 @@ class TrackedArray(np.ndarray):
 
     @property
     def mutable(self):
-        return self.flags['WRITEABLE']
+        return self.flags["WRITEABLE"]
 
     @mutable.setter
     def mutable(self, value):
@@ -174,15 +174,15 @@ def make_tracked_array(array, dtype=None, copy=True):
         tracked = tracked.view(TrackedArray)
 
     # should always be contiguous here
-    assert tracked.flags['C_CONTIGUOUS']
+    assert tracked.flags["C_CONTIGUOUS"]
 
     return tracked
 
 
 class DataHolder(abc.ABC):
     __slots__ = [
-            "_helpee",
-            "_saved",
+        "_helpee",
+        "_saved",
     ]
 
     def __init__(self, helpee):
@@ -213,8 +213,8 @@ class DataHolder(abc.ABC):
         None
         """
         raise NotImplementedError(
-                "Sorry, you can't set items directly for "
-                f"{type(self).__qualname__}"
+            "Sorry, you can't set items directly for "
+            f"{type(self).__qualname__}"
         )
 
     def __getitem__(self, key):
@@ -407,9 +407,9 @@ class ComputedData(DataHolder):
 
 
 Unique2DFloats = namedtuple(
-        "Unique2DFloats", ["values", "ids", "inverse", "intersection"]
+    "Unique2DFloats", ["values", "ids", "inverse", "intersection"]
 )
-"""
+Unique2DFloats.__doc__ = """
 namedtuple to hold unique information of float type arrays.
 Note that for float types, "close enough" might be a better name than unique.
 This way, all tracked arrays, as long as they are 2D, have a dot separated
@@ -427,9 +427,10 @@ Unique2DFloats.intersection.__doc__ = """`(m) list of list`
 """
 
 Unique2DIntegers = namedtuple(
-        "Unique2DIntegers", ["values", "ids", "inverse", "counts"]
+    "Unique2DIntegers", ["values", "ids", "inverse", "counts"]
 )
-"""namedtuple to hold unique information of integer type arrays.
+Unique2DIntegers.__doc__ = """
+namedtuple to hold unique information of integer type arrays.
 Similar approach to Unique2DFloats.
 """
 
@@ -448,4 +449,5 @@ class ComputedMeshData(ComputedData):
 
     Subclassed to keep its own dependency info.
     """
+
     pass

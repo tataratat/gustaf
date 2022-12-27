@@ -1,5 +1,5 @@
-from typing import Union, Any
 import sys
+from typing import Any, Union
 
 from gustaf.edges import Edges
 from gustaf.faces import Faces
@@ -9,7 +9,8 @@ from gustaf.volumes import Volumes
 MESH_TYPES = Union[Vertices, Edges, Faces, Volumes]
 
 try:
-    from gustaf.spline.base import BSpline, NURBS, Bezier, RationalBezier
+    from gustaf.spline.base import NURBS, Bezier, BSpline, RationalBezier
+
     SPLINE_TYPES = Union[Bezier, RationalBezier, BSpline, NURBS]
 except ImportError:
     SPLINE_TYPES = None

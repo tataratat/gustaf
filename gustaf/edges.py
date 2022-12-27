@@ -5,9 +5,7 @@ Edges. Also known as lines.
 
 import numpy as np
 
-from gustaf import settings
-from gustaf import utils
-from gustaf import helpers
+from gustaf import helpers, settings, utils
 from gustaf.vertices import Vertices
 
 
@@ -16,15 +14,15 @@ class Edges(Vertices):
     kind = "edge"
 
     __slots__ = (
-            "_edges",
-            "_const_edges",
+        "_edges",
+        "_const_edges",
     )
 
     def __init__(
-            self,
-            vertices=None,
-            edges=None,
-            elements=None,
+        self,
+        vertices=None,
+        edges=None,
+        elements=None,
     ):
         """Edges. It has vertices and edges. Also known as lines.
 
@@ -138,7 +136,7 @@ class Edges(Vertices):
           valid attributes are {values, ids, inverse, counts}
         """
         unique_info = utils.connec.sorted_unique(
-                self.sorted_edges(), sorted_=True
+            self.sorted_edges(), sorted_=True
         )
 
         edges = self._get_attr("edges")
@@ -236,7 +234,9 @@ class Edges(Vertices):
         return self.const_vertices[self.const_elements].mean(axis=1)
 
     @helpers.data.ComputedMeshData.depends_on(["vertices", "elements"])
-    def referenced_vertices(self, ):
+    def referenced_vertices(
+        self,
+    ):
         """Returns mask of referenced vertices.
 
         Parameters
@@ -270,8 +270,8 @@ class Edges(Vertices):
         inverse[referenced] = np.arange(referenced.sum())
 
         return self.update_vertices(
-                mask=referenced,
-                inverse=inverse,
+            mask=referenced,
+            inverse=inverse,
         )
 
     def update_elements(self, mask):
@@ -347,7 +347,7 @@ class Edges(Vertices):
 
         return Edges(vertices=new_vs, edges=new_es)
 
-    def shrink(self, ratio=.8, map_vertexdata=True):
+    def shrink(self, ratio=0.8, map_vertexdata=True):
         """Returns shrunk elements.
 
         Parameters
