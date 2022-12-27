@@ -243,6 +243,7 @@ def _vedo_showable(obj, as_dict=False, **kwargs):
             )
             element_ids = False
     if vertex_ids:
+        # use vtk font. supposedly faster. And differs from cellid.
         vertex_ids = vedo_obj.labels("id", on="points", font="VTK")
         if not as_dict:
             vedo_obj += vertex_ids
