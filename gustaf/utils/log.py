@@ -4,7 +4,7 @@ Thin logging wrapper.
 """
 
 import logging
-import functools
+from functools import partial
 
 
 def configure(debug=False, logfile=None):
@@ -27,9 +27,7 @@ def configure(debug=False, logfile=None):
     logger.setLevel(level)
 
     # format
-    formatter = logging.Formatter(
-            fmt="%(name)s [%(levelname)s] %(message)s"
-    )
+    formatter = logging.Formatter(fmt="%(name)s [%(levelname)s] %(message)s")
 
     # apply format using stream handler
     # let's use only one stream handler so that calling configure multiple
@@ -101,3 +99,20 @@ def warning(*log):
     """
     logger = logging.getLogger("gustaf")
     logger.warning(" ".join(map(str, log)))
+
+
+def prepended_log(message, log_func):
+    """
+    Prepend message before a logging function.
+
+    Parameters
+    ----------
+    messgae: str
+    log_func: function
+      one of the followings - {info, debug, warning}
+
+    Returns
+    -------
+    prepended: function
+    """
+    return partial(log_func, message)
