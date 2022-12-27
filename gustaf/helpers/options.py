@@ -5,18 +5,18 @@ Classes to help organize options.
 from copy import deepcopy
 
 from gustaf import settings
-from gustaf.utils import log
 
 
 class Option:
     """
     Minimal Class to hold each options. Mainly to replace nested dict.
     """
+
     __slots__ = (
-            "backend",
-            "key",
-            "description",
-            "allowed_types",
+        "backend",
+        "key",
+        "description",
+        "allowed_types",
     )
 
     def __init__(self, backend, key, description, allowed_types):
@@ -27,43 +27,57 @@ class Option:
 
     def __repr__(self):
         specific = "\n".join(
-                [
-                        "", self.key, "=" * len(self.key),
-                        "backend: " + self.backend, "description:",
-                        "  " + str(self.description), "allowed_types:",
-                        "  " + str(self.allowed_types),
-                        super().__repr__(), ""
-                ]
+            [
+                "",
+                self.key,
+                "=" * len(self.key),
+                "backend: " + self.backend,
+                "description:",
+                "  " + str(self.description),
+                "allowed_types:",
+                "  " + str(self.allowed_types),
+                super().__repr__(),
+                "",
+            ]
         )
         return specific
 
 
 # predefine recurring options
 vedo_common_options = (
-        Option(
-                "vedo", "c", "Color in {rgb, RGB, str of (hex, name), int}",
-                (str, tuple, list, int)
-        ),
-        Option("vedo", "alpha", "Transparency in range [0, 1].", (float, int)),
-        Option(
-                "vedo", "dataname", "Name of vertexdata to show. "
-                "Object must have vertexdata with the same name.", (str, )
-        ),
-        Option("vedo", "cmap", "Colormap for vertexdata plots.", (str, )),
-        Option("vedo", "vmin", "Minimum value for cmap", (float, int)),
-        Option("vedo", "vmax", "Maximum value for cmap", (float, int)),
-        Option(
-                "vedo", "cmapalpha", "Colormap Transparency in range [0, 1].",
-                (float, int)
-        ),
-        Option(
-                "vedo", "scalarbar",
-                "Scalarbar describing cmap. At least an empty dict or "
-                "dict with following items are accepted: "
-                "{title: str, pos: tuple, title_yoffset: int, font_size: int, "
-                "nlabels: int, c: str, horizontal: bool, use_alpha: bool, "
-                "label_format: str}", (dict, )
-        ),
+    Option(
+        "vedo",
+        "c",
+        "Color in {rgb, RGB, str of (hex, name), int}",
+        (str, tuple, list, int),
+    ),
+    Option("vedo", "alpha", "Transparency in range [0, 1].", (float, int)),
+    Option(
+        "vedo",
+        "dataname",
+        "Name of vertexdata to show. "
+        "Object must have vertexdata with the same name.",
+        (str,),
+    ),
+    Option("vedo", "cmap", "Colormap for vertexdata plots.", (str,)),
+    Option("vedo", "vmin", "Minimum value for cmap", (float, int)),
+    Option("vedo", "vmax", "Maximum value for cmap", (float, int)),
+    Option(
+        "vedo",
+        "cmapalpha",
+        "Colormap Transparency in range [0, 1].",
+        (float, int),
+    ),
+    Option(
+        "vedo",
+        "scalarbar",
+        "Scalarbar describing cmap. At least an empty dict or "
+        "dict with following items are accepted: "
+        "{title: str, pos: tuple, title_yoffset: int, font_size: int, "
+        "nlabels: int, c: str, horizontal: bool, use_alpha: bool, "
+        "label_format: str}",
+        (dict,),
+    ),
 )
 
 # summarize vedo common keys for convenience
@@ -104,6 +118,7 @@ class ShowOption:
     Helps all the way up to initializing backend showables up to their backend
     specific common routines. ShowOption and ShowManager in a sense.
     """
+
     __slots__ = ("_helpee", "_options", "_backend")
 
     _valid_options = dict()
@@ -119,8 +134,8 @@ class ShowOption:
         self._helpee = helpee  # maybe won't save
         if not type(helpee).__qualname__.startswith(self._helps):
             raise TypeError(
-                    f"This show option is for {self._helps}. "
-                    f"Given helpee is {type(helpee)}."
+                f"This show option is for {self._helps}. "
+                f"Given helpee is {type(helpee)}."
             )
         self._options = dict()
         self._backend = settings.VISUALIZATION_BACKEND
@@ -144,13 +159,12 @@ class ShowOption:
         if key in self._valid_options[self._backend].keys():
             # valid type check
             if not isinstance(
-                    value,
-                    self._valid_options[self._backend][key].allowed_types
+                value, self._valid_options[self._backend][key].allowed_types
             ):
                 raise TypeError(
-                        f"{type(value)} is invalid value type for '{key}'. "
-                        f"Details for '{key}':\n"
-                        f"{self._valid_options[self._backend][key]}"
+                    f"{type(value)} is invalid value type for '{key}'. "
+                    f"Details for '{key}':\n"
+                    f"{self._valid_options[self._backend][key]}"
                 )
 
             # types are valid. let's add
@@ -160,7 +174,7 @@ class ShowOption:
             # special keyword.
             if not isinstance(value, str):
                 raise TypeError(
-                        f"Invalid backend info ({value}). Must be a str"
+                    f"Invalid backend info ({value}). Must be a str"
                 )
             self._backend = value
             if not self._options.get(self._backend, False):
@@ -309,7 +323,7 @@ class ShowOption:
         None
         """
         if not isinstance(copy_to, ShowOption):
-            raise TypeError(f"copy_to should be a ShowOption")
+            raise TypeError("copy_to should be a ShowOption")
         valid_keys = copy_to.valid_keys()
         for key, value in self.items():
             if key in valid_keys:

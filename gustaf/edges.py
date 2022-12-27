@@ -6,10 +6,7 @@ from copy import deepcopy
 
 import numpy as np
 
-from gustaf import settings
-from gustaf import utils
-from gustaf import helpers
-from gustaf import show
+from gustaf import helpers, settings, show, utils
 from gustaf.helpers.options import Option
 from gustaf.vertices import Vertices
 
@@ -18,28 +15,29 @@ class EdgesShowOption(helpers.options.ShowOption):
     """
     Show options for vertices.
     """
+
     _valid_options = helpers.options.make_valid_options(
-            *helpers.options.vedo_common_options,
-            Option(
-                    "vedo", "lw", "Width of edges (lines) in pixel units.",
-                    (int, )
-            ),
-            Option("vedo", "as_arrows", "Show edges as arrows.", (bool, )),
-            Option(
-                    "vedo", "head_radius",
-                    "Radius of arrow head. Applicable if as_arrows is True",
-                    (float, int)
-            ),
-            Option(
-                    "vedo", "head_length",
-                    "Length of arrow head. Applicable if as_arrows is True",
-                    (float, int)
-            ),
-            Option(
-                    "vedo", "shaft_radius",
-                    "Radius of arrow shaft. Applicable if as_arrows is True",
-                    (float, int)
-            ),
+        *helpers.options.vedo_common_options,
+        Option("vedo", "lw", "Width of edges (lines) in pixel units.", (int,)),
+        Option("vedo", "as_arrows", "Show edges as arrows.", (bool,)),
+        Option(
+            "vedo",
+            "head_radius",
+            "Radius of arrow head. Applicable if as_arrows is True",
+            (float, int),
+        ),
+        Option(
+            "vedo",
+            "head_length",
+            "Length of arrow head. Applicable if as_arrows is True",
+            (float, int),
+        ),
+        Option(
+            "vedo",
+            "shaft_radius",
+            "Radius of arrow shaft. Applicable if as_arrows is True",
+            (float, int),
+        ),
     )
 
     _helps = "Edges"
@@ -59,15 +57,15 @@ class EdgesShowOption(helpers.options.ShowOption):
         if self.get("as_arrows", False):
             init_options = ("head_radius", "head_length", "shaft_radius")
             return show.vedo.Arrows(
-                    self._helpee.const_vertices[self._helpee.edges],
-                    **self[init_options]
+                self._helpee.const_vertices[self._helpee.edges],
+                **self[init_options],
             )
 
         else:
             init_options = ("lw",)
             return show.vedo.Lines(
-                    self._helpee.const_vertices[self._helpee.edges],
-                    **self[init_options],
+                self._helpee.const_vertices[self._helpee.edges],
+                **self[init_options],
             )
 
 
@@ -76,18 +74,18 @@ class Edges(Vertices):
     kind = "edge"
 
     __slots__ = (
-            "_edges",
-            "_const_edges",
+        "_edges",
+        "_const_edges",
     )
 
     __show_option__ = EdgesShowOption
     __parent__ = Vertices
 
     def __init__(
-            self,
-            vertices=None,
-            edges=None,
-            elements=None,
+        self,
+        vertices=None,
+        edges=None,
+        elements=None,
     ):
         """Edges. It has vertices and edges. Also known as lines.
 
@@ -201,7 +199,7 @@ class Edges(Vertices):
           valid attributes are {values, ids, inverse, counts}
         """
         unique_info = utils.connec.sorted_unique(
-                self.sorted_edges(), sorted_=True
+            self.sorted_edges(), sorted_=True
         )
 
         edges = self._get_attr("edges")
@@ -299,7 +297,9 @@ class Edges(Vertices):
         return self.const_vertices[self.const_elements].mean(axis=1)
 
     @helpers.data.ComputedMeshData.depends_on(["vertices", "elements"])
-    def referenced_vertices(self, ):
+    def referenced_vertices(
+        self,
+    ):
         """Returns mask of referenced vertices.
 
         Parameters
@@ -333,8 +333,8 @@ class Edges(Vertices):
         inverse[referenced] = np.arange(referenced.sum())
 
         return self.update_vertices(
-                mask=referenced,
-                inverse=inverse,
+            mask=referenced,
+            inverse=inverse,
         )
 
     def update_elements(self, mask):
@@ -410,7 +410,7 @@ class Edges(Vertices):
 
         return Edges(vertices=new_vs, edges=new_es)
 
-    def shrink(self, ratio=.8, map_vertexdata=True):
+    def shrink(self, ratio=0.8, map_vertexdata=True):
         """Returns shrunk elements.
 
         Parameters

@@ -7,24 +7,19 @@ import copy
 
 import numpy as np
 
-from gustaf import settings
-from gustaf import utils
-from gustaf import show
-from gustaf import helpers
-from gustaf.helpers.options import Option
+from gustaf import helpers, settings, show, utils
 from gustaf._base import GustafBase
+from gustaf.helpers.options import Option
 
 
 class VerticesShowOption(helpers.options.ShowOption):
     """
     Show options for vertices.
     """
+
     _valid_options = helpers.options.make_valid_options(
-            *helpers.options.vedo_common_options,
-            Option(
-                    "vedo", "r", "Radius of vertices in units of pixels.",
-                    (int, )
-            ),
+        *helpers.options.vedo_common_options,
+        Option("vedo", "r", "Radius of vertices in units of pixels.", (int,)),
     )
 
     _helps = "Vertices"
@@ -44,7 +39,7 @@ class VerticesShowOption(helpers.options.ShowOption):
         init_options = ("r",)
 
         return show.vedo.Points(
-                self._helpee.const_vertices, **self[init_options]
+            self._helpee.const_vertices, **self[init_options]
         )
 
 
