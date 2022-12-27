@@ -59,6 +59,8 @@ vedo_common_options = (
         "Object must have vertexdata with the same name.",
         (str,),
     ),
+    Option("vedo", "vertex_ids", "Show ids of vertices", (bool,)),
+    Option("vedo", "element_ids", "Show ids of elements", (bool,)),
     Option("vedo", "cmap", "Colormap for vertexdata plots.", (str,)),
     Option("vedo", "vmin", "Minimum value for cmap", (float, int)),
     Option("vedo", "vmax", "Maximum value for cmap", (float, int)),
@@ -142,6 +144,35 @@ class ShowOption:
 
         # initialize backend specific option holder
         self._options[self._backend] = dict()
+
+    def __repr__(self):
+        """
+        Friendly info prints for show option.
+
+        Parameters
+        ----------
+        None
+
+        Returns
+        -------
+        description: str
+        """
+        valid_option_str = "\n".join(
+            [str(opt) for opt in self._valid_options[self._backend]]
+        )
+        valid_and_current = list()
+        for vo in self._valid_options[self._backend].values():
+            valid = str(vo)
+            current = ""
+            if vo.key in self.keys():
+                current = "current option: " + str(self[vo.key])
+            valid_and_current.append(valid + current)
+
+        header = [
+            f"ShowOption for {self._helps}",
+            f"Selected Backend: {self._backend}",
+        ]
+        return "\n".join(header + valid_and_current)
 
     def __setitem__(self, key, value):
         """
@@ -264,7 +295,7 @@ class ShowOption:
         -------
         keys: dict_keys
         """
-        return self._options.keys()
+        return self._options[self._backend].keys()
 
     def values(self):
         """
@@ -278,7 +309,7 @@ class ShowOption:
         -------
         keys: dict_values
         """
-        return self._options.values()
+        return self._options[self._backend].values()
 
     def items(self):
         """
@@ -292,7 +323,7 @@ class ShowOption:
         -------
         items: dict_items
         """
-        return self._options.items()
+        return self._options[self._backend].items()
 
     def clear(self):
         """

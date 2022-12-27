@@ -188,19 +188,41 @@ def show_vedo(
         return plt
 
 
-def _vedo_showable(obj, **kwargs):
+def _vedo_showable(obj, as_dict=False, **kwargs):
     """Generates a vedo obj based on `kind` attribute from given obj.
 
     Parameters
     -----------
     obj: gustaf obj
+    as_dict: bool
+      If True, returns vedo objects in a dict. Corresponding main objecst will
+      be available with ["main"] key. Else, returns vedo.Assembly object,
+      where all the objects are grouped together.
 
     Returns
     --------
     vedo_obj: vedo obj
     """
+    # incase kwargs are defined, we will make a copy of the object and
+    # try to overwrite all the applicable kwargs.
+    if kwargs:
+        obj = obj.copy()
+        for key, value in kwargs.items():
+            try:
+                obj.show_options[key] = value
+            except BaseException:
+                utils.log.debug(
+                    f"Skipping invalid option {key} for "
+                    f"{obj.show_options._helps}"
+                )
+                continue
+
     # minimal-initalization of vedo objects
     vedo_obj = obj.show_options._initialize_showable()
+    # as dict?
+    if as_dict:
+        return_as_dict = dict()
+
     # set common values. Could be a perfect place to try :=, but we want to
     # support p3.6.
     c = obj.show_options.get("c", None)
@@ -209,6 +231,30 @@ def _vedo_showable(obj, **kwargs):
     alpha = obj.show_options.get("alpha", None)
     if alpha is not None:
         vedo_obj.alpha(alpha)
+    vertex_ids = obj.show_options.get("vertex_ids", False)
+    element_ids = obj.show_options.get("element_ids", False)
+    # special treatment for vertex
+    if obj.kind.startswith("vertex"):
+        vertex_ids = vertex_ids | element_ids
+        if element_ids:
+            utils.log.debug(
+                "`element_ids` option is True for Vertices. Overwriting it as"
+                "vertex_ids."
+            )
+            element_ids = False
+    if vertex_ids:
+        vertex_ids = vedo_obj.labels("id", on="points", font="VTK")
+        if not as_dict:
+            vedo_obj += vertex_ids
+        else:
+            return_as_dict["vertex_ids"] = vertex_ids
+    if element_ids:
+        # should only reach here if this obj is not vertex
+        element_ids = vedo.Points(obj.centers()).labels("id", on="points")
+        if not as_dict:
+            vedo_obj += element_ids
+        else:
+            return_as_dict["element_ids"] = element_ids
 
     # data plotting
     dataname = obj.show_options.get("dataname", None)
@@ -240,7 +286,10 @@ def _vedo_showable(obj, **kwargs):
             f"No vertexdata named '{dataname}' for {obj}. Skipping"
         )
 
-    return vedo_obj
+    if not as_dict:
+        return vedo_obj
+    else:
+        return_as_dict["main"] = vedo_obj
 
 
 def _trimesh_showable(obj):
