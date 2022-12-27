@@ -12,7 +12,7 @@ import splinepy
 from gustaf import settings
 from gustaf import show as showmodule
 from gustaf._base import GustafBase
-from gustaf.spline._utils import to_res_list
+from gustaf.utils.arr import enforce_len
 from gustaf.spline.create import Creator
 from gustaf.spline.extract import Extractor
 from gustaf.spline.proximity import Proximity
@@ -90,7 +90,7 @@ def show(
         backend = settings.VISUALIZATION_BACKEND
 
     # Prepare correct form of resolution input
-    resolutions = to_res_list(resolutions, spline.para_dim)
+    resolutions = enforce_len(resolutions, spline.para_dim)
 
     # Prepare things to show dict.
     things_to_show = dict()

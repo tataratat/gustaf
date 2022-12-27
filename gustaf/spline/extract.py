@@ -10,7 +10,6 @@ import numpy as np
 from gustaf import utils
 from gustaf.edges import Edges
 from gustaf.faces import Faces
-from gustaf.spline._utils import to_res_list
 from gustaf.vertices import Vertices
 from gustaf.volumes import Volumes
 
@@ -127,7 +126,7 @@ def faces(
     --------
     faces: faces
     """
-    resolutions = to_res_list(resolutions, spline.para_dim)
+    resolutions = utils.arr.enforce_len(resolutions, spline.para_dim)
 
     if spline.para_dim == 2:
         return Faces(
