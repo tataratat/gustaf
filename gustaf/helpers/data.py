@@ -9,6 +9,8 @@ from functools import wraps
 
 import numpy as np
 
+from gustaf._base import GustafBase
+
 
 class TrackedArray(np.ndarray):
     """Taken from nice implementations of `trimesh` (see LICENSE.txt).
@@ -179,7 +181,7 @@ def make_tracked_array(array, dtype=None, copy=True):
     return tracked
 
 
-class DataHolder:
+class DataHolder(GustafBase):
     __slots__ = (
         "_helpee",
         "_saved",
@@ -404,6 +406,172 @@ class ComputedData(DataHolder):
                 return compute_or_return_saved
 
         return inner
+
+
+class VertexData(DataHolder):
+    """
+    Minimal manager for vertex data. Checks input array size, transforms
+    data on request. __setitem__ and __getitem__ will perform length checks.
+    key(), values(), items(), and get() will return whatever is currently
+    stored.
+    """
+
+    __slots__ = ()
+
+    def __init__(self, helpee):
+        """
+        Checks if helpee has vertices as attr beforehand.
+
+        Parameters
+        ----------
+        helpee: Vertices
+          Vertices and its derived classes.
+
+        Returns
+        -------
+        None
+        """
+        if not hasattr(helpee, "vertices"):
+            raise AttributeError("Helpee does not have `vertices`.")
+
+        super().__init__(helpee)
+
+    def _validate_len(self, value=None, raise_=True):
+        """
+        Checks if given value is a valid vertexdata based of its length.
+        If raise_, throws error, else, deletes all incompatible values.
+        Only checks len(). If array has (1, len) shape, this will still return
+        False.
+
+        Parameters
+        ----------
+        value: array-like
+          Default is None. If None, checks all existing values.
+        raise_: bool
+          Default is True, If True, raises in case of incompatibility.
+
+        Returns
+        -------
+        validity: bool
+          If raise_ is False.
+        """
+        valid = True
+        helpee_len = len(self._helpee.vertices)
+        if value is not None:
+            if len(value) != helpee_len:
+                valid = False
+
+            if raise_ and not valid:
+                raise ValueError(
+                    f"Expected ({helpee_len}) length data, "
+                    f"Given (len(value))"
+                )
+
+            return valid
+
+        # here, check all saved values.
+        for key, value in self._saved.items():
+            if len(value) != helpee_len:
+                valid = False
+
+            if not valid:
+                if raise_:
+                    raise ValueError(
+                        f"`{key}`-data len ({len(value)}) doesn't match "
+                        f"expected len ({helpee_len})"
+                    )
+                else:
+                    self._logd(
+                        f"`{key}`-data len ({len(value)}) doesn't match "
+                        f"expect len ({helpee_len}). Deleting `{key}`."
+                    )
+                # pop invalid data
+                self._saved.pop(key)
+
+        return valid
+
+    def __setitem__(self, key, value):
+        """
+        Performs len() based check before stroing vertexdata.
+
+        Parameters
+        ----------
+        key: str
+        value: object
+
+        Returns
+        -------
+        None
+        """
+        self._validate_len(value, raise_=True)
+
+        # we are here because this is valid
+        self._saved[key] = np.asanyarray(value).reshape(
+            len(self._helpee.vertices), -1
+        )
+
+    def __getitem__(self, key):
+        """
+        Validates data length before returning item.
+
+        Parameters
+        ----------
+        key: str
+
+        Returns
+        -------
+        data: array-like
+        """
+        valid = self._validate_len(raise_=False)
+        if valid:
+            return self._saved[key]
+        else:
+            raise KeyError(
+                "Either requested data is not stored or deleted due to "
+                "changes in number of vertices."
+            )
+
+    def as_scalar(self, key):
+        """
+        Returns scalar version of requested data. If it is already a scalar,
+        will return as is. Else, will return a norm. using `np.linalg.norm()`.
+
+        Parameters
+        ----------
+        key: str
+
+        Returns
+        -------
+        data_as_scalar: (n, 1) np.ndarray
+        """
+        value = self[key]  # will perform check
+        if value.shape[1] == 1:
+            return value
+        else:
+            # return tall array
+            return np.linalg.norm(value, axis=1).reshape(-1, 1)
+
+    def as_arrow(self, key, raise_=True):
+        """
+        Returns an array as is, only if it is showable as arrow.
+
+        Parameters
+        ----------
+        key: str
+        raise_: bool
+
+        Returns
+        -------
+        data: (n, d) np.ndarray
+        """
+        value = self[key]
+        # if it is 2D or 3D, it is showable as arrow
+        if value.shape[1] in (2, 3):
+            return value
+        elif raise_:
+            raise ValueError(f"`{key}`-data is neither 2D nor 3D data.")
+
+        return None
 
 
 Unique2DFloats = namedtuple(
