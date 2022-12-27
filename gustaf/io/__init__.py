@@ -13,10 +13,10 @@ from gustaf.io import nutils
 from gustaf.io.default import load
 
 __all__ = [
-        "ioutils",
-        "mfem",
-        "meshio",
-        "mixd",
-        "nutils",
-        "load",
+    "ioutils",
+    "mfem",
+    "meshio",
+    "mixd",
+    "nutils",
+    "load",
 ]

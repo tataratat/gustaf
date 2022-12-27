@@ -7,9 +7,9 @@ from gustaf.utils import tictoc
 connectivity = connec
 
 __all__ = [
-        "arr",
-        "connec",
-        "connectivity",
-        "log",
-        "tictoc",
+    "arr",
+    "connec",
+    "connectivity",
+    "log",
+    "tictoc",
 ]

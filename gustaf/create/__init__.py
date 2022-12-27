@@ -10,11 +10,12 @@ except ImportError as err:
     # comprehensive exception will be raised which is understandable in
     # contrast to the possible multitude of errors previously possible
     from gustaf.helpers.raise_if import ModuleImportRaiser
+
     spline = ModuleImportRaiser("splinepy", err)
 
 __all__ = [
-        "vertices",
-        "faces",
-        "volumes",
-        "spline",
+    "vertices",
+    "faces",
+    "volumes",
+    "spline",
 ]

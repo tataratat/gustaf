@@ -17,11 +17,11 @@ from gustaf.spline._utils import to_res_list
 
 
 def edges(
-        spline,
-        resolution=100,
-        extract_dim=None,
-        extract_knot=None,
-        all_knots=False,
+    spline,
+    resolution=100,
+    extract_dim=None,
+    extract_knot=None,
+    all_knots=False,
 ):
     """Extract edges (lines) from a given spline. Only entity you can extract
     without dimension limit.
@@ -46,11 +46,11 @@ def edges(
 
     if spline.para_dim == 1:
         return Edges(
-                vertices=spline.sample(resolution),
-                edges=utils.connec.range_to_edges(
-                        (0, resolution),
-                        closed=False,
-                )
+            vertices=spline.sample(resolution),
+            edges=utils.connec.range_to_edges(
+                (0, resolution),
+                closed=False,
+            ),
         )
 
     else:
@@ -59,7 +59,7 @@ def edges(
         if extract_knot is not None:
             if len(extract_knot) != spline.para_dim - 1:
                 raise ValueError(
-                        "Must satisfy len(extract_knot) == spline.para_dim -1."
+                    "Must satisfy len(extract_knot) == spline.para_dim -1."
                 )
 
         # This may take awhile.
@@ -71,7 +71,7 @@ def edges(
                 mask[i] = False
                 # gather knots along current knot
                 extract_knot_queries = list(
-                        itertools.product(*unique_knots[mask])
+                    itertools.product(*unique_knots[mask])
                 )
 
                 for ekq in extract_knot_queries:
@@ -81,9 +81,9 @@ def edges(
 
         # Get parametric points to extract
         queries = np.empty(
-                (resolution, spline.para_dim),
-                dtype="float64",  # hardcoded for splinelibpy
-                order="C",  # hardcoded for splinelibpy
+            (resolution, spline.para_dim),
+            dtype="float64",  # hardcoded for splinelibpy
+            order="C",  # hardcoded for splinelibpy
         )
         # get ~extract_dim
         not_ed = np.arange(spline.para_dim).tolist()
@@ -96,23 +96,23 @@ def edges(
         max_knot_position = max(uniq_knots)
 
         queries[:, extract_dim] = np.linspace(
-                min_knot_position,
-                max_knot_position,
-                resolution,
+            min_knot_position,
+            max_knot_position,
+            resolution,
         )
 
         return Edges(
-                vertices=spline.evaluate(queries),
-                edges=utils.connec.range_to_edges(
-                        (0, resolution),
-                        closed=False,
-                )
+            vertices=spline.evaluate(queries),
+            edges=utils.connec.range_to_edges(
+                (0, resolution),
+                closed=False,
+            ),
         )
 
 
 def faces(
-        spline,
-        resolutions,
+    spline,
+    resolutions,
 ):
     """Extract faces from spline. Valid iff para_dim is one of the followings:
     {2, 3}. In case of {3}, it will return only surfaces. If internal faces are
@@ -132,8 +132,8 @@ def faces(
 
     if spline.para_dim == 2:
         return Faces(
-                vertices=spline.sample(resolutions),
-                faces=utils.connec.make_quad_faces(resolutions),
+            vertices=spline.sample(resolutions),
+            faces=utils.connec.make_quad_faces(resolutions),
         )
 
     elif spline.para_dim == 3:
@@ -155,81 +155,83 @@ def faces(
 
             # Extract range
             extract_range = [
-                    [
-                            min(ukvs[extract_along[0]]),
-                            max(ukvs[extract_along[0]]),
-                    ],
-                    [
-                            min(ukvs[extract_along[1]]),
-                            max(ukvs[extract_along[1]]),
-                    ],
+                [
+                    min(ukvs[extract_along[0]]),
+                    max(ukvs[extract_along[0]]),
+                ],
+                [
+                    min(ukvs[extract_along[1]]),
+                    max(ukvs[extract_along[1]]),
+                ],
             ]
 
             extract_list = [
-                    min(ukvs[extract]),
-                    max(ukvs[extract]),
+                min(ukvs[extract]),
+                max(ukvs[extract]),
             ]
 
             # surface point queries (spq)
             spq = np.linspace(
-                    extract_range[0][0],
-                    extract_range[0][1],
-                    resolutions[extract_along[0]],
+                extract_range[0][0],
+                extract_range[0][1],
+                resolutions[extract_along[0]],
             ).reshape(-1, 1)
 
             # expand horizontally and init with 1
             spq = np.hstack((spq, np.ones((len(spq), 1))))
             spq = np.vstack(
-                    np.linspace(
-                            spq * [1, extract_range[1][0]],
-                            spq * [1, extract_range[1][1]],
-                            resolutions[extract_along[1]],
-                    )
+                np.linspace(
+                    spq * [1, extract_range[1][0]],
+                    spq * [1, extract_range[1][1]],
+                    resolutions[extract_along[1]],
+                )
             )
 
             # expand horizontally and init with 1
             spq = np.hstack((spq, np.ones((len(spq), 1))))
             spq = np.vstack(
-                    np.linspace(
-                            spq * [1, 1, extract_list[0]],
-                            spq * [1, 1, extract_list[1]], 2
-                    )
+                np.linspace(
+                    spq * [1, 1, extract_list[0]],
+                    spq * [1, 1, extract_list[1]],
+                    2,
+                )
             )
 
             surface_point_queries = utils.arr.make_c_contiguous(
-                    spq,
-                    dtype="float64",
+                spq,
+                dtype="float64",
             )
             sorted_ids = np.argsort(
-                    [extract_along[0], extract_along[1], extract]
+                [extract_along[0], extract_along[1], extract]
             )
             surface_point_queries = surface_point_queries[:, sorted_ids]
 
             vertices.append(
-                    spline.evaluate(
-                            surface_point_queries[:int(
-                                    surface_point_queries.shape[0] / 2
-                            )]
-                    )
+                spline.evaluate(
+                    surface_point_queries[
+                        : int(surface_point_queries.shape[0] / 2)
+                    ]
+                )
             )
 
             if len(faces) != 0:
                 offset = faces[-1].max() + 1
 
             tmp_faces = utils.connec.make_quad_faces(
-                    [
-                            resolutions[extract_along[0]],
-                            resolutions[extract_along[1]],
-                    ]
+                [
+                    resolutions[extract_along[0]],
+                    resolutions[extract_along[1]],
+                ]
             )
 
             faces.append(tmp_faces + int(offset))
 
             vertices.append(
-                    spline.evaluate(
-                            surface_point_queries[
-                                    int(surface_point_queries.shape[0] / 2):]
-                    )
+                spline.evaluate(
+                    surface_point_queries[
+                        int(surface_point_queries.shape[0] / 2) :
+                    ]
+                )
             )
 
             offset = faces[-1].max() + 1
@@ -260,13 +262,13 @@ def volumes(spline, resolutions):
     """
     if spline.para_dim != 3:
         raise ValueError(
-                "Volume extraction from a spline is only valid for "
-                "para_dim: 3 dim: 3 splines."
+            "Volume extraction from a spline is only valid for "
+            "para_dim: 3 dim: 3 splines."
         )
 
     return Volumes(
-            vertices=spline.sample(resolutions),
-            volumes=utils.connec.make_hexa_volumes(resolutions),
+        vertices=spline.sample(resolutions),
+        volumes=utils.connec.make_hexa_volumes(resolutions),
     )
 
 
@@ -300,10 +302,10 @@ def control_edges(spline):
         raise ValueError("Invalid spline type!")
 
     return Edges(
-            vertices=spline.control_points,
-            edges=utils.connec.range_to_edges(
-                    len(spline.control_points), closed=False
-            )
+        vertices=spline.control_points,
+        edges=utils.connec.range_to_edges(
+            len(spline.control_points), closed=False
+        ),
     )
 
 
@@ -322,10 +324,8 @@ def control_faces(spline):
         raise ValueError("Invalid spline type!")
 
     return Faces(
-            vertices=spline.control_points,
-            faces=utils.connec.make_quad_faces(
-                    spline.control_mesh_resolutions
-            ),
+        vertices=spline.control_points,
+        faces=utils.connec.make_quad_faces(spline.control_mesh_resolutions),
     )
 
 
@@ -344,14 +344,16 @@ def control_volumes(spline):
         raise ValueError("Invalid spline type!")
 
     return Volumes(
-            vertices=spline.control_points,
-            volumes=utils.connec.make_hexa_volumes(
-                    spline.control_mesh_resolutions
-            ),
+        vertices=spline.control_points,
+        volumes=utils.connec.make_hexa_volumes(
+            spline.control_mesh_resolutions
+        ),
     )
 
 
-def control_mesh(spline, ):
+def control_mesh(
+    spline,
+):
     """Calls control_edges, control_faces, control_volumes based on current
     spline.
 
@@ -371,35 +373,34 @@ def control_mesh(spline, ):
         return control_volumes(spline)
     else:
         raise ValueError(
-                "Invalid para_dim to extract control_mesh. "
-                "Supports 1 to 3."
+            "Invalid para_dim to extract control_mesh. " "Supports 1 to 3."
         )
 
 
 def beziers(spline):
     """Extracts Bezier-type objects of any spline-type object.
 
-  Parameters
-  ----------
-  spline : Gustaf-Spline
+    Parameters
+    ----------
+    spline : Gustaf-Spline
 
-  Returns
-  -------
-  bezier_list : list<bezier-types>
-  """
+    Returns
+    -------
+    bezier_list : list<bezier-types>
+    """
     from gustaf.spline.base import Bezier, RationalBezier
 
     if "Bezier" in spline.whatami:
         return [spline]
     elif "BSpline" in spline.whatami:
         return [
-                Bezier(**s.todict())
-                for s in super(type(spline), spline).extract_bezier_patches()
+            Bezier(**s.todict())
+            for s in super(type(spline), spline).extract_bezier_patches()
         ]
     elif "NURBS" in spline.whatami:
         return [
-                RationalBezier(**s.todict())
-                for s in super(type(spline), spline).extract_bezier_patches()
+            RationalBezier(**s.todict())
+            for s in super(type(spline), spline).extract_bezier_patches()
         ]
     else:
         raise TypeError("Unknown Spline-Type.")
@@ -429,21 +430,21 @@ def spline(spline, para_dim, split_plane):
     # Check arguments for sanity
     if para_dim > spline.para_dim:
         raise ValueError(
-                "Requested parametric dimension exceeds spline's parametric"
-                " dimensionality."
+            "Requested parametric dimension exceeds spline's parametric"
+            " dimensionality."
         )
     if isinstance(split_plane, list):
         if not (
-                (len(split_plane) == 2)
-                and (isinstance(split_plane[0], float))
-                and (isinstance(split_plane[0], float))
+            (len(split_plane) == 2)
+            and (isinstance(split_plane[0], float))
+            and (isinstance(split_plane[0], float))
         ):
             raise ValueError(
-                    "Range must be float or tuple of floats with length 2"
+                "Range must be float or tuple of floats with length 2"
             )
     elif not isinstance(split_plane, float):
         raise ValueError(
-                "Range must be float or tuple of floats with length 2"
+            "Range must be float or tuple of floats with length 2"
         )
     else:
         # Convert float to tuple to facilitate
@@ -478,8 +479,9 @@ def spline(spline, para_dim, split_plane):
 
     # Return new_spline
     spline_info = {}
-    spline_info["control_points"] = spline_copy.cps[(para_dim_ids >= start_id)
-                                                    & (para_dim_ids <= end_id)]
+    spline_info["control_points"] = spline_copy.cps[
+        (para_dim_ids >= start_id) & (para_dim_ids <= end_id)
+    ]
     spline_info["degrees"] = spline_copy.degrees.tolist()
     if start_id == end_id:
         spline_info["degrees"].pop(para_dim)
@@ -489,16 +491,20 @@ def spline(spline, para_dim, split_plane):
             spline_info["knot_vectors"].pop(para_dim)
         else:
             spline_info["knot_vectors"][para_dim] = (
-                    [spline_copy.knot_vectors[para_dim][start_id]]
-                    + spline_copy.knot_vectors[para_dim]
-                    [start_id:(end_id + spline_copy.degrees[para_dim])] + [
-                            spline_copy.knot_vectors[para_dim]
-                            [(end_id + spline_copy.degrees[para_dim] - 1)]
+                [spline_copy.knot_vectors[para_dim][start_id]]
+                + spline_copy.knot_vectors[para_dim][
+                    start_id : (end_id + spline_copy.degrees[para_dim])
+                ]
+                + [
+                    spline_copy.knot_vectors[para_dim][
+                        (end_id + spline_copy.degrees[para_dim] - 1)
                     ]
+                ]
             )
     if is_rational:
         spline_info["weights"] = spline_copy.weights[
-                (para_dim_ids >= start_id) & (para_dim_ids <= end_id)]
+            (para_dim_ids >= start_id) & (para_dim_ids <= end_id)
+        ]
 
     return type(spline)(**spline_info)
 
@@ -565,7 +571,7 @@ class Extractor:
             if interval is not None:
                 raise ValueError("Arguments incompatible expect dictionary")
             splittin_plane = dict(
-                    sorted(splittin_plane.items(), key=lambda x: x[0])[::-1]
+                sorted(splittin_plane.items(), key=lambda x: x[0])[::-1]
             )
             spline_copy = self._spline.copy()
             for key, item in splittin_plane.items():

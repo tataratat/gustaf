@@ -11,10 +11,7 @@ from gustaf import settings
 
 
 def box(
-        bounds=[[0, 0], [1, 1]],
-        resolutions=[2, 2],
-        simplex=False,
-        backslash=False
+    bounds=[[0, 0], [1, 1]], resolutions=[2, 2], simplex=False, backslash=False
 ):
     """Create structured quadrangle or triangle block mesh.
 
@@ -98,8 +95,8 @@ def tosimplex(quad, backslash=False):
 
     if not isinstance(quad, Faces):
         raise ValueError(
-                "Input to tosimplex needs to be of type Faces, but it's "
-                + type(quad)
+            "Input to tosimplex needs to be of type Faces, but it's "
+            + type(quad)
         )
 
     if quad.whatami.startswith("quad"):
@@ -118,14 +115,13 @@ def tosimplex(quad, backslash=False):
         tri_faces[tf_half:] = quad_faces[:, split[1]]
 
         tri = Faces(
-                vertices=quad.vertices.copy(),
-                faces=tri_faces,
+            vertices=quad.vertices.copy(),
+            faces=tri_faces,
         )
     else:
         tri = quad
         utils.log.debug(
-                "Non quadrilateral mesh provided, return original"
-                " mesh."
+            "Non quadrilateral mesh provided, return original" " mesh."
         )
 
     return tri

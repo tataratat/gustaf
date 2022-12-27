@@ -19,6 +19,7 @@ try:
     from gustaf import spline
     from gustaf.spline.base import BSpline, NURBS, Bezier, RationalBezier
     from gustaf.spline.ffd import FFD
+
     has_spline = True
 except ImportError as err:
     # overwrites the all modules which depend on the `splinepy` library
@@ -28,6 +29,7 @@ except ImportError as err:
     # comprehensive exception will be raised which is understandable in
     # contrast to the possible multitude of errors previously possible
     from gustaf.helpers.raise_if import ModuleImportRaiser
+
     spline = ModuleImportRaiser("splinepy", err)
     BSpline = spline
     NURBS = spline
@@ -40,26 +42,26 @@ except ImportError as err:
 __version__ = _version.version
 
 __all__ = [
-        "__version__",
-        "settings",
-        "vertices",
-        "edges",
-        "faces",
-        "volumes",
-        "show",
-        "utils",
-        "create",
-        "io",
-        "helpers",
-        "Vertices",
-        "Edges",
-        "Faces",
-        "Volumes",
-        "spline",
-        "has_spline",
-        "BSpline",
-        "NURBS",
-        "Bezier",
-        "RationalBezier",
-        "FFD",
+    "__version__",
+    "settings",
+    "vertices",
+    "edges",
+    "faces",
+    "volumes",
+    "show",
+    "utils",
+    "create",
+    "io",
+    "helpers",
+    "Vertices",
+    "Edges",
+    "Faces",
+    "Volumes",
+    "spline",
+    "has_spline",
+    "BSpline",
+    "NURBS",
+    "Bezier",
+    "RationalBezier",
+    "FFD",
 ]

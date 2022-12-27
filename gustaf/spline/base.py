@@ -20,25 +20,25 @@ from gustaf.spline._utils import to_res_list
 
 
 def show(
-        spline,
-        resolutions=100,
-        control_points=True,
-        knots=True,
-        show_fitting_queries=True,
-        return_discrete=False,
-        return_showable=False,
-        backend=None,
-        # From here, | only relevant if "vedo" is backend.
-        #            V
-        parametric_space=False,
-        color=None,
-        surface_alpha=1,
-        control_points_alpha=.8,
-        lighting="glossy",
-        control_point_ids=True,
-        color_spline=None,
-        cmap=None,  # only required
-        **kwargs,
+    spline,
+    resolutions=100,
+    control_points=True,
+    knots=True,
+    show_fitting_queries=True,
+    return_discrete=False,
+    return_showable=False,
+    backend=None,
+    # From here, | only relevant if "vedo" is backend.
+    #            V
+    parametric_space=False,
+    color=None,
+    surface_alpha=1,
+    control_points_alpha=0.8,
+    lighting="glossy",
+    control_point_ids=True,
+    color_spline=None,
+    cmap=None,  # only required
+    **kwargs,
 ):
     """Shows splines with various options. They are excessively listed, so that
     it can be adjustable.
@@ -76,11 +76,11 @@ def show(
     """
     # Showing is only possible for following splines
     allowed_dim_combo = (
-            (1, 2),
-            (1, 3),
-            (2, 2),
-            (2, 3),
-            (3, 3),
+        (1, 2),
+        (1, 3),
+        (2, 2),
+        (2, 3),
+        (3, 3),
     )
     if (spline.para_dim, spline.dim) not in allowed_dim_combo:
         raise ValueError("Sorry, can't show given spline.")
@@ -178,21 +178,20 @@ def show(
         # add red points for at control points
         if control_points and control_point_ids:
             vedo_things.update(
-                    control_point_ids=vedo_things["control_points"].
-                    labels("id")
+                control_point_ids=vedo_things["control_points"].labels("id")
             )
 
         # add knots as "x" for curves
         if knots and spline.para_dim == 1:
             uks = spline.unique_knots[0]
             phys_uks = showmodule.make_showable(
-                    Vertices(spline.evaluate([[uk] for uk in uks])),
-                    backend=backend,
+                Vertices(spline.evaluate([[uk] for uk in uks])),
+                backend=backend,
             )
             xs = ["x"] * len(uks)
 
             vedo_things.update(
-                    knots=phys_uks.labels(xs, justify="center", c="green")
+                knots=phys_uks.labels(xs, justify="center", c="green")
             )
 
         # generate parametric view of spline
@@ -203,13 +202,13 @@ def show(
 
             para_spline = parametric_view(spline)
             para_showables = show(
-                    para_spline,
-                    control_points=False,
-                    return_showable=True,
-                    lighting=lighting,
-                    knots=knots,
-                    parametric_space=False,
-                    backend=backend,
+                para_spline,
+                control_points=False,
+                return_showable=True,
+                lighting=lighting,
+                knots=knots,
+                parametric_space=False,
+                backend=backend,
             )
             # Make lines a bit thicker
             if knots:
@@ -222,15 +221,15 @@ def show(
             upperb = bs[1] + bs_diff_001
 
             axes_config = dict(
-                    xtitle="u",
-                    ytitle="v",
-                    xrange=[lowerb[0], upperb[0]],
-                    yrange=[lowerb[1], upperb[1]],
-                    tipSize=0,
-                    xMinorTicks=3,
-                    yMinorTicks=3,
-                    xyGrid=False,
-                    yzGrid=False,
+                xtitle="u",
+                ytitle="v",
+                xrange=[lowerb[0], upperb[0]],
+                yrange=[lowerb[1], upperb[1]],
+                tipSize=0,
+                xMinorTicks=3,
+                yMinorTicks=3,
+                xyGrid=False,
+                yzGrid=False,
             )
 
             if spline.para_dim == 3:
@@ -240,7 +239,7 @@ def show(
                 axes_config.update(zxGrid=False)
 
             para_showables.update(
-                    axes=Axes(para_showables["spline"], **axes_config)
+                axes=Axes(para_showables["spline"], **axes_config)
             )
 
         # showable return
@@ -262,7 +261,6 @@ def show(
 
 
 class GustafSpline(GustafBase):
-
     @abc.abstractmethod
     def __init__(self):
         """Contructor as abstractmethod.
@@ -350,12 +348,11 @@ class GustafSpline(GustafBase):
 
 
 class Bezier(GustafSpline, splinepy.Bezier):
-
     def __init__(
-            self,
-            degrees=None,
-            control_points=None,
-            spline=None,
+        self,
+        degrees=None,
+        control_points=None,
+        spline=None,
     ):
         """Bezier of gustaf. Inherited from splinepy.Bezier and GustafSpline.
 
@@ -375,7 +372,7 @@ class Bezier(GustafSpline, splinepy.Bezier):
         None
         """
         super(splinepy.Bezier, self).__init__(
-                degrees=degrees, control_points=control_points, spline=spline
+            degrees=degrees, control_points=control_points, spline=spline
         )
 
         self._extractor = Extractor(self)
@@ -409,9 +406,9 @@ class Bezier(GustafSpline, splinepy.Bezier):
         same : RationalBezier
         """
         return RationalBezier(
-                degrees=self.degrees,
-                control_points=self.control_points,
-                weights=np.ones(self.control_points.shape[0])
+            degrees=self.degrees,
+            control_points=self.control_points,
+            weights=np.ones(self.control_points.shape[0]),
         )
 
     @property
@@ -427,12 +424,12 @@ class Bezier(GustafSpline, splinepy.Bezier):
         same_bspline : BSpline
         """
         return BSpline(
-                degrees=self.degrees,
-                control_points=self.control_points,
-                knot_vectors=[
-                        [0] * (self.degrees[i] + 1) + [1]
-                        * (self.degrees[i] + 1) for i in range(self.para_dim)
-                ]
+            degrees=self.degrees,
+            control_points=self.control_points,
+            knot_vectors=[
+                [0] * (self.degrees[i] + 1) + [1] * (self.degrees[i] + 1)
+                for i in range(self.para_dim)
+            ],
         )
 
     @property
@@ -451,13 +448,12 @@ class Bezier(GustafSpline, splinepy.Bezier):
 
 
 class RationalBezier(GustafSpline, splinepy.RationalBezier):
-
     def __init__(
-            self,
-            degrees=None,
-            control_points=None,
-            weights=None,
-            spline=None,
+        self,
+        degrees=None,
+        control_points=None,
+        weights=None,
+        spline=None,
     ):
         """Rational Bezier of gustaf. Inherited from splinepy.RationalBezier
         and GustafSpline.
@@ -479,10 +475,10 @@ class RationalBezier(GustafSpline, splinepy.RationalBezier):
         None
         """
         super(splinepy.RationalBezier, self).__init__(
-                degrees=degrees,
-                control_points=control_points,
-                weights=weights,
-                spline=spline,
+            degrees=degrees,
+            control_points=control_points,
+            weights=weights,
+            spline=spline,
         )
 
         self._extractor = Extractor(self)
@@ -516,24 +512,23 @@ class RationalBezier(GustafSpline, splinepy.RationalBezier):
         same_nurbs: NURBS
         """
         return NURBS(
-                degrees=self.degrees,
-                control_points=self.control_points,
-                knot_vectors=[
-                        [0] * (self.degrees[i] + 1) + [1]
-                        * (self.degrees[i] + 1) for i in range(self.para_dim)
-                ],
-                weights=self.weights
+            degrees=self.degrees,
+            control_points=self.control_points,
+            knot_vectors=[
+                [0] * (self.degrees[i] + 1) + [1] * (self.degrees[i] + 1)
+                for i in range(self.para_dim)
+            ],
+            weights=self.weights,
         )
 
 
 class BSpline(GustafSpline, splinepy.BSpline):
-
     def __init__(
-            self,
-            degrees=None,
-            knot_vectors=None,
-            control_points=None,
-            spline=None,
+        self,
+        degrees=None,
+        knot_vectors=None,
+        control_points=None,
+        spline=None,
     ):
         """BSpline of gustaf. Inherited from splinepy.BSpline and GustafSpline.
 
@@ -554,10 +549,10 @@ class BSpline(GustafSpline, splinepy.BSpline):
         None
         """
         super(splinepy.BSpline, self).__init__(
-                degrees=degrees,
-                knot_vectors=knot_vectors,
-                control_points=control_points,
-                spline=spline,
+            degrees=degrees,
+            knot_vectors=knot_vectors,
+            control_points=control_points,
+            spline=spline,
         )
 
         self._extractor = Extractor(self)
@@ -594,11 +589,11 @@ class BSpline(GustafSpline, splinepy.BSpline):
         from copy import deepcopy
 
         return NURBS(
-                degrees=deepcopy(self.degrees),
-                knot_vectors=deepcopy(self.knot_vectors),
-                control_points=deepcopy(self.control_points),
-                # fix dtype to match splinepy's dtype.
-                weights=np.ones(self.control_points.shape[0], dtype="float64")
+            degrees=deepcopy(self.degrees),
+            knot_vectors=deepcopy(self.knot_vectors),
+            control_points=deepcopy(self.control_points),
+            # fix dtype to match splinepy's dtype.
+            weights=np.ones(self.control_points.shape[0], dtype="float64"),
         )
 
     def extract_bezier_patches(self):
@@ -614,21 +609,20 @@ class BSpline(GustafSpline, splinepy.BSpline):
         None
         """
         logging.warning(
-                "Functionality not supported, please use:\n"
-                "<BSpline>.extract.beziers()"
+            "Functionality not supported, please use:\n"
+            "<BSpline>.extract.beziers()"
         )
         return None
 
 
 class NURBS(GustafSpline, splinepy.NURBS):
-
     def __init__(
-            self,
-            degrees=None,
-            knot_vectors=None,
-            control_points=None,
-            weights=None,
-            spline=None,
+        self,
+        degrees=None,
+        knot_vectors=None,
+        control_points=None,
+        weights=None,
+        spline=None,
     ):
         """NURBS of gustaf. Inherited from splinepy.NURBS.
 
@@ -650,11 +644,11 @@ class NURBS(GustafSpline, splinepy.NURBS):
         None
         """
         super(splinepy.NURBS, self).__init__(
-                degrees=degrees,
-                knot_vectors=knot_vectors,
-                control_points=control_points,
-                weights=weights,
-                spline=spline,
+            degrees=degrees,
+            knot_vectors=knot_vectors,
+            control_points=control_points,
+            weights=weights,
+            spline=spline,
         )
 
         self._extractor = Extractor(self)
@@ -675,13 +669,13 @@ class NURBS(GustafSpline, splinepy.NURBS):
         """
         if self.para_dim != 2:
             raise NotImplementedError(
-                    "Sorry, only available for para_dim = 2 splines"
+                "Sorry, only available for para_dim = 2 splines"
             )
 
         gustaf2mfem, mfem2gustaf = splinepy.io.mfem.mfem_index_mapping(
-                self.para_dim,
-                self.degrees,
-                self.knot_vectors,
+            self.para_dim,
+            self.degrees,
+            self.knot_vectors,
         )
 
         return gustaf2mfem, mfem2gustaf
@@ -699,8 +693,8 @@ class NURBS(GustafSpline, splinepy.NURBS):
         None
         """
         logging.warning(
-                "Functionality not supported, please use:\n"
-                "<NURBS>.extract.beziers()"
+            "Functionality not supported, please use:\n"
+            "<NURBS>.extract.beziers()"
         )
         return None
 
@@ -731,16 +725,16 @@ def from_mfem(nurbs_dict):
     nurbs: NURBS
     """
     _, m2gus = splinepy.io.mfem.mfem_index_mapping(
-            len(nurbs_dict["degrees"]),
-            nurbs_dict["degrees"],
-            nurbs_dict["knot_vectors"],
+        len(nurbs_dict["degrees"]),
+        nurbs_dict["degrees"],
+        nurbs_dict["knot_vectors"],
     )
 
     return NURBS(
-            degrees=nurbs_dict["degrees"],
-            knot_vectors=nurbs_dict["knot_vectors"],
-            control_points=nurbs_dict["control_points"][m2gus],
-            weights=nurbs_dict["weights"][m2gus],
+        degrees=nurbs_dict["degrees"],
+        knot_vectors=nurbs_dict["knot_vectors"],
+        control_points=nurbs_dict["control_points"][m2gus],
+        weights=nurbs_dict["weights"][m2gus],
     )
 
 

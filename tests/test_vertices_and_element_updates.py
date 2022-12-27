@@ -5,44 +5,68 @@ import gustaf as gus
 
 # frequently used fixtures
 all_grids = (
-        "vertices",
-        "edges",
-        "faces_tri",
-        "faces_quad",
-        "volumes_tet",
-        "volumes_hexa",
+    "vertices",
+    "edges",
+    "faces_tri",
+    "faces_quad",
+    "volumes_tet",
+    "volumes_hexa",
 )
 
 
 @pytest.fixture
 def volumes_hexa333():
     v = [
-            [0., 0., 0.], [0.5, 0., 0.], [1., 0., 0.], [0., 0.5, 0.],
-            [0.5, 0.5, 0.], [1., 0.5, 0.], [0., 1., 0.], [0.5, 1., 0.],
-            [1., 1., 0.], [0., 0., 0.5], [0.5, 0., 0.5], [1., 0., 0.5],
-            [0., 0.5, 0.5], [0.5, 0.5, 0.5], [1., 0.5, 0.5], [0., 1., 0.5],
-            [0.5, 1., 0.5], [1., 1., 0.5], [0., 0., 1.], [0.5, 0., 1.],
-            [1., 0., 1.], [0., 0.5, 1.], [0.5, 0.5, 1.], [1., 0.5, 1.],
-            [0., 1., 1.], [0.5, 1., 1.], [1., 1., 1.]
+        [0.0, 0.0, 0.0],
+        [0.5, 0.0, 0.0],
+        [1.0, 0.0, 0.0],
+        [0.0, 0.5, 0.0],
+        [0.5, 0.5, 0.0],
+        [1.0, 0.5, 0.0],
+        [0.0, 1.0, 0.0],
+        [0.5, 1.0, 0.0],
+        [1.0, 1.0, 0.0],
+        [0.0, 0.0, 0.5],
+        [0.5, 0.0, 0.5],
+        [1.0, 0.0, 0.5],
+        [0.0, 0.5, 0.5],
+        [0.5, 0.5, 0.5],
+        [1.0, 0.5, 0.5],
+        [0.0, 1.0, 0.5],
+        [0.5, 1.0, 0.5],
+        [1.0, 1.0, 0.5],
+        [0.0, 0.0, 1.0],
+        [0.5, 0.0, 1.0],
+        [1.0, 0.0, 1.0],
+        [0.0, 0.5, 1.0],
+        [0.5, 0.5, 1.0],
+        [1.0, 0.5, 1.0],
+        [0.0, 1.0, 1.0],
+        [0.5, 1.0, 1.0],
+        [1.0, 1.0, 1.0],
     ]
 
     vol = [
-            [0, 1, 4, 3, 9, 10, 13, 12], [1, 2, 5, 4, 10, 11, 14, 13],
-            [3, 4, 7, 6, 12, 13, 16, 15], [4, 5, 8, 7, 13, 14, 17, 16],
-            [9, 10, 13, 12, 18, 19, 22, 21], [10, 11, 14, 13, 19, 20, 23, 22],
-            [12, 13, 16, 15, 21, 22, 25, 24], [13, 14, 17, 16, 22, 23, 26, 25]
+        [0, 1, 4, 3, 9, 10, 13, 12],
+        [1, 2, 5, 4, 10, 11, 14, 13],
+        [3, 4, 7, 6, 12, 13, 16, 15],
+        [4, 5, 8, 7, 13, 14, 17, 16],
+        [9, 10, 13, 12, 18, 19, 22, 21],
+        [10, 11, 14, 13, 19, 20, 23, 22],
+        [12, 13, 16, 15, 21, 22, 25, 24],
+        [13, 14, 17, 16, 22, 23, 26, 25],
     ]
 
     return gus.Volumes(v, vol)
 
 
 update_elements_params = (
-        *all_grids[1:-1],  # without vertices and simple hexa
-        "volumes_hexa333"
+    *all_grids[1:-1],  # without vertices and simple hexa
+    "volumes_hexa333",
 )
 
 
-@pytest.mark.parametrize('grid', all_grids)
+@pytest.mark.parametrize("grid", all_grids)
 def test_unique_vertices(grid, request):
     """Test unique_vertices. requires scipy."""
     grid = request.getfixturevalue(grid)
@@ -56,10 +80,7 @@ def test_unique_vertices(grid, request):
     # assgin new vertices
     #  ==> stacks (original, random, original, random)
     grid.vertices = np.vstack(
-            (
-                    grid.vertices, random_vertices, original_vertices,
-                    random_vertices
-            )
+        (grid.vertices, random_vertices, original_vertices, random_vertices)
     )
     # check if vertices are correctly set
     assert len(grid.vertices) == int((n_original_vertices + n_ran) * 2)
@@ -81,7 +102,7 @@ def test_unique_vertices(grid, request):
     # also, should be sorted, assuming scipy verion is > 1.6
     intersection_list = [*unique_vs.intersection]
     intersection_ref = [
-            [i, i + n_expected_unique] for i in range(n_expected_unique)
+        [i, i + n_expected_unique] for i in range(n_expected_unique)
     ] * 2
     assert intersection_list == intersection_ref
 
@@ -125,9 +146,9 @@ def test_update_vertices(grid, request):
     n_original_vs = len(grid.vertices)
     n_vertices_to_keep = 3
     int_mask = np.random.choice(
-            np.arange(n_original_vs),
-            n_vertices_to_keep,
-            replace=False,
+        np.arange(n_original_vs),
+        n_vertices_to_keep,
+        replace=False,
     )
 
     # save ref values for updated vertices
@@ -176,9 +197,9 @@ def test_update_elements(grid, request):
     n_original_es = len(grid.elements)
     n_elements_to_keep = 3
     int_mask = np.random.choice(
-            np.arange(n_original_es),
-            n_elements_to_keep,
-            replace=False,
+        np.arange(n_original_es),
+        n_elements_to_keep,
+        replace=False,
     )
 
     test_grid = grid.copy()
@@ -190,8 +211,7 @@ def test_update_elements(grid, request):
 
     assert len(test_grid.elements) == n_elements_to_keep
     assert np.allclose(
-            grid.vertices[updated_es_ref],
-            test_grid.vertices[test_grid.elements]
+        grid.vertices[updated_es_ref], test_grid.vertices[test_grid.elements]
     )
 
     # make a copy
@@ -210,8 +230,8 @@ def test_update_elements(grid, request):
 
     assert len(test_grid.elements) == n_elements_to_keep
     assert np.allclose(
-            grid.vertices[updated_es_ref[reorganize_ref]],
-            test_grid.vertices[test_grid.elements]
+        grid.vertices[updated_es_ref[reorganize_ref]],
+        test_grid.vertices[test_grid.elements],
     )
 
     # see if vertices are removed.
@@ -221,6 +241,6 @@ def test_update_elements(grid, request):
     assert len(leftover_vertex_ids) == len(leftover_vertex_ids_ref)
 
     assert np.allclose(
-            test_grid.vertices[leftover_vertex_ids],
-            grid.vertices[leftover_vertex_ids_ref]
+        test_grid.vertices[leftover_vertex_ids],
+        grid.vertices[leftover_vertex_ids_ref],
     )

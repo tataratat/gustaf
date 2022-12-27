@@ -15,12 +15,7 @@ from gustaf.utils import log
 
 
 def load(
-        simplex=True,
-        volume=False,
-        fname=None,
-        mxyz=None,
-        mien=None,
-        mrng=None
+    simplex=True, volume=False, fname=None, mxyz=None, mien=None, mrng=None
 ):
     """mixd load. To avoid reading minf, all the crucial info can be given as
     params. Default input will try to import `mxyz`, `mien`, `mrng` from
@@ -114,9 +109,9 @@ def load(
 
 
 def export(
-        mesh,
-        fname,
-        space_time=False,
+    mesh,
+    fname,
+    space_time=False,
 ):
     """Export in mixd format. Supports triangle, quadrilateral, tetrahedron,
     and hexahedron semi-discrete and (flat) space-time mesh output.
@@ -138,7 +133,7 @@ def export(
 
     if whatami not in acceptable_shapes:
         raise NotImplementedError(
-                f"Sorry, we can't export {whatami}-shape in mixd format."
+            f"Sorry, we can't export {whatami}-shape in mixd format."
         )
 
     # prepare export location
@@ -183,7 +178,7 @@ def export(
 
     # write connec
     with open(connec_file, "wb") as cf:
-        for c in (mesh.elements.ravel() + 1):
+        for c in mesh.elements.ravel() + 1:
             cf.write(struct.pack(big_endian_int, c))
 
     # write bc

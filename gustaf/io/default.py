@@ -22,9 +22,9 @@ def load(fname: Union[str, pathlib.Path]) -> MESH_TYPES:
         Loaded mesh.
     """
     extensions_to_load_functions = {
-            ".mixd": mixd.load,
-            ".mfem": mfem.load,
-            ".msh": meshio.load,
+        ".mixd": mixd.load,
+        ".mfem": mfem.load,
+        ".msh": meshio.load,
     }
 
     fname = pathlib.Path(fname).resolve()
@@ -34,7 +34,7 @@ def load(fname: Union[str, pathlib.Path]) -> MESH_TYPES:
 
     else:
         raise ValueError(
-                f"Failed to load given file with '{fname.suffix}' extension. "
-                "Valid extensions are: "
-                f"{tuple(extensions_to_load_functions.keys())}."
+            f"Failed to load given file with '{fname.suffix}' extension. "
+            "Valid extensions are: "
+            f"{tuple(extensions_to_load_functions.keys())}."
         )

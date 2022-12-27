@@ -10,7 +10,13 @@ from gustaf.spline import base
 from gustaf.spline import create
 from gustaf.spline import extract
 from gustaf.spline.base import (
-        Bezier, RationalBezier, BSpline, NURBS, show, from_mfem, load_splines
+    Bezier,
+    RationalBezier,
+    BSpline,
+    NURBS,
+    show,
+    from_mfem,
+    load_splines,
 )
 from gustaf.spline import ffd
 from gustaf.spline import microstructure
@@ -20,27 +26,27 @@ from splinepy import io
 
 # overwrite name to type map
 splinepy.settings.NAME_TO_TYPE = dict(
-        Bezier=Bezier,
-        RationalBezier=RationalBezier,
-        BSpline=BSpline,
-        NURBS=NURBS,
+    Bezier=Bezier,
+    RationalBezier=RationalBezier,
+    BSpline=BSpline,
+    NURBS=NURBS,
 )
 
 # a shortcut
 NAME_TO_TYPE = splinepy.settings.NAME_TO_TYPE
 
 __all__ = [
-        "base",
-        "create",
-        "extract",
-        "Bezier",
-        "RationalBezier",
-        "BSpline",
-        "NURBS",
-        "show",
-        "from_mfem",
-        "load_splines",
-        "ffd",
-        "microstructure",
-        "io",
+    "base",
+    "create",
+    "extract",
+    "Bezier",
+    "RationalBezier",
+    "BSpline",
+    "NURBS",
+    "show",
+    "from_mfem",
+    "load_splines",
+    "ffd",
+    "microstructure",
+    "io",
 ]

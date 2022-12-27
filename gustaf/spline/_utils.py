@@ -21,7 +21,7 @@ def to_res_list(res, length):
     if isinstance(res, list):
         if len(res) != length:
             raise ValueError(
-                    "Invalid resolution length! " + "It should match length."
+                "Invalid resolution length! " + "It should match length."
             )
 
         return res
@@ -35,5 +35,5 @@ def to_res_list(res, length):
 
     else:
         raise TypeError(
-                "Invalid resolutions input. It should be int, tuple, or list."
+            "Invalid resolutions input. It should be int, tuple, or list."
         )

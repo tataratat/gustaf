@@ -9,7 +9,7 @@ from gustaf import utils
 from gustaf import create
 
 
-def box(bounds=[[0., 0., 0.], [1., 1., 1.]], resolutions=[2, 2, 2]):
+def box(bounds=[[0.0, 0.0, 0.0], [1.0, 1.0, 1.0]], resolutions=[2, 2, 2]):
     """Create structured hexahedron block mesh.
 
     Parameters

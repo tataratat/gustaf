@@ -10,6 +10,7 @@ MESH_TYPES = Union[Vertices, Edges, Faces, Volumes]
 
 try:
     from gustaf.spline.base import BSpline, NURBS, Bezier, RationalBezier
+
     SPLINE_TYPES = Union[Bezier, RationalBezier, BSpline, NURBS]
 except ImportError:
     SPLINE_TYPES = None

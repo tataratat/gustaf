@@ -12,10 +12,10 @@ INT_DTYPE = "int32"
 VISUALIZATION_BACKEND = "vedo"
 
 VEDO_DEFAULT_OPTIONS = dict(
-        vertex=dict(),
-        edges=dict(),
-        faces=dict(),
-        volumes=dict(),
+    vertex=dict(),
+    edges=dict(),
+    faces=dict(),
+    volumes=dict(),
 )
 
 NTHREADS = 1

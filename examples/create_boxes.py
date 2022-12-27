@@ -1,4 +1,5 @@
 import gustaf as gus
+
 """In this example, four separate meshes are created.
 
 mesh_faces_box: creates a quadrilateral 2D-face-mesh with quadrilateral
@@ -35,31 +36,32 @@ diagonalization in the other direction.
 def main():
 
     mesh_faces_box = gus.create.faces.box(
-            bounds=[[0, 0], [2, 2]], resolutions=[2, 3]
+        bounds=[[0, 0], [2, 2]], resolutions=[2, 3]
     )
 
     mesh_volumes_box = gus.create.volumes.box(
-            bounds=[[0., 0., 0.], [1., 1., 1.]], resolutions=[2, 3, 4]
+        bounds=[[0.0, 0.0, 0.0], [1.0, 1.0, 1.0]], resolutions=[2, 3, 4]
     )
 
     mesh_faces_triangle = gus.create.faces.box(
-            bounds=[[0, 0], [2, 2]],
-            resolutions=[3, 3],
-            simplex=True,
-            backslash=False
+        bounds=[[0, 0], [2, 2]],
+        resolutions=[3, 3],
+        simplex=True,
+        backslash=False,
     )
 
     mesh_faces_triangle_bs = gus.create.faces.box(
-            bounds=[[0, 0], [2, 2]],
-            resolutions=[3, 3],
-            simplex=True,
-            backslash=True
+        bounds=[[0, 0], [2, 2]],
+        resolutions=[3, 3],
+        simplex=True,
+        backslash=True,
     )
 
     gus.show.show_vedo(
-            ["faces-box", mesh_faces_box], ["volumes-box", mesh_volumes_box],
-            ["faces-triangle", mesh_faces_triangle],
-            ["faces-triangle-backslash", mesh_faces_triangle_bs]
+        ["faces-box", mesh_faces_box],
+        ["volumes-box", mesh_volumes_box],
+        ["faces-triangle", mesh_faces_triangle],
+        ["faces-triangle-backslash", mesh_faces_triangle_bs],
     )
 
 

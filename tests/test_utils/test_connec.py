@@ -1,7 +1,12 @@
 import numpy as np
 
-from gustaf.utils.connec import tet_to_tri, hexa_to_quad, faces_to_edges, \
-    make_quad_faces, make_hexa_volumes
+from gustaf.utils.connec import (
+    tet_to_tri,
+    hexa_to_quad,
+    faces_to_edges,
+    make_quad_faces,
+    make_hexa_volumes,
+)
 import pytest
 
 
@@ -56,8 +61,9 @@ def test_make_quad_faces_throwException(sample_hex):
 
 
 def test_make_quad_faces(sample_quad_faces, expected_quad_faces):
-    assert np.equal(expected_quad_faces,
-                    make_quad_faces(sample_quad_faces)).all()
+    assert np.equal(
+        expected_quad_faces, make_quad_faces(sample_quad_faces)
+    ).all()
 
 
 def test_make_quad_faces_wrong_input(sample_quad_faces_fail):

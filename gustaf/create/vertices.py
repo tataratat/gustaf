@@ -9,8 +9,8 @@ from gustaf.vertices import Vertices
 
 
 def raster(
-        bounds,
-        resolutions,
+    bounds,
+    resolutions,
 ):
     """Simple wraper of np.mgrid to extract raster points of desired bounds and
     resolutions.

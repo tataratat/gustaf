@@ -11,15 +11,18 @@ def test_extrude_error_on_no_spline_given(values):
 
 
 @pytest.mark.parametrize(
-        "spline_name",
-        ["bspline_2d", "nurbs_2d", "bezier_2d", "rationalbezier_2d"]
+    "spline_name", ["bspline_2d", "nurbs_2d", "bezier_2d", "rationalbezier_2d"]
 )
 @pytest.mark.parametrize(
-        "axis,error", [
-                (None, True), (1, True), ([1], True), ({
-                        "hallo": 1
-                }, True), ("hallo", True), (np.random.rand(3), False)
-        ]
+    "axis,error",
+    [
+        (None, True),
+        (1, True),
+        ([1], True),
+        ({"hallo": 1}, True),
+        ("hallo", True),
+        (np.random.rand(3), False),
+    ],
 )
 def test_extrude(spline_name: str, axis, error, request):
     # get the correct spline from the provided fixtures
@@ -31,9 +34,9 @@ def test_extrude(spline_name: str, axis, error, request):
         extrudate = spline.create.extruded(extrusion_vector=axis)
         x, y, z = np.random.rand(3).tolist()
         assert np.allclose(
-                extrudate.evaluate([[x, y, z]]),
-                np.hstack((spline.evaluate([[x, y]]), np.zeros((1, 1))))
-                + z * axis
+            extrudate.evaluate([[x, y, z]]),
+            np.hstack((spline.evaluate([[x, y]]), np.zeros((1, 1))))
+            + z * axis,
         )
 
 
@@ -44,27 +47,22 @@ def test_revolved_error_on_no_spline_given(values):
 
 
 @pytest.mark.parametrize(
-        "spline_name",
-        ["bspline_2d", "nurbs_2d", "bezier_2d", "rationalbezier_2d"]
+    "spline_name", ["bspline_2d", "nurbs_2d", "bezier_2d", "rationalbezier_2d"]
 )
 @pytest.mark.parametrize(
-        "axis,center,angle,n_knot_span,degree,error",
-        [
-                # (None, None, None, None, True, True),
-                tuple([1]) + tuple([None] * 3) + tuple([True, True]),
-                tuple([[1]]) + tuple([None] * 3) + tuple([True, True]),
-                tuple([[0, 0, 1e-18]]) + tuple([None] * 3)
-                + tuple([True, True]),
-                tuple([{
-                        "hallo": 1
-                }]) + tuple([None] * 3) + tuple([True, True]),
-                tuple(["hallo"]) + tuple([None] * 3) + tuple([True, True]),
-                # (np.random.rand(3))+tuple([None]*4)+tuple((False))
-        ]
+    "axis,center,angle,n_knot_span,degree,error",
+    [
+        # (None, None, None, None, True, True),
+        tuple([1]) + tuple([None] * 3) + tuple([True, True]),
+        tuple([[1]]) + tuple([None] * 3) + tuple([True, True]),
+        tuple([[0, 0, 1e-18]]) + tuple([None] * 3) + tuple([True, True]),
+        tuple([{"hallo": 1}]) + tuple([None] * 3) + tuple([True, True]),
+        tuple(["hallo"]) + tuple([None] * 3) + tuple([True, True]),
+        # (np.random.rand(3))+tuple([None]*4)+tuple((False))
+    ],
 )
 def test_revolved_3d(
-        spline_name: str, axis, center, angle, n_knot_span, degree, error,
-        request
+    spline_name: str, axis, center, angle, n_knot_span, degree, error, request
 ):
     # get the correct spline from the provided fixtures
     spline: gus.spline.base.GustafSpline = request.getfixturevalue(spline_name)
@@ -77,18 +75,18 @@ def test_revolved_3d(
         cc, ss = np.cos(angle), np.sin(angle)
         r = np.array([[cc, -ss, 0], [ss, cc, 0], [0, 0, 1]])
         revolved = spline.create.revolved(
-                axis, center, angle, n_knot_span, degree
+            axis, center, angle, n_knot_span, degree
         )
 
         dim_bumped_cps = np.zeros((spline.control_points.shape[0], 1))
 
         ref_sol = np.matmul(
-                np.hstack((spline.control_points, dim_bumped_cps)), r.T
+            np.hstack((spline.control_points, dim_bumped_cps)), r.T
         )
 
         assert np.allclose(
-                revolved.control_points[-10:, :],
-                ref_sol,
+            revolved.control_points[-10:, :],
+            ref_sol,
         ), f"{spline.whatami} failed revolution"
 
     # Test Revolution Routine
@@ -112,16 +110,17 @@ def test_create_revolution():
     # Test 2D Revolutions of lines
     for spline_g in (bezier_line, nurbs_line):
         assert np.allclose(
-                spline_g.create.revolved(angle=r_angle,
-                                         degree=False).control_points[-2:, :],
-                np.matmul(spline_g.control_points, R2.T)
+            spline_g.create.revolved(
+                angle=r_angle, degree=False
+            ).control_points[-2:, :],
+            np.matmul(spline_g.control_points, R2.T),
         )
 
     # Test 2D Revolutions of lines around center
     for spline_g in (bezier_line, nurbs_line):
         assert np.allclose(
-                spline_g.create.revolved(
-                        angle=r_angle, center=r_center, degree=False
-                ).control_points[-2:, :],
-                np.matmul(spline_g.control_points - r_center, R2.T) + r_center
+            spline_g.create.revolved(
+                angle=r_angle, center=r_center, degree=False
+            ).control_points[-2:, :],
+            np.matmul(spline_g.control_points - r_center, R2.T) + r_center,
         ), f"{spline_g.whatami} failed revolution around center"

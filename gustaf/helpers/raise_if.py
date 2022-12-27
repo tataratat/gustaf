@@ -27,8 +27,8 @@ def invalid_inherited_attr(func, qualname, property_=False):
 
     def raiser(self):
         raise AttributeError(
-                f"{func.__name__} is not supported from {qualname} "
-                "and its subclasses thereof."
+            f"{func.__name__} is not supported from {qualname} "
+            "and its subclasses thereof."
         )
 
     if property_:
@@ -52,11 +52,11 @@ class ModuleImportRaiser:
         if error_message is not None:
             original_message = f"\nOriginal error message - {error_message}"
         self._message = str(
-                f"Cannot load {lib_name} package, on which requested "
-                "functionality depends. "
-                "Please refer to the installation instructions "
-                "[tataratat.github.io/gustaf] for more information."
-                f"{original_message}"
+            f"Cannot load {lib_name} package, on which requested "
+            "functionality depends. "
+            "Please refer to the installation instructions "
+            "[tataratat.github.io/gustaf] for more information."
+            f"{original_message}"
         )
 
     def __call__(self, *args: Any, **kwds: Any) -> Any:

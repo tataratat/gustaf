@@ -12,13 +12,13 @@ from gustaf.faces import Faces
 from gustaf.volumes import Volumes
 
 geometry_types = {
-        "POINT": 0,
-        "SEGMENT": 1,
-        "TRIANGLE": 2,
-        "SQUARE": 3,
-        "TETRAHEDRON": 4,
-        "CUBE": 5,
-        "PRISM": 6
+    "POINT": 0,
+    "SEGMENT": 1,
+    "TRIANGLE": 2,
+    "SQUARE": 3,
+    "TETRAHEDRON": 4,
+    "CUBE": 5,
+    "PRISM": 6,
 }
 
 
@@ -55,11 +55,11 @@ def load(fname):
         """
         end_index = total_lines - (start_index + n_lines + 2)
         return np.genfromtxt(
-                fname,
-                delimiter=" ",
-                skip_header=start_index,
-                skip_footer=end_index,
-                dtype=dtype
+            fname,
+            delimiter=" ",
+            skip_header=start_index,
+            skip_footer=end_index,
+            dtype=dtype,
         )
 
     with open(fname, "r") as f:
@@ -70,25 +70,30 @@ def load(fname):
         keywords = ["dimension", "elements", "boundary", "vertices"]
         indices = [lines.index(f"{keyword}\n") for keyword in keywords]
         dimension, n_elements, n_boundaries, n_vertices = [
-                int(lines[index + 1]) for index in indices
+            int(lines[index + 1]) for index in indices
         ]
         vdim = int(lines[indices[-1] + 2])
         # Extract values
         elements = extract_values(
-                fname, indices[1] + 2, n_elements, total_lines,
-                settings.INT_DTYPE
+            fname, indices[1] + 2, n_elements, total_lines, settings.INT_DTYPE
         )
         if elements.shape[0] != n_elements:
             raise ValueError("Number of elements do not match.")
         boundary = extract_values(
-                fname, indices[2] + 2, n_boundaries, total_lines,
-                settings.INT_DTYPE
+            fname,
+            indices[2] + 2,
+            n_boundaries,
+            total_lines,
+            settings.INT_DTYPE,
         )
         if boundary.shape[0] != n_boundaries:
             raise ValueError("Number of boundaries do not match.")
         vertices = extract_values(
-                fname, indices[3] + 3, n_vertices, total_lines,
-                settings.FLOAT_DTYPE
+            fname,
+            indices[3] + 3,
+            n_vertices,
+            total_lines,
+            settings.FLOAT_DTYPE,
         )
         if vertices.shape != (n_vertices, vdim):
             raise ValueError("Number of vertices do not match.")
@@ -146,12 +151,12 @@ def export(mesh, fname):
             geometry_type = geometry_types["SQUARE"]
         else:
             raise NotImplementedError(
-                    "Sorry, we cannot export mesh with elements "
-                    f"with {n_element_vertices} vertices."
+                "Sorry, we cannot export mesh with elements "
+                f"with {n_element_vertices} vertices."
             )
         e = np.ones((n_elements, 1), dtype=settings.INT_DTYPE)
         elements_array = np.hstack(
-                (element_attribute * e, geometry_type * e, elements)
+            (element_attribute * e, geometry_type * e, elements)
         )
         elements_array_string = format_array(elements_array)
         elements_string = f"elements\n{n_elements}\n"
@@ -161,7 +166,7 @@ def export(mesh, fname):
         edges = mesh.edges()
         nboundary_edges = sum(map(len, mesh.BC.values()))
         boundary_array = np.empty(
-                (nboundary_edges, 4), dtype=settings.INT_DTYPE
+            (nboundary_edges, 4), dtype=settings.INT_DTYPE
         )
         startrow = 0
         # Add boundary one by one as SEGMENTs
@@ -169,8 +174,8 @@ def export(mesh, fname):
             nedges = len(edgeids)
             e = np.ones(nedges).reshape(-1, 1)
             vertex_list = edges[edgeids, :]
-            boundary_array[startrow:(startrow + nedges), :] = np.hstack(
-                    (int(bid) * e, geometry_types["SEGMENT"] * e, vertex_list)
+            boundary_array[startrow : (startrow + nedges), :] = np.hstack(
+                (int(bid) * e, geometry_types["SEGMENT"] * e, vertex_list)
             )
             startrow += nedges
 
@@ -194,5 +199,5 @@ def export(mesh, fname):
     # Export 3D mesh
     else:
         raise NotImplementedError(
-                f"Sorry, we cannot export mesh of dimension {dim}."
+            f"Sorry, we cannot export mesh of dimension {dim}."
         )

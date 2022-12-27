@@ -51,9 +51,9 @@ def tet_to_tri(volumes):
         raise ValueError("Given volumes are not `tet` volumes")
 
     fpe = 4  # faces per element
-    faces = np.ones(
-            ((volumes.shape[0] * fpe), 3), dtype=np.int32
-    ) * -1  # -1 for safety check
+    faces = (
+        np.ones(((volumes.shape[0] * fpe), 3), dtype=np.int32) * -1
+    )  # -1 for safety check
 
     faces[:, 0] = volumes.flatten()
     faces[::fpe, [1, 2]] = volumes[:, [2, 1]]
@@ -111,9 +111,9 @@ def hexa_to_quad(volumes):
         raise ValueError("Given volumes are not `hexa` volumes")
 
     fpe = 6  # faces per element
-    faces = np.ones(
-            ((volumes.shape[0] * fpe), 4), dtype=np.int32
-    ) * -1  # -1 for safety check
+    faces = (
+        np.ones(((volumes.shape[0] * fpe), 4), dtype=np.int32) * -1
+    )  # -1 for safety check
 
     faces[::fpe] = volumes[:, [1, 0, 3, 2]]
     faces[1::fpe] = volumes[:, [0, 1, 5, 4]]
@@ -278,10 +278,10 @@ def make_quad_faces(resolutions):
     node_indices = np.arange(total_nodes).reshape(nnpd[1], nnpd[0])
     faces = np.ones((total_faces, 4)) * -1
 
-    faces[:, 0] = node_indices[:(nnpd[1] - 1), :(nnpd[0] - 1)].flatten()
-    faces[:, 1] = node_indices[:(nnpd[1] - 1), 1:nnpd[0]].flatten()
-    faces[:, 2] = node_indices[1:nnpd[1], 1:nnpd[0]].flatten()
-    faces[:, 3] = node_indices[1:nnpd[1], :(nnpd[0] - 1)].flatten()
+    faces[:, 0] = node_indices[: (nnpd[1] - 1), : (nnpd[0] - 1)].flatten()
+    faces[:, 1] = node_indices[: (nnpd[1] - 1), 1 : nnpd[0]].flatten()
+    faces[:, 2] = node_indices[1 : nnpd[1], 1 : nnpd[0]].flatten()
+    faces[:, 3] = node_indices[1 : nnpd[1], : (nnpd[0] - 1)].flatten()
 
     if faces.all() == -1:
         raise ValueError("Something went wrong during `make_quad_faces`.")
@@ -319,22 +319,30 @@ def make_hexa_volumes(resolutions):
     node_indices = np.arange(total_nodes, dtype=np.int32).reshape(nnpd[::-1])
     volumes = np.ones((total_volumes, 8), dtype=np.int32) * int(-1)
 
-    volumes[:,
-            0] = node_indices[:(nnpd[2] - 1), :(nnpd[1] - 1), :(nnpd[0]
-                                                                - 1)].flatten()
-    volumes[:, 1] = node_indices[:(nnpd[2] - 1), :(nnpd[1] - 1),
-                                 1:nnpd[0]].flatten()
-    volumes[:, 2] = node_indices[:(nnpd[2] - 1), 1:nnpd[1],
-                                 1:nnpd[0]].flatten()
-    volumes[:, 3] = node_indices[:(nnpd[2] - 1),
-                                 1:nnpd[1], :(nnpd[0] - 1)].flatten()
-    volumes[:, 4] = node_indices[1:nnpd[2], :(nnpd[1] - 1), :(nnpd[0]
-                                                              - 1)].flatten()
-    volumes[:, 5] = node_indices[1:nnpd[2], :(nnpd[1] - 1),
-                                 1:nnpd[0]].flatten()
-    volumes[:, 6] = node_indices[1:nnpd[2], 1:nnpd[1], 1:nnpd[0]].flatten()
-    volumes[:, 7] = node_indices[1:nnpd[2],
-                                 1:nnpd[1], :(nnpd[0] - 1)].flatten()
+    volumes[:, 0] = node_indices[
+        : (nnpd[2] - 1), : (nnpd[1] - 1), : (nnpd[0] - 1)
+    ].flatten()
+    volumes[:, 1] = node_indices[
+        : (nnpd[2] - 1), : (nnpd[1] - 1), 1 : nnpd[0]
+    ].flatten()
+    volumes[:, 2] = node_indices[
+        : (nnpd[2] - 1), 1 : nnpd[1], 1 : nnpd[0]
+    ].flatten()
+    volumes[:, 3] = node_indices[
+        : (nnpd[2] - 1), 1 : nnpd[1], : (nnpd[0] - 1)
+    ].flatten()
+    volumes[:, 4] = node_indices[
+        1 : nnpd[2], : (nnpd[1] - 1), : (nnpd[0] - 1)
+    ].flatten()
+    volumes[:, 5] = node_indices[
+        1 : nnpd[2], : (nnpd[1] - 1), 1 : nnpd[0]
+    ].flatten()
+    volumes[:, 6] = node_indices[
+        1 : nnpd[2], 1 : nnpd[1], 1 : nnpd[0]
+    ].flatten()
+    volumes[:, 7] = node_indices[
+        1 : nnpd[2], 1 : nnpd[1], : (nnpd[0] - 1)
+    ].flatten()
 
     if (volumes == -1).any():
         raise ValueError("Something went wrong during `make_hexa_volumes`.")
@@ -376,8 +384,8 @@ def subdivide_edges(edges):
 
 
 def subdivide_tri(
-        mesh,
-        return_dict=False,
+    mesh,
+    return_dict=False,
 ):
     """Subdivide triangles. Each triangle is divided into 4 meshes.
 
@@ -427,8 +435,8 @@ def subdivide_tri(
     new_vertices = np.vstack((mesh.vertices, edge_mid_v))
 
     subd_faces = np.empty(
-            (mesh.faces.shape[0] * 4, mesh.faces.shape[1]),
-            dtype=np.int32,
+        (mesh.faces.shape[0] * 4, mesh.faces.shape[1]),
+        dtype=np.int32,
     )
 
     mask = np.ones(subd_faces.shape[0], dtype=bool)
@@ -438,21 +446,20 @@ def subdivide_tri(
     subd_faces[mask, 0] = mesh.faces.flatten()  # copies
 
     # Form ids for new vertices
-    new_vertices_ids = (
-            mesh.unique_edges().inverse + int(mesh.faces.max() + 1)
-    )
+    new_vertices_ids = mesh.unique_edges().inverse + int(mesh.faces.max() + 1)
     # 1st & 2nd columns
     subd_faces[mask, 1] = new_vertices_ids
-    subd_faces[mask, 2] = new_vertices_ids.reshape(-1, 3)[:,
-                                                          [2, 0, 1]].flatten()
+    subd_faces[mask, 2] = new_vertices_ids.reshape(-1, 3)[
+        :, [2, 0, 1]
+    ].flatten()
 
     # Every 4th row, starting from 3rd row
     subd_faces[~mask, :] = new_vertices_ids.reshape(-1, 3)
 
     if return_dict:
         return dict(
-                vertices=new_vertices,
-                faces=subd_faces,
+            vertices=new_vertices,
+            faces=subd_faces,
         )
 
     else:
@@ -460,8 +467,8 @@ def subdivide_tri(
 
 
 def subdivide_quad(
-        mesh,
-        return_dict=False,
+    mesh,
+    return_dict=False,
 ):
     """Subdivide quads.
 
@@ -485,32 +492,34 @@ def subdivide_quad(
     # Form new vertices
     edge_mid_v = mesh.vertices[mesh.unique_edges().values].mean(axis=1)
     face_centers = mesh.centers()
-    new_vertices = np.vstack((
+    new_vertices = np.vstack(
+        (
             mesh.vertices,
             edge_mid_v,
             face_centers,
-    ))
+        )
+    )
 
     subd_faces = np.empty(
-            (mesh.faces.shape[0] * 4, mesh.faces.shape[1]),
-            dtype=np.int32,
+        (mesh.faces.shape[0] * 4, mesh.faces.shape[1]),
+        dtype=np.int32,
     )
 
     subd_faces[:, 0] = mesh.faces.flatten()
     subd_faces[:, 1] = mesh.unique_edges().inverse + len(mesh.vertices)
     subd_faces[:, 2] = np.repeat(
-            np.arange(len(face_centers))
-            + (len(mesh.vertices) + len(edge_mid_v)),
-            4,
-            # dtype=np.int32,
+        np.arange(len(face_centers)) + (len(mesh.vertices) + len(edge_mid_v)),
+        4,
+        # dtype=np.int32,
     )
-    subd_faces[:, 3] = subd_faces[:, 1].reshape(-1, 4)[:,
-                                                       [3, 0, 1, 2]].flatten()
+    subd_faces[:, 3] = (
+        subd_faces[:, 1].reshape(-1, 4)[:, [3, 0, 1, 2]].flatten()
+    )
 
     if return_dict:
         return dict(
-                vertices=new_vertices,
-                faces=subd_faces,
+            vertices=new_vertices,
+            faces=subd_faces,
         )
 
     else:
@@ -533,16 +542,16 @@ def sorted_unique(connectivity, sorted_=False):
     s_connec = connectivity if sorted_ else np.sort(connectivity, axis=1)
 
     unique_stuff = arr.unique_rows(
-            s_connec,
-            return_index=True,
-            return_inverse=True,
-            return_counts=True,
-            dtype_name=settings.INT_DTYPE,
+        s_connec,
+        return_index=True,
+        return_inverse=True,
+        return_counts=True,
+        dtype_name=settings.INT_DTYPE,
     )
 
     return helpers.data.Unique2DIntegers(
-            unique_stuff[0],  # values
-            unique_stuff[1],  # ids
-            unique_stuff[2],  # inverse
-            unique_stuff[3],  # counts
+        unique_stuff[0],  # values
+        unique_stuff[1],  # ids
+        unique_stuff[2],  # inverse
+        unique_stuff[3],  # counts
     )

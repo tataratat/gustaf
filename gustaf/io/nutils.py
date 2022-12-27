@@ -25,12 +25,12 @@ def load(fname):
     mesh: Faces or Volumes
     """
     npzfile = np.load(fname, allow_pickle=True)
-    nodes = npzfile['nodes']
-    _ = npzfile['cnodes']
-    coords = npzfile['coords']
-    _ = npzfile['tags'].item()
-    btags = npzfile['btags'].item()
-    _ = npzfile['ptags'].item()
+    nodes = npzfile["nodes"]
+    _ = npzfile["cnodes"]
+    coords = npzfile["coords"]
+    _ = npzfile["tags"].item()
+    btags = npzfile["btags"].item()
+    _ = npzfile["ptags"].item()
 
     if nodes.shape[0] == 0:
         raise TypeError("Can not find nodes. Check nutils mesh description.")
@@ -55,8 +55,8 @@ def load(fname):
         mesh = Volumes(vertices, connec) if volume else Faces(vertices, connec)
     except BaseException:
         raise RuntimeError(
-                "Can not generate a mesh from the nutils input."
-                "Check nutils mesh description."
+            "Can not generate a mesh from the nutils input."
+            "Check nutils mesh description."
         )
 
     mesh.BC = btags
@@ -115,7 +115,7 @@ def to_nutils_simplex(mesh):
         volumes = mesh.volumes
         elements = volumes
     else:
-        raise TypeError('Only Triangle and Tetrahedrons are accepted.')
+        raise TypeError("Only Triangle and Tetrahedrons are accepted.")
 
     dic_to_nutils = dict()
 
@@ -127,7 +127,7 @@ def to_nutils_simplex(mesh):
     bcs = dict()
     bcs_in = mixd.make_mrng(mesh)
     bcs_in = np.ndarray.reshape(
-            bcs_in, (int(len(bcs_in) / (dimension + 1)), (dimension + 1))
+        bcs_in, (int(len(bcs_in) / (dimension + 1)), (dimension + 1))
     )
 
     bound_id = np.unique(bcs_in)
@@ -143,14 +143,14 @@ def to_nutils_simplex(mesh):
         bcs[str(bi)] = np.argwhere(bcs_sorted == bi)
 
     dic_to_nutils.update(
-            {
-                    'nodes': elements_sorted,
-                    'cnodes': elements_sorted,
-                    'coords': vertices,
-                    'tags': {},
-                    'btags': bcs,
-                    'ptags': {}
-            }
+        {
+            "nodes": elements_sorted,
+            "cnodes": elements_sorted,
+            "coords": vertices,
+            "tags": {},
+            "btags": bcs,
+            "ptags": {},
+        }
     )
 
     return dic_to_nutils
