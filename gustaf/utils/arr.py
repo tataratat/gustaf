@@ -69,6 +69,7 @@ def enforce_len(value, n_len):
             "Supports {int, float, np.ndarray, tuple, list}."
         )
 
+
 def unique_rows(
     in_arr,
     return_index=True,
