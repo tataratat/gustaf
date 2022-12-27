@@ -157,9 +157,6 @@ class ShowOption:
         -------
         description: str
         """
-        valid_option_str = "\n".join(
-            [str(opt) for opt in self._valid_options[self._backend]]
-        )
         valid_and_current = list()
         for vo in self._valid_options[self._backend].values():
             valid = str(vo)
