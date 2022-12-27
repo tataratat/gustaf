@@ -1,9 +1,3 @@
-import numpy as np
-from nutils import function, mesh, solver
-from nutils.expression_v2 import Namespace
-
-import gustaf as gus
-
 """This example shows the functionality of gustaf.io.nutils.
 
 A 2-dimensional plate with fixed edges on the left and right edges is
@@ -12,6 +6,11 @@ The plate consists of 20 triangular elements and is created with gustaf.
 One can either add the displacements directly to gustaf.vertices or evaluate
 the new coordinates and create a new gustaf.mesh.
 """
+import numpy as np
+from nutils import function, mesh, solver
+from nutils.expression_v2 import Namespace
+
+import gustaf as gus
 
 
 def main():
