@@ -114,12 +114,14 @@ class Vertices(GustafBase):
         """
         self._logd("setting vertices")
 
-        # shape check
-        utils.arr.is_shape(vs, (-1, -1), strict=True)
-
         self._vertices = helpers.data.make_tracked_array(
             vs, settings.FLOAT_DTYPE
         )
+
+        # shape check
+        utils.arr.is_shape(vs, (-1, -1), strict=True)
+
+
         # exact same, but not tracked.
         self._const_vertices = self._vertices.view()
         self._const_vertices.flags.writeable = False

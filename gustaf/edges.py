@@ -131,11 +131,12 @@ class Edges(Vertices):
         """
         self._logd("setting edges")
 
+        self._edges = helpers.data.make_tracked_array(es, settings.INT_DTYPE)
+
         # shape check
         if es is not None:
             utils.arr.is_shape(es, (-1, 2), strict=True)
 
-        self._edges = helpers.data.make_tracked_array(es, settings.INT_DTYPE)
         # same, but non-writeable view of tracked array
         self._const_edges = self._edges.view()
         self._const_edges.flags.writeable = False

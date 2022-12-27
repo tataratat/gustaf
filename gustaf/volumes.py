@@ -181,17 +181,16 @@ class Volumes(Faces):
         --------
         None
         """
+        self._volumes = helpers.data.make_tracked_array(
+            vols,
+            settings.INT_DTYPE,
+        )
         if vols is not None:
             utils.arr.is_one_of_shapes(
                 vols,
                 ((-1, 4), (-1, 8)),
                 strict=True,
             )
-
-        self._volumes = helpers.data.make_tracked_array(
-            vols,
-            settings.INT_DTYPE,
-        )
         # same, but non-writeable view of tracked array
         self._const_volumes = self._volumes.view()
         self._const_volumes.flags.writeable = False
