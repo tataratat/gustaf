@@ -189,7 +189,8 @@ def show_vedo(
 
 
 def _vedo_showable(obj, as_dict=False, **kwargs):
-    """Generates a vedo obj based on `kind` attribute from given obj.
+    """Generates a vedo obj based on `kind` attribute from given obj, as well
+    as show_options.
 
     Parameters
     -----------
@@ -198,6 +199,8 @@ def _vedo_showable(obj, as_dict=False, **kwargs):
       If True, returns vedo objects in a dict. Corresponding main objecst will
       be available with ["main"] key. Else, returns vedo.Assembly object,
       where all the objects are grouped together.
+    **kwargs: kwargs
+      Will try to overwrite applicable items.
 
     Returns
     --------
@@ -206,7 +209,9 @@ def _vedo_showable(obj, as_dict=False, **kwargs):
     # incase kwargs are defined, we will make a copy of the object and
     # try to overwrite all the applicable kwargs.
     if kwargs:
-        obj = obj.copy()
+        # keep original ones and assign new show_options temporarily
+        orig_show_options = obj.show_options
+        obj._show_options = obj.__show_option__(obj)
         for key, value in kwargs.items():
             try:
                 obj.show_options[key] = value
@@ -228,9 +233,11 @@ def _vedo_showable(obj, as_dict=False, **kwargs):
     c = obj.show_options.get("c", None)
     if c is not None:
         vedo_obj.c(c)
+
     alpha = obj.show_options.get("alpha", None)
     if alpha is not None:
         vedo_obj.alpha(alpha)
+
     vertex_ids = obj.show_options.get("vertex_ids", False)
     element_ids = obj.show_options.get("element_ids", False)
     # special treatment for vertex
@@ -259,7 +266,7 @@ def _vedo_showable(obj, as_dict=False, **kwargs):
 
     # data plotting
     dataname = obj.show_options.get("dataname", None)
-    vertexdata = obj.vertexdata.get(dataname, None)
+    vertexdata = obj.vertexdata.as_scalar(dataname, None)
     if dataname is not None and vertexdata is not None:
         # transfer data
         vedo_obj.pointdata[dataname] = vertexdata
@@ -268,7 +275,7 @@ def _vedo_showable(obj, as_dict=False, **kwargs):
         cmap_keys = ("vmin", "vmax")
         cmap_kwargs = obj.show_options[cmap_keys]
         # set adefault cmap if needed
-        cmap_kwargs["cname"] = obj.show_options.get("cmap", "turbo")
+        cmap_kwargs["cname"] = obj.show_options.get("cmap", "inferno")
         cmap_kwargs["alpha"] = obj.show_options.get("cmapalpha", 1)
         # add dataname
         cmap_kwargs["input_array"] = dataname
@@ -287,10 +294,44 @@ def _vedo_showable(obj, as_dict=False, **kwargs):
             f"No vertexdata named '{dataname}' for {obj}. Skipping"
         )
 
+    # arrow plots - this is independent from data plotting.
+    arrowdata_name = obj.show_options.get("arrowdata", None)
+    # will raise if data is scalar
+    arrowdata_value = obj.vertexdata.as_arrow(arrowdata_name, None, True)
+    if arrowdata_name is not None and arrowdata_value is not None:
+        from gustaf.create.edges import from_data
+
+        # we are here because this data is not a scalar
+        # is showable?
+        if arrowdata_value.shape[1] not in (2, 3):
+            raise ValueError(
+                "Only 2D or 3D data can be shown.",
+                f"Requested data is {arrowdata_value.shape[1]}",
+            )
+
+        as_edges = from_data(
+            obj,
+            arrowdata_value,
+            obj.show_options.get("arrowdata_scale", None),
+        )
+        arrows = vedo.Arrows(
+            as_edges.vertices[as_edges.edges],
+            c=obj.show_options.get("arrowdata_color", "magma"),
+        )
+        if not as_dict:
+            vedo_obj += arrows
+        else:
+            return_as_dict["arrowdata"] = arrows
+
+    # set back temporary show_options if needed
+    if kwargs:
+        obj._show_options = orig_show_options
+
     if not as_dict:
         return vedo_obj
     else:
         return_as_dict["main"] = vedo_obj
+        return return_as_dict
 
 
 def _trimesh_showable(obj):
