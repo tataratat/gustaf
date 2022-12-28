@@ -313,6 +313,7 @@ def _vedo_showable(obj, as_dict=False, **kwargs):
             obj,
             arrowdata_value,
             obj.show_options.get("arrowdata_scale", None),
+            data_norm=obj.vertexdata.as_scalar(arrowdata_name),
         )
         arrows = vedo.Arrows(
             as_edges.vertices[as_edges.edges],
