@@ -236,7 +236,7 @@ def revolved(
     else:
         utils.log.debug(
             "True revolutions are only possible for rational spline types.",
-            "Creating Approximation."
+            "Creating Approximation.",
         )
 
     if center is not None:
