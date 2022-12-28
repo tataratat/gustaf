@@ -1,27 +1,15 @@
-name: format
-
+name: format/style
 on:
-  pull_request
+  pull_request:
+  push:
+    branches: [main]
 
 jobs:
-  format:
+  main:
     runs-on: ubuntu-latest
     steps:
-      - name: checkout git
-        uses: actions/checkout@v3
-
-      - name: setup python
-        uses: actions/setup-python@v3
-        with:
-          python-version: 3.9
-      - name: check formats
-        run: |
-          pip install flake8 black isort
-          isort gustaf examples tests
-          black -l 79 gustaf examples tests
-          flake8 gustaf examples tests
-
-      - name: push diff
-        uses: getsentry/action-git-diff-suggestions@main
-        with:
-          message: formatting suggestions
+    - uses: actions/checkout@v3
+    - uses: actions/setup-python@v4
+      with:
+        python-version: 3.x
+    - uses: pre-commit/action@v3.0.0
