@@ -1,4 +1,4 @@
-from gustaf.create import faces, vertices, volumes
+from gustaf.create import edges, faces, vertices, volumes
 
 try:
     from gustaf.create import spline
