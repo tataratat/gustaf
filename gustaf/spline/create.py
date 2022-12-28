@@ -245,6 +245,69 @@ def revolved(
     return type(spline)(**spline_dict)
 
 
+def with_bounds(
+    parametric_bounds,
+    physical_bounds,
+):
+    """Creates a minimal spline with given parametric bounds, physical bounds.
+    Physical bounds can have less or equal number of
+    dimension as parametric bounds. (Greater is not supported)
+
+    Parameters
+    -----------
+    parametric_bounds: (2, n) array-like
+    physical_bounds: (2, n) array-like
+
+    Returns
+    --------
+    spline: BSpline
+    """
+    physical_bounds = np.asanyarray(physical_bounds).reshape(2, -1)
+    parametric_bounds = np.asanyarray(parametric_bounds).reshape(2, -1)
+
+    # get correctly sized bezbox
+    phys_size = physical_bounds[1] - physical_bounds[0]
+
+    # minimal bspline
+    bspline_box = box(*phys_size).bspline  # kvs are in [0, 1]
+    bspline_box.cps += physical_bounds[0]  # apply offset
+
+    # update parametric bounds
+    for i, kv in enumerate(bspline_box.kvs):
+        # apply scale and offset
+        newkv = (kv * parametric_bounds[1][i]) + parametric_bounds[0][i]
+        bspline_box.kvs[i] = newkv
+
+    return bspline_box
+
+
+def parametric_view(spline):
+    """Create parametric view of given spline. Previously called
+    `naive_spline()`. Degrees are always 1 and knot multiplicity is not
+    preserved. Returns BSpline, as BSpline and NURBS should look the same as
+    parametric view.
+
+    Parameters
+    -----------
+    spline: BSpline or NURBS
+
+    Returns
+    --------
+    para_spline: BSpline
+    """
+    para_spline = with_bounds(
+        parametric_bounds=spline.parametric_bounds,
+        physical_bounds=spline.parametric_bounds,
+    )
+
+    # loop through knot vectors and insert missing knots
+    for i, kv in enumerate(spline.unique_knots):
+        if len(kv) > 2:
+            para_spline.insert_knots(i, kv[1:-1])
+
+    return para_spline
+
+
 def line(points):
     """Create a spline with the provided points as control points.
 
