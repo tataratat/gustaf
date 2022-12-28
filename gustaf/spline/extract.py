@@ -349,9 +349,7 @@ def control_volumes(spline):
     )
 
 
-def control_mesh(
-    spline,
-):
+def control_mesh(spline):
     """Calls control_edges, control_faces, control_volumes based on current
     spline.
 
