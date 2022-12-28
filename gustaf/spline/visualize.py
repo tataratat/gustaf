@@ -74,7 +74,7 @@ class SplineShowOption(options.ShowOption):
         self._options[self._backend] = dict()
 
 
-def _vedo_common(spline):
+def _vedo_showable(spline):
     """
     Goes through common precedures for preparing showable splines.
 
@@ -87,6 +87,75 @@ def _vedo_common(spline):
     gus_dict: dict
       dict of sampled spline as gustaf objects
     """
+    # get spline and knots
+    gus_primitives = eval(f"_vedo_showable_para_dim_{spline.para_dim}(spline)")
+
+    # apply spline color
+    sampled_spline = gus_primitives
+    default_color = "green" if spline.para_dim > 1 else "black"
+    sampled_spline.show_options["c"] = spline.show_options.get(
+        "c", default_color
+    )
+    sampled_spline.show_options["alpha"] = spline.show_options.get(
+        "alpha", None
+    )
+    sampled_spline.show_options["lighting"] = spline.show_options.get(
+        "lighting", "glossy"
+    )
+    # cmap
+    # cmapalpha
+    # vmin
+    # vmax
+    # scalarbar
+    # arrowdata
+    # arrowdata_scale
+    # arrowdata_color
+
+    # double check on same obj ref
+    gus_primitives["spline"] = gus_primitives
+
+    # control_points & control_points_alpha
+    if spline.show_options.get("control_points", True):
+        # pure control mesh
+        cmesh = spline.extract.control_mesh()  # either edges or faces
+        if spline.para_dim != 1:
+            cmesh = cmesh.toedges(unique=True)
+
+        cmesh.show_options["c"] = "red"
+        cmesh.show_options["lw"] = 4
+        cmesh.show_options["alpha"] = spline.show_options.get(
+            "control_points_alpha", 0.8
+        )
+        # add
+        gus_primitives["control_mesh"] = cmesh
+
+        # control points (vertices)
+        cps = spline.extract.control_points()
+        cps.show_options["c"] = "red"
+        cps.show_options["r"] = 10
+        cps.show_options["alpha"] = spline.show_options.get(
+            "control_points_alpha", 0.8
+        )
+        # add
+        gus_primitives["control_points"] = cps
+
+        if spline.show_options.get("control_point_ids", True):
+            # a bit redundant, but nicely separable
+            cp_ids = spline.extract.control_points()
+            cp_ids.show_options["labels"] = np.arange(cp_ids)
+            cp_ids.show_options["label_options"] = {"font": "VTK"}
+            gus_primitives["control_point_ids"] = cp_ids
+
+    # fitting queries
+    if hasattr(spline, "_fitting_queries") and spline.show_options.get(
+        "fitting_queries", True
+    ):
+        fqs = Vertices(spline._fitting_queries)
+        fqs.show_options["c"] = "blue"
+        fqs.show_options["r"] = 10
+        gus_primitives["fitting_queries"] = fqs
+
+    return gus_primitives
 
 
 def _vedo_showable_para_dim_1(spline):
@@ -125,3 +194,38 @@ def _vedo_showable_para_dim_1(spline):
         gus_primitives["knots"] = knots
 
     return gus_primitives
+
+
+def _vedo_showable_para_dim_2(spline):
+    """
+    Assumes showability check has been already performed
+
+    Parameters
+    ----------
+    spline: GustafSpline
+
+    Returns
+    -------
+    gus_primitives: dict
+      keys are {spline, knots}
+    """
+    gus_primitives = dict()
+    res = enforce_len(
+        spline.show_options.get("resolutions", 100), spline.para_dim
+    )
+    sp = spline.extract.faces(res)
+    gus_primitives["spline"] = sp
+
+    # knots
+    if spline.show_options.get("knots", True):
+        knot_lines = spline.extract.edges(res, all_knots=True)
+        knot_lines.show_options["c"] = "black"
+        knot_lines.show_options["lw"] = 3
+        gus_primitives["knots"] = knot_lines
+
+
+def _vedo_showable_para_dim_3(spline):
+    """
+    Currently same as _vedo_showable_para_dim_2
+    """
+    return _vedo_showable_para_dim_2(spline)
