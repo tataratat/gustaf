@@ -12,9 +12,28 @@ import numpy as np
 
 from gustaf import settings
 from gustaf._base import GustafBase
-from gustaf._typing import MESH_TYPES, SPLINE_TYPES, is_mesh, is_spline
-from gustaf.create.spline import with_bounds
+from gustaf._typing import MESH_TYPES, is_mesh
 from gustaf.show import show_vedo
+from gustaf.spline.base import NURBS, Bezier, BSpline, RationalBezier
+from gustaf.create.spline import with_bounds
+
+SPLINE_TYPES = Union[Bezier, RationalBezier, BSpline, NURBS]
+
+
+def is_spline(candidate: Any) -> bool:
+    """This function checks if the candidate is a spline.
+
+    Parameters
+    -----------
+    candidate: Any
+      object to check for being a spline.
+
+    Returns
+    --------
+    is_mesh: bool
+      Is the given object a sline.
+    """
+    return isinstance(candidate, SPLINE_TYPES.__args__)
 
 
 class FFD(GustafBase):
