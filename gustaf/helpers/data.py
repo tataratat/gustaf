@@ -536,7 +536,7 @@ class VertexData(DataHolder):
         self._validate_len(value, raise_=True)
 
         # we are here because this is valid
-        self._saved[key] = np.asanyarray(value).reshape(
+        self._saved[key] = make_tracked_array(value, copy=False).reshape(
             len(self._helpee.vertices), -1
         )
 
@@ -588,17 +588,26 @@ class VertexData(DataHolder):
             key = key.replace("__norm", "")
 
         if normkey in self.keys():
-            return self[normkey]  # performs len check
-        else:
-            # let's save norm
-            value = self[key]
-            if value.shape[1] == 1:
-                value_norm = value
+            saved = self[normkey]  # performs len check
+            # return if original is not modified
+            if not self[key]._modified:  # check if original data is modified
+                return saved
             else:
-                value_norm = np.linalg.norm(value, axis=1).reshape(-1, 1)
-            # save norm
-            self[normkey] = value_norm
-            return value_norm
+                self._saved.pop(normkey)
+
+        # we are here because we have to compute norm. let's save norm
+        value = self[key]
+        if value.shape[1] == 1:
+            value_norm = value
+        else:
+            value_norm = np.linalg.norm(value, axis=1).reshape(-1, 1)
+
+        # save norm
+        self[normkey] = value_norm
+        # considered not modified
+        self[key]._modified = False
+
+        return value_norm
 
     def as_arrow(self, key, default=None, raise_=True):
         """
