@@ -45,4 +45,5 @@ __all__ = [
     "ffd",
     "microstructure",
     "io",
+    "visualize",
 ]
