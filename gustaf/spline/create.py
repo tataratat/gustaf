@@ -111,7 +111,7 @@ def revolved(
                 "Dimension Mismatch between extrusion axis and spline."
             )
         elif spline.control_points.shape[1] < axis.shape[0]:
-            utils.log.warning(
+            utils.log.debug(
                 "Control Point dimension is smaller than axis dimension,"
                 " filling with zeros"
             )
@@ -234,9 +234,9 @@ def revolved(
                 (spline_dict["weights"], mid_weights, spline.weights)
             )
     else:
-        utils.log.warning(
-            "True revolutions are only possible for rational spline types."
-            "\nCreating Approximation."
+        utils.log.debug(
+            "True revolutions are only possible for rational spline types.",
+            "Creating Approximation."
         )
 
     if center is not None:
@@ -245,10 +245,7 @@ def revolved(
     return type(spline)(**spline_dict)
 
 
-def with_bounds(
-    parametric_bounds,
-    physical_bounds,
-):
+def with_bounds(parametric_bounds, physical_bounds):
     """Creates a minimal spline with given parametric bounds, physical bounds.
     Physical bounds can have less or equal number of
     dimension as parametric bounds. (Greater is not supported)
