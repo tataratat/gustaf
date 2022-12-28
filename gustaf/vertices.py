@@ -52,7 +52,8 @@ class Vertices(GustafBase):
         "_const_vertices",
         "_computed",
         "_show_options",
-        "vertexdata",
+        "_setter_copies",
+        "_vertexdata",
     )
 
     # define freuqently used types as dunder variable
@@ -62,21 +63,26 @@ class Vertices(GustafBase):
     def __init__(
         self,
         vertices=None,
+        copy=True,
     ):
         """Vertices. It has vertices.
 
         Parameters
         -----------
         vertices: (n, d) np.ndarray
+        copy: bool
+          If false, all setter calls will try to avoid copy.
 
         Returns
         --------
         None
         """
+        # call setters
+        self.setter_copies = copy
         self.vertices = vertices
 
-        self.vertexdata = helpers.data.VertexData(self)
-
+        # init helpers
+        self._vertexdata = helpers.data.VertexData(self)
         self._computed = helpers.data.ComputedMeshData(self)
         self._show_options = self.__show_option__(self)
 
@@ -114,7 +120,7 @@ class Vertices(GustafBase):
         self._logd("setting vertices")
 
         self._vertices = helpers.data.make_tracked_array(
-            vs, settings.FLOAT_DTYPE
+            vs, settings.FLOAT_DTYPE, self.setter_copies
         )
 
         # shape check
@@ -144,6 +150,56 @@ class Vertices(GustafBase):
         """
         self._logd("returning const_vertices")
         return self._const_vertices
+
+    @property
+    def vertexdata(self):
+        """
+        Returns vertexdata manager. Behaves similar to dict() and can be used
+        to store values/data associated with each vertex.
+
+        Parameters
+        ----------
+        None
+
+        Returns
+        -------
+        vertexdata: VertexData
+        """
+        self._logd("returning vertexdata")
+        return self._vertexdata
+
+    @property
+    def setter_copies(self):
+        """
+        Switch to set if setter should copy or try to avoid copying.
+        If data is np.ndarray, c_contiguous, and has same dtype as
+        corresponding settings.<FLOAT/INT>_dtype, it can probably avoid being
+        copied. Setter will try to cast input to bool.
+
+        Parameters
+        ----------
+        None
+
+        Returns
+        -------
+        setter_copies: bool
+        """
+        return self._setter_copies
+
+    @setter_copies.setter
+    def setter_copies(self, should_copy):
+        """
+        Sets setter_copies
+
+        Parameters
+        ----------
+        should_copy: bool
+
+        Returns
+        -------
+        None
+        """
+        self._setter_copies = bool(should_copy)
 
     @property
     def show_options(self):

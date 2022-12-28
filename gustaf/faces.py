@@ -99,6 +99,7 @@ class Faces(Edges):
         vertices=None,
         faces=None,
         elements=None,
+        copy=True,
     ):
         """Faces. It has vertices and faces. Faces could be triangles or
         quadrilaterals.
@@ -108,7 +109,7 @@ class Faces(Edges):
         vertices: (n, d) np.ndarray
         faces: (n, 3) or (n, 4) np.ndarray
         """
-        super().__init__(vertices=vertices)
+        super().__init__(vertices=vertices, copy=copy)
         if faces is not None:
             self.faces = faces
 
@@ -135,9 +136,7 @@ class Faces(Edges):
         return utils.connec.faces_to_edges(faces)
 
     @property
-    def whatami(
-        self,
-    ):
+    def whatami(self):
         """Determines whatami.
 
         Parameters
@@ -212,6 +211,7 @@ class Faces(Edges):
         self._faces = helpers.data.make_tracked_array(
             fs,
             settings.INT_DTYPE,
+            self.setter_copies,
         )
         # shape check
         if fs is not None:
