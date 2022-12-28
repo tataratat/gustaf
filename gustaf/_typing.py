@@ -8,13 +8,6 @@ from gustaf.volumes import Volumes
 
 MESH_TYPES = Union[Vertices, Edges, Faces, Volumes]
 
-try:
-    from gustaf.spline.base import NURBS, Bezier, BSpline, RationalBezier
-
-    SPLINE_TYPES = Union[Bezier, RationalBezier, BSpline, NURBS]
-except ImportError:
-    SPLINE_TYPES = None
-
 
 def is_mesh(candidate: Any) -> bool:
     """This function checks if the candidate is a mesh.
@@ -35,19 +28,3 @@ def is_mesh(candidate: Any) -> bool:
         return isinstance(candidate, MESH_TYPES.__args__)
     else:
         return issubclass(type(candidate), MESH_TYPES)
-
-
-def is_spline(candidate: Any) -> bool:
-    """This function checks if the candidate is a spline.
-
-    Parameters
-    -----------
-    candidate: Any
-      object to check for being a spline.
-
-    Returns
-    --------
-    is_mesh: bool
-      Is the given object a sline.
-    """
-    return isinstance(candidate, SPLINE_TYPES.__args__)
