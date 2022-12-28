@@ -212,6 +212,7 @@ def _vedo_showable(obj, as_dict=False, **kwargs):
         # keep original ones and assign new show_options temporarily
         orig_show_options = obj.show_options
         obj._show_options = obj.__show_option__(obj)
+        orig_show_options.copy_valid_options(obj.show_options)
         for key, value in kwargs.items():
             try:
                 obj.show_options[key] = value
