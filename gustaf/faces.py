@@ -80,7 +80,7 @@ class Faces(Edges):
         property_=False,
     )
     dashed = helpers.raise_if.invalid_inherited_attr(
-        Edges.const_edges,
+        Edges.dashed,
         __qualname__,
         property_=False,
     )
