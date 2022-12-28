@@ -86,6 +86,7 @@ class Edges(Vertices):
         vertices=None,
         edges=None,
         elements=None,
+        copy=True,
     ):
         """Edges. It has vertices and edges. Also known as lines.
 
@@ -94,7 +95,7 @@ class Edges(Vertices):
         vertices: (n, d) np.ndarray
         edges: (n, 2) np.ndarray
         """
-        super().__init__(vertices=vertices)
+        super().__init__(vertices=vertices, copy=copy)
 
         if edges is not None:
             self.edges = edges
@@ -131,7 +132,9 @@ class Edges(Vertices):
         """
         self._logd("setting edges")
 
-        self._edges = helpers.data.make_tracked_array(es, settings.INT_DTYPE)
+        self._edges = helpers.data.make_tracked_array(
+            es, settings.INT_DTYPE, self.setter_copies
+        )
 
         # shape check
         if es is not None:

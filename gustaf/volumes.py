@@ -36,8 +36,10 @@ class VolumesShowOption(helpers.options.ShowOption):
         """
         # without a data to plot on the surface, return vedo.UGrid
         # if vertex_ids is on, we will go with mesh
-        if self.get("dataname", None) is None and not self.get(
-            "vertex_ids", False
+        if (
+            self.get("dataname", None) is None
+            and not self.get("vertex_ids", False)
+            and not self.get("arrowdata", False)
         ):
             from vtk import VTK_HEXAHEDRON as herr_hexa
             from vtk import VTK_TETRA as frau_tetra
@@ -91,6 +93,7 @@ class Volumes(Faces):
         vertices=None,
         volumes=None,
         elements=None,
+        copy=True,
     ):
         """Volumes. It has vertices and volumes. Volumes could be tetrahedrons
         or hexahedrons.
@@ -100,7 +103,7 @@ class Volumes(Faces):
         vertices: (n, d) np.ndarray
         volumes: (n, 4) or (n, 8) np.ndarray
         """
-        super().__init__(vertices=vertices)
+        super().__init__(vertices=vertices, copy=copy)
         if volumes is not None:
             self.volumes = volumes
         elif elements is not None:
@@ -184,6 +187,7 @@ class Volumes(Faces):
         self._volumes = helpers.data.make_tracked_array(
             vols,
             settings.INT_DTYPE,
+            self.setter_copies,
         )
         if vols is not None:
             utils.arr.is_one_of_shapes(
