@@ -20,6 +20,24 @@ class VerticesShowOption(helpers.options.ShowOption):
     _valid_options = helpers.options.make_valid_options(
         *helpers.options.vedo_common_options,
         Option("vedo", "r", "Radius of vertices in units of pixels.", (int,)),
+        Option(
+            "vedo",
+            "labels",
+            "Places a label/description str at the place of vertices.",
+            (np.ndarray, tuple, list),
+        ),
+        Option(
+            "vedo",
+            "label_options",
+            "Label kwargs to be passed during initialization."
+            "Valid keywords are: {scale: float, xrot: float, yrot: float, "
+            "zrot: float, ratio: float, precision: int, italic: bool, "
+            "font: str, justify: str, c: (str, tuple, list, int), "
+            "alpha: float}. "
+            "As further hint, justify takes '-' joined combination of "
+            "{center, mid, right, left, top, bottom}.",
+            (dict,),
+        ),
     )
 
     _helps = "Vertices"
@@ -38,9 +56,30 @@ class VerticesShowOption(helpers.options.ShowOption):
         """
         init_options = ("r",)
 
-        return show.vedo.Points(
+        vertices = show.vedo.Points(
             self._helpee.const_vertices, **self[init_options]
         )
+
+        labels = self.get("labels", None)
+        if labels is not None:
+            # check length
+            if len(labels) != len(self._helpee.const_vertices):
+                raise ValueError(
+                    f"number of label contents ({len(labels)}) and "
+                    "number of vertices"
+                    f"({len(self._helpee.const_vertices)}) does not match."
+                )
+
+            # apply options and return labels
+            return vertices.labels(
+                content=labels,
+                on="points",
+                **self.get("label_options", dict()),
+            )
+
+        else:
+            # no labels, return Points
+            return vertices
 
 
 class Vertices(GustafBase):
