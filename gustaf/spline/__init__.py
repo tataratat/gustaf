@@ -9,7 +9,7 @@ here.
 import splinepy
 from splinepy import io
 
-from gustaf.spline import base, create, extract, ffd, microstructure
+from gustaf.spline import base, create, extract, ffd, microstructure, visualize
 from gustaf.spline.base import (
     NURBS,
     Bezier,
