@@ -4,10 +4,11 @@ Routines to create edges.
 
 import numpy as np
 
-from gustaf import settings, utils
+from gustaf import utils
 from gustaf.edges import Edges
 
-def from_data(gus_obj, data, scale=None):
+
+def from_data(gus_obj, data, scale=None, data_norm=None):
     """
     Creates edges from an vertices / vertexdata containing objects.
     By default, scaling value will be
@@ -23,8 +24,9 @@ def from_data(gus_obj, data, scale=None):
      If str, will be considered as dataname and search for saved vertexdata.
     scale: float
       Absolute value.
-    raise_if_scalar: bool
-      If True, raises error if corresponding data is scalar.
+    data_norm: float or array-like
+      If float, will be considered as max_norm of the data. Else, searches for
+      max value. Doesn't enforce len to match.
 
     Returns
     -------
@@ -39,7 +41,7 @@ def from_data(gus_obj, data, scale=None):
     origin = gus_obj.const_vertices
     if isinstance(data, str):
         # will raise if data doesn't exist
-        increment = gus_obj.vertexdata[dataname]
+        increment = gus_obj.vertexdata[data]
     elif isinstance(data, (tuple, list, np.ndarray)):
         increment = np.asanyarray(data)
         if len(increment) != len(origin):
@@ -56,15 +58,15 @@ def from_data(gus_obj, data, scale=None):
     if inc_dim == 1:
         # if data is scalar, it should be addable to any vertices
         utils.log.debug(
-            f"gus.create.edges.from_data() - requested data ({dataname}) is",
-            "scalar. Edge orientation will be [1,1,..,1]."
+            f"gus.create.edges.from_data() - requested data ({data}) is",
+            "scalar. Edge orientation will be [1,1,..,1].",
         )
     elif inc_dim != origin_dim:
         # match data and vertex dim.
         utils.log.debug(
             "gus.create.edges.from_data() - dimension mismatch between",
             f"vertices ({origin_dim}) and data ({inc_dim}). Matching",
-            "dimension by appending zeros."
+            "dimension by appending zeros.",
         )
         dim_diff = int(inc_dim - origin_dim)
         zero_pad = np.zeros((len(origin_dim), abs(dim_diff)))
@@ -76,9 +78,13 @@ def from_data(gus_obj, data, scale=None):
     # apply default scale
     if scale is None:
         if isinstance(data, str):
-            norm = gus_obj.vertexdata.as_scalar(dataname, None, True)
+            norm = gus_obj.vertexdata.as_scalar(data, None, True)
         else:
-            norm = np.linalg.norm(increment, axis=1)
+            # compute
+            if data_norm is None:
+                norm = np.linalg.norm(increment, axis=1)
+            else:
+                norm = np.asanyarray(data_norm)
 
         max_data_norm = norm.max()
         aabb_diagonal_norm = gus_obj.bounds_diagonal_norm()
@@ -88,8 +94,8 @@ def from_data(gus_obj, data, scale=None):
         )
 
     # by here, this should be good to go
-    vs = np.hstack(
-        (origin, origin + (increment * scale))
-    ).reshape(-1, origin.shape[1])
+    vs = np.hstack((origin, origin + (increment * scale))).reshape(
+        -1, origin.shape[1]
+    )
 
     return Edges(vs, utils.connec.range_to_edges(len(vs), continuous=False))
