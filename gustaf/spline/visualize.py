@@ -3,6 +3,7 @@
 Spline visualization module. Supports visualization of following spline
 (para_dim, dim) pairs: ((1, 2), (1, 3), (2, 2), (2, 3), (3, 3)
 """
+import numpy as np
 
 from gustaf.helpers import options
 
@@ -29,20 +30,24 @@ class SplineShowOption(options.ShowOption):
             "Shows fitting queries if they are locally saved in splines.",
             (bool,),
         ),
-        options.option(
+        options.Option(
             "vedo",
             "control_points_alpha",
             "Transparency of control points in range [0, 1].",
             (float, int),
         ),
-        options.option(
+        options.Option(
             "vedo",
             "control_point_ids",
             "Show ids of control_points.",
             (bool,),
         ),
-        options.option(),
-        options.option(),
+        options.Option(
+            "vedo",
+            "resolutions",
+            "Sampling resolution for spline.",
+            (int, list, tuple, np.ndarray),
+        ),
     )
 
 
