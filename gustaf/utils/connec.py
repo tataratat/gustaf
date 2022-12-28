@@ -205,7 +205,7 @@ def faces_to_edges(faces):
     return edges
 
 
-def range_to_edges(range_, closed=False):
+def range_to_edges(range_, closed=False, continuous=True):
     """Given range, for example (a, b), returns an edge sequence that
     sequentially connects indices. If int is given as range, it is considered
     as (0, value). Used to be called "closed/open_loop_index_train".
@@ -214,6 +214,7 @@ def range_to_edges(range_, closed=False):
     -----------
     range_: list, tuple, or int
     closed: bool
+    continuous: bool
 
     Returns
     --------
@@ -229,6 +230,13 @@ def range_to_edges(range_, closed=False):
         # change to (ran[0], ran[1]+1)
         indices = np.arange(*range_)
 
+    # closed is ignored
+    if not continuous:
+        if indices.size % 2 == 1:
+            raise ValueError("Ranges should result in even number of indices.")
+        return indices.reshape(-1, 2)
+
+    # continous edges
     indices = np.repeat(indices, 2)
     if closed:
         indices = np.append(indices, indices[0])[1:]
