@@ -9,6 +9,7 @@ import splinepy
 from gustaf import settings
 from gustaf import show as showmodule
 from gustaf._base import GustafBase
+from gustaf.spline import visualize
 from gustaf.spline.create import Creator
 from gustaf.spline.extract import Extractor
 from gustaf.spline.proximity import Proximity
@@ -195,7 +196,7 @@ def show(
         if parametric_space and spline.para_dim > 1:
             from vedo.addons import Axes
 
-            from gustaf.create.spline import parametric_view
+            from gustaf.spline.create import parametric_view
             from gustaf.utils.arr import bounds
 
             para_spline = parametric_view(spline)
@@ -259,13 +260,33 @@ def show(
 
 
 class GustafSpline(GustafBase):
+    __show_option__ = visualize.SplineShowOption
+
     def __init__(self):
         """Contructor as abstractmethod.
 
         This needs to be inherited first to make sure duplicating
         functions properly override splinepy.Spline
         """
-        raise NotImplementedError
+        self._extractor = Extractor(self)
+        self._proximity = Proximity(self)
+        self._creator = Creator(self)
+        self._show_options = self.__show_option__(self)
+
+    @property
+    def show_options(self):
+        """
+        Show option manager for splines.
+
+        Parameters
+        ----------
+        None
+
+        Returns
+        -------
+        show_options: SplineShowOption
+        """
+        return self._show_options
 
     @property
     def extract(self):
@@ -331,17 +352,13 @@ class GustafSpline(GustafBase):
         return self._proximity
 
     def show(self, **kwargs):
-        """Equivalent to `gustaf.spline.base.show(**kwrags)`"""
+        """Equivalent to `gustaf.spline.base.show(**kwargs)`"""
         return show(self, **kwargs)
 
     def showable(self, **kwargs):
         """Equivalent to
         `gustaf.spline.base.show(return_showable=True,**kwargs)`"""
         return show(self, return_showable=True, **kwargs)
-
-    def copy(self):
-        """"""
-        return type(self)(**self.todict())
 
 
 class Bezier(GustafSpline, splinepy.Bezier):
@@ -368,13 +385,10 @@ class Bezier(GustafSpline, splinepy.Bezier):
         --------
         None
         """
-        super(splinepy.Bezier, self).__init__(
-            degrees=degrees, control_points=control_points, spline=spline
+        splinepy.Bezier.__init__(
+            self, degrees=degrees, control_points=control_points, spline=spline
         )
-
-        self._extractor = Extractor(self)
-        self._proximity = Proximity(self)
-        self._creator = Creator(self)
+        GustafSpline.__init__(self)
 
     @property
     def bezier(self):
@@ -471,16 +485,14 @@ class RationalBezier(GustafSpline, splinepy.RationalBezier):
         --------
         None
         """
-        super(splinepy.RationalBezier, self).__init__(
+        splinepy.RationalBezier.__init__(
+            self,
             degrees=degrees,
             control_points=control_points,
             weights=weights,
             spline=spline,
         )
-
-        self._extractor = Extractor(self)
-        self._proximity = Proximity(self)
-        self._creator = Creator(self)
+        GustafSpline.__init__(self)
 
     @property
     def rationalbezier(self):
@@ -545,16 +557,15 @@ class BSpline(GustafSpline, splinepy.BSpline):
         --------
         None
         """
-        super(splinepy.BSpline, self).__init__(
+        splinepy.BSpline.__init__(
+            self,
             degrees=degrees,
             knot_vectors=knot_vectors,
             control_points=control_points,
             spline=spline,
         )
 
-        self._extractor = Extractor(self)
-        self._proximity = Proximity(self)
-        self._creator = Creator(self)
+        GustafSpline.__init__(self)
 
     @property
     def bspline(self):
@@ -622,17 +633,15 @@ class NURBS(GustafSpline, splinepy.NURBS):
         --------
         None
         """
-        super(splinepy.NURBS, self).__init__(
+        splinepy.NURBS.__init__(
+            self,
             degrees=degrees,
             knot_vectors=knot_vectors,
             control_points=control_points,
             weights=weights,
             spline=spline,
         )
-
-        self._extractor = Extractor(self)
-        self._proximity = Proximity(self)
-        self._creator = Creator(self)
+        GustafSpline.__init__(self)
 
     @property
     def _mfem_ids(self):

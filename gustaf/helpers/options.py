@@ -161,7 +161,7 @@ class ShowOption:
         ----------
         helpee: object
         """
-        self._helpee = helpee  # maybe won't save
+        self._helpee = helpee
         if not type(helpee).__qualname__.startswith(self._helps):
             raise TypeError(
                 f"This show option is for {self._helps}. "
