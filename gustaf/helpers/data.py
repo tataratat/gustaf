@@ -236,6 +236,35 @@ class DataHolder(GustafBase):
         else:
             raise KeyError(f"`{key}` is not stored for {type(self._helpee)}")
 
+    def pop(self, key, default=None):
+        """
+        Applied pop() to saved data
+
+        Parameters
+        ----------
+        key: str
+        default: object
+
+        Returns
+        -------
+        value: object
+        """
+        return self._saved.pop(key, default)
+
+    def clear(self):
+        """
+        Clears saved data by reassigning new dict
+
+        Parameters
+        ----------
+        None
+
+        Returns
+        -------
+        None
+        """
+        self._saved = dict()
+
     def get(self, key, default_values=None):
         """Returns stored item if the key exists. Else, given default value. If
         the key exist, default value always exists, since it is initialized
@@ -487,6 +516,7 @@ class VertexData(DataHolder):
                     )
                 # pop invalid data
                 self._saved.pop(key)
+                self._saved.pop(key + "__norm", None)
 
         return valid
 
@@ -522,16 +552,17 @@ class VertexData(DataHolder):
         -------
         data: array-like
         """
-        valid = self._validate_len(raise_=False)
+        value = super().__getitem__(key)  # raises KeyError
+        valid = self._validate_len(value, raise_=False)
         if valid:
-            return self._saved[key]
+            return value
         else:
             raise KeyError(
                 "Either requested data is not stored or deleted due to "
                 "changes in number of vertices."
             )
 
-    def as_scalar(self, key):
+    def as_scalar(self, key, default=None):
         """
         Returns scalar version of requested data. If it is already a scalar,
         will return as is. Else, will return a norm. using `np.linalg.norm()`.
@@ -539,39 +570,62 @@ class VertexData(DataHolder):
         Parameters
         ----------
         key: str
+        default: object
 
         Returns
         -------
         data_as_scalar: (n, 1) np.ndarray
         """
-        value = self[key]  # will perform check
-        if value.shape[1] == 1:
-            return value
-        else:
-            # return tall array
-            return np.linalg.norm(value, axis=1).reshape(-1, 1)
+        if key not in self.keys():
+            return default
 
-    def as_arrow(self, key, raise_=True):
+        # interpret scalar as norm
+        # save the norm once it is called.
+        if "__norm" not in key:
+            normkey = key + "__norm"
+        else:
+            normkey = key
+            key = key.replace("__norm", "")
+
+        if normkey in self.keys():
+            return self[normkey]  # performs len check
+        else:
+            # let's save norm
+            value = self[key]
+            if value.shape[1] == 1:
+                value_norm = value
+            else:
+                value_norm = np.linalg.norm(value, axis=1).reshape(-1, 1)
+            # save norm
+            self[normkey] = value_norm
+            return value_norm
+
+    def as_arrow(self, key, default=None, raise_=True):
         """
         Returns an array as is, only if it is showable as arrow.
 
         Parameters
         ----------
         key: str
+        default: object
         raise_: bool
 
         Returns
         -------
         data: (n, d) np.ndarray
         """
-        value = self[key]
-        # if it is 2D or 3D, it is showable as arrow
-        if value.shape[1] in (2, 3):
-            return value
-        elif raise_:
-            raise ValueError(f"`{key}`-data is neither 2D nor 3D data.")
+        if key not in self.keys():
+            return default
 
-        return None
+        value = self[key]
+        if value.shape[1] == 1:
+            self._logd(f"as_arrow() requested data ({key}) is 1D data.")
+            if raise_:
+                raise ValueError(
+                    f"`{key}`-data is 1D and cannot be represented as arrows."
+                )
+
+        return value
 
 
 Unique2DFloats = namedtuple(
