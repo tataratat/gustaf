@@ -381,14 +381,15 @@ class Vertices(GustafBase):
 
         def update_vertexdata(obj, m, vertex_data=None):
             """apply mask to vertex data if there's any."""
-            newdata = dict()
+            newdata = helpers.data.VertexData(obj)
             if vertex_data is None:
                 vertex_data = obj.vertexdata
 
             for key, values in vertex_data.items():
+                # should work, since this is called after updating vertices
                 newdata[key] = values[m]
 
-            obj.vertexdata = newdata
+            obj._vertexdata = newdata
 
             return obj
 
