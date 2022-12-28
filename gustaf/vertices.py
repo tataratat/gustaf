@@ -73,13 +73,12 @@ class Vertices(GustafBase):
         --------
         None
         """
-        if vertices is not None:
-            self.vertices = vertices
+        self.vertices = vertices
+
+        self.vertexdata = helpers.data.VertexData(self)
 
         self._computed = helpers.data.ComputedMeshData(self)
         self._show_options = self.__show_option__(self)
-
-        self.vertexdata = dict()
 
     @property
     def vertices(self):
@@ -124,6 +123,11 @@ class Vertices(GustafBase):
         # exact same, but not tracked.
         self._const_vertices = self._vertices.view()
         self._const_vertices.flags.writeable = False
+
+        # at each setting, validate vertexdata
+        # --> by len mismatch, will clear data
+        if hasattr(self, "vertexdata"):
+            self.vertexdata._validate_len(raise_=False)
 
     @property
     def const_vertices(self):
