@@ -153,7 +153,6 @@ def show_vedo(
                         list_of_showables.append(tmp_showable)
                 else:
                     list_of_showables.extend(sl)
-
         # set interactive to true at last element
         if int(i + 1) == len(args):
             plt.show(
@@ -328,6 +327,16 @@ def _vedo_showable(obj, as_dict=False, **kwargs):
             vedo_obj += arrows
         else:
             return_as_dict["arrowdata"] = arrows
+
+    axes_kw = obj.show_options.get("axes", None)
+    # need to explicitly check if it is false
+    if axes_kw is not None and axes_kw is not False:
+        axes_kw = dict() if isinstance(axes_kw, bool) else axes_kw
+        axes = vedo.Axes(vedo_obj, **axes_kw)
+        if not as_dict:
+            vedo_obj += axes
+        else:
+            return_as_dict["axes"] = axes
 
     # set back temporary show_options if needed
     if kwargs:

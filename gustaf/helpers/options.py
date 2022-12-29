@@ -108,6 +108,15 @@ vedo_common_options = (
         "cmap, colors are based on the size of the arrows.",
         (str, tuple, list, int),
     ),
+    Option(
+        "vedo",
+        "axes",
+        "Configure a specific axes with options. Expect dict(), but setting "
+        "True will set a default axes. For full options, see "
+        "https://vedo.embl.es/autodocs/content/vedo/addons.html"
+        "#vedo.addons.Axes",
+        (bool, dict),
+    ),
 )
 
 
