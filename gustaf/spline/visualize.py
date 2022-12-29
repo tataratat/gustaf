@@ -52,6 +52,12 @@ class SplineShowOption(options.ShowOption):
             "Sampling resolution for spline.",
             (int, list, tuple, np.ndarray),
         ),
+        options.Option(
+            "vedo",
+            "arrowdata_on",
+            "Specify parametric coordinates to place arrowdata.",
+            (list, tuple, np.ndarray),
+        )
     )
 
     _helps = "GustafSpline"
@@ -106,14 +112,90 @@ def _vedo_showable(spline):
     sampled_spline.show_options["lighting"] = spline.show_options.get(
         "lighting", "glossy"
     )
-    # cmap
-    # cmapalpha
-    # vmin
-    # vmax
-    # scalarbar
-    # arrowdata
-    # arrowdata_scale
-    # arrowdata_color
+
+    # with color representable, scalar field data
+    res = enforce_len(
+        spline.show_options.get("resolutions", 100), spline.para_dim
+    )
+    dataname = spline.show_options.get("dataname", None)
+    sampled_splinedata = spline.splinedata.as_scalar(dataname, res, default=None)
+    if dataname is not None and sampled_splinedata is not None:
+        # transfer data
+        sampled_spline.vertexdata[dataname] = sampled_splinedata
+
+        # transfer options - maybe vectorized query?
+        keys = ("vmin", "vmax", "scalarbar", "cmap", "cmapalpha")
+        spline.show_options.copy_valid_options(sampled_spline.show_options, keys)
+        #for k in keys:
+        #    value = spline.show_options.get(k, None)
+        #    if value is not None:
+        #        sampled_spline.show_options[k] = value
+
+        # mark that we want to see this data
+        sampled_spline.show_options["dataname"] = dataname
+
+    elif dataname is not None and splinedata is None:
+        utils.log.debug(
+            f"No splinedata named ({dataname}) for {spline}. Skipping"
+        )
+
+    # with arrow representable, vector data
+    adata_name = spline.show_options.get("arrowdata", None)
+    adapted_adata = spline.splinedata.get(adata_name, None)
+    if adata_name is not None and adapted_adata is not None:
+        # if location is specified, this will be a separate Vertices obj with
+        # configured arrowdata
+        create_vertices = (
+            adapted_adata.has_locations
+            or "arrowdata_on" in spline.show_options.keys()
+        )
+        if create_vertices:
+            # prepare corresponding queries
+            if adapted_adata.has_locations:
+                queries = adapted_adata.locations
+                on = None
+            else:
+                queries = spline.show_options["arrowdata_on"]
+                on = queries
+
+            # bound /  dim check
+            bounds = spline.parametric_bounds
+            print(queries)
+            if queries.shape[1] != len(bounds[0]):
+                raise ValueError(
+                    "Dimension mismatch: arrowdata locations-"
+                    f"{queries.shape[1]} / para_dim-{spline.para_dim}."
+                )
+            lb_diff = (queries.min(axis=0) - bounds[0])
+            ub_diff = (queries.max(axis=0) - bounds[1])
+            if (
+                any(lb_diff < settings.TOLERANCE)
+                or any(ub_diff > settings.TOLERANCE)
+            ):
+                raise ValueError(
+                    f"Specified locations of ({adataname}) are out side the "
+                    f"parametric bounds ({bounds}) by [{lb_diff}, {ub_diff}]."
+                )
+
+            # get arrow 
+            adata = spline.splinedata.as_arrow(adata_name, on=on)
+
+            # create vertices that can be shown as arrows
+            loc_vertices = Vertices(spline.evaluate(queries), copy=False)
+            loc_vertices.vertexdata[adata_name] = adata
+
+            # transfer options
+            keys = ("arrowdata_scale", "arrowdata_color", "arrowdata")
+            spline.show_options.copy_valid_options(loc_vertices.show_options, keys)
+
+            # add to primitives
+            gus_primitives["arrowdata"] = loc_vertices        
+
+        else: # sample arrows and append to sampled spline.
+            sampled_spline.vertexdata[adata_name] = spline.splinedata.as_arrow(adata_name, resolutions=res)
+            # transfer options
+            keys = ("arrowdata_scale", "arrowdata_color", "arrowdata")
+            spline.show_options.copy_valid_options(sampled_spline.show_options, keys)
 
     # double check on same obj ref
     gus_primitives["spline"] = sampled_spline
