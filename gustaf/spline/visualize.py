@@ -112,6 +112,11 @@ def _vedo_showable(spline):
         "lighting", "glossy"
     )
 
+    # axis?
+    sampled_spline.show_options["axes"] = spline.show_options.get(
+        "axes", False
+    )
+
     # with color representable, scalar field data
     res = enforce_len(
         spline.show_options.get("resolutions", 100), spline.para_dim
@@ -129,10 +134,6 @@ def _vedo_showable(spline):
         spline.show_options.copy_valid_options(
             sampled_spline.show_options, keys
         )
-        # for k in keys:
-        #    value = spline.show_options.get(k, None)
-        #    if value is not None:
-        #        sampled_spline.show_options[k] = value
 
         # mark that we want to see this data
         sampled_spline.show_options["dataname"] = dataname
@@ -161,7 +162,6 @@ def _vedo_showable(spline):
 
             # bound /  dim check
             bounds = spline.parametric_bounds
-            print(queries)
             if queries.shape[1] != len(bounds[0]):
                 raise ValueError(
                     "Dimension mismatch: arrowdata locations-"
