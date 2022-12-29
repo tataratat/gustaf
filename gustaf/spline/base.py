@@ -90,7 +90,12 @@ def show(spline, **kwargs):
 
     if para_space:
         things_to_show.pop("parametric_spline")
-        return showmodule.show_vedo(p_spline, things_to_show, **kwargs)
+
+        return showmodule.show_vedo(
+            ["Parametric Space", p_spline],
+            ["Physical Space", *things_to_show.values()],
+            **kwargs,
+        )
 
     return showmodule.show_vedo(things_to_show, **kwargs)
 
