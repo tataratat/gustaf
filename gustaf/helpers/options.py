@@ -110,9 +110,6 @@ vedo_common_options = (
     ),
 )
 
-# summarize vedo common keys for convenience
-vedo_common_keys = (vopt.key for vopt in vedo_common_options)
-
 
 def make_valid_options(*options):
     """
@@ -366,13 +363,15 @@ class ShowOption:
         # put back default backend option dict
         self._options[self._backend] = dict()
 
-    def copy_valid_options(self, copy_to):
+    def copy_valid_options(self, copy_to, keys=None):
         """
         Copies valid option to other showopts. Simply iterates and treis.
 
         Parameters
         ----------
         copy_to: ShowOption
+        keys: tuple or list
+          Can specify keys
 
         Returns
         -------
@@ -381,7 +380,13 @@ class ShowOption:
         if not isinstance(copy_to, ShowOption):
             raise TypeError("copy_to should be a ShowOption")
         valid_keys = copy_to.valid_keys()
-        for key, value in self.items():
+
+        if keys is not None:
+            items = self[keys].items()
+        else:
+            items = self.items()
+
+        for key, value in items:
             if key in valid_keys:
                 copy_to[key] = deepcopy(value)  # is deepcopy necessary?
 
