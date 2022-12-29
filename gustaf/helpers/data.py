@@ -645,25 +645,6 @@ class SplineDataAdaptor(GustafBase):
     Prepares data to be presentable on spline. To support both
     scalar-data and vector-data, which are representable with colors and
     arrows respectively, this class will prepare data accordingly.
-    You can specify
-
-    Here are some use case control-path prototype:
-    1. is_spline?
-      -> yes
-        -> set (is_spline) True/False
-    2. does this data have function?
-      -> set (has_function) True/False
-    3. does data come with specified locations? # should be arrowdata_only
-      -> yes
-        3.1 ~(is_spline) and ~(has_function) and len(data) != len(locations)?
-          -> yes
-            -> raise
-          -> no
-            -> set (has_locations, arrowdata_only) True
-            -> assumes function(data, locations) -> arrowdata
-      -> no # maybe both scalar and arrowdata
-        -> assumes data.sample(resolutions) -> para_dim_equidistance_samples
-        -> set (has_locations, arrowdata_only) False
     """
 
     __slots__ = (
