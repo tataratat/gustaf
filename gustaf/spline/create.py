@@ -278,29 +278,62 @@ def with_bounds(parametric_bounds, physical_bounds):
     return bspline_box
 
 
-def parametric_view(spline):
+def parametric_view(spline, axes=True):
     """Create parametric view of given spline. Previously called
     `naive_spline()`. Degrees are always 1 and knot multiplicity is not
     preserved. Returns BSpline, as BSpline and NURBS should look the same as
     parametric view.
+    Will take shallow copy of underlying data of splinedata and show_options
+    from original spline.
 
     Parameters
     -----------
     spline: BSpline or NURBS
+    axes: bool
+     If True, will configure axes settings, it is supported.
 
     Returns
     --------
     para_spline: BSpline
     """
+    p_bounds = spline.parametric_bounds
     para_spline = with_bounds(
-        parametric_bounds=spline.parametric_bounds,
-        physical_bounds=spline.parametric_bounds,
+        parametric_bounds=p_bounds, physical_bounds=p_bounds
     )
 
     # loop through knot vectors and insert missing knots
     for i, kv in enumerate(spline.unique_knots):
         if len(kv) > 2:
             para_spline.insert_knots(i, kv[1:-1])
+
+    # take shallow copy
+    para_spline._splinedata._saved = spline.splinedata._saved.copy()
+    para_spline._show_options._options = spline.show_options._options.copy()
+
+    if axes and "axes" in spline.show_options.valid_keys():
+        # configure axes
+        bs = p_bounds
+        bs_diff_001 = (bs[1] - bs[0]) * 0.001
+        lowerb = bs[0] - bs_diff_001
+        upperb = bs[1] + bs_diff_001
+        axes_config = dict(
+            xtitle="u",
+            ytitle="v",
+            xrange=[lowerb[0], upperb[0]],
+            yrange=[lowerb[1], upperb[1]],
+            tipSize=0,
+            xMinorTicks=3,
+            yMinorTicks=3,
+            xyGrid=False,
+            yzGrid=False,
+        )
+        if spline.para_dim == 3:
+            axes_config.update(ztitle="w")
+            axes_config.update(zrange=[lowerb[2], upperb[2]])
+            axes_config.update(zMinorTicks=3)
+            axes_config.update(zxGrid=False)
+
+        para_spline.show_options["axes"] = axes_config
 
     return para_spline
 
@@ -729,3 +762,6 @@ class Creator:
 
     def revolved(self, *args, **kwargs):
         return revolved(self.spline, *args, **kwargs)
+
+    def parametric_view(self, *args, **kwargs):
+        return parametric_view(self.spline, *args, **kwargs)
