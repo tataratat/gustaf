@@ -277,7 +277,7 @@ class DataHolder(GustafBase):
 
         Returns
         --------
-        value: np.ndarray
+        value: object
         """
         if key in self._saved.keys():
             return self._saved[key]
@@ -443,6 +443,9 @@ class VertexData(DataHolder):
     data on request. __setitem__ and __getitem__ will perform length checks.
     key(), values(), items(), and get() will return whatever is currently
     stored.
+
+    gustaf supports two kinds of data representation: scalar-data with cmap
+    and vector-data with arrows.
     """
 
     __slots__ = ()
@@ -635,6 +638,245 @@ class VertexData(DataHolder):
                 )
 
         return value
+
+
+class SplineDataAdaptor(GustafBase):
+    """
+    Prepares data to be presentable on spline. To support both
+    scalar-data and vector-data, which are representable with colors and
+    arrows respectively, this class will prepare data accordingly.
+    You can specify 
+
+    Here are some use case control-path prototype:
+    1. is_spline?
+      -> yes
+        -> set (is_spline) True/False
+    2. does this data have function?
+      -> set (has_function) True/False
+    3. does data come with specified locations? # should be arrowdata_only
+      -> yes
+        3.1 ~(is_spline) and ~(has_function) and len(data) != len(locations)?
+          -> yes
+            -> raise
+          -> no
+            -> set (has_locations, arrowdata_only) True
+            -> assumes function(data, locations) -> arrowdata
+      -> no # maybe both scalar and arrowdata
+        -> assumes data.sample(resolutions) -> para_dim_equidistance_samples
+        -> set (has_locations, arrowdata_only) False
+    """
+    __slots__ = (
+        "data",
+        "function",
+        "locations",
+        "is_spline",
+        "has_function",
+        "has_locations",
+        "has_evaluate",
+        "arrowdata_only",
+        "_user_created",
+    )
+
+    def __init__(self, data, locations=None, function=None):
+        """
+        """
+        # default
+        self._user_created = True
+        self.data = data
+        self.is_spline = False
+        self.has_function = False
+        self.has_locations = False
+        self.has_evaluate = callable(data.evaluate)
+        self.arrowdata_only = False
+
+        # is spline we know?
+        if "CoreSpline" in str(type(data).__mro__):
+            self.is_spline = True
+
+        # has function?
+        if function is not None:
+            self.has_function = True
+            if not callable(function):
+                raise ValueError("Given function isn't callable")
+            self.function = function
+
+        # locations? - keep this compatible with functions. maybe
+        # we want to have some state dependent value at certain locations
+        if locations is not None:
+            # set what holds true
+            self.has_locations = True
+            self.arrowdata_only = True
+            self.locations = np.asanyarray(locations)
+
+            # if this is not a spline we know, it doesn't have a function,
+            # it should:
+            # -> `data.evaluate` is callable, or
+            # -> len(data) == len(locations)
+            if not self.is_spline and not self.has_function:
+                len_matches = False
+                if hasattr(data, "__len__"):
+                    len_matches = len(locations) == len(data)
+                if not (self.has_evaluate or len_matches):
+                    raise ValueError(
+                        "Data cannot be represented at specified locations."
+                        "Requires one of the following requirements: "
+                        "1) is a spline derived from splinepy's spline; "
+                        "2) data has `data.evalauate()`; "
+                        "3) length of the data and location should match."
+                    )
+            # location is sepcified, meaning we don't need sample()
+            return None
+
+        # can call sample or has a function?
+        if not (callable(data.sample) or self.has_function):
+            raise ValueError(
+                "Data without specified locations should have `data.sample()`"
+            )
+
+    def as_vertexdata(self, resolutions=None, on=None):
+        """
+        Parameters
+        ----------
+        resolutions: list or tuple
+        at: (n, d) array-like
+
+        Returns
+        -------
+        vertexdata: (m, r) array-like
+        """
+        if resolutions is not None and on is not None:
+            raise ValueError(
+                "Please only specify either `resolutions` or `on`"
+            )
+
+        if self.has_locations and (resolutions is not None or on is not None):
+            raise ValueError(
+                "Location dependent data can't be evaluated with `resolutions`"
+                " or `at`."
+            )
+
+        # if resolutions is specified, this is not a location query
+        if resolutions is not None:
+            if self.has_function:
+                return self.function(self.data, resolutions=resolutions)
+            else:
+                return self.data.sample(resolutions)
+
+        # runtime location query
+        if on is not None:
+            if self.has_function:
+                return self.function(self.data, on=on)
+            elif self.has_evaluate:
+                return self.data.evaluate(on)
+            else:
+                raise ValueError(
+                    "Given data can't support data extraction on specified "
+                    f"locations ({on})."
+                )
+
+        # location specified - either evaluate function at the 
+        if self.has_locations:
+            if self.has_function:
+                return self.function(self.data, self.locations)
+            elif self.has_evaluate:
+                return data.evaluate(self.locations)
+            else:
+                return self.data
+
+        # should be returned by now 
+        raise RuntimeError("Something went wrong while preparing spline data.")
+
+
+class SplineData(DataHolder):
+    """
+    Data manager for splines.
+    """
+
+    def __init__(self, helpee):
+        """
+        """
+        if "GustafSpline" not in str(type(helpee).__mro__):
+            raise AttributeError("Helpee does not have `vertices`")
+
+        super().__init__(helpee)
+
+    def __setitem__(self, key, value):
+        """
+        Selectively accept spline data.
+
+        Parameters
+        ----------
+        key: str
+        value: object
+
+        Returns
+        -------
+        None
+        """
+        if isinstance(value, SplineDataAdaptor):
+            self._saved[key] = value
+        else:
+            adapted = SplineDataAdaptor(value) # will test usability
+            adapted._user_created = False # mark for __getitem__
+            self._saved[key] = adapted
+
+    def __getitem__(self, key):
+        """
+        Returns value from __setitem__
+
+        Parameters
+        ----------
+        key: str
+
+        Returns
+        -------
+        value: object
+        """
+        saved = super().__getitem__(key)
+        if saved._user_created:
+            return saved
+        else:
+            return saved.data
+    
+    def as_scalar(self, key, resolutions, default=None):
+        """
+        Return scalar value at given resolutions
+
+        Parameters
+        ----------
+        key: str
+        resolutions: list or tuple
+        default: object
+          Default is None and will return is key doesn't exist
+
+        Returns
+        -------
+        value: np.ndarray
+        """
+        if key not in self._saved:
+            return default
+
+        saved = super().__getitem__(key)
+        # will raise
+        return saved.as_vertexdata(resolutions=resolutions)
+
+    def as_arrow(self, key, resolutions=None, on=None, default=None):
+        """
+        Returns as-arrow-representable data on certain places, with given
+        resolution, or on predefined places.
+
+        Parameters
+        ----------
+        key: str
+        resolutions: list or tuple
+        on: array-like
+        """
+        if key not in self._saved:
+            return default
+
+        saved = super().__getitem__(key)
+        # will raise
+        return saved.as_vertexdata(resolutions=resolutions, on=on)
 
 
 Unique2DFloats = namedtuple(
