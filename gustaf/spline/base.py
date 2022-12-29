@@ -7,38 +7,35 @@ from copy import deepcopy
 import numpy as np
 import splinepy
 
-from gustaf import settings
-from gustaf import utils
 from gustaf import show as showmodule
+from gustaf import utils
 from gustaf._base import GustafBase
+from gustaf.helpers.data import SplineData
 from gustaf.spline import visualize
 from gustaf.spline.create import Creator
 from gustaf.spline.extract import Extractor
 from gustaf.spline.proximity import Proximity
-from gustaf.utils.arr import enforce_len
-from gustaf.helpers.data import SplineData 
-from gustaf.vertices import Vertices
 
 
 def show(
     spline,
-#    resolutions=100,
-#    control_points=True,
-#    knots=True,
-#    show_fitting_queries=True,
-#    return_discrete=False,
-#    return_showable=False,
-#    backend=None,
+    #    resolutions=100,
+    #    control_points=True,
+    #    knots=True,
+    #    show_fitting_queries=True,
+    #    return_discrete=False,
+    #    return_showable=False,
+    #    backend=None,
     # From here, | only relevant if "vedo" is backend.
     #            V
-#    parametric_space=False,
-#    color=None,
-#    surface_alpha=1,
-#    control_points_alpha=0.8,
-#    lighting="glossy",
-#    control_point_ids=True,
-#    color_spline=None,
-#    cmap=None,  # only required
+    #    parametric_space=False,
+    #    color=None,
+    #    surface_alpha=1,
+    #    control_points_alpha=0.8,
+    #    lighting="glossy",
+    #    control_point_ids=True,
+    #    color_spline=None,
+    #    cmap=None,  # only required
     **kwargs,
 ):
     """Shows splines with various options. They are excessively listed, so that
@@ -103,69 +100,70 @@ def show(
     # Prepare things to show dict.
     things_to_show = visualize.make_showable(spline)
 
-#        # generate parametric view of spline
-#        if parametric_space and spline.para_dim > 1:
-#            from vedo.addons import Axes
-#
-#            from gustaf.spline.create import parametric_view
-#            from gustaf.utils.arr import bounds
-#
-#            para_spline = parametric_view(spline)
-#            para_showables = show(
-#                para_spline,
-#                control_points=False,
-#                return_showable=True,
-#                lighting=lighting,
-#                knots=knots,
-#                parametric_space=False,
-#                backend=backend,
-#            )
-#            # Make lines a bit thicker
-#            if knots:
-#                para_showables["knots"].lw(6)
-#
-#            # Trick to show begin/end value
-#            bs = np.asarray(bounds(para_showables["spline"].points()))
-#            bs_diff_001 = (bs[1] - bs[0]) * 0.001
-#            lowerb = bs[0] - bs_diff_001
-#            upperb = bs[1] + bs_diff_001
-#
-#            axes_config = dict(
-#                xtitle="u",
-#                ytitle="v",
-#                xrange=[lowerb[0], upperb[0]],
-#                yrange=[lowerb[1], upperb[1]],
-#                tipSize=0,
-#                xMinorTicks=3,
-#                yMinorTicks=3,
-#                xyGrid=False,
-#                yzGrid=False,
-#            )
-#
-#            if spline.para_dim == 3:
-#                axes_config.update(ztitle="w")
-#                axes_config.update(zrange=[lowerb[2], upperb[2]])
-#                axes_config.update(zMinorTicks=3)
-#                axes_config.update(zxGrid=False)
-#
-#            para_showables.update(
-#                axes=Axes(para_showables["spline"], **axes_config)
-#            )
-#
-#        # showable return
-#        if return_showable:
-#            if parametric_space:
-#                vedo_things.update(parametric_spline=para_showables)
-#            return vedo_things
-#
-#        # now, show
-#        if parametric_space:
-#            para_showables.update(description="Parametric View")
-#            vedo_things.update(description="Physical View")
-#            plt = showmodule.show_vedo(para_showables, vedo_things, **kwargs)
-#
-#        else:
-#            plt = showmodule.show_vedo(vedo_things, **kwargs)
+    #        # generate parametric view of spline
+    #        if parametric_space and spline.para_dim > 1:
+    #            from vedo.addons import Axes
+    #
+    #            from gustaf.spline.create import parametric_view
+    #            from gustaf.utils.arr import bounds
+    #
+    #            para_spline = parametric_view(spline)
+    #            para_showables = show(
+    #                para_spline,
+    #                control_points=False,
+    #                return_showable=True,
+    #                lighting=lighting,
+    #                knots=knots,
+    #                parametric_space=False,
+    #                backend=backend,
+    #            )
+    #            # Make lines a bit thicker
+    #            if knots:
+    #                para_showables["knots"].lw(6)
+    #
+    #            # Trick to show begin/end value
+    #            bs = np.asarray(bounds(para_showables["spline"].points()))
+    #            bs_diff_001 = (bs[1] - bs[0]) * 0.001
+    #            lowerb = bs[0] - bs_diff_001
+    #            upperb = bs[1] + bs_diff_001
+    #
+    #            axes_config = dict(
+    #                xtitle="u",
+    #                ytitle="v",
+    #                xrange=[lowerb[0], upperb[0]],
+    #                yrange=[lowerb[1], upperb[1]],
+    #                tipSize=0,
+    #                xMinorTicks=3,
+    #                yMinorTicks=3,
+    #                xyGrid=False,
+    #                yzGrid=False,
+    #            )
+    #
+    #            if spline.para_dim == 3:
+    #                axes_config.update(ztitle="w")
+    #                axes_config.update(zrange=[lowerb[2], upperb[2]])
+    #                axes_config.update(zMinorTicks=3)
+    #                axes_config.update(zxGrid=False)
+    #
+    #            para_showables.update(
+    #                axes=Axes(para_showables["spline"], **axes_config)
+    #            )
+    #
+    #        # showable return
+    #        if return_showable:
+    #            if parametric_space:
+    #                vedo_things.update(parametric_spline=para_showables)
+    #            return vedo_things
+    #
+    #        # now, show
+    #        if parametric_space:
+    #            para_showables.update(description="Parametric View")
+    #            vedo_things.update(description="Physical View")
+    #            plt = showmodule.show_vedo(para_showables, vedo_things,
+    #            **kwargs)
+    #
+    #        else:
+    #            plt = showmodule.show_vedo(vedo_things, **kwargs)
 
     if kwargs.get("return_showable", False):
         return {key: value.showable() for key, value in things_to_show.items()}

@@ -645,7 +645,7 @@ class SplineDataAdaptor(GustafBase):
     Prepares data to be presentable on spline. To support both
     scalar-data and vector-data, which are representable with colors and
     arrows respectively, this class will prepare data accordingly.
-    You can specify 
+    You can specify
 
     Here are some use case control-path prototype:
     1. is_spline?
@@ -665,6 +665,7 @@ class SplineDataAdaptor(GustafBase):
         -> assumes data.sample(resolutions) -> para_dim_equidistance_samples
         -> set (has_locations, arrowdata_only) False
     """
+
     __slots__ = (
         "data",
         "function",
@@ -678,8 +679,7 @@ class SplineDataAdaptor(GustafBase):
     )
 
     def __init__(self, data, locations=None, function=None):
-        """
-        """
+        """ """
         # default
         self._user_created = True
         self.data = data
@@ -774,16 +774,16 @@ class SplineDataAdaptor(GustafBase):
                     f"locations ({on})."
                 )
 
-        # location specified - either evaluate function at the 
+        # location specified - either evaluate function at the
         if self.has_locations:
             if self.has_function:
                 return self.function(self.data, self.locations)
             elif self.has_evaluate:
-                return data.evaluate(self.locations)
+                return self.data.evaluate(self.locations)
             else:
                 return self.data
 
-        # should be returned by now 
+        # should be returned by now
         raise RuntimeError("Something went wrong while preparing spline data.")
 
 
@@ -793,8 +793,7 @@ class SplineData(DataHolder):
     """
 
     def __init__(self, helpee):
-        """
-        """
+        """ """
         if "GustafSpline" not in str(type(helpee).__mro__):
             raise AttributeError("Helpee does not have `vertices`")
 
@@ -816,8 +815,8 @@ class SplineData(DataHolder):
         if isinstance(value, SplineDataAdaptor):
             self._saved[key] = value
         else:
-            adapted = SplineDataAdaptor(value) # will test usability
-            adapted._user_created = False # mark for __getitem__
+            adapted = SplineDataAdaptor(value)  # will test usability
+            adapted._user_created = False  # mark for __getitem__
             self._saved[key] = adapted
 
     def __getitem__(self, key):
@@ -837,7 +836,7 @@ class SplineData(DataHolder):
             return saved
         else:
             return saved.data
-    
+
     def as_scalar(self, key, resolutions, default=None):
         """
         Return scalar value at given resolutions
