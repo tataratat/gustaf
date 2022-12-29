@@ -239,6 +239,10 @@ def _vedo_showable(obj, as_dict=False, **kwargs):
     if alpha is not None:
         vedo_obj.alpha(alpha)
 
+    lighting = obj.show_options.get("lighting", None)
+    if lighting is not None:
+        vedo_obj.lighting(lighting)
+
     vertex_ids = obj.show_options.get("vertex_ids", False)
     element_ids = obj.show_options.get("element_ids", False)
     # special treatment for vertex
