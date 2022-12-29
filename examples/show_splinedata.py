@@ -51,7 +51,7 @@ if __name__ == "__main__":
     b.show()
 
     # 3. see coordinates norm and as arrows only on specified places
-    b.show_options["arrowdata_on"] = np.random.random((100,2)) # para_coords
+    b.show_options["arrowdata_on"] = np.random.random((100, 2))  # para_coords
     b.show()
 
     # 4. see 3. with parametric_view
