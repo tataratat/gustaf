@@ -16,6 +16,7 @@ from gustaf.spline.create import Creator
 from gustaf.spline.extract import Extractor
 from gustaf.spline.proximity import Proximity
 from gustaf.utils.arr import enforce_len
+from gustaf.helpers.data import SplineData 
 from gustaf.vertices import Vertices
 
 
@@ -185,6 +186,7 @@ class GustafSpline(GustafBase):
         self._proximity = Proximity(self)
         self._creator = Creator(self)
         self._show_options = self.__show_option__(self)
+        self._splinedata = SplineData(self)
 
     @property
     def show_options(self):
@@ -200,6 +202,21 @@ class GustafSpline(GustafBase):
         show_options: SplineShowOption
         """
         return self._show_options
+
+    @property
+    def splinedata(self):
+        """
+        Spline data helper for splines.
+
+        Parameters
+        ----------
+        None
+
+        Returns
+        -------
+        splinedata: SplineData
+        """
+        return self._splinedata
 
     @property
     def extract(self):
