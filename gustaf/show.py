@@ -294,7 +294,7 @@ def _vedo_showable(obj, as_dict=False, **kwargs):
         if sb_kwargs is not None:
             vedo_obj.addScalarBar(**sb_kwargs)
 
-    elif dataname and not vertexdata:
+    elif dataname is not None and vertexdata is None:
         utils.log.debug(
             f"No vertexdata named '{dataname}' for {obj}. Skipping"
         )
