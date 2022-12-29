@@ -69,7 +69,7 @@ def from_data(gus_obj, data, scale=None, data_norm=None):
             "dimension by appending zeros.",
         )
         dim_diff = int(inc_dim - origin_dim)
-        zero_pad = np.zeros((len(origin_dim), abs(dim_diff)))
+        zero_pad = np.zeros((len(origin), abs(dim_diff)))
         if dim_diff > 0:
             origin = np.hstack((origin, zero_pad))
         else:
