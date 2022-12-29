@@ -8,23 +8,15 @@ from gustaf.utils import log
 class GustafBase:
     """Base class for gustaf, where logging is nicely wrapped, and some useful
     methods are defined as classmethods..
-
-    Since attributes are predefined with __slots__, we can pre define
-    all the properties that could have been saved.
-    Adding `get_` in front of such properties are names for functions that
-    freshly compute and save the properties and their byproducts.
-
-    Other more complex operations will be a separate function.
-
-    TODO: maybe add explicit `use_saved` switch to avoid recomputing
     """
 
     __slots__ = ()
 
-    def __new__(cls, *args, **kwargs):
+    def __init_subclass__(cls, *args, **kwargs):
         """
         Add logger shortcut.
         """
+        super().__init_subclass__(*args, **kwargs)
         cls._logi = log.prepended_log("<" + cls.__qualname__ + ">", log.info)
         cls._logd = log.prepended_log("<" + cls.__qualname__ + ">", log.debug)
         cls._logw = log.prepended_log(
