@@ -2,11 +2,13 @@
 
 Base for splines. Contains show and inherited classes from `spline`.
 """
+from copy import deepcopy
 
 import numpy as np
 import splinepy
 
 from gustaf import settings
+from gustaf import utils
 from gustaf import show as showmodule
 from gustaf._base import GustafBase
 from gustaf.spline import visualize
@@ -19,23 +21,23 @@ from gustaf.vertices import Vertices
 
 def show(
     spline,
-    resolutions=100,
-    control_points=True,
-    knots=True,
-    show_fitting_queries=True,
-    return_discrete=False,
-    return_showable=False,
-    backend=None,
+#    resolutions=100,
+#    control_points=True,
+#    knots=True,
+#    show_fitting_queries=True,
+#    return_discrete=False,
+#    return_showable=False,
+#    backend=None,
     # From here, | only relevant if "vedo" is backend.
     #            V
-    parametric_space=False,
-    color=None,
-    surface_alpha=1,
-    control_points_alpha=0.8,
-    lighting="glossy",
-    control_point_ids=True,
-    color_spline=None,
-    cmap=None,  # only required
+#    parametric_space=False,
+#    color=None,
+#    surface_alpha=1,
+#    control_points_alpha=0.8,
+#    lighting="glossy",
+#    control_point_ids=True,
+#    color_spline=None,
+#    cmap=None,  # only required
     **kwargs,
 ):
     """Shows splines with various options. They are excessively listed, so that
@@ -83,180 +85,91 @@ def show(
     if (spline.para_dim, spline.dim) not in allowed_dim_combo:
         raise ValueError("Sorry, can't show given spline.")
 
-    # determine backend
-    if backend is None:
-        backend = settings.VISUALIZATION_BACKEND
-
-    # Prepare correct form of resolution input
-    resolutions = enforce_len(resolutions, spline.para_dim)
+    if kwargs:
+        orig_show_options = spline.show_options
+        spline._show_options = spline.__show_option__(spline)
+        orig_show_options.copy_valid_options(spline.show_options)
+        for key, value in kwargs.items():
+            try:
+                spline.show_options[key] = value
+            except BaseException:
+                utils.log.debug(
+                    f"Skipping invalid option {key} for "
+                    f"{spline.show_options._helps}."
+                )
+                continue
 
     # Prepare things to show dict.
-    things_to_show = dict()
+    things_to_show = visualize.make_showable(spline)
 
-    # (discretized) spline itself with basic color scheme.
-    if spline.para_dim == 1:
-        sp = spline.extract.edges(resolutions[0])
-        if color is None:
-            color = "black"
-        sp.vis_dict.update(c=color, lw=8)
+#        # generate parametric view of spline
+#        if parametric_space and spline.para_dim > 1:
+#            from vedo.addons import Axes
+#
+#            from gustaf.spline.create import parametric_view
+#            from gustaf.utils.arr import bounds
+#
+#            para_spline = parametric_view(spline)
+#            para_showables = show(
+#                para_spline,
+#                control_points=False,
+#                return_showable=True,
+#                lighting=lighting,
+#                knots=knots,
+#                parametric_space=False,
+#                backend=backend,
+#            )
+#            # Make lines a bit thicker
+#            if knots:
+#                para_showables["knots"].lw(6)
+#
+#            # Trick to show begin/end value
+#            bs = np.asarray(bounds(para_showables["spline"].points()))
+#            bs_diff_001 = (bs[1] - bs[0]) * 0.001
+#            lowerb = bs[0] - bs_diff_001
+#            upperb = bs[1] + bs_diff_001
+#
+#            axes_config = dict(
+#                xtitle="u",
+#                ytitle="v",
+#                xrange=[lowerb[0], upperb[0]],
+#                yrange=[lowerb[1], upperb[1]],
+#                tipSize=0,
+#                xMinorTicks=3,
+#                yMinorTicks=3,
+#                xyGrid=False,
+#                yzGrid=False,
+#            )
+#
+#            if spline.para_dim == 3:
+#                axes_config.update(ztitle="w")
+#                axes_config.update(zrange=[lowerb[2], upperb[2]])
+#                axes_config.update(zMinorTicks=3)
+#                axes_config.update(zxGrid=False)
+#
+#            para_showables.update(
+#                axes=Axes(para_showables["spline"], **axes_config)
+#            )
+#
+#        # showable return
+#        if return_showable:
+#            if parametric_space:
+#                vedo_things.update(parametric_spline=para_showables)
+#            return vedo_things
+#
+#        # now, show
+#        if parametric_space:
+#            para_showables.update(description="Parametric View")
+#            vedo_things.update(description="Physical View")
+#            plt = showmodule.show_vedo(para_showables, vedo_things, **kwargs)
+#
+#        else:
+#            plt = showmodule.show_vedo(vedo_things, **kwargs)
 
-    if spline.para_dim == 2 or spline.para_dim == 3:
-        sp = spline.extract.faces(resolutions)
-        if color is None:
-            color = "green"
-        sp.vis_dict.update(c=color)
-        # If
+    if kwargs.get("return_showable", False):
+        return {key: value.showable() for key, value in things_to_show.items()}
 
-    things_to_show.update(spline=sp)
-
-    # control_points = control mesh + control_points
-    # control mesh always takes unique edge representation.
-    if control_points:
-        control_mesh = spline.extract.control_mesh()
-        if spline.para_dim != 1:
-            control_mesh = control_mesh.toedges(unique=True)
-
-        # Set alpha to < 1, so that they don't "overshadow" spline
-        control_mesh.vis_dict.update(c="red", lw=4, alpha=control_points_alpha)
-        things_to_show.update(control_mesh=control_mesh)  # mesh itself
-        # Add big vertices to emphasize cps.
-        cps = control_mesh.tovertices()
-        cps.vis_dict.update(c="red", r=10, alpha=control_points_alpha)
-        things_to_show.update(control_points=cps)  # only points
-
-    if knots:
-        # Knot lines for non-curve splines.
-        # Knot for curves are only added for vedo backend.
-        if spline.para_dim > 1:
-            knot_lines = spline.extract.edges(resolutions, all_knots=True)
-            knot_lines.vis_dict.update(c="black", lw=3)
-            things_to_show.update(knots=knot_lines)
-
-    if show_fitting_queries and hasattr(spline, "_fitting_queries"):
-        fitting_queries = Vertices(spline._fitting_queries)
-        fitting_queries.vis_dict.update(c="blue", r=10)
-        things_to_show.update(fitting_queries=fitting_queries)
-
-    # Return here, if backend is not vedo
-    if not backend.startswith("vedo"):
-        # turn everything into backend showables
-        if return_showable:
-            for key, gusobj in things_to_show.items():
-                things_to_show.update({key: gusobj.showable(backend=backend)})
-
-            return things_to_show
-
-        elif return_discrete:
-            return things_to_show
-
-        else:
-            showmodule.show(list(things_to_show.values()))
-            return None
-
-    # iff backend is vedo, we provide fancier visualization
-    elif backend.startswith("vedo"):
-        # return if showable is not desired
-        # -> From now on we will directly work on vedo objects.
-        if return_discrete and not return_showable:
-            return things_to_show
-
-        # turn all gus objects into gus objects.
-        vedo_things = dict()
-        for key, gusobj in things_to_show.items():
-            vedo_things.update({key: gusobj.showable(backend=backend)})
-
-        # apply lighting
-        if lighting is not None:
-            vedo_things["spline"].lighting(lighting)
-
-        # adjust surface alpha
-        if spline.para_dim > 1:
-            vedo_things["spline"].alpha(surface_alpha)
-
-        # add red points for at control points
-        if control_points and control_point_ids:
-            vedo_things.update(
-                control_point_ids=vedo_things["control_points"].labels("id")
-            )
-
-        # add knots as "x" for curves
-        if knots and spline.para_dim == 1:
-            uks = spline.unique_knots[0]
-            phys_uks = showmodule.make_showable(
-                Vertices(spline.evaluate([[uk] for uk in uks])),
-                backend=backend,
-            )
-            xs = ["x"] * len(uks)
-
-            vedo_things.update(
-                knots=phys_uks.labels(xs, justify="center", c="green")
-            )
-
-        # generate parametric view of spline
-        if parametric_space and spline.para_dim > 1:
-            from vedo.addons import Axes
-
-            from gustaf.spline.create import parametric_view
-            from gustaf.utils.arr import bounds
-
-            para_spline = parametric_view(spline)
-            para_showables = show(
-                para_spline,
-                control_points=False,
-                return_showable=True,
-                lighting=lighting,
-                knots=knots,
-                parametric_space=False,
-                backend=backend,
-            )
-            # Make lines a bit thicker
-            if knots:
-                para_showables["knots"].lw(6)
-
-            # Trick to show begin/end value
-            bs = np.asarray(bounds(para_showables["spline"].points()))
-            bs_diff_001 = (bs[1] - bs[0]) * 0.001
-            lowerb = bs[0] - bs_diff_001
-            upperb = bs[1] + bs_diff_001
-
-            axes_config = dict(
-                xtitle="u",
-                ytitle="v",
-                xrange=[lowerb[0], upperb[0]],
-                yrange=[lowerb[1], upperb[1]],
-                tipSize=0,
-                xMinorTicks=3,
-                yMinorTicks=3,
-                xyGrid=False,
-                yzGrid=False,
-            )
-
-            if spline.para_dim == 3:
-                axes_config.update(ztitle="w")
-                axes_config.update(zrange=[lowerb[2], upperb[2]])
-                axes_config.update(zMinorTicks=3)
-                axes_config.update(zxGrid=False)
-
-            para_showables.update(
-                axes=Axes(para_showables["spline"], **axes_config)
-            )
-
-        # showable return
-        if return_showable:
-            if parametric_space:
-                vedo_things.update(parametric_spline=para_showables)
-            return vedo_things
-
-        # now, show
-        if parametric_space:
-            para_showables.update(description="Parametric View")
-            vedo_things.update(description="Physical View")
-            plt = showmodule.show_vedo(para_showables, vedo_things, **kwargs)
-
-        else:
-            plt = showmodule.show_vedo(vedo_things, **kwargs)
-
-        return plt
+    return showmodule.show_vedo(things_to_show)
 
 
 class GustafSpline(GustafBase):
@@ -359,6 +272,13 @@ class GustafSpline(GustafBase):
         """Equivalent to
         `gustaf.spline.base.show(return_showable=True,**kwargs)`"""
         return show(self, return_showable=True, **kwargs)
+
+    def copy(self):
+        """tmp copy from splinepy until #89 merges"""
+        new = type(self)()
+        new.new_core(**self._data["properties"], properties_round_trip=False)
+        new._data = deepcopy(self._data)
+        return new
 
 
 class Bezier(GustafSpline, splinepy.Bezier):
