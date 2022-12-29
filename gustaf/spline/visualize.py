@@ -74,6 +74,10 @@ class SplineShowOption(options.ShowOption):
         self._options[self._backend] = dict()
 
 
+def make_showable(spline):
+    return eval(f"_{spline.show_options._backend}_showable(spline)")
+
+
 def _vedo_showable(spline):
     """
     Goes through common precedures for preparing showable splines.
@@ -91,13 +95,13 @@ def _vedo_showable(spline):
     gus_primitives = eval(f"_vedo_showable_para_dim_{spline.para_dim}(spline)")
 
     # apply spline color
-    sampled_spline = gus_primitives
+    sampled_spline = gus_primitives["spline"]
     default_color = "green" if spline.para_dim > 1 else "black"
     sampled_spline.show_options["c"] = spline.show_options.get(
         "c", default_color
     )
     sampled_spline.show_options["alpha"] = spline.show_options.get(
-        "alpha", None
+        "alpha", 1
     )
     sampled_spline.show_options["lighting"] = spline.show_options.get(
         "lighting", "glossy"
@@ -112,7 +116,7 @@ def _vedo_showable(spline):
     # arrowdata_color
 
     # double check on same obj ref
-    gus_primitives["spline"] = gus_primitives
+    gus_primitives["spline"] = sampled_spline
 
     # control_points & control_points_alpha
     if spline.show_options.get("control_points", True):
@@ -142,7 +146,7 @@ def _vedo_showable(spline):
         if spline.show_options.get("control_point_ids", True):
             # a bit redundant, but nicely separable
             cp_ids = spline.extract.control_points()
-            cp_ids.show_options["labels"] = np.arange(cp_ids)
+            cp_ids.show_options["labels"] = np.arange(len(cp_ids.vertices))
             cp_ids.show_options["label_options"] = {"font": "VTK"}
             gus_primitives["control_point_ids"] = cp_ids
 
@@ -222,6 +226,8 @@ def _vedo_showable_para_dim_2(spline):
         knot_lines.show_options["c"] = "black"
         knot_lines.show_options["lw"] = 3
         gus_primitives["knots"] = knot_lines
+
+    return gus_primitives
 
 
 def _vedo_showable_para_dim_3(spline):
