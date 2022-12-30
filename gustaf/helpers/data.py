@@ -667,12 +667,16 @@ class SplineDataAdaptor(GustafBase):
         self.is_spline = False
         self.has_function = False
         self.has_locations = False
-        self.has_evaluate = callable(data.evaluate)
+        self.has_evaluate = False
         self.arrowdata_only = False
 
         # is spline we know?
         if "CoreSpline" in str(type(data).__mro__):
             self.is_spline = True
+
+        # data has evaluate?
+        if hasattr(data, "evaluate"):
+            self.has_evaluate = callable(data.evaluate)
 
         # has function?
         if function is not None:
@@ -709,9 +713,10 @@ class SplineDataAdaptor(GustafBase):
             return None
 
         # can call sample or has a function?
-        if not (callable(data.sample) or self.has_function):
+        if not self.has_function and not self.is_spline:
             raise ValueError(
-                "Data without specified locations should have `data.sample()`"
+                "None spline data should at least have an accompanying "
+                "function."
             )
 
     def as_vertexdata(self, resolutions=None, on=None):
@@ -740,6 +745,9 @@ class SplineDataAdaptor(GustafBase):
         if resolutions is not None:
             if self.has_function:
                 return self.function(self.data, resolutions=resolutions)
+            elif self.is_spline and self.data.para_dim > 2:
+                # TODO: replace this with generalized query helpers.
+                return self.data.extract.faces(resolutions).vertices
             else:
                 return self.data.sample(resolutions)
 
