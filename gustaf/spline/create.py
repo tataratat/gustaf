@@ -4,7 +4,6 @@ Creates splines.
 """
 
 import numpy as np
-from splinepy.spline import RequiredProperties
 
 from gustaf import settings, utils
 
@@ -60,9 +59,9 @@ def extruded(spline, extrusion_vector=None):
 
     spline_dict["degrees"] = np.concatenate((spline.degrees, [1]))
     spline_dict["control_points"] = np.vstack((cps, cps + extrusion_vector))
-    if "knot_vectors" in RequiredProperties.of(spline):
+    if spline.has_knot_vectors:
         spline_dict["knot_vectors"] = spline.knot_vectors + [[0, 0, 1, 1]]
-    if "weights" in RequiredProperties.of(spline):
+    if spline.is_rational:
         spline_dict["weights"] = np.concatenate(
             (spline.weights, spline.weights)
         )
@@ -180,7 +179,7 @@ def revolved(
     if (n_knot_spans) is None or (n_knot_spans < minimum_n_knot_spans):
         n_knot_spans = minimum_n_knot_spans
 
-    if "Bezier" in spline.whatami:
+    if "Bezier" in spline.name:
         if n_knot_spans > 1:
             raise ValueError(
                 "Revolutions are only supported for angles up to 180 "
@@ -220,13 +219,13 @@ def revolved(
             (spline_dict["control_points"], mid_points, end_points)
         )
 
-    if "knot_vectors" in RequiredProperties.of(spline):
+    if spline.has_knot_vectors:
         kv = [0, 0, 0]
         [kv.extend([i + 1, i + 1]) for i in range(n_knot_spans - 1)]
         spline_dict["knot_vectors"] = spline.knot_vectors + [
             kv + [n_knot_spans + 1] * 3
         ]
-    if "weights" in RequiredProperties.of(spline):
+    if spline.is_rational:
         mid_weights = spline.weights * weight
         spline_dict["weights"] = spline.weights
         for i_segment in range(n_knot_spans):
@@ -308,7 +307,9 @@ def parametric_view(spline, axes=True):
 
     # take shallow copy
     para_spline._splinedata._saved = spline.splinedata._saved.copy()
-    para_spline._show_options._options = spline.show_options._options.copy()
+    para_spline._show_options._options[
+        para_spline._show_options._backend
+    ] = spline.show_options._options[spline._show_options._backend].copy()
 
     if axes and "axes" in spline.show_options.valid_keys():
         # configure axes
@@ -375,7 +376,11 @@ def line(points):
 
 
 def arc(
-    radius=1.0, angle=90.0, n_knot_spans=None, start_angle=0.0, degree=True
+    radius=1.0,
+    angle=90.0,
+    n_knot_spans=-1,
+    start_angle=0.0,
+    degree=True,
 ):
     """Creates a 1-D arc as Rational Bezier or NURBS with given radius and
     angle. The arc lies in the x-y plane and rotates around the z-axis.
@@ -411,14 +416,14 @@ def arc(
     if abs(angle) >= np.pi or n_knot_spans > 1:
         point_spline = point_spline.nurbs
 
-    # Revolve
+    # Revolve - set degree to False, since all the angles are converted to rad
     arc_attribs = point_spline.create.revolved(
-        angle=angle, n_knot_spans=n_knot_spans, degree=degree
+        angle=angle, n_knot_spans=n_knot_spans, degree=False
     ).todict()
     # Remove the first parametric dimenions, which is only a point and
     # only used for the revolution
     arc_attribs["degrees"] = list(arc_attribs["degrees"])[1:]
-    if "knot_vectors" in RequiredProperties.of(point_spline):
+    if point_spline.has_knot_vectors:
         arc_attribs["knot_vectors"] = list(arc_attribs["knot_vectors"])[1:]
 
     return type(point_spline)(**arc_attribs)
@@ -508,7 +513,7 @@ def disk(
     outer_radius,
     inner_radius=None,
     angle=360.0,
-    n_knot_spans=None,
+    n_knot_spans=4,
     degree=True,
 ):
     """Surface spline describing a potentially hollow disk with quadratic
@@ -632,7 +637,7 @@ def sphere(
     outer_radius,
     inner_radius=None,
     angle=360.0,
-    n_knot_spans=None,
+    n_knot_spans=-1,
     degree=True,
 ):
     """Creates a volumetric spline describing a sphere with radius R.
