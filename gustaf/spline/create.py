@@ -335,6 +335,9 @@ def parametric_view(spline, axes=True):
             axes_config.update(zxGrid=False)
 
         para_spline.show_options["axes"] = axes_config
+        # it is a view, so cps won't be realistic
+        para_spline.show_options["control_points"] = False
+        para_spline.show_options["lighting"] = "off"
 
     return para_spline
 
