@@ -39,7 +39,6 @@ except ImportError as err:
     RationalBezier = spline
     FFD = spline
 
-# import try/catch for triangle and gustaf-tetgen
 
 __version__ = _version.version
 

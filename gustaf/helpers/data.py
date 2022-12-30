@@ -766,7 +766,11 @@ class SplineDataAdaptor(GustafBase):
         # location specified - either evaluate function at the
         if self.has_locations:
             if self.has_function:
-                return self.function(self.data, self.locations)
+                # function may want locations
+                try:
+                    return self.function(self.data, self.locations)
+                except TypeError:  # maybe too many args
+                    return self.function(self.data)
             elif self.has_evaluate:
                 return self.data.evaluate(self.locations)
             else:
