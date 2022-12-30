@@ -372,6 +372,20 @@ class ShowOption:
         # put back default backend option dict
         self._options[self._backend] = dict()
 
+    def pop(self, *args, **kwargs):
+        """
+        Calls pop() on current backend options
+
+        Parameters
+        ----------
+        None
+
+        Returns
+        -------
+        value: object
+        """
+        self._options[self._backend].pop(*args, **kwargs)
+
     def copy_valid_options(self, copy_to, keys=None):
         """
         Copies valid option to other showopts. Simply iterates and treis.
