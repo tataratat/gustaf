@@ -147,10 +147,17 @@ def _vedo_showable(spline):
     if adata_name is not None and adapted_adata is not None:
         # if location is specified, this will be a separate Vertices obj with
         # configured arrowdata
-        create_vertices = (
-            adapted_adata.has_locations
-            or "arrowdata_on" in spline.show_options.keys()
-        )
+        has_locations = adapted_adata.has_locations
+        adata_on = "arrowdata_on" in spline.show_options.keys()
+        create_vertices = has_locations or adata_on
+
+        # this case causes conflict of interest. raise
+        if has_locations and adata_on:
+            raise ValueError(
+                f"arrowdata-({adata_name}) has fixed location, "
+                "but and `arrowdata_on` is set.",
+            )
+
         if create_vertices:
             # prepare corresponding queries
             if adapted_adata.has_locations:
@@ -167,11 +174,11 @@ def _vedo_showable(spline):
                     "Dimension mismatch: arrowdata locations-"
                     f"{queries.shape[1]} / para_dim-{spline.para_dim}."
                 )
-            lb_diff = queries.min(axis=0) - bounds[0]
-            ub_diff = queries.max(axis=0) - bounds[1]
-            if any(lb_diff < settings.TOLERANCE) or any(
-                ub_diff > settings.TOLERANCE
-            ):
+            # tolerance padding. may still cause issues in splinepy.
+            # in that case, we will have to scale queries.
+            lb_diff = queries.min(axis=0) - bounds[0] + settings.TOLERANCE
+            ub_diff = queries.max(axis=0) - bounds[1] - settings.TOLERANCE
+            if any(lb_diff < 0) or any(ub_diff > 0):
                 raise ValueError(
                     f"Specified locations of ({adata_name}) are out side the "
                     f"parametric bounds ({bounds}) by [{lb_diff}, {ub_diff}]."
