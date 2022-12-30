@@ -2,6 +2,8 @@
 
 Everything related to show/visualization.
 """
+import sys
+
 import numpy as np
 
 from gustaf import settings, utils
@@ -21,6 +23,18 @@ except ImportError as err:
     vedo = ModuleImportRaiser("vedo", err)
 
 
+# enable `gus.show()`
+# taken from https://stackoverflow.com/questions/1060796/callable-modules
+# will use this until this module is renamed
+class _CallableShowDotPy(sys.modules[__name__].__class__):
+    def __call__(self, *args, **kwargs):
+        """call show()"""
+        return show(*args, **kwargs)
+
+
+sys.modules[__name__].__class__ = _CallableShowDotPy
+
+
 def show(*gusobj, **kwargs):
     """Shows using appropriate backend.
 
@@ -32,11 +46,10 @@ def show(*gusobj, **kwargs):
     --------
     None
     """
-    showables = [make_showable(g, **kwargs) for g in gusobj]
     vis_b = settings.VISUALIZATION_BACKEND
 
     if vis_b.startswith("vedo"):
-        return show_vedo(showables, **kwargs)
+        return show_vedo(*gusobj, **kwargs)
     elif vis_b.startswith("trimesh"):
         pass
     elif vis_b.startswith("matplotlib"):
@@ -290,7 +303,8 @@ def _vedo_showable(obj, as_dict=False, **kwargs):
         # at last, scalarbar
         # deprecated function name, keeep it for now for backward compat
         sb_kwargs = obj.show_options.get("scalarbar", None)
-        if sb_kwargs is not None:
+        if sb_kwargs is not None and sb_kwargs is not False:
+            sb_kwargs = dict() if isinstance(sb_kwargs, bool) else sb_kwargs
             vedo_obj.addScalarBar(**sb_kwargs)
 
     elif dataname is not None and vertexdata is None:
