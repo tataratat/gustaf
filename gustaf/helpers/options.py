@@ -84,8 +84,8 @@ vedo_common_options = (
         "dict with following items are accepted: "
         "{title: str, pos: tuple, title_yoffset: int, font_size: int, "
         "nlabels: int, c: str, horizontal: bool, use_alpha: bool, "
-        "label_format: str}",
-        (dict,),
+        "label_format: str}. Setting bool will add a default scalarbar",
+        (bool, dict),
     ),
     Option(
         "vedo",
