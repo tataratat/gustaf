@@ -46,7 +46,7 @@ def tet_to_tri(volumes):
     """
     volumes = arr.make_c_contiguous(volumes, settings.INT_DTYPE)
 
-    if volumes.shape[1] != 4:
+    if volumes.ndim != 2 or volumes.shape[1] != 4:
         raise ValueError("Given volumes are not `tet` volumes")
 
     fpe = 4  # faces per element
@@ -106,7 +106,7 @@ def hexa_to_quad(volumes):
     """
     volumes = arr.make_c_contiguous(volumes, settings.INT_DTYPE)
 
-    if volumes.shape[1] != 8:
+    if volumes.ndim != 2 or volumes.shape[1] != 8:
         raise ValueError("Given volumes are not `hexa` volumes")
 
     fpe = 6  # faces per element
@@ -176,6 +176,10 @@ def faces_to_edges(faces):
     --------
     edges: (n * 3, 2) or (n * 4, 2) np.ndarray
     """
+    if faces.ndim != 2:
+        raise ValueError("Given input has wrong dimension. "
+                         "The input array for a faces has to be dim of 2")
+
     num_faces = faces.shape[0]
     vertices_per_face = faces.shape[1]
 
@@ -274,8 +278,15 @@ def make_quad_faces(resolutions):
     nnpd = np.asarray(resolutions)  # number of nodes per dimension
     total_nodes = np.product(nnpd)
     total_faces = (nnpd[0] - 1) * (nnpd[1] - 1)
-    node_indices = np.arange(total_nodes).reshape(nnpd[1], nnpd[0])
-    faces = np.ones((total_faces, 4)) * -1
+    try:
+        node_indices = np.arange(total_nodes).reshape(nnpd[1], nnpd[0])
+    except ValueError as e:
+        raise ValueError(f'Problem with generating node indices. {e}')
+
+    try:
+        faces = np.ones((total_faces, 4)) * -1
+    except ValueError as e:
+        raise ValueError(f'Problem with generating faces. {e}')
 
     faces[:, 0] = node_indices[: (nnpd[1] - 1), : (nnpd[0] - 1)].flatten()
     faces[:, 1] = node_indices[: (nnpd[1] - 1), 1 : nnpd[0]].flatten()
@@ -316,7 +327,11 @@ def make_hexa_volumes(resolutions):
     total_nodes = np.product(nnpd)
     total_volumes = np.product(nnpd - 1)
     node_indices = np.arange(total_nodes, dtype=np.int32).reshape(nnpd[::-1])
-    volumes = np.ones((total_volumes, 8), dtype=np.int32) * int(-1)
+
+    try:
+        volumes = np.ones((total_volumes, 8), dtype=np.int32) * int(-1)
+    except ValueError as e:
+        raise ValueError(f'Problem with generating volumes. {e}')
 
     volumes[:, 0] = node_indices[
         : (nnpd[2] - 1), : (nnpd[1] - 1), : (nnpd[0] - 1)
