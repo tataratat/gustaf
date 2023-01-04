@@ -292,7 +292,7 @@ def _vedo_showable(obj, as_dict=False, **kwargs):
         cmap_keys = ("vmin", "vmax")
         cmap_kwargs = obj.show_options[cmap_keys]
         # set adefault cmap if needed
-        cmap_kwargs["cname"] = obj.show_options.get("cmap", "inferno")
+        cmap_kwargs["cname"] = obj.show_options.get("cmap", "plasma")
         cmap_kwargs["alpha"] = obj.show_options.get("cmapalpha", 1)
         # add dataname
         cmap_kwargs["input_array"] = dataname
@@ -335,7 +335,7 @@ def _vedo_showable(obj, as_dict=False, **kwargs):
         )
         arrows = vedo.Arrows(
             as_edges.vertices[as_edges.edges],
-            c=obj.show_options.get("arrowdata_color", "magma"),
+            c=obj.show_options.get("arrowdata_color", "plasma"),
         )
         if not as_dict:
             vedo_obj += arrows
