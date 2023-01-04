@@ -278,6 +278,9 @@ def make_quad_faces(resolutions):
     faces: (n, 4) np.ndarray
     """
     nnpd = np.asarray(resolutions)  # number of nodes per dimension
+    if any(nnpd < 1):
+        raise ValueError(f"The number of nodes per dimension is wrong: {nnpd}")
+
     total_nodes = np.product(nnpd)
     total_faces = (nnpd[0] - 1) * (nnpd[1] - 1)
     try:
@@ -285,10 +288,7 @@ def make_quad_faces(resolutions):
     except ValueError as e:
         raise ValueError(f"Problem with generating node indices. {e}")
 
-    try:
-        faces = np.ones((total_faces, 4)) * -1
-    except ValueError as e:
-        raise ValueError(f"Problem with generating faces. {e}")
+    faces = np.ones((total_faces, 4)) * -1
 
     faces[:, 0] = node_indices[: (nnpd[1] - 1), : (nnpd[0] - 1)].flatten()
     faces[:, 1] = node_indices[: (nnpd[1] - 1), 1 : nnpd[0]].flatten()
@@ -326,14 +326,14 @@ def make_hexa_volumes(resolutions):
     elements: (n, 8) np.ndarray
     """
     nnpd = np.asarray(resolutions)  # number of nodes per dimension
+    if any(nnpd < 1):
+        raise ValueError(f"The number of nodes per dimension is wrong: {nnpd}")
+
     total_nodes = np.product(nnpd)
     total_volumes = np.product(nnpd - 1)
     node_indices = np.arange(total_nodes, dtype=np.int32).reshape(nnpd[::-1])
 
-    try:
-        volumes = np.ones((total_volumes, 8), dtype=np.int32) * int(-1)
-    except ValueError as e:
-        raise ValueError(f"Problem with generating volumes. {e}")
+    volumes = np.ones((total_volumes, 8), dtype=np.int32) * int(-1)
 
     volumes[:, 0] = node_indices[
         : (nnpd[2] - 1), : (nnpd[1] - 1), : (nnpd[0] - 1)
