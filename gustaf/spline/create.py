@@ -37,7 +37,7 @@ def extruded(spline, extrusion_vector=None):
         expansion_dimension = extrusion_vector.shape[0] - spline.dim
         # one smaller dim is allowed
         # warn that we assume new dim is all zero
-        utils.log.warning(
+        utils.log.debug(
             f"Given extrusion vector is {expansion_dimension} dimension "
             "bigger than spline's dim. Assuming 0.0 entries for "
             "new dimension.",
