@@ -62,8 +62,9 @@ def test_make_quad_faces_throwException(sample_hex):
 
 
 def test_make_quad_faces(sample_quad_faces, expected_quad_faces):
-    assert np.equal(expected_quad_faces,
-                    make_quad_faces(sample_quad_faces)).all()
+    assert np.equal(
+        expected_quad_faces, make_quad_faces(sample_quad_faces)
+    ).all()
 
 
 def test_make_quad_faces_wrong_input(sample_quad_faces_fail):

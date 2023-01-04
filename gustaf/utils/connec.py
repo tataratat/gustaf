@@ -177,8 +177,10 @@ def faces_to_edges(faces):
     edges: (n * 3, 2) or (n * 4, 2) np.ndarray
     """
     if faces.ndim != 2:
-        raise ValueError("Given input has wrong dimension. "
-                         "The input array for a faces has to be dim of 2")
+        raise ValueError(
+            "Given input has wrong dimension. "
+            "The input array for a faces has to be dim of 2"
+        )
 
     num_faces = faces.shape[0]
     vertices_per_face = faces.shape[1]
@@ -281,12 +283,12 @@ def make_quad_faces(resolutions):
     try:
         node_indices = np.arange(total_nodes).reshape(nnpd[1], nnpd[0])
     except ValueError as e:
-        raise ValueError(f'Problem with generating node indices. {e}')
+        raise ValueError(f"Problem with generating node indices. {e}")
 
     try:
         faces = np.ones((total_faces, 4)) * -1
     except ValueError as e:
-        raise ValueError(f'Problem with generating faces. {e}')
+        raise ValueError(f"Problem with generating faces. {e}")
 
     faces[:, 0] = node_indices[: (nnpd[1] - 1), : (nnpd[0] - 1)].flatten()
     faces[:, 1] = node_indices[: (nnpd[1] - 1), 1 : nnpd[0]].flatten()
@@ -331,7 +333,7 @@ def make_hexa_volumes(resolutions):
     try:
         volumes = np.ones((total_volumes, 8), dtype=np.int32) * int(-1)
     except ValueError as e:
-        raise ValueError(f'Problem with generating volumes. {e}')
+        raise ValueError(f"Problem with generating volumes. {e}")
 
     volumes[:, 0] = node_indices[
         : (nnpd[2] - 1), : (nnpd[1] - 1), : (nnpd[0] - 1)
