@@ -22,4 +22,3 @@ class GustafBase:
         cls._logw = log.prepended_log(
             "<" + cls.__qualname__ + ">", log.warning
         )
-        return super().__new__(cls)
