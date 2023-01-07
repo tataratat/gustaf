@@ -6,7 +6,7 @@ behavior
 from typing import Any, Optional
 
 
-def invalid_inherited_attr(func, qualname, property_=False):
+def invalid_inherited_attr(attr_name, qualname, property_=False):
     """Returns a function that would behave the same as given function, but
     would raise AttributeError. This needs to be defined in class level.
 
@@ -27,7 +27,7 @@ def invalid_inherited_attr(func, qualname, property_=False):
 
     def raiser(self):
         raise AttributeError(
-            f"{func.__name__} is not supported from {qualname} "
+            f"{attr_name} is not supported from {qualname} "
             "and its subclasses thereof."
         )
 
