@@ -223,7 +223,7 @@ def revolved(
         kv = [0, 0, 0]
         [kv.extend([i + 1, i + 1]) for i in range(n_knot_spans - 1)]
         spline_dict["knot_vectors"] = spline.knot_vectors + [
-            kv + [n_knot_spans + 1] * 3
+            kv + [n_knot_spans] * 3
         ]
     if spline.is_rational:
         mid_weights = spline.weights * weight
