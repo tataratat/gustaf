@@ -25,7 +25,14 @@ class SplineShowOption(options.ShowOption):
         options.Option(
             "vedo",
             "control_points",
-            "Show spline's control points and control mesh.",
+            "Show spline's control points."
+            "Options propagates to control mesh, unless it is specified.",
+            (bool,),
+        ),
+        options.Option(
+            "vedo",
+            "control_mesh",
+            "Show spline's control mesh.",
             (bool,),
         ),
         options.Option("vedo", "knots", "Show spline's knots.", (bool,)),
@@ -214,20 +221,8 @@ def _vedo_showable(spline):
     gus_primitives["spline"] = sampled_spline
 
     # control_points & control_points_alpha
-    if spline.show_options.get("control_points", True):
-        # pure control mesh
-        cmesh = spline.extract.control_mesh()  # either edges or faces
-        if spline.para_dim != 1:
-            cmesh = cmesh.toedges(unique=True)
-
-        cmesh.show_options["c"] = "red"
-        cmesh.show_options["lw"] = 4
-        cmesh.show_options["alpha"] = spline.show_options.get(
-            "control_points_alpha", 0.8
-        )
-        # add
-        gus_primitives["control_mesh"] = cmesh
-
+    show_cps = spline.show_options.get("control_points", True)
+    if show_cps:
         # control points (vertices)
         cps = spline.extract.control_points()
         cps.show_options["c"] = "red"
@@ -244,6 +239,20 @@ def _vedo_showable(spline):
             cp_ids.show_options["labels"] = np.arange(len(cp_ids.vertices))
             cp_ids.show_options["label_options"] = {"font": "VTK"}
             gus_primitives["control_point_ids"] = cp_ids
+
+    if spline.show_options.get("control_mesh", show_cps):
+        # pure control mesh
+        cmesh = spline.extract.control_mesh()  # either edges or faces
+        if spline.para_dim != 1:
+            cmesh = cmesh.toedges(unique=True)
+
+        cmesh.show_options["c"] = "red"
+        cmesh.show_options["lw"] = 4
+        cmesh.show_options["alpha"] = spline.show_options.get(
+            "control_points_alpha", 0.8
+        )
+        # add
+        gus_primitives["control_mesh"] = cmesh
 
     # fitting queries
     if hasattr(spline, "_fitting_queries") and spline.show_options.get(
