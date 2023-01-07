@@ -70,17 +70,17 @@ class Faces(Edges):
     kind = "face"
 
     const_edges = helpers.raise_if.invalid_inherited_attr(
-        Edges.const_edges,
+        "Edges.const_edges",
         __qualname__,
         property_=True,
     )
     update_edges = helpers.raise_if.invalid_inherited_attr(
-        Edges.update_edges,
+        "Edges.update_edges",
         __qualname__,
         property_=False,
     )
     dashed = helpers.raise_if.invalid_inherited_attr(
-        Edges.dashed,
+        "Edges.dashed",
         __qualname__,
         property_=False,
     )
@@ -92,7 +92,7 @@ class Faces(Edges):
     )
 
     __show_option__ = FacesShowOption
-    __parent__ = Edges
+    __boundary_class__ = Edges
 
     def __init__(
         self,

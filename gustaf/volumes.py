@@ -70,12 +70,12 @@ class Volumes(Faces):
     kind = "volume"
 
     const_faces = helpers.raise_if.invalid_inherited_attr(
-        Faces.const_faces,
+        "Faces.const_faces",
         __qualname__,
         property_=True,
     )
     update_faces = helpers.raise_if.invalid_inherited_attr(
-        Faces.update_edges,
+        "Faces.update_edges",
         __qualname__,
         property_=False,
     )
@@ -86,7 +86,7 @@ class Volumes(Faces):
     )
 
     __show_option__ = VolumesShowOption
-    __parent__ = Faces
+    __boundary_class__ = Faces
 
     def __init__(
         self,

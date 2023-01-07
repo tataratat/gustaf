@@ -79,7 +79,7 @@ class Edges(Vertices):
     )
 
     __show_option__ = EdgesShowOption
-    __parent__ = Vertices
+    __boundary_class__ = Vertices
 
     def __init__(
         self,

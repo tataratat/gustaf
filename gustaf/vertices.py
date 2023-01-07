@@ -97,7 +97,6 @@ class Vertices(GustafBase):
 
     # define freuqently used types as dunder variable
     __show_option__ = VerticesShowOption
-    __parent__ = GustafBase
 
     def __init__(
         self,
