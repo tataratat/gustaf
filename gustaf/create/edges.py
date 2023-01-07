@@ -32,7 +32,7 @@ def from_data(gus_obj, data, scale=None, data_norm=None):
     -------
     data_arrow: Edges
     """
-    if not isinstance(gus_obj, Edges.__parent__):
+    if not isinstance(gus_obj, Edges.__boundary_class__):
         raise TypeError(
             "Invalid input. Expecting gus.Vertices or its subclasses"
         )
