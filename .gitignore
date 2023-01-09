@@ -3,6 +3,7 @@
 .coverage
 *cov/**
 
+.vscode/
 
 docs/build/
 docs/source/*rst
