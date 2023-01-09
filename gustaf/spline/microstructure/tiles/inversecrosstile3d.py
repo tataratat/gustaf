@@ -1,7 +1,7 @@
 import numpy as np
 
 from gustaf.spline import base
-from gustaf.spline.microstructure.tiles import TileBase
+from gustaf.spline.microstructure.tiles.tilebase import TileBase
 
 
 class InverseCrossTile3D(TileBase):
