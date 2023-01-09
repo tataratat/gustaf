@@ -1,9 +1,10 @@
 import numpy as np
 
 from gustaf.spline import base
+from gustaf.spline.microstructure.tiles import TileBase
 
 
-class InverseCrossTile3D(base.GustafBase):
+class InverseCrossTile3D(TileBase):
     """Class that provides necessary functions to create inverse microtile,
     that can be used to describe the domain within a microstructure."""
 
@@ -22,40 +23,6 @@ class InverseCrossTile3D(base.GustafBase):
             ]
         )
         self._parameter_space_dimension = 1
-
-    @property
-    def parameter_space_dimension(self):
-        """Number of parameters per evaluation point."""
-        return self._parameter_space_dimension
-
-    @property
-    def evaluation_points(self):
-        """Positions in the parametrization function to be evaluated when tile
-        is constructed prior to composition.
-
-        Parameters
-        ----------
-        None
-
-        Returns
-        -------
-        evaluation_points : np.ndarray(6,3)
-        """
-        return self._evaluation_points
-
-    @property
-    def dim(self):
-        """Returns dimensionality in physical space of the inverse tile.
-
-        Parameters
-        ----------
-        None
-
-        Returns
-        -------
-        dim : int
-        """
-        return self._dim
 
     def closing_tile(
         self,
