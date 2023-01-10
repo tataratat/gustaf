@@ -7,16 +7,17 @@ import gustaf as gus
 
 microtile = gus.spline.microstructure.tiles.CrossTile2D()
 tile, derivs = microtile.create_tile(
-        parameters=tuple([np.array([0.2, 0.3, 0.2, 0.15])]),
-        parameter_sensitivities=[tuple([np.array([1., 0., 0., 0.])])],
-        center_expansion=1.3
+    parameters=tuple([np.array([0.2, 0.3, 0.2, 0.15])]),
+    parameter_sensitivities=[tuple([np.array([1.0, 0.0, 0.0, 0.0])])],
+    center_expansion=1.3,
 )
 
 show_list = []
 res = [8, 8]
 for t, d in zip(tile, derivs[0]):
-    arrows = np.hstack((t.sample(res), t.sample(res) + d.sample(res) * 0.1)
-                       ).reshape(-1, t.dim)
+    arrows = np.hstack(
+        (t.sample(res), t.sample(res) + d.sample(res) * 0.1)
+    ).reshape(-1, t.dim)
     es = gus.Edges(arrows, np.arange(len(arrows)).reshape(-1, 2))
     es.vis_dict["arrows"] = True
     show_list.extend([t, es])
