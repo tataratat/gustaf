@@ -3,25 +3,22 @@ from vedo import Mesh, colors
 
 import gustaf as gus
 
-# Show derivative
 
-microtile = gus.spline.microstructure.tiles.CrossTile2D()
-tile, derivs = microtile.create_tile(
-    parameters=tuple([np.array([0.2, 0.3, 0.2, 0.15])]),
-    parameter_sensitivities=[tuple([np.array([1.0, 0.0, 0.0, 0.0])])],
-    center_expansion=1.3,
-)
+# Auxiliary function to plot vector fields
+# (to be replaced with gustaf show options)
+def show_with_field(splines, field, field_res=5, **kwargs):
+    show_list = []
+    res = [field_res for i in range(splines[0].para_dim)]
+    for t, d in zip(splines, field):
+        arrows = np.hstack(
+            (t.sample(res), t.sample(res) + d.sample(res) * 0.1)
+        ).reshape(-1, t.dim)
+        es = gus.Edges(arrows, np.arange(len(arrows)).reshape(-1, 2))
+        es.vis_dict["arrows"] = True
+        show_list.extend([t, es])
+    gus.show.show_vedo(show_list, **kwargs)
 
-show_list = []
-res = [8, 8]
-for t, d in zip(tile, derivs[0]):
-    arrows = np.hstack(
-        (t.sample(res), t.sample(res) + d.sample(res) * 0.1)
-    ).reshape(-1, t.dim)
-    es = gus.Edges(arrows, np.arange(len(arrows)).reshape(-1, 2))
-    es.vis_dict["arrows"] = True
-    show_list.extend([t, es])
-gus.show.show_vedo(show_list, knots=False, control_points=False)
+
 # First Test
 generator = gus.spline.microstructure.Microstructure()
 generator.deformation_function = gus.Bezier(
@@ -217,4 +214,56 @@ for item in showables_inverse:
 
 gus.show.show_vedo(
     composed_structure, title="Parametrized Microstructure and its inverse"
+)
+
+
+# Seventh Example
+# Show derivatives
+microtile = gus.spline.microstructure.tiles.CrossTile2D()
+tile, derivs = microtile.create_tile(
+    parameters=tuple([np.array([0.2, 0.3, 0.2, 0.15])]),
+    parameter_sensitivities=[tuple([np.array([1.0, 0.0, 0.0, 0.0])])],
+    center_expansion=1.3,
+)
+show_with_field(
+    tile, derivs[0], knots=False, control_points=False, resolution=8
+)
+
+# Composition with parameter abstraction
+para_s = gus.Bezier(
+    degrees=[1, 1], control_points=[[0.1], [0.1], [0.3], [0.1]]
+)
+
+
+def foo(x):
+    """
+    Parametrization Function (determines thickness)
+    """
+    return tuple([para_s.evaluate(x).flatten()])
+
+
+def foo_deriv(x):
+    basis_functions = para_s.basis_and_support(x)[0].T
+    return [tuple([bf]) for bf in basis_functions]
+
+
+generator = gus.spline.microstructure.Microstructure()
+generator.deformation_function = gus.Bezier(
+    degrees=[1, 1], control_points=[[0, 0], [1, 0], [0, 1], [1, 1]]
+)
+generator.microtile = gus.spline.microstructure.tiles.CrossTile2D()
+generator.tiling = [6, 6]
+generator.parametrization_function = foo
+generator.parameter_sensitivity_function = foo_deriv
+
+microstructure, derivatives = generator.create(
+    closing_face="x", seperator_distance=0.4, center_expansion=1.3
+)
+show_with_field(
+    microstructure,
+    derivatives[0],
+    knots=False,
+    control_points=False,
+    resolution=8,
+    title="Derivative w.r.t. first control variable",
 )
