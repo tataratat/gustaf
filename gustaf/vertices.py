@@ -162,7 +162,8 @@ class Vertices(GustafBase):
         )
 
         # shape check
-        utils.arr.is_shape(vs, (-1, -1), strict=True)
+        if self._vertices.size > 0:
+            utils.arr.is_shape(self._vertices, (-1, -1), strict=True)
 
         # exact same, but not tracked.
         self._const_vertices = self._vertices.view()
