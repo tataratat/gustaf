@@ -2,11 +2,11 @@ import numpy as np
 
 import gustaf as gus
 
-if __name__ == "__main__":
-    # turn on debug logs
-    # gus.utils.log.configure(debug=True)
-    # surface
-    # define degrees
+
+def bspline2p3d():
+    """
+    Creates new bspline of of parametric dimension 2, physical dimension 3
+    """
     ds2 = [2, 2]
 
     # define knot vectors
@@ -34,32 +34,62 @@ if __name__ == "__main__":
     )
 
     # init bspline
-    b = gus.BSpline(
+    return gus.BSpline(
         degrees=ds2,
         knot_vectors=kvs2,
         control_points=cps2,
     )
 
+
+if __name__ == "__main__":
+    # turn on debug logs
+    # gus.utils.log.configure(debug=True)
+
     # define splinedata
     # 1. see coordinates's norm
+    b = bspline2p3d()
     b.splinedata["me"] = b
     b.show_options["dataname"] = "me"
-    b.show()
+    gus.show(["1. Show norm of coordinates.", b])
+
     # 1.1 default scalarbar
+    b = bspline2p3d()
+    b.splinedata["me"] = b
+    b.show_options["dataname"] = "me"
     b.show_options["scalarbar"] = True
-    b.show()
-    b.show_options["scalarbar"] = False
+    gus.show(["1.1. Show 1. plus scalarbar", b])
 
     # 2. see coordinate's norm and as arrow
+    b = bspline2p3d()
+    b.splinedata["me"] = b
+    b.show_options["dataname"] = "me"
     b.show_options["arrowdata"] = "me"
-    b.show()
+    gus.show(
+        ["2. Show coordinate norm as scalar field and coordinate as arrows", b]
+    )
 
     # 3. see coordinates norm and as arrows only on specified places
+    b = bspline2p3d()
+    b.splinedata["me"] = b
+    b.show_options["dataname"] = "me"
+    b.show_options["arrowdata"] = "me"
     b.show_options["arrowdata_on"] = np.random.random((100, 2))  # para_coords
-    b.show()
+    gus.show(
+        ["3. Show coordinates norm and as arrows on 100 random points.", b]
+    )
 
     # 4. see 3. with parametric_view
-    b.show(parametric_space=True)
+    b = bspline2p3d()
+    b.splinedata["me"] = b
+    b.show_options["dataname"] = "me"
+    b.show_options["arrowdata"] = "me"
+    b.show_options["arrowdata_on"] = np.random.random((100, 2))  # para_coords
+    b.show_options["scalarbar"] = True
+    gus.show(
+        ["4. Show 3. and 3. in parametric space view with scalarbar.", b],
+        b.create.parametric_view(),
+    )
+    # b.show(parametric_space=True)  # does the same
 
     # 5. plot function that supports both resolutions and on
     def plot_func(data, resolutions=None, on=None):
@@ -74,26 +104,50 @@ if __name__ == "__main__":
         elif on is not None:
             return data.derivative(on, [0, 1])
 
+    # use adaptor to defie a data
     plot_func_data = gus.spline.SplineDataAdaptor(b, function=plot_func)
+    # the rest is the same
+    b = bspline2p3d()
     b.splinedata["der01"] = plot_func_data
     b.show_options["arrowdata"] = "der01"
-    b.show()  # arrowdata_on from 3.
+    gus.show(
+        [
+            "5. Show partial derivative of seconda parametric dimension.\n"
+            "This uses a callback function and SplineDataAdaptor.\n"
+            "Also achievable with derivative spline.",
+            b,
+        ]
+    )
 
     # remove on to sample same way as spline.
     # however, gold
-    b.show_options.pop("arrowdata_on")  # remove
+    b = bspline2p3d()
+    b.splinedata["der01"] = plot_func_data
+    b.show_options["arrowdata"] = "der01"
+    b.show_options["arrowdata_on"] = np.random.random((100, 2))  # para_coords
     b.show_options["arrowdata_color"] = "gold"
-    b.show()  # resolutions
+    gus.show(
+        [
+            "5.1. Same data as 5. However, on 100 random places with gold "
+            "arrows",
+            b,
+        ]
+    )
 
     # 6. plot on predefined place - this will be only available as arrow data
     locations = np.repeat(np.linspace(0, 1, 15), 2).reshape(-1, 2)
     values = np.repeat(np.linspace(1, 2, 15), 3).reshape(-1, 3) + [0, 0, 2]
     fixed_data = gus.spline.SplineDataAdaptor(values, locations=locations)
+    b = bspline2p3d()
     b.splinedata["fixed"] = fixed_data
     b.show_options["arrowdata"] = "fixed"
-    # let's turn off scalar field
-    b.show_options.pop("dataname")
-    b.show()
+    gus.show(
+        [
+            "6. Show arbitrary array data on predefined locations using "
+            "SplineDataAdaptor.",
+            b,
+        ]
+    )
 
     # fixed location data can't be shown in other requested locations.
     # followings won't work
@@ -102,9 +156,9 @@ if __name__ == "__main__":
 
     # 7. plot any data with a function
     # some manually defined deformed spline
-    deformed = b.copy()  # minimal copy - properties and cached data only
+    deformed = bspline2p3d()  # minimal copy - properties and cached data only
     deformed.cps[11, -1] -= 4
-    deformed.cps *= [6, 6, 6]
+    deformed.cps *= [5.5, 5.5, 5.5]
     deformed.cps += [-5, 0, 8]
     deformed.cps[0, [0, -1]] += 4
     deformed.show_options["c"] = "hotpink"
@@ -133,13 +187,39 @@ if __name__ == "__main__":
     b.show_options["arrowdata_on"] = locations
     # let's see in parametric space
     p_view = b.create.parametric_view()  # shallow copies data and options
-    p_view.show_options.pop("arrowdata_scale")  # too big for p_view
+    p_view.show_options.pop("arrowdata_scale")  # we want automatic scaling
+    p_view.show_options["arrowdata_color"] = "gold"
     p_view.show_options["dataname"] = "deformed"
     # plot side by side
-    gus.show([b, deformed], ["Parametric view of displacements", p_view])
+    gus.show(
+        [
+            "7. Original spline, deformed spline\n"
+            "and pointwise correspondence on selected locations.",
+            b,
+            deformed,
+        ],
+        [
+            "Parametric view of displacements.\n"
+            "Arrows are directly transfered with automatic rescaling.\n"
+            "(no inverse mapping)",
+            p_view,
+        ],
+    )
     # say, deformed has changed again - plots should adapt automatically
     deformed.cps[:, [1, 2]] = deformed.cps[:, [2, 1]]
-    gus.show([b, deformed], ["Parametric view of displacements", p_view])
+    gus.show(
+        [
+            "7.1. Same setup as 7. with inplace changes in deformed spline.",
+            b,
+            deformed,
+        ],
+        [
+            "Parametric view of displacements.\n"
+            "Arrows are directly transfered with automatic rescaling.\n"
+            "(no inverse mapping)",
+            p_view,
+        ],
+    )
 
     # 8. fixed location data that uses callback
     # predefind some locations
@@ -174,10 +254,16 @@ if __name__ == "__main__":
         locations=locations,
         function=heights,
     )
-
     disc = gus.spline.create.disk(2, angle=123)
     disc.normalize_knot_vectors()
     disc.splinedata["nice"] = nice_data
     disc.show_options["arrowdata"] = "nice"
     disc.show_options["arrowdata_color"] = "jet"
-    disc.show()
+    gus.show(
+        [
+            "8. Showing arbitrary data with callback.\n"
+            "Any array-like multi-dim data can be plotted as long as\n"
+            "len(data) == len(locations) holds.",
+            disc,
+        ]
+    )
