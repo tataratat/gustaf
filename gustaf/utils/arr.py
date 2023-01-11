@@ -426,8 +426,7 @@ def is_shape(arr, shape, strict=False):
     --------
     matches: bool
     """
-    if not isinstance(arr, np.ndarray):
-        arr = np.asanyarray(arr)
+    arr = np.asanyarray(arr)
 
     if arr.ndim != len(shape):
         if strict:
