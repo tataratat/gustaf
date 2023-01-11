@@ -10,7 +10,12 @@ from gustaf.edges import Edges
 
 def from_data(gus_obj, data, scale=None, data_norm=None):
     """
-    Creates edges from an vertices / vertexdata containing objects.
+    Creates edges from gustaf object with vertices.
+    Data can be either multi-dim array-like data or a str describing a name
+    of vertexdata that belongs to given gustaf object.
+    len(gus_obj.vertices) number of edges will be created, where origin and
+    end of each edge is created using the following scheme:
+    [[vertices[0], vertices[0] + (array_data[0] * scale)], ...].
     By default, scaling value will be
     max([1, (aabb_diagonal_norm * 0.1 / max_data_norm)]).
     If there's dimension mismatch between vertices and the data, will append
@@ -37,7 +42,7 @@ def from_data(gus_obj, data, scale=None, data_norm=None):
             "Invalid input. Expecting gus.Vertices or its subclasses"
         )
 
-    # get origin and increment (= unit_orientation * scale)
+    # get origin and increment (= array_data * scale)
     origin = gus_obj.const_vertices
     if isinstance(data, str):
         # will raise if data doesn't exist
