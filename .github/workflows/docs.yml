@@ -1,7 +1,6 @@
 name: build docs
 on:
   push:
-    branches: ["main"]
 
 jobs:
   docs:
@@ -21,11 +20,6 @@ jobs:
       - name: Install dependencies
         run:  pip install -r ./docs/requirements.txt
 
-      - name: install splinepy
-        run: |
-          # test version of v0.0.3
-          pip install -i https://test.pypi.org/simple/ splinepy==0.0.3
-
       - name: Sphinx config
         run: |
           sphinx-apidoc -f -t docs/source/_templates -o docs/source gustaf
@@ -36,7 +30,7 @@ jobs:
 
       - name: Deploy
         uses: peaceiris/actions-gh-pages@v3
-        #if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/master' }}
+        if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
         with:
           #publish_branch: gh-pages
           github_token: ${{ secrets.GITHUB_TOKEN }}
