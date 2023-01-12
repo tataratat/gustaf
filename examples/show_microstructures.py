@@ -3,22 +3,6 @@ from vedo import Mesh, colors
 
 import gustaf as gus
 
-
-# Auxiliary function to plot vector fields
-# (to be replaced with gustaf show options)
-def show_with_field(splines, field, field_res=5, **kwargs):
-    show_list = []
-    res = [field_res for i in range(splines[0].para_dim)]
-    for t, d in zip(splines, field):
-        arrows = np.hstack(
-            (t.sample(res), t.sample(res) + d.sample(res) * 0.1)
-        ).reshape(-1, t.dim)
-        es = gus.Edges(arrows, np.arange(len(arrows)).reshape(-1, 2))
-        es.vis_dict["arrows"] = True
-        show_list.extend([t, es])
-    gus.show.show_vedo(show_list, **kwargs)
-
-
 # First Test
 generator = gus.spline.microstructure.Microstructure()
 generator.deformation_function = gus.Bezier(
@@ -225,9 +209,17 @@ tile, derivs = microtile.create_tile(
     parameter_sensitivities=[tuple([np.array([1.0, 0.0, 0.0, 0.0])])],
     center_expansion=1.3,
 )
-show_with_field(
-    tile, derivs[0], knots=False, control_points=False, resolution=8
-)
+
+for t, d in zip(tile, derivs[0]):
+    t.splinedata["derivative0"] = d
+    t.show_options["dataname"] = "derivative0"
+    t.show_options["arrowdata"] = "derivative0"
+    t.show_options["arrowdata_on"] = np.reshape(
+        np.meshgrid(*(np.linspace(0, 1, 5) for _ in range(2))), (2, -1)
+    ).T
+    t.show_options["arrowdata_scale"] = 0.1
+
+gus.show(tile, knots=False, control_points=False, resolution=5)
 
 # Composition with parameter abstraction
 para_s = gus.Bezier(
@@ -259,9 +251,19 @@ generator.parameter_sensitivity_function = foo_deriv
 microstructure, derivatives = generator.create(
     closing_face="x", seperator_distance=0.4, center_expansion=1.3
 )
-show_with_field(
+
+
+for t, d in zip(microstructure, derivatives[0]):
+    t.splinedata["derivative0"] = d
+    t.show_options["dataname"] = "derivative0"
+    t.show_options["arrowdata"] = "derivative0"
+    t.show_options["arrowdata_on"] = np.reshape(
+        np.meshgrid(*(np.linspace(0, 1, 5) for _ in range(2))), (2, -1)
+    ).T
+    t.show_options["arrowdata_scale"] = 0.1
+
+gus.show(
     microstructure,
-    derivatives[0],
     knots=False,
     control_points=False,
     resolution=8,
