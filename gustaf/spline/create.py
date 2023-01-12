@@ -244,7 +244,7 @@ def revolved(
     return type(spline)(**spline_dict)
 
 
-def with_bounds(parametric_bounds, physical_bounds):
+def from_bounds(parametric_bounds, physical_bounds):
     """Creates a minimal spline with given parametric bounds, physical bounds.
     Physical bounds can have less or equal number of
     dimension as parametric bounds. (Greater is not supported)
@@ -296,7 +296,7 @@ def parametric_view(spline, axes=True):
     para_spline: BSpline
     """
     p_bounds = spline.parametric_bounds
-    para_spline = with_bounds(
+    para_spline = from_bounds(
         parametric_bounds=p_bounds, physical_bounds=p_bounds
     )
 

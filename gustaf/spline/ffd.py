@@ -15,7 +15,7 @@ from gustaf._base import GustafBase
 from gustaf._typing import MESH_TYPES, is_mesh
 from gustaf.show import show_vedo
 from gustaf.spline.base import NURBS, Bezier, BSpline, RationalBezier
-from gustaf.spline.create import with_bounds
+from gustaf.spline.create import from_bounds
 
 SPLINE_TYPES = Union[Bezier, RationalBezier, BSpline, NURBS]
 
@@ -134,7 +134,7 @@ class FFD(GustafBase):
         if self._spline is None:
             # Define a default spline if mesh is given but no spline
             par_dim = mesh.vertices.shape[1]
-            self.spline = with_bounds(
+            self.spline = from_bounds(
                 [[0] * par_dim, [1] * par_dim], mesh.bounds()
             )
         self._logi("Setting mesh.")
