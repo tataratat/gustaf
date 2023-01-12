@@ -43,7 +43,7 @@ class CrossTile3D(TileBase):
         filling_height : float
           portion of the height that is filled in parametric domain
 
-        Results
+        Returns
         -------
         list_of_splines : list
         """

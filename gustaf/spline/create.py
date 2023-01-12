@@ -4,7 +4,6 @@ Creates splines.
 """
 
 import numpy as np
-from splinepy.spline import RequiredProperties
 
 from gustaf import settings, utils
 
@@ -38,7 +37,7 @@ def extruded(spline, extrusion_vector=None):
         expansion_dimension = extrusion_vector.shape[0] - spline.dim
         # one smaller dim is allowed
         # warn that we assume new dim is all zero
-        utils.log.warning(
+        utils.log.debug(
             f"Given extrusion vector is {expansion_dimension} dimension "
             "bigger than spline's dim. Assuming 0.0 entries for "
             "new dimension.",
@@ -60,9 +59,9 @@ def extruded(spline, extrusion_vector=None):
 
     spline_dict["degrees"] = np.concatenate((spline.degrees, [1]))
     spline_dict["control_points"] = np.vstack((cps, cps + extrusion_vector))
-    if "knot_vectors" in RequiredProperties.of(spline):
+    if spline.has_knot_vectors:
         spline_dict["knot_vectors"] = spline.knot_vectors + [[0, 0, 1, 1]]
-    if "weights" in RequiredProperties.of(spline):
+    if spline.is_rational:
         spline_dict["weights"] = np.concatenate(
             (spline.weights, spline.weights)
         )
@@ -111,7 +110,7 @@ def revolved(
                 "Dimension Mismatch between extrusion axis and spline."
             )
         elif spline.control_points.shape[1] < axis.shape[0]:
-            utils.log.warning(
+            utils.log.debug(
                 "Control Point dimension is smaller than axis dimension,"
                 " filling with zeros"
             )
@@ -180,7 +179,7 @@ def revolved(
     if (n_knot_spans) is None or (n_knot_spans < minimum_n_knot_spans):
         n_knot_spans = minimum_n_knot_spans
 
-    if "Bezier" in spline.whatami:
+    if "Bezier" in spline.name:
         if n_knot_spans > 1:
             raise ValueError(
                 "Revolutions are only supported for angles up to 180 "
@@ -220,13 +219,13 @@ def revolved(
             (spline_dict["control_points"], mid_points, end_points)
         )
 
-    if "knot_vectors" in RequiredProperties.of(spline):
+    if spline.has_knot_vectors:
         kv = [0, 0, 0]
         [kv.extend([i + 1, i + 1]) for i in range(n_knot_spans - 1)]
         spline_dict["knot_vectors"] = spline.knot_vectors + [
-            kv + [n_knot_spans + 1] * 3
+            kv + [n_knot_spans] * 3
         ]
-    if "weights" in RequiredProperties.of(spline):
+    if spline.is_rational:
         mid_weights = spline.weights * weight
         spline_dict["weights"] = spline.weights
         for i_segment in range(n_knot_spans):
@@ -234,15 +233,113 @@ def revolved(
                 (spline_dict["weights"], mid_weights, spline.weights)
             )
     else:
-        utils.log.warning(
-            "True revolutions are only possible for rational spline types."
-            "\nCreating Approximation."
+        utils.log.debug(
+            "True revolutions are only possible for rational spline types.",
+            "Creating Approximation.",
         )
 
     if center is not None:
         spline_dict["control_points"] += center
 
     return type(spline)(**spline_dict)
+
+
+def from_bounds(parametric_bounds, physical_bounds):
+    """Creates a minimal spline with given parametric bounds, physical bounds.
+    Physical bounds can have less or equal number of
+    dimension as parametric bounds. (Greater is not supported)
+
+    Parameters
+    -----------
+    parametric_bounds: (2, n) array-like
+    physical_bounds: (2, n) array-like
+
+    Returns
+    --------
+    spline: BSpline
+    """
+    physical_bounds = np.asanyarray(physical_bounds).reshape(2, -1)
+    parametric_bounds = np.asanyarray(parametric_bounds).reshape(2, -1)
+
+    # get correctly sized bezbox
+    phys_size = physical_bounds[1] - physical_bounds[0]
+
+    # minimal bspline
+    bspline_box = box(*phys_size).bspline  # kvs are in [0, 1]
+    bspline_box.cps += physical_bounds[0]  # apply offset
+
+    # update parametric bounds
+    for i, kv in enumerate(bspline_box.kvs):
+        # apply scale and offset
+        newkv = (kv * parametric_bounds[1][i]) + parametric_bounds[0][i]
+        bspline_box.kvs[i] = newkv
+
+    return bspline_box
+
+
+def parametric_view(spline, axes=True):
+    """Create parametric view of given spline. Previously called
+    `naive_spline()`. Degrees are always 1 and knot multiplicity is not
+    preserved. Returns BSpline, as BSpline and NURBS should look the same as
+    parametric view.
+    Will take shallow copy of underlying data of splinedata and show_options
+    from original spline.
+
+    Parameters
+    -----------
+    spline: BSpline or NURBS
+    axes: bool
+     If True, will configure axes settings, it is supported.
+
+    Returns
+    --------
+    para_spline: BSpline
+    """
+    p_bounds = spline.parametric_bounds
+    para_spline = from_bounds(
+        parametric_bounds=p_bounds, physical_bounds=p_bounds
+    )
+
+    # loop through knot vectors and insert missing knots
+    for i, kv in enumerate(spline.unique_knots):
+        if len(kv) > 2:
+            para_spline.insert_knots(i, kv[1:-1])
+
+    # take shallow copy
+    para_spline._splinedata._saved = spline.splinedata._saved.copy()
+    para_spline._show_options._options[
+        para_spline._show_options._backend
+    ] = spline.show_options._options[spline._show_options._backend].copy()
+
+    if axes and "axes" in spline.show_options.valid_keys():
+        # configure axes
+        bs = p_bounds
+        bs_diff_001 = (bs[1] - bs[0]) * 0.001
+        lowerb = bs[0] - bs_diff_001
+        upperb = bs[1] + bs_diff_001
+        axes_config = dict(
+            xtitle="u",
+            ytitle="v",
+            xrange=[lowerb[0], upperb[0]],
+            yrange=[lowerb[1], upperb[1]],
+            tip_size=0,
+            xminor_ticks=3,
+            yminor_ticks=3,
+            xygrid=False,
+            yzgrid=False,
+        )
+        if spline.para_dim == 3:
+            axes_config.update(ztitle="w")
+            axes_config.update(zrange=[lowerb[2], upperb[2]])
+            axes_config.update(zminor_ticks=3)
+            axes_config.update(zxgrid=False)
+
+        para_spline.show_options["axes"] = axes_config
+        # it is a view, so cps won't be realistic
+        para_spline.show_options["control_points"] = False
+        para_spline.show_options["lighting"] = "off"
+
+    return para_spline
 
 
 def line(points):
@@ -282,7 +379,11 @@ def line(points):
 
 
 def arc(
-    radius=1.0, angle=90.0, n_knot_spans=None, start_angle=0.0, degree=True
+    radius=1.0,
+    angle=90.0,
+    n_knot_spans=-1,
+    start_angle=0.0,
+    degree=True,
 ):
     """Creates a 1-D arc as Rational Bezier or NURBS with given radius and
     angle. The arc lies in the x-y plane and rotates around the z-axis.
@@ -318,14 +419,14 @@ def arc(
     if abs(angle) >= np.pi or n_knot_spans > 1:
         point_spline = point_spline.nurbs
 
-    # Revolve
+    # Revolve - set degree to False, since all the angles are converted to rad
     arc_attribs = point_spline.create.revolved(
-        angle=angle, n_knot_spans=n_knot_spans, degree=degree
+        angle=angle, n_knot_spans=n_knot_spans, degree=False
     ).todict()
     # Remove the first parametric dimenions, which is only a point and
     # only used for the revolution
     arc_attribs["degrees"] = list(arc_attribs["degrees"])[1:]
-    if "knot_vectors" in RequiredProperties.of(point_spline):
+    if point_spline.has_knot_vectors:
         arc_attribs["knot_vectors"] = list(arc_attribs["knot_vectors"])[1:]
 
     return type(point_spline)(**arc_attribs)
@@ -415,7 +516,7 @@ def disk(
     outer_radius,
     inner_radius=None,
     angle=360.0,
-    n_knot_spans=None,
+    n_knot_spans=4,
     degree=True,
 ):
     """Surface spline describing a potentially hollow disk with quadratic
@@ -539,7 +640,7 @@ def sphere(
     outer_radius,
     inner_radius=None,
     angle=360.0,
-    n_knot_spans=None,
+    n_knot_spans=-1,
     degree=True,
 ):
     """Creates a volumetric spline describing a sphere with radius R.
@@ -669,3 +770,6 @@ class Creator:
 
     def revolved(self, *args, **kwargs):
         return revolved(self.spline, *args, **kwargs)
+
+    def parametric_view(self, *args, **kwargs):
+        return parametric_view(self.spline, *args, **kwargs)

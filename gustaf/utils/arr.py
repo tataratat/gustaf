@@ -40,6 +40,36 @@ def make_c_contiguous(array, dtype=None):
         return np.ascontiguousarray(array)
 
 
+def enforce_len(value, n_len):
+    """Given int, float, np.ndarray, tuple, list, returns an array with n_len
+    len(). In case of iterable, it asserts n_len, else, repeats.
+
+    Parameters
+    ----------
+    value: int, float or iterable
+    n_len: int
+      Size of desired array
+
+    Returns
+    -------
+    len_n_array: (n_len,) np.ndarray
+    """
+    if isinstance(value, (int, float)):
+        return np.repeat(value, n_len)
+    elif isinstance(value, (np.ndarray, tuple, list)):
+        if len(value) != n_len:
+            raise ValueError(
+                f"Invalid value length ({len(value)}). ",
+                f"Expected length is ({n_len})",
+            )
+        return np.asarray(value)
+    else:
+        raise TypeError(
+            f"Invalid value type ({type(value)}). "
+            "Supports {int, float, np.ndarray, tuple, list}."
+        )
+
+
 def unique_rows(
     in_arr,
     return_index=True,

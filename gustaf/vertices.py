@@ -9,41 +9,120 @@ import numpy as np
 
 from gustaf import helpers, settings, show, utils
 from gustaf._base import GustafBase
+from gustaf.helpers.options import Option
+
+
+class VerticesShowOption(helpers.options.ShowOption):
+    """
+    Show options for vertices.
+    """
+
+    _valid_options = helpers.options.make_valid_options(
+        *helpers.options.vedo_common_options,
+        Option("vedo", "r", "Radius of vertices in units of pixels.", (int,)),
+        Option(
+            "vedo",
+            "labels",
+            "Places a label/description str at the place of vertices.",
+            (np.ndarray, tuple, list),
+        ),
+        Option(
+            "vedo",
+            "label_options",
+            "Label kwargs to be passed during initialization."
+            "Valid keywords are: {scale: float, xrot: float, yrot: float, "
+            "zrot: float, ratio: float, precision: int, italic: bool, "
+            "font: str, justify: str, c: (str, tuple, list, int), "
+            "alpha: float}. "
+            "As further hint, justify takes '-' joined combination of "
+            "{center, mid, right, left, top, bottom}.",
+            (dict,),
+        ),
+    )
+
+    _helps = "Vertices"
+
+    def _initialize_vedo_showable(self):
+        """
+        Initialize Vertices showable for vedo.
+
+        Parameters
+        ----------
+        None
+
+        Returns
+        -------
+        vertices: vedo.Points
+        """
+        init_options = ("r",)
+
+        vertices = show.vedo.Points(
+            self._helpee.const_vertices, **self[init_options]
+        )
+
+        labels = self.get("labels", None)
+        if labels is not None:
+            # check length
+            if len(labels) != len(self._helpee.const_vertices):
+                raise ValueError(
+                    f"number of label contents ({len(labels)}) and "
+                    "number of vertices"
+                    f"({len(self._helpee.const_vertices)}) does not match."
+                )
+
+            # apply options and return labels
+            return vertices.labels(
+                content=labels,
+                on="points",
+                **self.get("label_options", dict()),
+            )
+
+        else:
+            # no labels, return Points
+            return vertices
 
 
 class Vertices(GustafBase):
 
     kind = "vertex"
 
-    __slots__ = [
+    __slots__ = (
         "_vertices",
         "_const_vertices",
         "_computed",
-        "vis_dict",
-        "vertexdata",
-    ]
+        "_show_options",
+        "_setter_copies",
+        "_vertexdata",
+    )
+
+    # define freuqently used types as dunder variable
+    __show_option__ = VerticesShowOption
 
     def __init__(
         self,
         vertices=None,
+        copy=True,
     ):
         """Vertices. It has vertices.
 
         Parameters
         -----------
         vertices: (n, d) np.ndarray
+        copy: bool
+          If false, all setter calls will try to avoid copy.
 
         Returns
         --------
         None
         """
-        if vertices is not None:
-            self.vertices = vertices
+        # call setters
+        self.setter_copies = copy
+        self.vertices = vertices
 
+        # init helpers
+        self._vertexdata = helpers.data.VertexData(self)
         self._computed = helpers.data.ComputedMeshData(self)
-
-        self.vis_dict = dict()
-        self.vertexdata = dict()
+        self._show_options = self.__show_option__(self)
 
     @property
     def vertices(self):
@@ -78,15 +157,22 @@ class Vertices(GustafBase):
         """
         self._logd("setting vertices")
 
-        # shape check
-        utils.arr.is_shape(vs, (-1, -1), strict=True)
-
         self._vertices = helpers.data.make_tracked_array(
-            vs, settings.FLOAT_DTYPE
+            vs, settings.FLOAT_DTYPE, self.setter_copies
         )
+
+        # shape check
+        if self._vertices.size > 0:
+            utils.arr.is_shape(self._vertices, (-1, -1), strict=True)
+
         # exact same, but not tracked.
         self._const_vertices = self._vertices.view()
         self._const_vertices.flags.writeable = False
+
+        # at each setting, validate vertexdata
+        # --> by len mismatch, will clear data
+        if hasattr(self, "vertexdata"):
+            self.vertexdata._validate_len(raise_=False)
 
     @property
     def const_vertices(self):
@@ -105,9 +191,91 @@ class Vertices(GustafBase):
         return self._const_vertices
 
     @property
-    def whatami(
-        self,
-    ):
+    def vertexdata(self):
+        """
+        Returns vertexdata manager. Behaves similar to dict() and can be used
+        to store values/data associated with each vertex.
+
+        Parameters
+        ----------
+        None
+
+        Returns
+        -------
+        vertexdata: VertexData
+        """
+        self._logd("returning vertexdata")
+        return self._vertexdata
+
+    @property
+    def setter_copies(self):
+        """
+        Switch to set if setter should copy or try to avoid copying.
+        If data is np.ndarray, c_contiguous, and has same dtype as
+        corresponding settings.<FLOAT/INT>_dtype, it can probably avoid being
+        copied. Setter will try to cast input to bool.
+
+        Parameters
+        ----------
+        None
+
+        Returns
+        -------
+        setter_copies: bool
+        """
+        return self._setter_copies
+
+    @setter_copies.setter
+    def setter_copies(self, should_copy):
+        """
+        Sets setter_copies
+
+        Parameters
+        ----------
+        should_copy: bool
+
+        Returns
+        -------
+        None
+        """
+        self._setter_copies = bool(should_copy)
+
+    @property
+    def show_options(self):
+        """
+        Returns a show option manager for this object. Behaves similar to
+        dict.
+
+        Parameters
+        ----------
+        None
+
+        Returns
+        -------
+        show_options: ShowOption
+          A derived class that's suitable for current class.
+        """
+        self._logd("returning show_options")
+        return self._show_options
+
+    @property
+    def vis_dict(self):
+        """
+        Temporary backward compatibility
+        """
+        self._logw("`vis_dict` is deprecated. Please use `show_options`")
+        return self.show_options
+
+    @vis_dict.setter
+    def vis_dict(self, vd):
+        """
+        Tmp
+        """
+        self._logw("`vis_dict` is deprecated. Please use `show_options`")
+        self._show_options = vd
+
+    @property
+    def whatami(self):
         """Answers deep philosophical question: "what am i"?
 
         Parameters
@@ -252,14 +420,15 @@ class Vertices(GustafBase):
 
         def update_vertexdata(obj, m, vertex_data=None):
             """apply mask to vertex data if there's any."""
-            newdata = dict()
+            newdata = helpers.data.VertexData(obj)
             if vertex_data is None:
                 vertex_data = obj.vertexdata
 
             for key, values in vertex_data.items():
+                # should work, since this is called after updating vertices
                 newdata[key] = values[m]
 
-            obj.vertexdata = newdata
+            obj._vertexdata = newdata
 
             return obj
 
@@ -300,9 +469,7 @@ class Vertices(GustafBase):
         mask = np.ones(len(self.vertices), dtype=bool)
         mask[ids] = False
 
-        return self.update_vertices(
-            mask,
-        )
+        return self.update_vertices(mask)
 
     def merge_vertices(self, tolerance=None):
         """Based on unique vertices, merge vertices if it is mergeable.
@@ -437,9 +604,7 @@ class Vertices(GustafBase):
             )
 
         else:
-            return Vertices(
-                vertices=np.vstack(vertices),
-            )
+            return Vertices(vertices=np.vstack(vertices))
 
     def __add__(self, to_add):
         """Concat in form of +.

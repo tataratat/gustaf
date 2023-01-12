@@ -2,6 +2,8 @@
 
 Everything related to show/visualization.
 """
+import sys
+
 import numpy as np
 
 from gustaf import settings, utils
@@ -21,6 +23,18 @@ except ImportError as err:
     vedo = ModuleImportRaiser("vedo", err)
 
 
+# enable `gus.show()`
+# taken from https://stackoverflow.com/questions/1060796/callable-modules
+# will use this until this module is renamed
+class _CallableShowDotPy(sys.modules[__name__].__class__):
+    def __call__(self, *args, **kwargs):
+        """call show()"""
+        return show(*args, **kwargs)
+
+
+sys.modules[__name__].__class__ = _CallableShowDotPy
+
+
 def show(*gusobj, **kwargs):
     """Shows using appropriate backend.
 
@@ -32,11 +46,10 @@ def show(*gusobj, **kwargs):
     --------
     None
     """
-    showables = [make_showable(g, **kwargs) for g in gusobj]
     vis_b = settings.VISUALIZATION_BACKEND
 
     if vis_b.startswith("vedo"):
-        return show_vedo(showables, **kwargs)
+        return show_vedo(*gusobj, **kwargs)
     elif vis_b.startswith("trimesh"):
         pass
     elif vis_b.startswith("matplotlib"):
@@ -153,7 +166,6 @@ def show_vedo(
                         list_of_showables.append(tmp_showable)
                 else:
                     list_of_showables.extend(sl)
-
         # set interactive to true at last element
         if int(i + 1) == len(args):
             plt.show(
@@ -188,168 +200,167 @@ def show_vedo(
         return plt
 
 
-def _vedo_showable(obj, **kwargs):
-    """Generates a vedo obj based on `kind` attribute from given obj.
+def _vedo_showable(obj, as_dict=False, **kwargs):
+    """Generates a vedo obj based on `kind` attribute from given obj, as well
+    as show_options.
 
     Parameters
     -----------
     obj: gustaf obj
+    as_dict: bool
+      If True, returns vedo objects in a dict. Corresponding main objecst will
+      be available with ["main"] key. Else, returns vedo.Assembly object,
+      where all the objects are grouped together.
+    **kwargs: kwargs
+      Will try to overwrite applicable items.
 
     Returns
     --------
     vedo_obj: vedo obj
     """
-    # parse from vis_dict
-    # NOTE: maybe we can make a helper class to organize this nicely
-    basic_options = dict(
-        c=obj.vis_dict.get("c", None),
-        r=obj.vis_dict.get("r", None),
-        lw=obj.vis_dict.get("lw", None),
-        alpha=obj.vis_dict.get("alpha", None),
-        cmap=obj.vis_dict.get("cmap", None),
-        # > followings are cmap options
-        vmin=obj.vis_dict.get("vmin", None),
-        vmax=obj.vis_dict.get("vmax", None),
-        cmapalpha=obj.vis_dict.get("cmapalpha", 1),
-        # > takes scalarbar options as dict.
-        scalarbar=obj.vis_dict.get("scalarbar", None),
-        dataname=obj.vis_dict.get("dataname", None),
-        # <
-        arrows=obj.vis_dict.get("arrows", None),  # only for edges
-        # >only for edges internally treated same as `lw`,
-        # but higher priority
-        thickness=obj.vis_dict.get("thickness", None),
-        title=obj.vis_dict.get("title", "gustaf"),
-    )
-    # loop once more to extract basics from kwargs
-    # done after vis_dict, so that this overpowers
-    keys = list(kwargs.keys())  # to pop dict during loop
-    for key in keys:
-        if key in basic_options.keys():
-            basic_options[key] = kwargs[key]
-            kwargs.pop(key)
+    # incase kwargs are defined, we will make a copy of the object and
+    # try to overwrite all the applicable kwargs.
+    if kwargs:
+        # keep original ones and assign new show_options temporarily
+        orig_show_options = obj.show_options
+        obj._show_options = obj.__show_option__(obj)
+        orig_show_options.copy_valid_options(obj.show_options)
+        for key, value in kwargs.items():
+            try:
+                obj.show_options[key] = value
+            except BaseException:
+                utils.log.debug(
+                    f"Skipping invalid option {key} for "
+                    f"{obj.show_options._helps}"
+                )
+                continue
 
-    utils.log.debug("making vedo-showable obj")
-    local_options = dict()
+    # minimal-initalization of vedo objects
+    vedo_obj = obj.show_options._initialize_showable()
+    # as dict?
+    if as_dict:
+        return_as_dict = dict()
 
-    if obj.kind == "vertex":
-        for key in ["c", "r", "alpha"]:
-            value = basic_options[key]
-            if value is not None:
-                local_options.update({key: value})
+    # set common values. Could be a perfect place to try :=, but we want to
+    # support p3.6.
+    c = obj.show_options.get("c", None)
+    if c is not None:
+        vedo_obj.c(c)
 
-        vobj = vedo.Points(
-            obj.vertices,
-            **local_options,
-        )
+    alpha = obj.show_options.get("alpha", None)
+    if alpha is not None:
+        vedo_obj.alpha(alpha)
 
-    elif obj.kind == "edge":
-        for key in ["c", "lw", "alpha"]:
-            value = basic_options[key]
-            if value is not None:
-                local_options.update({key: value})
+    lighting = obj.show_options.get("lighting", None)
+    if lighting is not None:
+        vedo_obj.lighting(lighting)
 
-        # edges can be arrows if vis_dict["arrows"] is set True
-        if not basic_options["arrows"]:
-            vobj = vedo.Lines(
-                obj.vertices[obj.edges],
-                **local_options,
+    vertex_ids = obj.show_options.get("vertex_ids", False)
+    element_ids = obj.show_options.get("element_ids", False)
+    # special treatment for vertex
+    if obj.kind.startswith("vertex"):
+        vertex_ids = vertex_ids | element_ids
+        if element_ids:
+            utils.log.debug(
+                "`element_ids` option is True for Vertices. Overwriting it as"
+                "vertex_ids."
             )
-
+            element_ids = False
+    if vertex_ids:
+        # use vtk font. supposedly faster. And differs from cellid.
+        vertex_ids = vedo_obj.labels("id", on="points", font="VTK")
+        if not as_dict:
+            vedo_obj += vertex_ids
         else:
-            if basic_options.get("thickness", False):
-                local_options.update({"thickness": basic_options["thickness"]})
-
-            # turn lw into thickness if there's no thickness
-            elif local_options.get("lw", False):
-                thickness = local_options.pop("lw")
-                local_options.update({"thickness": thickness})
-
-            # `s` is another param for arrows
-            local_options.update({"s": obj.vis_dict.get("s", None)})
-
-            vobj = vedo.Arrows(
-                obj.vertices[obj.edges],
-                **local_options,
-            )
-
-    elif obj.kind == "face":
-        for key in ["c", "alpha"]:
-            value = basic_options[key]
-            if value is not None:
-                local_options.update({key: value})
-
-        vobj = vedo.Mesh(
-            [obj.vertices, obj.faces],
-            **local_options,
-        )
-
-    elif obj.kind == "volume":
-        from vtk import VTK_HEXAHEDRON as herr_hexa
-        from vtk import VTK_TETRA as frau_tetra
-
-        whatami = obj.whatami
-        if whatami.startswith("tet"):
-            grid_type = frau_tetra
-        elif whatami.startswith("hexa"):
-            grid_type = herr_hexa
+            return_as_dict["vertex_ids"] = vertex_ids
+    if element_ids:
+        # should only reach here if this obj is not vertex
+        element_ids = vedo.Points(obj.centers()).labels("id", on="points")
+        if not as_dict:
+            vedo_obj += element_ids
         else:
-            return None  # get_whatami should've rasied error..
+            return_as_dict["element_ids"] = element_ids
 
-        if basic_options["dataname"]:
-            from gustaf.faces import Faces
-
-            # UGrid would be politically correct,
-            # but currently it can't show field
-            # so, extract only surface mesh
-            surf_ids = obj.single_faces()  # gets faces too
-            sfaces = Faces(obj.vertices, obj.faces()[surf_ids])
-            sfaces.remove_unreferenced_vertices()
-
-            vobj = sfaces.showable(backend="vedo")  # recursive alert
-
-        else:
-            vobj = vedo.UGrid(
-                [
-                    obj.vertices,
-                    obj.volumes,
-                    np.repeat([grid_type], len(obj.volumes)),
-                ]
-            )
-
-            if basic_options["c"] is None:
-                basic_options["c"] = "hotpink"
-
-            vobj.color(basic_options["c"])
-            vobj.alpha(basic_options["alpha"])
-
-    # this sets vedo v2021.0.6+ requirement
-    dname = basic_options["dataname"]
-    if dname is not None:
+    # data plotting
+    dataname = obj.show_options.get("dataname", None)
+    vertexdata = obj.vertexdata.as_scalar(dataname, None)
+    if dataname is not None and vertexdata is not None:
         # transfer data
-        vobj.pointdata[dname] = obj.vertexdata[dname]
+        vedo_obj.pointdata[dataname] = vertexdata
 
-        # default cmap is jet.
-        if basic_options["cmap"] is None:
-            basic_options["cmap"] = "jet"
+        # form cmap kwargs for init
+        cmap_keys = ("vmin", "vmax")
+        cmap_kwargs = obj.show_options[cmap_keys]
+        # set adefault cmap if needed
+        cmap_kwargs["cname"] = obj.show_options.get("cmap", "plasma")
+        cmap_kwargs["alpha"] = obj.show_options.get("cmapalpha", 1)
+        # add dataname
+        cmap_kwargs["input_array"] = dataname
 
-        # register cmap and data
-        vobj.cmap(
-            basic_options["cmap"],
-            input_array=dname,
-            on="points",  # hardcoded since yet, we don't have cell field
-            vmin=basic_options["vmin"],
-            vmax=basic_options["vmax"],
-            alpha=basic_options["cmapalpha"],
+        # set cmap
+        vedo_obj.cmap(**cmap_kwargs)
+
+        # at last, scalarbar
+        # deprecated function name, keeep it for now for backward compat
+        sb_kwargs = obj.show_options.get("scalarbar", None)
+        if sb_kwargs is not None and sb_kwargs is not False:
+            sb_kwargs = dict() if isinstance(sb_kwargs, bool) else sb_kwargs
+            vedo_obj.addScalarBar(**sb_kwargs)
+
+    elif dataname is not None and vertexdata is None:
+        utils.log.debug(
+            f"No vertexdata named '{dataname}' for {obj}. Skipping"
         )
 
-        # scalarbar?
-        scalarbar_dict = basic_options["scalarbar"]
-        if scalarbar_dict is not None:
-            # if horizontal==True, size doesnt really matter
-            vobj.addScalarBar(**scalarbar_dict)
+    # arrow plots - this is independent from data plotting.
+    arrowdata_name = obj.show_options.get("arrowdata", None)
+    # will raise if data is scalar
+    arrowdata_value = obj.vertexdata.as_arrow(arrowdata_name, None, True)
+    if arrowdata_name is not None and arrowdata_value is not None:
+        from gustaf.create.edges import from_data
 
-    return vobj
+        # we are here because this data is not a scalar
+        # is showable?
+        if arrowdata_value.shape[1] not in (2, 3):
+            raise ValueError(
+                "Only 2D or 3D data can be shown.",
+                f"Requested data is {arrowdata_value.shape[1]}",
+            )
+
+        as_edges = from_data(
+            obj,
+            arrowdata_value,
+            obj.show_options.get("arrowdata_scale", None),
+            data_norm=obj.vertexdata.as_scalar(arrowdata_name),
+        )
+        arrows = vedo.Arrows(
+            as_edges.vertices[as_edges.edges],
+            c=obj.show_options.get("arrowdata_color", "plasma"),
+        )
+        if not as_dict:
+            vedo_obj += arrows
+        else:
+            return_as_dict["arrowdata"] = arrows
+
+    axes_kw = obj.show_options.get("axes", None)
+    # need to explicitly check if it is false
+    if axes_kw is not None and axes_kw is not False:
+        axes_kw = dict() if isinstance(axes_kw, bool) else axes_kw
+        axes = vedo.Axes(vedo_obj, **axes_kw)
+        if not as_dict:
+            vedo_obj += axes
+        else:
+            return_as_dict["axes"] = axes
+
+    # set back temporary show_options if needed
+    if kwargs:
+        obj._show_options = orig_show_options
+
+    if not as_dict:
+        return vedo_obj
+    else:
+        return_as_dict["main"] = vedo_obj
+        return return_as_dict
 
 
 def _trimesh_showable(obj):

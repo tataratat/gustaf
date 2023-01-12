@@ -44,5 +44,14 @@ if __name__ == "__main__":
 
     # show
     tet.show()
-    tet.show(shrink=False)  # Default is True
-    hexa.show(c="blue")
+
+    # green tet
+    tet.show_options["c"] = "green"
+    tet.show()
+
+    # display vertexdata
+    # assign values to vertexdata
+    hexa.vertexdata["arange"] = np.arange(len(v))
+    # set vertexdata to plot
+    hexa.show_options["dataname"] = "arange"
+    hexa.show()

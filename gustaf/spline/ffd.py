@@ -12,9 +12,28 @@ import numpy as np
 
 from gustaf import settings
 from gustaf._base import GustafBase
-from gustaf._typing import MESH_TYPES, SPLINE_TYPES, is_mesh, is_spline
-from gustaf.create.spline import with_bounds
+from gustaf._typing import MESH_TYPES, is_mesh
 from gustaf.show import show_vedo
+from gustaf.spline.base import NURBS, Bezier, BSpline, RationalBezier
+from gustaf.spline.create import from_bounds
+
+SPLINE_TYPES = Union[Bezier, RationalBezier, BSpline, NURBS]
+
+
+def is_spline(candidate: Any) -> bool:
+    """This function checks if the candidate is a spline.
+
+    Parameters
+    -----------
+    candidate: Any
+      object to check for being a spline.
+
+    Returns
+    --------
+    is_mesh: bool
+      Is the given object a sline.
+    """
+    return isinstance(candidate, SPLINE_TYPES.__args__)
 
 
 class FFD(GustafBase):
@@ -115,7 +134,7 @@ class FFD(GustafBase):
         if self._spline is None:
             # Define a default spline if mesh is given but no spline
             par_dim = mesh.vertices.shape[1]
-            self.spline = with_bounds(
+            self.spline = from_bounds(
                 [[0] * par_dim, [1] * par_dim], mesh.bounds()
             )
         self._logi("Setting mesh.")
@@ -397,8 +416,8 @@ class FFD(GustafBase):
             Returns, if applicable, the vedo plotter. 'close=False' as argument
             to get the plotter.
         """
-        if not (self._spline is None or self._mesh is None):
-            raise ValueError("Please set a spline before using this function.")
+        if self._spline is None and self._mesh is None:
+            raise ValueError("Please set a mesh before calling show()")
         backend = kwargs.pop("backend", None)
         return_showable = kwargs.pop("return_showable", False)
         return_discrete = kwargs.pop("return_discrete", False)

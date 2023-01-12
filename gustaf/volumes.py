@@ -2,8 +2,67 @@
 
 import numpy as np
 
-from gustaf import helpers, settings, utils
+from gustaf import helpers, settings, show, utils
 from gustaf.faces import Faces
+from gustaf.helpers.options import Option
+
+
+class VolumesShowOption(helpers.options.ShowOption):
+    """
+    Show options for vertices.
+    """
+
+    _valid_options = helpers.options.make_valid_options(
+        *helpers.options.vedo_common_options,
+        Option("vedo", "lw", "Width of edges (lines) in pixel units.", (int,)),
+        Option(
+            "vedo", "lc", "Color of edges (lines).", (int, str, tuple, list)
+        ),
+    )
+
+    _helps = "Volumes"
+
+    def _initialize_vedo_showable(self):
+        """
+        Initialize volumes as vedo.UGrid or visually equivalent vedo.Mesh
+
+        Parameters
+        ----------
+        None
+
+        Returns
+        -------
+        volumes: vedo.UGrid or vedo.Mesh
+        """
+        # without a data to plot on the surface, return vedo.UGrid
+        # if vertex_ids is on, we will go with mesh
+        if (
+            self.get("dataname", None) is None
+            and not self.get("vertex_ids", False)
+            and not self.get("arrowdata", False)
+        ):
+            from vtk import VTK_HEXAHEDRON as herr_hexa
+            from vtk import VTK_TETRA as frau_tetra
+
+            to_vtktype = {"tet": frau_tetra, "hexa": herr_hexa}
+            grid_type = to_vtktype[self._helpee.whatami]
+            ugrid = show.vedo.UGrid(
+                [
+                    self._helpee.const_vertices,
+                    self._helpee.const_volumes,
+                    [grid_type] * len(self._helpee.const_volumes),
+                ]
+            )
+            return ugrid.c("hotpink")
+
+        # to show data, let's use Faces. This will plot all the elements
+        # as well as invisible ones. This will at least try to avoid
+        # duplicating faces.  If you wanna see inside faces, try
+        # as_shrinked_faces = volumes.tofaces(unique=False).shrink(.8)
+        faces = self._helpee.tofaces(unique=True)
+        self.copy_valid_options(faces.show_options)
+
+        return faces.show_options._initialize_vedo_showable()
 
 
 class Volumes(Faces):
@@ -11,12 +70,12 @@ class Volumes(Faces):
     kind = "volume"
 
     const_faces = helpers.raise_if.invalid_inherited_attr(
-        Faces.const_faces,
+        "Faces.const_faces",
         __qualname__,
         property_=True,
     )
     update_faces = helpers.raise_if.invalid_inherited_attr(
-        Faces.update_edges,
+        "Faces.update_edges",
         __qualname__,
         property_=False,
     )
@@ -26,11 +85,15 @@ class Volumes(Faces):
         "_const_volumes",
     )
 
+    __show_option__ = VolumesShowOption
+    __boundary_class__ = Faces
+
     def __init__(
         self,
         vertices=None,
         volumes=None,
         elements=None,
+        copy=True,
     ):
         """Volumes. It has vertices and volumes. Volumes could be tetrahedrons
         or hexahedrons.
@@ -40,7 +103,7 @@ class Volumes(Faces):
         vertices: (n, d) np.ndarray
         volumes: (n, 4) or (n, 8) np.ndarray
         """
-        super().__init__(vertices=vertices)
+        super().__init__(vertices=vertices, copy=copy)
         if volumes is not None:
             self.volumes = volumes
         elif elements is not None:
@@ -121,17 +184,17 @@ class Volumes(Faces):
         --------
         None
         """
+        self._volumes = helpers.data.make_tracked_array(
+            vols,
+            settings.INT_DTYPE,
+            self.setter_copies,
+        )
         if vols is not None:
             utils.arr.is_one_of_shapes(
                 vols,
                 ((-1, 4), (-1, 8)),
                 strict=True,
             )
-
-        self._volumes = helpers.data.make_tracked_array(
-            vols,
-            settings.INT_DTYPE,
-        )
         # same, but non-writeable view of tracked array
         self._const_volumes = self._volumes.view()
         self._const_volumes.flags.writeable = False

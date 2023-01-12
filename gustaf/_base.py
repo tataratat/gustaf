@@ -2,60 +2,23 @@
 
 Useful base class for gustaf. Plus some useful decorators.
 """
-from gustaf import utils
+from gustaf.utils import log
 
 
 class GustafBase:
     """Base class for gustaf, where logging is nicely wrapped, and some useful
     methods are defined as classmethods..
-
-    Since attributes are predefined with __slots__, we can pre define
-    all the properties that could have been saved.
-    Adding `get_` in front of such properties are names for functions that
-    freshly compute and save the properties and their byproducts.
-
-    Other more complex operations will be a separate function.
-
-    TODO: maybe add explicit `use_saved` switch to avoid recomputing
     """
 
     __slots__ = ()
 
-    def _logd(self, *log):
-        """Debug logger wrapper for Mesh.
-
-        Parameters
-        -----------
-        *log: *str
-
-        Returns
-        --------
-        None
+    def __init_subclass__(cls, *args, **kwargs):
         """
-        utils.log.debug(type(self).__qualname__, "-", *log)
-
-    def _logi(self, *log):
-        """Info logger wrapper for Mesh.
-
-        Parameters
-        -----------
-        *log: *str
-
-        Returns
-        --------
-        None
+        Add logger shortcut.
         """
-        utils.log.info(type(self).__qualname__, "-", *log)
-
-    def _logw(self, *log):
-        """Warning logger wrapper for Mesh.
-
-        Parameters
-        -----------
-        *log: *str
-
-        Returns
-        --------
-        None
-        """
-        utils.log.warning(type(self).__qualname__, "-", *log)
+        super().__init_subclass__(*args, **kwargs)
+        cls._logi = log.prepended_log("<" + cls.__qualname__ + ">", log.info)
+        cls._logd = log.prepended_log("<" + cls.__qualname__ + ">", log.debug)
+        cls._logw = log.prepended_log(
+            "<" + cls.__qualname__ + ">", log.warning
+        )

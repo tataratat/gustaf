@@ -2,11 +2,71 @@
 
 Edges. Also known as lines.
 """
+from copy import deepcopy
 
 import numpy as np
 
-from gustaf import helpers, settings, utils
+from gustaf import helpers, settings, show, utils
+from gustaf.helpers.options import Option
 from gustaf.vertices import Vertices
+
+
+class EdgesShowOption(helpers.options.ShowOption):
+    """
+    Show options for vertices.
+    """
+
+    _valid_options = helpers.options.make_valid_options(
+        *helpers.options.vedo_common_options,
+        Option("vedo", "lw", "Width of edges (lines) in pixel units.", (int,)),
+        Option("vedo", "as_arrows", "Show edges as arrows.", (bool,)),
+        Option(
+            "vedo",
+            "head_radius",
+            "Radius of arrow head. Applicable if as_arrows is True",
+            (float, int),
+        ),
+        Option(
+            "vedo",
+            "head_length",
+            "Length of arrow head. Applicable if as_arrows is True",
+            (float, int),
+        ),
+        Option(
+            "vedo",
+            "shaft_radius",
+            "Radius of arrow shaft. Applicable if as_arrows is True",
+            (float, int),
+        ),
+    )
+
+    _helps = "Edges"
+
+    def _initialize_vedo_showable(self):
+        """
+        Initializes edges as either vedo.Lines or vedo.Arrows
+
+        Parameters
+        ----------
+        None
+
+        Returns
+        -------
+        edges: vedo.Lines or vedo.Arrows
+        """
+        if self.get("as_arrows", False):
+            init_options = ("head_radius", "head_length", "shaft_radius")
+            return show.vedo.Arrows(
+                self._helpee.const_vertices[self._helpee.edges],
+                **self[init_options],
+            )
+
+        else:
+            init_options = ("lw",)
+            return show.vedo.Lines(
+                self._helpee.const_vertices[self._helpee.edges],
+                **self[init_options],
+            )
 
 
 class Edges(Vertices):
@@ -18,11 +78,15 @@ class Edges(Vertices):
         "_const_edges",
     )
 
+    __show_option__ = EdgesShowOption
+    __boundary_class__ = Vertices
+
     def __init__(
         self,
         vertices=None,
         edges=None,
         elements=None,
+        copy=True,
     ):
         """Edges. It has vertices and edges. Also known as lines.
 
@@ -31,7 +95,7 @@ class Edges(Vertices):
         vertices: (n, d) np.ndarray
         edges: (n, 2) np.ndarray
         """
-        super().__init__(vertices=vertices)
+        super().__init__(vertices=vertices, copy=copy)
 
         if edges is not None:
             self.edges = edges
@@ -68,11 +132,14 @@ class Edges(Vertices):
         """
         self._logd("setting edges")
 
+        self._edges = helpers.data.make_tracked_array(
+            es, settings.INT_DTYPE, self.setter_copies
+        )
+
         # shape check
         if es is not None:
             utils.arr.is_shape(es, (-1, 2), strict=True)
 
-        self._edges = helpers.data.make_tracked_array(es, settings.INT_DTYPE)
         # same, but non-writeable view of tracked array
         self._const_edges = self._edges.view()
         self._const_edges.flags.writeable = False
@@ -383,7 +450,7 @@ class Edges(Vertices):
                 s_elements.vertexdata[key] = value[elements_flat]
 
             # probably wanna take visulation options too
-            s_elements.vis_dict = self.vis_dict
+            s_elements._show_options = deepcopy(self.show_options)
 
         return s_elements
 

@@ -7,7 +7,7 @@ import gustaf as gus
 
 # this will cause a deprecated warning for newer version of vedo.
 # for backward compatibility, we keep this one.
-vedo.settings.screenshotTransparentBackground = 1
+vedo.settings.screenshot_transparent_background = 1
 
 if __name__ == "__main__":
     arg_parser = argparse.ArgumentParser(
@@ -187,7 +187,7 @@ if __name__ == "__main__":
     face_showables = []
     spline_showables = []
     for f in fanfare:
-        showables = f.showable(resolutions=500, color=(255, 215, 0))
+        showables = f.showable(resolutions=500, c=(255, 215, 0))
         faces = showables["spline"]
         face_showables.append(faces)
         spline_showables.extend(list(showables.values()))

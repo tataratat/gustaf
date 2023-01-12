@@ -1,8 +1,68 @@
 """gustaf/gustaf/faces.py."""
 import numpy as np
 
-from gustaf import helpers, settings, utils
+from gustaf import helpers, settings, show, utils
 from gustaf.edges import Edges
+from gustaf.helpers.options import Option
+
+# special types for face texture option
+try:
+    import vedo
+
+    vedoPicture = vedo.Picture
+    # there are other ways to get here, but this is exact path for our use
+    vtkTexture = vedo.mesh.vtk.vtkTexture
+except ImportError as err:
+    vedoPicture = helpers.raise_if.ModuleImportRaiser("vedo", err)
+    vtkTexture = helpers.raise_if.ModuleImportRaiser("vedo", err)
+
+
+class FacesShowOption(helpers.options.ShowOption):
+    """
+    Show options for vertices.
+    """
+
+    _valid_options = helpers.options.make_valid_options(
+        *helpers.options.vedo_common_options,
+        Option("vedo", "lw", "Width of edges (lines) in pixel units.", (int,)),
+        Option(
+            "vedo", "lc", "Color of edges (lines).", (int, str, tuple, list)
+        ),
+        Option(
+            "vedo",
+            "texture",
+            "Texture of faces in array, vedo.Picture, vtk.vtkTexture, "
+            "or path to an image.",
+            (np.ndarray, tuple, list, str, vedoPicture, vtkTexture),
+        ),
+    )
+
+    _helps = "Faces"
+
+    def _initialize_vedo_showable(self):
+        """
+        Initializes Faces as vedo.Mesh
+
+        Parameters
+        ----------
+        None
+
+        Returns
+        -------
+        faces: vedo.Mesh
+        """
+        init_options = ("lw", "lc")
+        faces = show.vedo.Mesh(
+            [self._helpee.const_vertices, self._helpee.const_faces],
+            **self[init_options],
+        )
+
+        # forward texture if there's any
+        texture = self.get("texture", False)
+        if texture:
+            faces.texture(texture)
+
+        return faces
 
 
 class Faces(Edges):
@@ -10,17 +70,17 @@ class Faces(Edges):
     kind = "face"
 
     const_edges = helpers.raise_if.invalid_inherited_attr(
-        Edges.const_edges,
+        "Edges.const_edges",
         __qualname__,
         property_=True,
     )
     update_edges = helpers.raise_if.invalid_inherited_attr(
-        Edges.update_edges,
+        "Edges.update_edges",
         __qualname__,
         property_=False,
     )
     dashed = helpers.raise_if.invalid_inherited_attr(
-        Edges.const_edges,
+        "Edges.dashed",
         __qualname__,
         property_=False,
     )
@@ -31,11 +91,15 @@ class Faces(Edges):
         "BC",
     )
 
+    __show_option__ = FacesShowOption
+    __boundary_class__ = Edges
+
     def __init__(
         self,
         vertices=None,
         faces=None,
         elements=None,
+        copy=True,
     ):
         """Faces. It has vertices and faces. Faces could be triangles or
         quadrilaterals.
@@ -45,7 +109,7 @@ class Faces(Edges):
         vertices: (n, d) np.ndarray
         faces: (n, 3) or (n, 4) np.ndarray
         """
-        super().__init__(vertices=vertices)
+        super().__init__(vertices=vertices, copy=copy)
         if faces is not None:
             self.faces = faces
 
@@ -72,9 +136,7 @@ class Faces(Edges):
         return utils.connec.faces_to_edges(faces)
 
     @property
-    def whatami(
-        self,
-    ):
+    def whatami(self):
         """Determines whatami.
 
         Parameters
@@ -146,6 +208,11 @@ class Faces(Edges):
         """
         self._logd("setting faces")
 
+        self._faces = helpers.data.make_tracked_array(
+            fs,
+            settings.INT_DTYPE,
+            self.setter_copies,
+        )
         # shape check
         if fs is not None:
             utils.arr.is_one_of_shapes(
@@ -154,10 +221,6 @@ class Faces(Edges):
                 strict=True,
             )
 
-        self._faces = helpers.data.make_tracked_array(
-            fs,
-            settings.INT_DTYPE,
-        )
         # same, but non-writeable view of tracekd array
         self._const_faces = self._faces.view()
         self._const_faces.flags.writeable = False

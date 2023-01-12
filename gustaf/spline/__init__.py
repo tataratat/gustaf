@@ -9,7 +9,8 @@ here.
 import splinepy
 from splinepy import io
 
-from gustaf.spline import base, create, extract, ffd, microstructure
+from gustaf.helpers.data import SplineDataAdaptor
+from gustaf.spline import base, create, extract, ffd, microstructure, visualize
 from gustaf.spline.base import (
     NURBS,
     Bezier,
@@ -39,10 +40,12 @@ __all__ = [
     "RationalBezier",
     "BSpline",
     "NURBS",
+    "SplineDataAdaptor",
     "show",
     "from_mfem",
     "load_splines",
     "ffd",
     "microstructure",
     "io",
+    "visualize",
 ]

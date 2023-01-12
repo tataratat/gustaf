@@ -4,6 +4,7 @@ Thin logging wrapper.
 """
 
 import logging
+from functools import partial
 
 
 def configure(debug=False, logfile=None):
@@ -18,19 +19,41 @@ def configure(debug=False, logfile=None):
     --------
     None
     """
-    logger = logging.getLogger()
-    if debug:
-        logger.setLevel(logging.DEBUG)
+    # logger
+    logger = logging.getLogger("gustaf")
 
-    else:
-        logger.setLevel(logging.INFO)
+    # level
+    level = logging.DEBUG if debug else logging.INFO
+    logger.setLevel(level)
 
+    # format
+    formatter = logging.Formatter(fmt="%(name)s [%(levelname)s] %(message)s")
+
+    # apply format using stream handler
+    # let's use only one stream handler so that calling configure multiple
+    # times won't duplicate printing.
+    new_handlers = list()
+    for i, h in enumerate(logger.handlers):
+        # we skip all the stream handler.
+        if isinstance(h, logging.StreamHandler):
+            continue
+
+        # blindly keep other ones
+        else:
+            new_handlers.append(h)
+
+    # add new stream handler
+    stream_handler = logging.StreamHandler()
+    stream_handler.setLevel(level)
+    stream_handler.setFormatter(formatter)
+    new_handlers.append(stream_handler)
+
+    logger.handlers = new_handlers
+
+    # output logs
     if logfile is not None:
         file_logger_handler = logging.FileHandler(logfile)
         logger.addHandler(file_logger_handler)
-    logging.basicConfig(
-        format="%(asctime)-15s [%(levelname)s]: %(message)s",
-    )
 
 
 def debug(*log):
@@ -44,7 +67,8 @@ def debug(*log):
     --------
     None
     """
-    logging.debug(" ".join(map(str, log)))
+    logger = logging.getLogger("gustaf")
+    logger.debug(" ".join(map(str, log)))
 
 
 def info(*log):
@@ -58,7 +82,8 @@ def info(*log):
     --------
     None
     """
-    logging.info(" ".join(map(str, log)))
+    logger = logging.getLogger("gustaf")
+    logger.info(" ".join(map(str, log)))
 
 
 def warning(*log):
@@ -72,4 +97,22 @@ def warning(*log):
     --------
     None
     """
-    logging.warning(" ".join(map(str, log)))
+    logger = logging.getLogger("gustaf")
+    logger.warning(" ".join(map(str, log)))
+
+
+def prepended_log(message, log_func):
+    """
+    Prepend message before a logging function.
+
+    Parameters
+    ----------
+    messgae: str
+    log_func: function
+      one of the followings - {info, debug, warning}
+
+    Returns
+    -------
+    prepended: function
+    """
+    return partial(log_func, message)
