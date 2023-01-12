@@ -23,6 +23,7 @@ Contributing
 Library
 ============
 .. toctree::
+   :maxdepth: 1
 
    API references <modules>
 
