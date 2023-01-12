@@ -322,17 +322,17 @@ def parametric_view(spline, axes=True):
             ytitle="v",
             xrange=[lowerb[0], upperb[0]],
             yrange=[lowerb[1], upperb[1]],
-            tipSize=0,
-            xMinorTicks=3,
-            yMinorTicks=3,
-            xyGrid=False,
-            yzGrid=False,
+            tip_size=0,
+            xminor_ticks=3,
+            yminor_ticks=3,
+            xygrid=False,
+            yzgrid=False,
         )
         if spline.para_dim == 3:
             axes_config.update(ztitle="w")
             axes_config.update(zrange=[lowerb[2], upperb[2]])
-            axes_config.update(zMinorTicks=3)
-            axes_config.update(zxGrid=False)
+            axes_config.update(zminor_ticks=3)
+            axes_config.update(zxgrid=False)
 
         para_spline.show_options["axes"] = axes_config
         # it is a view, so cps won't be realistic
