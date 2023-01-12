@@ -1,7 +1,7 @@
 """gustaf/spline/visualize.py.
 
 Spline visualization module. Supports visualization of following spline
-(para_dim, dim) pairs: ((1, 2), (1, 3), (2, 2), (2, 3), (3, 3)
+(para_dim, dim) pairs: (1, 2), (1, 3), (2, 2), (2, 3), (3, 3)
 """
 import numpy as np
 
