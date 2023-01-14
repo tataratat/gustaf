@@ -286,7 +286,12 @@ def _vedo_showable(obj, as_dict=False, **kwargs):
     vertexdata = obj.vertexdata.as_scalar(dataname, None)
     if dataname is not None and vertexdata is not None:
         # transfer data
-        vedo_obj.pointdata[dataname] = vertexdata
+        if obj.kind.startswith("edge"):
+            vedo_obj.pointdata[dataname] = vertexdata[obj.edges].reshape(
+                -1, vertexdata.shape[1]
+            )
+        else:
+            vedo_obj.pointdata[dataname] = vertexdata
 
         # form cmap kwargs for init
         cmap_keys = ("vmin", "vmax")
