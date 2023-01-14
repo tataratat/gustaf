@@ -7,7 +7,7 @@ import itertools
 
 import numpy as np
 
-from gustaf import utils
+from gustaf import settings, utils
 from gustaf.edges import Edges
 from gustaf.faces import Faces
 from gustaf.vertices import Vertices
@@ -464,8 +464,15 @@ def spline(spline, para_dim, split_plane):
 
     # Start extraction
     cps_res = spline_copy.control_mesh_resolutions
-    start_id = spline_copy.knot_vectors[para_dim].index(split_plane[0])
-    end_id = spline_copy.knot_vectors[para_dim].index(split_plane[-1])
+    # start and end id. indicies correspond to [first dim][first appearance]
+    start_id = np.where(
+        abs(spline_copy.knot_vectors[para_dim] - split_plane[0])
+        < settings.TOLERANCE
+    )[0][0]
+    end_id = np.where(
+        abs(spline_copy.knot_vectors[para_dim] - split_plane[-1])
+        < settings.TOLERANCE
+    )[0][0]
     para_dim_ids = np.arange(np.prod(cps_res))
     for i_pd in range(para_dim):
         para_dim_ids -= para_dim_ids % cps_res[i_pd]
@@ -486,17 +493,18 @@ def spline(spline, para_dim, split_plane):
         if start_id == end_id:
             spline_info["knot_vectors"].pop(para_dim)
         else:
-            spline_info["knot_vectors"][para_dim] = (
-                [spline_copy.knot_vectors[para_dim][start_id]]
-                + spline_copy.knot_vectors[para_dim][
-                    start_id : (end_id + spline_copy.degrees[para_dim])
-                ]
-                + [
-                    spline_copy.knot_vectors[para_dim][
-                        (end_id + spline_copy.degrees[para_dim] - 1)
-                    ]
-                ]
+            start_knot = spline_copy.knot_vectors[para_dim][start_id]
+            knots_inbetween = spline_copy.knot_vectors[para_dim][
+                start_id : (end_id + spline_copy.degrees[para_dim])
+            ]
+            end_knot = spline_copy.knot_vectors[para_dim][
+                (end_id + spline_copy.degrees[para_dim] - 1)
+            ]
+
+            spline_info["knot_vectors"][para_dim] = np.concatenate(
+                ([start_knot], knots_inbetween, [end_knot])
             )
+
     if is_rational:
         spline_info["weights"] = spline_copy.weights[
             (para_dim_ids >= start_id) & (para_dim_ids <= end_id)
