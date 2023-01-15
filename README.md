@@ -1,3 +1,6 @@
+![gustaf](https://github.com/tataratat/gustaf/raw/gustaf/docs/gustaf-logo.png)
+
+
 # gustaf
 Loyal butler for numerical-analysis-geometry processing and visualization.
 
