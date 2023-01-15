@@ -1,4 +1,4 @@
-![gustaf](https://github.com/tataratat/gustaf/raw/gustaf/docs/gustaf-logo.png)
+![gustaf](https://github.com/tataratat/gustaf/raw/gustaf/docs/source/gustaf-logo.png)
 
 
 # gustaf
