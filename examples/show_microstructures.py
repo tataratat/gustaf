@@ -29,14 +29,36 @@ generator.show(
     knots=False, control_points=False, title="2D Lattice Microstructure"
 )
 
-# Second test
-
 
 def parametrization_function(x):
     return tuple(
         [0.3 - 0.4 * np.maximum(abs(0.5 - x[:, 0]), abs(0.5 - x[:, 1]))]
     )
 
+
+# Test new microstructure
+
+generator = gus.spline.microstructure.Microstructure()
+# outer geometry
+generator.deformation_function = gus.Bezier(
+    degrees=[1, 1], control_points=[[0, 0], [1, 0], [0, 1], [1, 1]]
+)
+generator.microtile = gus.spline.microstructure.tiles.NutTile2D()
+# how many structures should be inside the cube
+generator.tiling = [10, 10]
+generator.parametrization_function = parametrization_function
+my_ms = generator.create()
+generator.show(
+    use_saved=True,
+    knots=True,
+    control_points=False,
+    title="2D Nuttile Parametrized Microstructure",
+    wall_thickness=0.3,
+    side_length=0.4,
+)
+
+
+# Second test
 
 generator = gus.spline.microstructure.Microstructure()
 generator.deformation_function = gus.Bezier(
