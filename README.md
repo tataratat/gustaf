@@ -14,6 +14,8 @@ pip install git+https://github.com/tataratat/gustaf.git@main
 
 Gustaf has the following dependencies, while default dependencies will be installed directly during installation of the package, the optional dependencies must be installed by hand if the functionalities they provide are necessary.
 
+> :warning: **VEDO**: If you want to use vedo to show volumes, please install vedo from source, due to a bug in the current release version of vedo. This can be done via: `pip install 'vedo @ git+https://github.com/marcomusy/vedo'`.
+
 |Package|Optional|pip|conda|Description|
 |-------|:---:|---|-----|-----------|
 |numpy|no|`pip install numpy`|`conda install numpy`|Necessary for computation|
