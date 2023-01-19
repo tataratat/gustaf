@@ -450,7 +450,9 @@ class Edges(Vertices):
                 s_elements.vertexdata[key] = value[elements_flat]
 
             # probably wanna take visulation options too
-            s_elements._show_options = deepcopy(self.show_options)
+            s_elements._show_options._options = deepcopy(
+                self.show_options._options
+            )
 
         return s_elements
 
