@@ -4,6 +4,8 @@ Classes to help organize options.
 """
 from copy import deepcopy
 
+import vedo
+
 from gustaf import settings
 
 
@@ -68,7 +70,15 @@ vedo_common_options = (
         "'glossy', 'ambient', 'off'}",
         (str,),
     ),
-    Option("vedo", "cmap", "Colormap for vertexdata plots.", (str,)),
+    Option(
+        "vedo",
+        "cmap",
+        "Colormap for vertexdata plots.",
+        (
+            str,
+            type(vedo.build_lut(())),
+        ),
+    ),
     Option("vedo", "vmin", "Minimum value for cmap", (float, int)),
     Option("vedo", "vmax", "Maximum value for cmap", (float, int)),
     Option(
@@ -411,7 +421,7 @@ class ShowOption:
 
         for key, value in items:
             if key in valid_keys:
-                copy_to[key] = deepcopy(value)  # is deepcopy necessary?
+                copy_to[key] = value
 
     def _initialize_showable(self):
         """

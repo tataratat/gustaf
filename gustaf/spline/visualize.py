@@ -88,6 +88,45 @@ class SplineShowOption(options.ShowOption):
         self._options[self._backend] = dict()
 
 
+class MultipatchShowOption(SplineShowOption):
+    """
+    Show options for Multipatch-Geometries.
+    """
+
+    __slots__ = ()
+
+    # if we start to support more backends, most of this options should become
+    # some sort of spline common.
+    _valid_options = options.make_valid_options(
+        *options.vedo_common_options,
+        options.Option(
+            "vedo",
+            "boundary_ids",
+            "Show multipatch boundaries with ID",
+            (bool,),
+        ),
+    )
+
+    _helps = "Multipatch"
+
+    def __init__(self, helpee):
+        """
+        Parameters
+        ----------
+        helpee: GustafSpline
+        """
+        self._helpee = helpee
+        # checks if helpee inherits from GustafSpline
+        if self._helps not in str(type(helpee).__mro__):
+            raise TypeError(
+                f"This show option if for {self._helps}.",
+                f"Given helpee is {type(helpee)}.",
+            )
+        self._options = dict()
+        self._backend = settings.VISUALIZATION_BACKEND
+        self._options[self._backend] = dict()
+
+
 def make_showable(spline):
     return eval(f"_{spline.show_options._backend}_showable(spline)")
 

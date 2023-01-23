@@ -547,6 +547,74 @@ class NURBS(GustafSpline, splinepy.NURBS):
         return self.copy()
 
 
+class Multipatch(GustafBase, splinepy.Multipatch):
+    def __init__(
+        self,
+        splines=None,
+        interfaces=None,
+        as_boundary=False,
+    ):
+        """
+        Multipatch
+
+        Parameters
+        ----------
+        splines : list-like
+          List of splines to store as multipatch
+        interfaces : array-like
+          Defines the connectivity inbetween patches
+        as_boundary : bool
+          Multipatch is a boundary object of a higher dimensional geometry. If
+          set to true, additional checks are performed on the interfaces,
+          requiring strict interconnectivity between all patches
+
+        Returns
+        -------
+        None
+        """
+        splinepy.Multipatch.__init__(
+            self,
+            splines=splines,
+            interfaces=interfaces,
+        )
+        GustafBase.__init__(self)
+
+    def show(self, **kwargs):
+        bsp = self.boundary_patches.splines
+        bsp_id = np.abs(self.interfaces[self.interfaces < 0])
+        from vedo import build_lut
+
+        # Create a custom color-map
+        max_id = np.max(bsp_id)
+        colors_per_dim = int(np.ceil((1 + max_id) ** (1 / 3)))
+        rgb_color_list = np.reshape(
+            np.meshgrid(
+                *(np.linspace(0, 1, colors_per_dim) for _ in range(3))
+            ),
+            (3, -1),
+        ).T
+        colorlist = [
+            (i + 0.5, rgb_color_list[i, :]) for i in range(max_id + 1)
+        ]
+        lut = build_lut(colorlist)
+
+        for patch, id in zip(bsp, bsp_id):
+            patch.splinedata["bid" + str(id)] = BSpline(
+                degrees=[1] * patch.para_dim,
+                knot_vectors=np.repeat(patch.parametric_bounds.T, 2).reshape(
+                    patch.para_dim, -1
+                ),
+                control_points=[[id]] * (2**patch.para_dim),
+            )
+            patch.show_options["dataname"] = "bid" + str(id)
+            patch.show_options["cmap"] = lut
+
+        if self.para_dim == 3:
+            showmodule(bsp, **kwargs)
+        else:
+            showmodule([*bsp], **kwargs)
+
+
 def from_mfem(nurbs_dict):
     """Construct a gustaf NURBS. Reorganizes control points and weights.
 

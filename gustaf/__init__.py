@@ -19,7 +19,13 @@ from gustaf.volumes import Volumes
 has_spline = False
 try:
     from gustaf import spline
-    from gustaf.spline.base import NURBS, Bezier, BSpline, RationalBezier
+    from gustaf.spline.base import (
+        NURBS,
+        Bezier,
+        BSpline,
+        Multipatch,
+        RationalBezier,
+    )
     from gustaf.spline.ffd import FFD
 
     has_spline = True
@@ -64,5 +70,6 @@ __all__ = [
     "NURBS",
     "Bezier",
     "RationalBezier",
+    "Multipatch",
     "FFD",
 ]
