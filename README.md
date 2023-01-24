@@ -2,7 +2,8 @@
 
 
 # gustaf
-Loyal butler for numerical-analysis-geometry processing and visualization.
+gustaf is a python library to process and visualize numerical-analysis-geometries; especially, Finite Element Methods (FEM) and Isogemetric Analysis (IGA).
+
 
 ## Installation
 ```
@@ -12,6 +13,22 @@ you can also get the latest version of gustaf by:
 ```
 pip install git+https://github.com/tataratat/gustaf.git@main
 ```
+
+## Quick Start
+```
+comming soon!
+```
+
+**But until then check out the `examples` folder, where some functionality is already shown.**
+
+For some examples a submodule is necessary, this can be initialized via the commandline:
+
+```
+git submodule update --init
+```
+
+This submodule provides sample geometries.
+
 
 ### Dependencies
 
@@ -29,19 +46,5 @@ Gustaf has the following dependencies, while default dependencies will be instal
 If you install `gustaf` from source we recommend to also install `splinepy` from source, see the install instructions for this in the [splinepy docs](https://tataratat.github.io/splinepy).
 
 
-## Quick Start
-```
-comming soon!
-```
-
-**But until then check out the `examples` folder, where some functionality is already shown.**
-
-For some examples a submodule is necessary, this can be initialized via the commandline:
-
-```
-git submodule update --init
-```
-
-This submodule provides sample geometries.
 
 Test version of documentations are available [here](https://tataratat.github.io/gustaf/)
