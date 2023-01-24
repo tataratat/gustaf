@@ -12,10 +12,7 @@ class NutTile2D(TileBase):
         self._dim = 2
         self._evaluation_points = np.array(
             [
-                [0.0, 0.5],
-                [1.0, 0.5],
-                [0.5, 0.0],
-                [0.5, 1.0],
+                [0.5, 0.5],
             ]
         )
         self._parameter_space_dimension = 1
@@ -24,55 +21,50 @@ class NutTile2D(TileBase):
         self,
         parameters=None,
         parameter_sensitivities=None,
-        wall_thickness=0.5,
-        side_length=0.5,
+        contact_length=0.5,
         **kwargs
     ):
-        if not isinstance(wall_thickness, float):
-            raise ValueError("Invalid Type for width")
-        if not isinstance(side_length, float):
+        if not isinstance(contact_length, float):
             raise ValueError("Invalid Type for radius")
 
-        if not ((wall_thickness > 0.01) and (wall_thickness < 0.99)):
-            raise ValueError(
-                "The thickness of the wall must be in (0.01 and 0.99)"
-            )
-        if not ((side_length > 0) and (side_length < 0.99)):
+        # if not ((wall_thickness > 0.01) and (wall_thickness < 0.99)):
+        #     raise ValueError(
+        #         "The thickness of the wall must be in (0.01 and 0.99)"
+        #     )
+        if not ((contact_length > 0) and (contact_length < 0.99)):
             raise ValueError("The length of a side must be in (0.01, 0.99)")
 
         if parameters is None:
-            self._logd("Setting parameters to default values (0.5, 0.5)")
-            parameters = tuple([np.ones(5) * 0.5])
+            self._logd("Setting parameters to default values (0.5)")
+            parameters = tuple([np.ones(1) * 0.4])
 
-            """
-                    for radius in parameters[0].tolist():
-                    if not isinstance(radius, float):
-                        raise ValueError("Invalid type")
-            """
-        center_expansion = 0.5
+        v_zero= 0.
+        v_one = 1.
+        v_outer_c_h = contact_length * 0.5
+        v_h_void = parameters[0][0]
+        v_inner_c_h = contact_length * parameters[0][0]
 
-        [x_min_r, x_max_r, y_min_r, y_max_r] = [1.0, 1.0, 1.0, 1.0]
 
-        center = (
-            (x_min_r + x_max_r + y_min_r + y_max_r) / 4.0 * center_expansion
-        )
-        param = 1 - wall_thickness
-        delta_out = center * side_length
-        alpha = math.asin(delta_out / center)
-        delta_in = math.sin(alpha) * (center * param)
+
+        center = 0.5
+        param = 1 - parameters[0][0]
+        delta_out = center * contact_length
+        # alpha = math.asin(delta_out / center)
+        delta_in = (delta_out  * param)
 
         spline_list = []
         v_one_half = 0.5
+        assert(v_h_void < 0.5)
 
         # set points:
         right = np.array(
             [
-                [center, delta_out],
-                [center * param, delta_in],
-                [center, -delta_out],
-                [center * param, -delta_in],
+                [v_h_void+v_one_half, -v_inner_c_h+v_one_half],
+                [v_one, -v_outer_c_h+v_one_half],
+                [v_h_void+v_one_half, v_inner_c_h+v_one_half],
+                [v_one, v_outer_c_h+v_one_half],
             ]
-        ) + np.array([v_one_half, v_one_half])
+        )
 
         right_top = np.array(
             [
