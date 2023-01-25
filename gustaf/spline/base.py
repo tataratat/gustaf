@@ -6,6 +6,7 @@ from copy import deepcopy
 
 import numpy as np
 import splinepy
+from vedo import build_lut
 
 from gustaf import show as showmodule
 from gustaf import utils
@@ -582,7 +583,6 @@ class Multipatch(GustafBase, splinepy.Multipatch):
     def show(self, **kwargs):
         bsp = self.boundary_patches.splines
         bsp_id = np.abs(self.interfaces[self.interfaces < 0])
-        from vedo import build_lut
 
         # Create a custom color-map
         max_id = np.max(bsp_id)
@@ -612,7 +612,7 @@ class Multipatch(GustafBase, splinepy.Multipatch):
         if self.para_dim == 3:
             showmodule(bsp, **kwargs)
         else:
-            showmodule([*bsp], **kwargs)
+            showmodule([*bsp, *self.splines], **kwargs)
 
 
 def from_mfem(nurbs_dict):
