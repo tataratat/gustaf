@@ -37,6 +37,12 @@ class SplineShowOption(options.ShowOption):
         ),
         options.Option("vedo", "knots", "Show spline's knots.", (bool,)),
         options.Option(
+    "vedo",
+    "contours",
+    "Show spline's contour - 2D edges.",
+    (bool,
+    )),
+        options.Option(
             "vedo",
             "fitting_queries",
             "Shows fitting queries if they are locally saved in splines.",
@@ -366,9 +372,14 @@ def _vedo_showable_para_dim_2(spline):
     # knots
     if spline.show_options.get("knots", True):
         knot_lines = spline.extract.edges(res, all_knots=True)
-        knot_lines.show_options["c"] = "black"
+        knot_lines.show_options["c"] = "grey"
         knot_lines.show_options["lw"] = 3
         gus_primitives["knots"] = knot_lines
+    if spline.show_options.get("contours", True):
+        knot_lines = spline.extract.edges(res)
+        knot_lines.show_options["c"] = "black"
+        knot_lines.show_options["lw"] = 5
+        gus_primitives["contours"] = knot_lines
 
     return gus_primitives
 

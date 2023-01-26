@@ -27,7 +27,7 @@ def edges(
     Parameters
     -----------
     spline: Spline
-    resolution: int
+    resolution: list, int
     extract_dim: int
       Parametric dimension to extract.
     extract_knot: list
@@ -39,14 +39,20 @@ def edges(
     --------
     edges: Edges
     """
-    if not all_knots:
-        resolution = int(resolution)
+    if not isinstance(resolution, (list, np.ndarray)):
+        resolution  = [resolution for _ in range(spline.para_dim)]
+
+    all_2d_edges = False
+    if (extract_dim is None) and (extract_knot is None) and (not all_knots):
+        # No information given, assuming to extract all surrounding (2D) edges
+        # from highdimensional object
+        all_2d_edges = True
 
     if spline.para_dim == 1:
         return Edges(
-            vertices=spline.sample(resolution),
+            vertices=spline.sample(resolution[0]),
             edges=utils.connec.range_to_edges(
-                (0, resolution),
+                (0, resolution[0]),
                 closed=False,
             ),
         )
@@ -61,9 +67,12 @@ def edges(
                 )
 
         # This may take awhile.
-        if all_knots:
+        if all_knots or all_2d_edges:
             edgess = []  # edges' is not a valid syntax
-            unique_knots = np.array(spline.unique_knots, dtype=object)
+            if all_knots:
+                unique_knots = np.array(spline.unique_knots, dtype=object)
+            else:
+                unique_knots = np.array(spline.parametric_bounds.T)
             for i in range(spline.para_dim):
                 mask = np.ones(spline.para_dim, dtype=bool)
                 mask[i] = False
@@ -79,7 +88,7 @@ def edges(
 
         # Get parametric points to extract
         queries = np.empty(
-            (resolution, spline.para_dim),
+            (resolution[0], spline.para_dim),
             dtype="float64",  # hardcoded for splinelibpy
             order="C",  # hardcoded for splinelibpy
         )
@@ -96,13 +105,13 @@ def edges(
         queries[:, extract_dim] = np.linspace(
             min_knot_position,
             max_knot_position,
-            resolution,
+            resolution[0],
         )
 
         return Edges(
             vertices=spline.evaluate(queries),
             edges=utils.connec.range_to_edges(
-                (0, resolution),
+                (0, resolution[0]),
                 closed=False,
             ),
         )
