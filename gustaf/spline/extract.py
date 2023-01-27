@@ -40,7 +40,7 @@ def edges(
     edges: Edges
     """
     if not isinstance(resolution, (list, np.ndarray)):
-        resolution  = [resolution for _ in range(spline.para_dim)]
+        resolution = [resolution for _ in range(spline.para_dim)]
 
     all_2d_edges = False
     if (extract_dim is None) and (extract_knot is None) and (not all_knots):

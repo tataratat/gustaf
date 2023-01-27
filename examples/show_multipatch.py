@@ -36,9 +36,18 @@ random.shuffle(spline_list)
 
 multipatch = gus.Multipatch(splines=spline_list)
 multipatch.boundaries_from_continuity()
-multipatch.show(knots=False, control_points=False, resolutions=4)
+multipatch.show(
+    boundary_ids=True, knots=False, control_points=False, resolutions=4
+)
 multipatch.boundary_from_function(split_plane, from_boundaries=[1, 2])
-multipatch.show(knots=False, control_points=False, resolutions=4)
+multipatch.show(
+    boundary_ids=True,
+    knots=False,
+    contours=True,
+    control_points=True,
+    control_mesh=False,
+    resolutions=4,
+)
 
 # 3D structure simple
 b1 = gus.Bezier(
@@ -97,7 +106,9 @@ b4 = gus.Bezier(
 # Multipatch
 multipatch = gus.Multipatch([b1, b2, b3, b4])
 multipatch.boundaries_from_continuity()
-multipatch.show(resolutions=5, knots=True, control_points=False)
+multipatch.show(
+    boundary_ids=True, resolutions=5, knots=True, control_points=False
+)
 
 
 # Test 2
@@ -138,4 +149,6 @@ microstructure = generator.create(
 # Multipatch
 multipatch = gus.Multipatch(microstructure)
 multipatch.boundaries_from_continuity()
-multipatch.show(resolutions=3, knots=True, control_points=False)
+multipatch.show(
+    boundary_ids=True, resolutions=3, knots=True, control_points=False
+)

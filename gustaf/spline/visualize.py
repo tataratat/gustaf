@@ -37,11 +37,8 @@ class SplineShowOption(options.ShowOption):
         ),
         options.Option("vedo", "knots", "Show spline's knots.", (bool,)),
         options.Option(
-    "vedo",
-    "contours",
-    "Show spline's contour - 2D edges.",
-    (bool,
-    )),
+            "vedo", "contours", "Show spline's contour - 2D edges.", (bool,)
+        ),
         options.Option(
             "vedo",
             "fitting_queries",
@@ -94,7 +91,7 @@ class SplineShowOption(options.ShowOption):
         self._options[self._backend] = dict()
 
 
-class MultipatchShowOption(SplineShowOption):
+class MultipatchShowOption(options.ShowOption):
     """
     Show options for Multipatch-Geometries.
     """
@@ -109,6 +106,12 @@ class MultipatchShowOption(SplineShowOption):
             "vedo",
             "boundary_ids",
             "Show multipatch boundaries with ID",
+            (bool,),
+        ),
+        options.Option(
+            "vedo",
+            "patch_borders",
+            "Show individual knot-lines with ID",
             (bool,),
         ),
     )
@@ -373,12 +376,12 @@ def _vedo_showable_para_dim_2(spline):
     if spline.show_options.get("knots", True):
         knot_lines = spline.extract.edges(res, all_knots=True)
         knot_lines.show_options["c"] = "grey"
-        knot_lines.show_options["lw"] = 3
+        knot_lines.show_options["lw"] = 2
         gus_primitives["knots"] = knot_lines
     if spline.show_options.get("contours", True):
         knot_lines = spline.extract.edges(res)
         knot_lines.show_options["c"] = "black"
-        knot_lines.show_options["lw"] = 5
+        knot_lines.show_options["lw"] = 3
         gus_primitives["contours"] = knot_lines
 
     return gus_primitives

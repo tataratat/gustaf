@@ -2,8 +2,6 @@
 
 Classes to help organize options.
 """
-from copy import deepcopy
-
 import vedo
 
 from gustaf import settings

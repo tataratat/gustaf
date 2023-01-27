@@ -549,6 +549,8 @@ class NURBS(GustafSpline, splinepy.NURBS):
 
 
 class Multipatch(GustafBase, splinepy.Multipatch):
+    __show_option__ = visualize.MultipatchShowOption
+
     def __init__(
         self,
         splines=None,
@@ -579,40 +581,65 @@ class Multipatch(GustafBase, splinepy.Multipatch):
             interfaces=interfaces,
         )
         GustafBase.__init__(self)
+        self._show_options = self.__show_option__(self)
+
+    @property
+    def show_options(self):
+        """
+        Show option manager for multipatch systems.
+
+        Parameters
+        ----------
+        None
+
+        Returns
+        -------
+        show_options: MultipatchShowOption
+        """
+        return self._show_options
 
     def show(self, **kwargs):
-        bsp = self.boundary_patches.splines
-        bsp_id = np.abs(self.interfaces[self.interfaces < 0])
+        """ """
+        # Retrieve show options out of valid options
+        spline_list = self.splines.copy()
+        if kwargs.get("boundary_ids", False):
+            bsp = self.boundary_patches().splines
+            bsp_id = np.abs(self.interfaces[self.interfaces < 0])
 
-        # Create a custom color-map
-        max_id = np.max(bsp_id)
-        colors_per_dim = int(np.ceil((1 + max_id) ** (1 / 3)))
-        rgb_color_list = np.reshape(
-            np.meshgrid(
-                *(np.linspace(0, 1, colors_per_dim) for _ in range(3))
-            ),
-            (3, -1),
-        ).T
-        colorlist = [
-            (i + 0.5, rgb_color_list[i, :]) for i in range(max_id + 1)
-        ]
-        lut = build_lut(colorlist)
-
-        for patch, id in zip(bsp, bsp_id):
-            patch.splinedata["bid" + str(id)] = BSpline(
-                degrees=[1] * patch.para_dim,
-                knot_vectors=np.repeat(patch.parametric_bounds.T, 2).reshape(
-                    patch.para_dim, -1
+            # Create a custom color-map
+            max_id = np.max(bsp_id)
+            colors_per_dim = int(np.ceil((1 + max_id) ** (1 / 3)))
+            rgb_color_list = np.reshape(
+                np.meshgrid(
+                    *(np.linspace(0, 1, colors_per_dim) for _ in range(3))
                 ),
-                control_points=[[id]] * (2**patch.para_dim),
-            )
-            patch.show_options["dataname"] = "bid" + str(id)
-            patch.show_options["cmap"] = lut
+                (3, -1),
+            ).T
+            colorlist = [
+                (i + 0.5, rgb_color_list[i, :]) for i in range(max_id + 1)
+            ]
+            lut = build_lut(colorlist)
 
-        if self.para_dim == 3:
-            showmodule(bsp, **kwargs)
-        else:
-            showmodule([*bsp, *self.splines], **kwargs)
+            for patch, id in zip(bsp, bsp_id):
+                patch.splinedata["bid" + str(id)] = BSpline(
+                    degrees=[1] * patch.para_dim,
+                    knot_vectors=np.repeat(
+                        patch.parametric_bounds.T, 2
+                    ).reshape(patch.para_dim, -1),
+                    control_points=[[id]] * (2**patch.para_dim),
+                )
+                patch.show_options["dataname"] = "bid" + str(id)
+                patch.show_options["cmap"] = lut
+
+            spline_list.extend(bsp)
+
+        # Check if return showable is requested and ensure it is set to false
+        # when enquiring show module
+        showmodule(spline_list, **kwargs)
+
+    def showable(self, **kwargs):
+        kwargs["return_showable"] = False
+        return self.show(self, **kwargs)
 
 
 def from_mfem(nurbs_dict):

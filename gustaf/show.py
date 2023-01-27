@@ -155,6 +155,7 @@ def show_vedo(
             for k, item in enumerate(sl):
                 if isinstance(item, GustafBase):
                     tmp_showable = item.showable(backend="vedo", **kwargs)
+
                     # splines return dict
                     # - maybe it is time to do some typing..
                     if isinstance(tmp_showable, dict):
