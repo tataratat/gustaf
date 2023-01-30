@@ -39,7 +39,7 @@ multipatch.boundaries_from_continuity()
 multipatch.show(
     boundary_ids=True, knots=False, control_points=False, resolutions=4
 )
-multipatch.boundary_from_function(split_plane, from_boundaries=[1, 2])
+multipatch.boundary_from_function(split_plane, mask=[1, 2])
 multipatch.show(
     boundary_ids=True,
     knots=False,
@@ -47,6 +47,10 @@ multipatch.show(
     control_points=True,
     control_mesh=False,
     resolutions=4,
+)
+
+gus.spline.io.gismo.export(
+    "rectangle_test_mesh.xml", multipatch=multipatch, indent=True
 )
 
 # 3D structure simple
