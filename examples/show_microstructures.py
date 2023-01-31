@@ -37,9 +37,8 @@ def parametrization_function(x):
 
 
 def parametrization_function_nut(x):
-    return tuple([
-        np.array([0.4])]
-    )
+    return tuple([np.array([0.3])])
+
 
 # Test new microstructure
 
@@ -52,14 +51,13 @@ generator.microtile = gus.spline.microstructure.tiles.NutTile2D()
 # how many structures should be inside the cube
 generator.tiling = [10, 10]
 generator.parametrization_function = parametrization_function_nut
-my_ms = generator.create()
+my_ms = generator.create(closing_face="x", contact_length=0.4)
 generator.show(
     use_saved=True,
     knots=True,
     control_points=False,
     title="2D Nuttile Parametrized Microstructure",
-    wall_thickness=0.3,
-    side_length=0.4,
+    contact_length=0.4,
     resolutions=4,
 )
 

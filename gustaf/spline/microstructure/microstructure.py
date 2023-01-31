@@ -409,7 +409,7 @@ class Microstructure(GustafBase):
                             **kwargs,
                         )
                     elif (index + 1) == element_resolutions[closing_face_dim]:
-                        # Closure at minimum id
+                        # Closure at minimum id TODO -> max?
                         tile = self._microtile.closing_tile(
                             parameters=tile_parameters,
                             parameter_sensitivities=tile_sensitivities,
