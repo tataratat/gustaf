@@ -255,6 +255,14 @@ class Microstructure(GustafBase):
             knot_span_wise = True
 
         # check if user wants closed structure
+        if (closing_face is not None) and (
+            not hasattr(self.microtile, "closing_tile")
+        ):
+            raise ValueError(
+                "Microtile does not provide closing tile definition"
+            )
+
+            pass
         closing_face_dim = {"x": 0, "y": 1, "z": 2}.get(closing_face)
         is_closed = closing_face_dim is not None
         if not is_closed and (closing_face is not None):

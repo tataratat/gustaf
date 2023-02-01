@@ -4,7 +4,7 @@ from gustaf.spline import base
 from gustaf.spline.microstructure.tiles.tilebase import TileBase
 
 
-class LatticeTile(TileBase):
+class DoubleLatticeTile(TileBase):
     def __init__(self):
         """Simple crosstile with linear-quadratic branches and a trilinear
         center spline."""
@@ -16,15 +16,12 @@ class LatticeTile(TileBase):
         )
         self._parameter_space_dimension = 1
 
-    def closing_tile(self):
-        return
-
     def create_tile(
-            self,
-            parameters=None,
-            parameter_sensitivities=None,
-            contact_length=0.5,
-            **kwargs,
+        self,
+        parameters=None,
+        parameter_sensitivities=None,
+        contact_length=0.5,
+        **kwargs,
     ):
         """Create a microtile based on the parameters that describe the branch
         thicknesses.
@@ -57,18 +54,18 @@ class LatticeTile(TileBase):
             self._logd("Tile request is not parametrized, setting default 0.2")
             parameters = tuple([np.ones(1) * 0.1])
         else:
-            if not (np.all(parameters[0] > 0) and np.all(parameters[0] < 0.25)):
-                raise ValueError(
-                    "The parameter must be in 0.01 and 0.25"
-                )
+            if not (
+                np.all(parameters[0] > 0) and np.all(parameters[0] < 0.25)
+            ):
+                raise ValueError("The parameter must be in 0.01 and 0.25")
             pass
 
         # Check if user requests derivative splines
         if parameter_sensitivities is not None:
             # Check format
             if not (
-                    isinstance(parameter_sensitivities, list)
-                    and isinstance(parameter_sensitivities[0], tuple)
+                isinstance(parameter_sensitivities, list)
+                and isinstance(parameter_sensitivities[0], tuple)
             ):
                 raise TypeError(
                     "The parameter_sensitivities passed have the wrong "
@@ -114,7 +111,7 @@ class LatticeTile(TileBase):
             spline_list = []
 
             spline_list.extend(
-                [   # 1
+                [  # 1
                     base.Bezier(
                         degrees=[1, 1],
                         control_points=[
@@ -131,8 +128,8 @@ class LatticeTile(TileBase):
                             [a01, a01],
                             [a04, a01],
                             [a02, a02],
-                            [a03, a02]
-                        ]
+                            [a03, a02],
+                        ],
                     ),
                     # 3
                     base.Bezier(
@@ -141,9 +138,8 @@ class LatticeTile(TileBase):
                             [a04, a01],
                             [a08, a01],
                             [a03, a02],
-                            [a09, a02]
-
-                        ]
+                            [a09, a02],
+                        ],
                     ),
                     # 4
                     base.Bezier(
@@ -152,8 +148,8 @@ class LatticeTile(TileBase):
                             [a08, a01],
                             [a11, a01],
                             [a09, a02],
-                            [a10, a02]
-                        ]
+                            [a10, a02],
+                        ],
                     ),
                     # 5
                     base.Bezier(
@@ -162,8 +158,8 @@ class LatticeTile(TileBase):
                             [a10, a02],
                             [a11, a01],
                             [a10, a03],
-                            [a11, a04]
-                        ]
+                            [a11, a04],
+                        ],
                     ),
                     # 6
                     base.Bezier(
@@ -172,8 +168,8 @@ class LatticeTile(TileBase):
                             [a11, a04],
                             [a11, a08],
                             [a10, a03],
-                            [a10, a09]
-                        ]
+                            [a10, a09],
+                        ],
                     ),
                     # 7
                     base.Bezier(
@@ -182,8 +178,8 @@ class LatticeTile(TileBase):
                             [a10, a09],
                             [a11, a08],
                             [a10, a10],
-                            [a11, a11]
-                        ]
+                            [a11, a11],
+                        ],
                     ),
                     # 8
                     base.Bezier(
@@ -192,8 +188,8 @@ class LatticeTile(TileBase):
                             [a09, a10],
                             [a10, a10],
                             [a08, a11],
-                            [a11, a11]
-                        ]
+                            [a11, a11],
+                        ],
                     ),
                     # 9
                     base.Bezier(
@@ -202,8 +198,8 @@ class LatticeTile(TileBase):
                             [a03, a10],
                             [a09, a10],
                             [a04, a11],
-                            [a08, a11]
-                        ]
+                            [a08, a11],
+                        ],
                     ),
                     # 10
                     base.Bezier(
@@ -212,8 +208,8 @@ class LatticeTile(TileBase):
                             [a02, a10],
                             [a03, a10],
                             [a01, a11],
-                            [a04, a11]
-                        ]
+                            [a04, a11],
+                        ],
                     ),
                     # 11
                     base.Bezier(
@@ -222,8 +218,8 @@ class LatticeTile(TileBase):
                             [a01, a08],
                             [a02, a09],
                             [a01, a11],
-                            [a02, a10]
-                        ]
+                            [a02, a10],
+                        ],
                     ),
                     # 12
                     base.Bezier(
@@ -232,8 +228,8 @@ class LatticeTile(TileBase):
                             [a01, a04],
                             [a02, a03],
                             [a01, a08],
-                            [a02, a09]
-                        ]
+                            [a02, a09],
+                        ],
                     ),
                     # 13
                     base.Bezier(
@@ -242,8 +238,8 @@ class LatticeTile(TileBase):
                             [a02, a09],
                             [a05, a06],
                             [a02, a10],
-                            [a06, a06]
-                        ]
+                            [a06, a06],
+                        ],
                     ),
                     # 14
                     base.Bezier(
@@ -252,8 +248,8 @@ class LatticeTile(TileBase):
                             [a02, a10],
                             [a06, a06],
                             [a03, a10],
-                            [a06, a07]
-                        ]
+                            [a06, a07],
+                        ],
                     ),
                     # 15
                     base.Bezier(
@@ -262,8 +258,8 @@ class LatticeTile(TileBase):
                             [a02, a02],
                             [a06, a06],
                             [a02, a03],
-                            [a05, a06]
-                        ]
+                            [a05, a06],
+                        ],
                     ),
                     # 16
                     base.Bezier(
@@ -272,8 +268,8 @@ class LatticeTile(TileBase):
                             [a02, a02],
                             [a03, a02],
                             [a06, a06],
-                            [a06, a05]
-                        ]
+                            [a06, a05],
+                        ],
                     ),
                     # 17
                     base.Bezier(
@@ -282,8 +278,8 @@ class LatticeTile(TileBase):
                             [a09, a02],
                             [a10, a02],
                             [a06, a05],
-                            [a06, a06]
-                        ]
+                            [a06, a06],
+                        ],
                     ),
                     # 18
                     base.Bezier(
@@ -292,8 +288,8 @@ class LatticeTile(TileBase):
                             [a06, a06],
                             [a10, a02],
                             [a07, a06],
-                            [a10, a03]
-                        ]
+                            [a10, a03],
+                        ],
                     ),
                     # 19
                     base.Bezier(
@@ -302,8 +298,8 @@ class LatticeTile(TileBase):
                             [a06, a06],
                             [a07, a06],
                             [a10, a10],
-                            [a10, a09]
-                        ]
+                            [a10, a09],
+                        ],
                     ),
                     # 20
                     base.Bezier(
@@ -312,8 +308,8 @@ class LatticeTile(TileBase):
                             [a06, a06],
                             [a06, a07],
                             [a10, a10],
-                            [a09, a10]
-                        ]
+                            [a09, a10],
+                        ],
                     ),
                 ]
             )

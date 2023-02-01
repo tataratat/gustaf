@@ -35,6 +35,72 @@ def parametrization_function(x):
         [0.3 - 0.4 * np.maximum(abs(0.5 - x[:, 0]), abs(0.5 - x[:, 1]))]
     )
 
+para_s = gus.BSpline(
+    knot_vectors=[
+        [0, 0, 1 / 5, 2 / 5, 3 / 5, 4 / 5, 1, 1],
+        [0, 0, 1 / 3, 2 / 3, 1, 1],
+    ],
+    degrees=[1, 1],
+    control_points=[
+        [0.15],
+        [0.15],
+        [0.15],
+        [0.15],
+        [0.05],
+        [0.05],
+        [0.05],
+        [0.05],
+        [0.15],
+        [0.15],
+        [0.15],
+        [0.05],
+        [0.05],
+        [0.1],
+        [0.15],
+        [0.05],
+        [0.15],
+        [0.15],
+        [0.2],
+        [0.2],
+        [0.2],
+        [0.15],
+        [0.15],
+        [0.24],
+    ],
+)
+
+
+def parameter_function_double_lattice(x):
+    """
+    Parametrization Function (determines thickness)
+    """
+    return tuple([para_s.evaluate(x).flatten()])
+
+
+# Test new microstructure
+
+generator = gus.spline.microstructure.Microstructure()
+# outer geometry
+generator.deformation_function = gus.Bezier(
+    degrees=[1, 1], control_points=[[0, 0], [2, 0], [0, 1], [2, 1]]
+)
+generator.microtile = gus.spline.microstructure.tiles.DoubleLatticeTile()
+# how many structures should be inside the cube
+generator.tiling = [24, 12]
+generator.parametrization_function = parameter_function_double_lattice
+my_ms = generator.create(contact_length=0.4)
+generator.show(
+    use_saved=True,
+    knots=True,
+    control_points=False,
+    title="2D Nuttile Parametrized Microstructure",
+    contact_length=0.4,
+    resolutions=2,
+)
+gus.show(my_ms,
+    knots=True,
+    control_points=False,
+    resolution=2)
 
 def parametrization_function_nut(x):
     return tuple([np.array([0.3])])
@@ -58,7 +124,7 @@ generator.show(
     control_points=False,
     title="2D Nuttile Parametrized Microstructure",
     contact_length=0.4,
-    resolutions=4,
+    resolutions=2,
 )
 
 
