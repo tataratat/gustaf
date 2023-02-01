@@ -299,7 +299,8 @@ class Microstructure(GustafBase):
                     continue
                 inv_t = 1 / self.tiling[i_pd]
                 new_knots = [
-                    j * inv_t * (ukvs[i_pd][i] - ukvs[i_pd][i - 1])
+                    ukvs[i_pd][i - 1]
+                    + j * inv_t * (ukvs[i_pd][i] - ukvs[i_pd][i - 1])
                     for i in range(1, len(ukvs[i_pd]))
                     for j in range(1, self.tiling[i_pd])
                 ]
