@@ -110,208 +110,263 @@ class DoubleLatticeTile(TileBase):
             # Init return value
             spline_list = []
 
-            spline_list.extend(
-                [  # 1
-                    base.Bezier(
-                        degrees=[1, 1],
-                        control_points=[
-                            [a01, a01],
-                            [a02, a02],
-                            [a01, a04],
-                            [a02, a03],
-                        ],
-                    ),
-                    # 2
-                    base.Bezier(
-                        degrees=[1, 1],
-                        control_points=[
-                            [a01, a01],
-                            [a04, a01],
-                            [a02, a02],
-                            [a03, a02],
-                        ],
-                    ),
-                    # 3
-                    base.Bezier(
-                        degrees=[1, 1],
-                        control_points=[
-                            [a04, a01],
-                            [a08, a01],
-                            [a03, a02],
-                            [a09, a02],
-                        ],
-                    ),
-                    # 4
-                    base.Bezier(
-                        degrees=[1, 1],
-                        control_points=[
-                            [a08, a01],
-                            [a11, a01],
-                            [a09, a02],
-                            [a10, a02],
-                        ],
-                    ),
-                    # 5
-                    base.Bezier(
-                        degrees=[1, 1],
-                        control_points=[
-                            [a10, a02],
-                            [a11, a01],
-                            [a10, a03],
-                            [a11, a04],
-                        ],
-                    ),
-                    # 6
-                    base.Bezier(
-                        degrees=[1, 1],
-                        control_points=[
-                            [a11, a04],
-                            [a11, a08],
-                            [a10, a03],
-                            [a10, a09],
-                        ],
-                    ),
-                    # 7
-                    base.Bezier(
-                        degrees=[1, 1],
-                        control_points=[
-                            [a10, a09],
-                            [a11, a08],
-                            [a10, a10],
-                            [a11, a11],
-                        ],
-                    ),
-                    # 8
-                    base.Bezier(
-                        degrees=[1, 1],
-                        control_points=[
-                            [a09, a10],
-                            [a10, a10],
-                            [a08, a11],
-                            [a11, a11],
-                        ],
-                    ),
-                    # 9
-                    base.Bezier(
-                        degrees=[1, 1],
-                        control_points=[
-                            [a03, a10],
-                            [a09, a10],
-                            [a04, a11],
-                            [a08, a11],
-                        ],
-                    ),
-                    # 10
-                    base.Bezier(
-                        degrees=[1, 1],
-                        control_points=[
-                            [a02, a10],
-                            [a03, a10],
-                            [a01, a11],
-                            [a04, a11],
-                        ],
-                    ),
-                    # 11
-                    base.Bezier(
-                        degrees=[1, 1],
-                        control_points=[
-                            [a01, a08],
-                            [a02, a09],
-                            [a01, a11],
-                            [a02, a10],
-                        ],
-                    ),
-                    # 12
-                    base.Bezier(
-                        degrees=[1, 1],
-                        control_points=[
-                            [a01, a04],
-                            [a02, a03],
-                            [a01, a08],
-                            [a02, a09],
-                        ],
-                    ),
-                    # 13
-                    base.Bezier(
-                        degrees=[1, 1],
-                        control_points=[
-                            [a02, a09],
-                            [a05, a06],
-                            [a02, a10],
-                            [a06, a06],
-                        ],
-                    ),
-                    # 14
-                    base.Bezier(
-                        degrees=[1, 1],
-                        control_points=[
-                            [a02, a10],
-                            [a06, a06],
-                            [a03, a10],
-                            [a06, a07],
-                        ],
-                    ),
-                    # 15
-                    base.Bezier(
-                        degrees=[1, 1],
-                        control_points=[
-                            [a02, a02],
-                            [a06, a06],
-                            [a02, a03],
-                            [a05, a06],
-                        ],
-                    ),
-                    # 16
-                    base.Bezier(
-                        degrees=[1, 1],
-                        control_points=[
-                            [a02, a02],
-                            [a03, a02],
-                            [a06, a06],
-                            [a06, a05],
-                        ],
-                    ),
-                    # 17
-                    base.Bezier(
-                        degrees=[1, 1],
-                        control_points=[
-                            [a09, a02],
-                            [a10, a02],
-                            [a06, a05],
-                            [a06, a06],
-                        ],
-                    ),
-                    # 18
-                    base.Bezier(
-                        degrees=[1, 1],
-                        control_points=[
-                            [a06, a06],
-                            [a10, a02],
-                            [a07, a06],
-                            [a10, a03],
-                        ],
-                    ),
-                    # 19
-                    base.Bezier(
-                        degrees=[1, 1],
-                        control_points=[
-                            [a06, a06],
-                            [a07, a06],
-                            [a10, a10],
-                            [a10, a09],
-                        ],
-                    ),
-                    # 20
-                    base.Bezier(
-                        degrees=[1, 1],
-                        control_points=[
-                            [a06, a06],
-                            [a06, a07],
-                            [a10, a10],
-                            [a09, a10],
-                        ],
-                    ),
-                ]
+            # 1
+            spline_list.append(
+                base.Bezier(
+                    degrees=[1, 1],
+                    control_points=[
+                        [a01, a01],
+                        [a02, a02],
+                        [a01, a04],
+                        [a02, a03],
+                    ],
+                )
+            )
+
+            # 2
+            spline_list.append(
+                base.Bezier(
+                    degrees=[1, 1],
+                    control_points=[
+                        [a01, a01],
+                        [a04, a01],
+                        [a02, a02],
+                        [a03, a02],
+                    ],
+                )
+            )
+
+            # 3
+            spline_list.append(
+                base.Bezier(
+                    degrees=[1, 1],
+                    control_points=[
+                        [a04, a01],
+                        [a08, a01],
+                        [a03, a02],
+                        [a09, a02],
+                    ],
+                )
+            )
+
+            # 4
+            spline_list.append(
+                base.Bezier(
+                    degrees=[1, 1],
+                    control_points=[
+                        [a08, a01],
+                        [a11, a01],
+                        [a09, a02],
+                        [a10, a02],
+                    ],
+                ),
+            )
+
+            # 5
+            spline_list.append(
+                base.Bezier(
+                    degrees=[1, 1],
+                    control_points=[
+                        [a10, a02],
+                        [a11, a01],
+                        [a10, a03],
+                        [a11, a04],
+                    ],
+                )
+            )
+
+            # 6
+            spline_list.append(
+                base.Bezier(
+                    degrees=[1, 1],
+                    control_points=[
+                        [a11, a04],
+                        [a11, a08],
+                        [a10, a03],
+                        [a10, a09],
+                    ],
+                )
+            )
+
+            # 7
+            spline_list.append(
+                base.Bezier(
+                    degrees=[1, 1],
+                    control_points=[
+                        [a10, a09],
+                        [a11, a08],
+                        [a10, a10],
+                        [a11, a11],
+                    ],
+                )
+            )
+            # 8
+            spline_list.append(
+                base.Bezier(
+                    degrees=[1, 1],
+                    control_points=[
+                        [a09, a10],
+                        [a10, a10],
+                        [a08, a11],
+                        [a11, a11],
+                    ],
+                )
+            )
+
+            # 9
+            spline_list.append(
+                base.Bezier(
+                    degrees=[1, 1],
+                    control_points=[
+                        [a03, a10],
+                        [a09, a10],
+                        [a04, a11],
+                        [a08, a11],
+                    ],
+                )
+            )
+
+            # 10
+            spline_list.append(
+                base.Bezier(
+                    degrees=[1, 1],
+                    control_points=[
+                        [a02, a10],
+                        [a03, a10],
+                        [a01, a11],
+                        [a04, a11],
+                    ],
+                )
+            )
+
+            # 11
+            spline_list.append(
+                base.Bezier(
+                    degrees=[1, 1],
+                    control_points=[
+                        [a01, a08],
+                        [a02, a09],
+                        [a01, a11],
+                        [a02, a10],
+                    ],
+                )
+            )
+
+            # 12
+            spline_list.append(
+                base.Bezier(
+                    degrees=[1, 1],
+                    control_points=[
+                        [a01, a04],
+                        [a02, a03],
+                        [a01, a08],
+                        [a02, a09],
+                    ],
+                )
+            )
+
+            # 13
+            spline_list.append(
+                base.Bezier(
+                    degrees=[1, 1],
+                    control_points=[
+                        [a02, a09],
+                        [a05, a06],
+                        [a02, a10],
+                        [a06, a06],
+                    ],
+                )
+            )
+
+            # 14
+            spline_list.append(
+                base.Bezier(
+                    degrees=[1, 1],
+                    control_points=[
+                        [a02, a10],
+                        [a06, a06],
+                        [a03, a10],
+                        [a06, a07],
+                    ],
+                )
+            )
+
+            # 15
+            spline_list.append(
+                base.Bezier(
+                    degrees=[1, 1],
+                    control_points=[
+                        [a02, a02],
+                        [a06, a06],
+                        [a02, a03],
+                        [a05, a06],
+                    ],
+                )
+            )
+
+            # 16
+            spline_list.append(
+                base.Bezier(
+                    degrees=[1, 1],
+                    control_points=[
+                        [a02, a02],
+                        [a03, a02],
+                        [a06, a06],
+                        [a06, a05],
+                    ],
+                )
+            )
+
+            # 17
+            spline_list.append(
+                base.Bezier(
+                    degrees=[1, 1],
+                    control_points=[
+                        [a09, a02],
+                        [a10, a02],
+                        [a06, a05],
+                        [a06, a06],
+                    ],
+                )
+            )
+
+            # 18
+            spline_list.append(
+                base.Bezier(
+                    degrees=[1, 1],
+                    control_points=[
+                        [a06, a06],
+                        [a10, a02],
+                        [a07, a06],
+                        [a10, a03],
+                    ],
+                )
+            )
+
+            # 19
+            spline_list.append(
+                base.Bezier(
+                    degrees=[1, 1],
+                    control_points=[
+                        [a06, a06],
+                        [a07, a06],
+                        [a10, a10],
+                        [a10, a09],
+                    ],
+                )
+            )
+
+            # 20
+            spline_list.append(
+                base.Bezier(
+                    degrees=[1, 1],
+                    control_points=[
+                        [a06, a06],
+                        [a06, a07],
+                        [a10, a10],
+                        [a09, a10],
+                    ],
+                )
             )
 
             # Pass to output
