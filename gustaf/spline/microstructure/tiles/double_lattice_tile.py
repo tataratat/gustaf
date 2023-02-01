@@ -4,7 +4,7 @@ from gustaf.spline import base
 from gustaf.spline.microstructure.tiles.tilebase import TileBase
 
 
-class CrossTile2D(TileBase):
+class LatticeTile(TileBase):
     def __init__(self):
         """Simple crosstile with linear-quadratic branches and a trilinear
         center spline."""
@@ -16,12 +16,15 @@ class CrossTile2D(TileBase):
         )
         self._parameter_space_dimension = 1
 
+    def closing_tile(self):
+        return
+
     def create_tile(
-        self,
-        parameters=None,
-        parameter_sensitivities=None,
-        contact_length=0.5,
-        **kwargs,
+            self,
+            parameters=None,
+            parameter_sensitivities=None,
+            contact_length=0.5,
+            **kwargs,
     ):
         """Create a microtile based on the parameters that describe the branch
         thicknesses.
@@ -54,16 +57,18 @@ class CrossTile2D(TileBase):
             self._logd("Tile request is not parametrized, setting default 0.2")
             parameters = tuple([np.ones(1) * 0.1])
         else:
-            # @Lukas, bitte hier type checks!
-            # shape muss(1,) sein mit werten zwischen (0, .25)
+            if not (np.all(parameters[0] > 0) and np.all(parameters[0] < 0.25)):
+                raise ValueError(
+                    "The parameter must be in 0.01 and 0.25"
+                )
             pass
 
         # Check if user requests derivative splines
         if parameter_sensitivities is not None:
             # Check format
             if not (
-                isinstance(parameter_sensitivities, list)
-                and isinstance(parameter_sensitivities[0], tuple)
+                    isinstance(parameter_sensitivities, list)
+                    and isinstance(parameter_sensitivities[0], tuple)
             ):
                 raise TypeError(
                     "The parameter_sensitivities passed have the wrong "
@@ -96,11 +101,11 @@ class CrossTile2D(TileBase):
             a01 = v_zero
             a02 = pp
             a03 = 2 * pp
-            a04 = (v_one + cl) * 0.5
+            a04 = (v_one - cl) * 0.5
             a05 = v_one_half - pp
             a06 = v_one_half
             a07 = v_one_half + pp
-            a08 = (v_one - cl) * 0.5
+            a08 = (v_one + cl) * 0.5
             a09 = v_one - 2 * pp
             a10 = v_one - pp
             a11 = v_one
@@ -108,23 +113,209 @@ class CrossTile2D(TileBase):
             # Init return value
             spline_list = []
 
-            ######################################
-            # @Lukas hier die Splines definieren #
-            ######################################
-            # Dabei bitte ausschliesslich die Hilfsvariablen A0 bis A11
-            # benutzen und keine Rechnungen durchfuehren
+            spline_list.extend(
+                [   # 1
+                    base.Bezier(
+                        degrees=[1, 1],
+                        control_points=[
+                            [a01, a01],
+                            [a02, a02],
+                            [a01, a04],
+                            [a02, a03],
+                        ],
+                    ),
+                    # 2
+                    base.Bezier(
+                        degrees=[1, 1],
+                        control_points=[
+                            [a01, a01],
+                            [a04, a01],
+                            [a02, a02],
+                            [a03, a02]
+                        ]
+                    ),
+                    # 3
+                    base.Bezier(
+                        degrees=[1, 1],
+                        control_points=[
+                            [a04, a01],
+                            [a08, a01],
+                            [a03, a02],
+                            [a09, a02]
 
-            # Beispiel (Spline mit nr 1 im Bild)
-            spline_list.append(
-                base.Bezier(
-                    degrees=[1, 1],
-                    control_points=[
-                        [a01, a01],
-                        [a02, a02],
-                        [a01, a04],
-                        [a02, a03],
-                    ],
-                )
+                        ]
+                    ),
+                    # 4
+                    base.Bezier(
+                        degrees=[1, 1],
+                        control_points=[
+                            [a08, a01],
+                            [a11, a01],
+                            [a09, a02],
+                            [a10, a02]
+                        ]
+                    ),
+                    # 5
+                    base.Bezier(
+                        degrees=[1, 1],
+                        control_points=[
+                            [a10, a02],
+                            [a11, a01],
+                            [a10, a03],
+                            [a11, a04]
+                        ]
+                    ),
+                    # 6
+                    base.Bezier(
+                        degrees=[1, 1],
+                        control_points=[
+                            [a11, a04],
+                            [a11, a08],
+                            [a10, a03],
+                            [a10, a09]
+                        ]
+                    ),
+                    # 7
+                    base.Bezier(
+                        degrees=[1, 1],
+                        control_points=[
+                            [a10, a09],
+                            [a11, a08],
+                            [a10, a10],
+                            [a11, a11]
+                        ]
+                    ),
+                    # 8
+                    base.Bezier(
+                        degrees=[1, 1],
+                        control_points=[
+                            [a09, a10],
+                            [a10, a10],
+                            [a08, a11],
+                            [a11, a11]
+                        ]
+                    ),
+                    # 9
+                    base.Bezier(
+                        degrees=[1, 1],
+                        control_points=[
+                            [a03, a10],
+                            [a09, a10],
+                            [a04, a11],
+                            [a08, a11]
+                        ]
+                    ),
+                    # 10
+                    base.Bezier(
+                        degrees=[1, 1],
+                        control_points=[
+                            [a02, a10],
+                            [a03, a10],
+                            [a01, a11],
+                            [a04, a11]
+                        ]
+                    ),
+                    # 11
+                    base.Bezier(
+                        degrees=[1, 1],
+                        control_points=[
+                            [a01, a08],
+                            [a02, a09],
+                            [a01, a11],
+                            [a02, a10]
+                        ]
+                    ),
+                    # 12
+                    base.Bezier(
+                        degrees=[1, 1],
+                        control_points=[
+                            [a01, a04],
+                            [a02, a03],
+                            [a01, a08],
+                            [a02, a09]
+                        ]
+                    ),
+                    # 13
+                    base.Bezier(
+                        degrees=[1, 1],
+                        control_points=[
+                            [a02, a09],
+                            [a05, a06],
+                            [a02, a10],
+                            [a06, a06]
+                        ]
+                    ),
+                    # 14
+                    base.Bezier(
+                        degrees=[1, 1],
+                        control_points=[
+                            [a02, a10],
+                            [a06, a06],
+                            [a03, a10],
+                            [a06, a07]
+                        ]
+                    ),
+                    # 15
+                    base.Bezier(
+                        degrees=[1, 1],
+                        control_points=[
+                            [a02, a02],
+                            [a06, a06],
+                            [a02, a03],
+                            [a05, a06]
+                        ]
+                    ),
+                    # 16
+                    base.Bezier(
+                        degrees=[1, 1],
+                        control_points=[
+                            [a02, a02],
+                            [a03, a02],
+                            [a06, a06],
+                            [a06, a05]
+                        ]
+                    ),
+                    # 17
+                    base.Bezier(
+                        degrees=[1, 1],
+                        control_points=[
+                            [a09, a02],
+                            [a10, a02],
+                            [a06, a05],
+                            [a06, a06]
+                        ]
+                    ),
+                    # 18
+                    base.Bezier(
+                        degrees=[1, 1],
+                        control_points=[
+                            [a06, a06],
+                            [a10, a02],
+                            [a07, a06],
+                            [a10, a03]
+                        ]
+                    ),
+                    # 19
+                    base.Bezier(
+                        degrees=[1, 1],
+                        control_points=[
+                            [a06, a06],
+                            [a07, a06],
+                            [a10, a10],
+                            [a10, a09]
+                        ]
+                    ),
+                    # 20
+                    base.Bezier(
+                        degrees=[1, 1],
+                        control_points=[
+                            [a06, a06],
+                            [a06, a07],
+                            [a10, a10],
+                            [a09, a10]
+                        ]
+                    ),
+                ]
             )
 
             # Pass to output
