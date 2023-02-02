@@ -46,8 +46,8 @@ class DoubleLatticeTile(TileBase):
 
         if not isinstance(contact_length, float):
             raise ValueError("Invalid Type")
-        if not ((contact_length > 0.0) and (contact_length < 0.5)):
-            raise ValueError("Center Expansion must be in (0.,1.)")
+        if not ((contact_length > 0.0) and (contact_length < 1.0)):
+            raise ValueError("Contact length must be in (0.,1.)")
 
         # set to default if nothing is given
         if parameters is None:

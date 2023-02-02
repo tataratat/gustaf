@@ -11,8 +11,10 @@ class TileBase(base.GustafBase):
         Init Values to None
         """
         self._dim = None
-        self._evaluation_points = None
-        self._parameter_space_dimension = None
+        self._evaluation_points = None  # ength of arrays in tuple must be this
+        self._parameter_space_dimension = (
+            None  # Must be length of tuple @LUKAS
+        )
 
     @property
     def parameter_space_dimension(self):
@@ -61,3 +63,9 @@ class TileBase(base.GustafBase):
                 "Inherited Tile-types need to provide _dim, see documentation."
             )
         return self._dim
+
+    def check_params(self):
+        pass
+
+    def check_param_sens(self):
+        pass

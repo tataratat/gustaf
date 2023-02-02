@@ -35,6 +35,7 @@ def parametrization_function(x):
         [0.3 - 0.4 * np.maximum(abs(0.5 - x[:, 0]), abs(0.5 - x[:, 1]))]
     )
 
+
 para_s = gus.BSpline(
     knot_vectors=[
         [0, 0, 1 / 5, 2 / 5, 3 / 5, 4 / 5, 1, 1],
@@ -97,10 +98,8 @@ generator.show(
     contact_length=0.4,
     resolutions=2,
 )
-gus.show(my_ms,
-    knots=True,
-    control_points=False,
-    resolution=2)
+gus.show(my_ms, knots=True, control_points=False, resolution=2)
+
 
 def parametrization_function_nut(x):
     return tuple([np.array([0.3])])
