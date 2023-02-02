@@ -1,3 +1,5 @@
+import numpy as np
+
 from gustaf.spline import base
 
 
@@ -11,10 +13,8 @@ class TileBase(base.GustafBase):
         Init Values to None
         """
         self._dim = None
-        self._evaluation_points = None  # ength of arrays in tuple must be this
-        self._parameter_space_dimension = (
-            None  # Must be length of tuple @LUKAS
-        )
+        self._evaluation_points = None
+        self._parameter_space_dimension = None
 
     @property
     def parameter_space_dimension(self):
@@ -64,8 +64,25 @@ class TileBase(base.GustafBase):
             )
         return self._dim
 
-    def check_params(self):
-        pass
+    def check_params(self, params):
+        # check if tuple
+        if not (type(params) == tuple):
+            raise TypeError("parameters must be a Tuple with array as entries")
+        # check if the tuple has the correct number of entries
+        if not (len(params) == self._parameter_space_dimension):
+            raise TypeError("There unexpected entries in the parameter tuple")
+        # check if all entries in the tuple has the correct length
+        if not (all([len(self._evaluation_points) == len(e) for e in params])):
+            raise TypeError("Wrong number of evaluation points")
 
-    def check_param_sens(self):
-        pass
+        return
+
+    def check_param_values(self, params, value_range):
+        if not (
+            np.all(params[0] > value_range[0])
+            and np.all(params[0] < value_range[1])
+        ):
+            raise ValueError(
+                f"Value of a parameter is out of range ("
+                f"{value_range[0]}, {value_range[1]})"
+            )

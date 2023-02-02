@@ -54,11 +54,8 @@ class DoubleLatticeTile(TileBase):
             self._logd("Tile request is not parametrized, setting default 0.2")
             parameters = tuple([np.ones(1) * 0.1])
         else:
-            if not (
-                np.all(parameters[0] > 0) and np.all(parameters[0] < 0.25)
-            ):
-                raise ValueError("The parameter must be in 0.01 and 0.25")
-            pass
+            self.check_params(parameters)
+            self.check_param_values(parameters, (0, 0.25))
 
         # Check if user requests derivative splines
         if parameter_sensitivities is not None:
