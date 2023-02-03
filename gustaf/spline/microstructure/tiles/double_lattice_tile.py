@@ -359,8 +359,8 @@ class DoubleLatticeTile(TileBase):
                     degrees=[1, 1],
                     control_points=[
                         [a06, a06],
-                        [a06, a07],
                         [a10, a10],
+                        [a06, a07],
                         [a09, a10],
                     ],
                 )
