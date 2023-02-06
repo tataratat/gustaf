@@ -1,5 +1,3 @@
-import numpy as np
-
 from gustaf.spline import base
 
 
@@ -65,24 +63,58 @@ class TileBase(base.GustafBase):
         return self._dim
 
     def check_params(self, params):
+        """Checks if the parameters have the correct format and shape
+
+        Parameters
+        ----------
+        params: tuple(np.ndarray)
+            the parameters for the tile
+
+        Returns
+        -------
+        True: Boolean
+        """
         # check if tuple
-        if not (type(params) == tuple):
+        if not (isinstance(params, tuple)):
             raise TypeError("parameters must be a Tuple with array as entries")
         # check if the tuple has the correct number of entries
         if not (len(params) == self._parameter_space_dimension):
-            raise TypeError("There unexpected entries in the parameter tuple")
-        # check if all entries in the tuple has the correct length
-        if not (all([len(self._evaluation_points) == len(e) for e in params])):
-            raise TypeError("Wrong number of evaluation points")
-
-        return
-
-    def check_param_values(self, params, value_range):
-        if not (
-            np.all(params[0] > value_range[0])
-            and np.all(params[0] < value_range[1])
-        ):
-            raise ValueError(
-                f"Value of a parameter is out of range ("
-                f"{value_range[0]}, {value_range[1]})"
+            raise TypeError(
+                f"Size mismatch in param, expected "
+                f"{self._parameter_space_dimension} "
+                f"entries got {len(params)} entries"
             )
+        # check if all entries in the tuple has the correct length
+        if not (all([len(self._evaluation_points) == e.size for e in params])):
+            raise TypeError(
+                f"Mismatch amount of parameter entries, expected "
+                f"{self._evaluation_points}"
+            )
+
+        return True
+
+    def check_param_derivatives(self, derivatives):
+        """Checks if all derivatives have the correct format and shape
+
+        Parameters
+        ----------
+        derivatives: list(tuple(np.ndarray)
+            all derivatives as list
+
+        Returns
+        -------
+        True: Boolean
+        """
+        if derivatives is None:
+            return False
+
+        if not (isinstance(derivatives, list)):
+            raise TypeError(
+                f"The parameter_sensitives passed have the wrong "
+                "format. The expected format is list(tuple(np.ndarray)),"
+                f" found type({type(derivatives) })"
+            )
+        for i in derivatives:
+            self.check_params(i)
+
+        return True
