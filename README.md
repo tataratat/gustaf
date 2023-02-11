@@ -59,12 +59,10 @@ tet = gus.Volumes(
 )
 tet.show()
 
-
 # elements can transform to their subelement types
 # set unique=True, if you don't want duplicating internal subelements
 as_faces = tet.tofaces(unique=False)
 as_edges = tet.toedges(unique=False)
-
 
 # as geometry classes inherit from its subelement class, we can
 # extract subelement connectivity directly.
@@ -72,40 +70,106 @@ as_edges = tet.toedges(unique=False)
 face_connectivity = tet.faces()
 edge_connectivity = tet.edges()
 
-
 # this holds
 assert np.allclose(face_connectivity, as_faces.faces)
 assert np.allclose(edge_connectivity, as_edges.edges)
 
 # the uniqueness of subelement connectivity is useful for finding
 # boundary elements, especially ones that appear only once.
+# first, general information about connectivity uniqueness
+unique_face_infos = tet.unique_faces()  # returns namedtuple
+print(unique_face_infos.values)
+print(unique_face_infos.ids)
+print(unique_face_infos.inverse)
+print(unique_face_infos.counts)
 
+# there's a shortcut - single_volumes(), single_faces(), single_edges()
+assert np.allclose(
+    tet.single_faces(),
+    unique_face_infos.ids[unique_face_infos.counts == 1]
+)
+
+# let's visualize some scalar data and vector data defined on vertices
+tet.vertexdata["arange"] = np.arange(len(tet.vertices))  # scalar
+tet.show_options["dataname"] = "arange"
+tet.vertexdata["random"] = np.random.random((len(tet.vertices), 3))  # vector
+tet.show_options["arrowdata"] = "random"
+tet.show()
+
+
+# create a 2D NURBS disc and visualize
+# all the spline types inherits from splinepy's splines and equipped with
+# additional functionalities
+nurbs = gus.NURBS(
+    degrees=[1, 2],
+    knot_vectors=[
+        [0, 0, 1, 1],
+        [0, 0, 0, 1, 1, 2, 2, 2],
+    ],
+    control_points=[
+        [ 1.        ,  0.        ],
+        [ 0.5       ,  0.        ],
+        [ 1.        ,  0.59493748],
+        [ 0.5       ,  0.29746874],
+        [ 0.47715876,  0.87881711],
+        [ 0.23857938,  0.43940856],
+        [-0.04568248,  1.16269674],
+        [-0.02284124,  0.58134837],
+        [-0.54463904,  0.83867057],
+        [-0.27231952,  0.41933528],
+    ],
+    weights=[
+        [1.        ],
+        [1.        ],
+        [0.85940641],
+        [0.85940641],
+        [1.        ],
+        [1.        ],
+        [0.85940641],
+        [0.85940641],
+        [1.        ],
+        [1.        ]
+    ]
+)
+nurbs.show()
+
+# extract / sample using Extractor helper class
+# they are all "show()"-able
+nurbs_as_faces = nurbs.extract.faces(resolutions=[100, 50])
+bezier_patches = nurbs.extract.beziers()  # returns list
+boundaries = nurbs.extract.boundaries()  # list of boundary splines
+subspline = nurbs.extract.spline(
+    {0: [.4, .8], 1: .7}  # define range dimension-wise
+)
+
+# create derived spline using Creator helper class
+extruded = nurbs.create.extruded(extrusion_vector=[0, 0, 1])
+revolved = nurbs.create.revolved(axis=[1, 0, 0], angle=70)
+parametric_view = nurbs.create.parametric_view()
+
+# just like vertexdata, you can define splinedata
+# for more options, checkout `gus.spline.SplineDataAdaptor`
+# following will plot the norm of nurbs' physical coordinates 
+nurbs.splinedata["coords"] = nurbs
+nurbs.show_options["dataname"] = "coords"
+
+# show them all together. each arg is plotted on a separate subplot
+# translate tet a bit to avoid overlapping
+tet.vertices += [2, 0, 0]
+gus.show(
+    ["NURBS and translated tet together", nurbs, tet],
+    ["Extruded NURBS", extruded],
+    ["Revolved NURBS", revolved],
+    ["NURBS parametric view", parametric_view],
+)
 ```
-
-**But until then check out the `examples` folder, where some functionality is already shown.**
-
-For some examples a submodule is necessary, this can be initialized via the commandline:
-
-```
-git submodule update --init
-```
-
-This submodule provides sample geometries.
+Check out [documentations]() and [examples](https://github.com/tataratat/gustaf/tree/main/examples) for more!
 
 
 ### Dependencies
-- []
-|Package|Optional|pip|conda|Description|
-|-------|:---:|---|-----|-----------|
-|numpy|no|`pip install numpy`|`conda install numpy`|Necessary for computation|
-|splinepy|yes|`pip install splinepy`|-|Necessary for any spline based functionality|
-|vedo|yes|`pip install vedo`|`conda install -c conda-forge vedo`|Default renderer of gustaf, only needed if visualization is performed|
-|scipy|yes|`pip install scipy`|`conda install scipy`|Necessary for vertex operations|
-|meshio|yes|`pip install meshio`|`conda install -c conda-forge meshio`|Necessary for meshio mesh imports|
-|pytest|yes|`pip install pytest`|`conda install pytest`|Necessary for testing of the package. Not needed for normal usage.|
-
-If you install `gustaf` from source we recommend to also install `splinepy` from source, see the install instructions for this in the [splinepy docs](https://tataratat.github.io/splinepy).
-
-
-
-Test version of documentations are available [here](https://tataratat.github.io/gustaf/)
+- [numpy](https://numpy.org)
+- [splinepy](https://github.com/tataratat/splinepy)
+- [vedo](https://vedo.embl.es)
+- [scipy](https://scipy.org)
+- [meshio](https://github.com/nschloe/meshio)
+- [pytest](https://pytest.org)
