@@ -5,7 +5,8 @@ gustaf currently supports linear elements:
 - triangle,
 - quadrilateral,
 - tetrahedron, and
-- hexahedron,
+- hexahedron,  
+
 as well as both single and multi-patch splines (with `splinepy` extension):
 - Bezier,
 - Rational Bezier,
@@ -163,7 +164,7 @@ gus.show(
     ["NURBS parametric view", parametric_view],
 )
 ```
-Check out [documentations]() and [examples](https://github.com/tataratat/gustaf/tree/main/examples) for more!
+Check out [documentations](https://tataratat.github.io/gustaf/) and [examples](https://github.com/tataratat/gustaf/tree/main/examples) for more!
 
 
 ### Dependencies
