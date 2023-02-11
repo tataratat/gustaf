@@ -1,7 +1,5 @@
 """Create gus"""
-
 import gustaf as gus
-import vedo
 
 if __name__ == "__main__":
 
@@ -65,5 +63,5 @@ if __name__ == "__main__":
         control_points=False,
         knots=False,
         lighting="off",
-        close=False
+        close=False,
     )
