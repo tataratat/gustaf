@@ -28,7 +28,7 @@ pip install git+https://github.com/tataratat/gustaf.git@main
 ```
 
 ## Quick Start
-This example shows how to visualize and extract properties of tetrahedrons and NURBS using gustaf. 
+This example shows how to visualize and extract properties of tetrahedrons and NURBS using gustaf.
 For visualization, gustaf uses [vedo](https://vedo.embl.es) as main backend.
 ```python
 import gustaf as gus
@@ -149,7 +149,7 @@ parametric_view = nurbs.create.parametric_view()
 
 # just like vertexdata, you can define splinedata
 # for more options, checkout `gus.spline.SplineDataAdaptor`
-# following will plot the norm of nurbs' physical coordinates 
+# following will plot the norm of nurbs' physical coordinates
 nurbs.splinedata["coords"] = nurbs
 nurbs.show_options["dataname"] = "coords"
 
