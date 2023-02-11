@@ -25,9 +25,8 @@ setup(
         "gustaf.spline.microstructure",
         "gustaf.spline.microstructure.tiles",
     ],
-    install_requires=[
-        "numpy",
-    ],
+    install_requires=["numpy"],
+    extra_requires={"all": ["vedo", "scipy", "meshio"]},
     classifiers=[
         "Development Status :: 2 - Pre-Alpha",
         "License :: OSI Approved :: MIT License",
