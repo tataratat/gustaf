@@ -83,7 +83,6 @@ class VerticesShowOption(helpers.options.ShowOption):
 
 
 class Vertices(GustafBase):
-
     kind = "vertex"
 
     __slots__ = (

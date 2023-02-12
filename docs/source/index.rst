@@ -1,8 +1,6 @@
 gustaf
 ==================================
 
-TEST version of docs.
-
 .. toctree::
    :maxdepth: 2
 
@@ -26,6 +24,8 @@ Library
    :maxdepth: 1
 
    API references <modules>
+
+   Feature details & options <details>
 
 .. Indices and tables
 .. ==================

@@ -66,7 +66,6 @@ class FacesShowOption(helpers.options.ShowOption):
 
 
 class Faces(Edges):
-
     kind = "face"
 
     const_edges = helpers.raise_if.invalid_inherited_attr(

@@ -373,35 +373,6 @@ def control_mesh(spline):
         )
 
 
-def beziers(spline):
-    """Extracts Bezier-type objects of any spline-type object.
-
-    Parameters
-    ----------
-    spline : Gustaf-Spline
-
-    Returns
-    -------
-    bezier_list : list<bezier-types>
-    """
-    from gustaf.spline.base import Bezier, RationalBezier
-
-    if "Bezier" in spline.whatami:
-        return [spline]
-    elif "BSpline" in spline.whatami:
-        return [
-            Bezier(**s.todict())
-            for s in super(type(spline), spline).extract_bezier_patches()
-        ]
-    elif "NURBS" in spline.whatami:
-        return [
-            RationalBezier(**s.todict())
-            for s in super(type(spline), spline).extract_bezier_patches()
-        ]
-    else:
-        raise TypeError("Unknown Spline-Type.")
-
-
 def spline(spline, para_dim, split_plane):
     """Extract a subspline from a given representation.
 
@@ -551,7 +522,10 @@ class Extractor:
         return control_mesh(self._spline)
 
     def beziers(self):
-        return beziers(self._spline)
+        return self._spline.extract_bezier_patches()
+
+    def boundaries(self, *args, **kwargs):
+        return self._spline.extract_boundaries(*args, **kwargs)
 
     def spline(self, splittin_plane=None, interval=None):
         """Extract a spline from a spline.

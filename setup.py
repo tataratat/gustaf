@@ -9,7 +9,7 @@ with open("README.md") as f:
 setup(
     name="gustaf",
     version=version,
-    description="Process and visualize geometries.",
+    description="Process and visualize numerical-analysis-geometries.",
     long_description=readme,
     long_description_content_type="text/markdown",
     author="Jaewook Lee",
@@ -25,9 +25,8 @@ setup(
         "gustaf.spline.microstructure",
         "gustaf.spline.microstructure.tiles",
     ],
-    install_requires=[
-        "numpy",
-    ],
+    install_requires=["numpy"],
+    extras_require={"all": ["vedo>=2023.4.3", "scipy", "meshio", "splinepy"]},
     classifiers=[
         "Development Status :: 2 - Pre-Alpha",
         "License :: OSI Approved :: MIT License",

@@ -70,7 +70,6 @@ class EdgesShowOption(helpers.options.ShowOption):
 
 
 class Edges(Vertices):
-
     kind = "edge"
 
     __slots__ = (
