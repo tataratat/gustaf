@@ -1,4 +1,4 @@
-![gustaf](https://github.com/tataratat/gustaf/raw/gustaf/docs/source/gustaf-logo.png)
+![gustaf](https://github.com/tataratat/gustaf/raw/main/docs/source/gustaf-logo.png)
 
 __gustaf__ is a python library to process and visualize numerical-analysis-geometries; especially for Finite Element Methods (FEM) and Isogemetric Analysis (IGA).
 gustaf currently supports linear elements:
