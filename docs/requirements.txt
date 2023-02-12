@@ -1,4 +1,4 @@
 myst_parser
-piccolo-theme
+furo
 sphinx
 sphinx-mdinclude

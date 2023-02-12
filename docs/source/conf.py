@@ -47,7 +47,8 @@ autodoc_mock_imports = [
 
 # -- Options for HTML output -------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#options-for-html-output
-html_theme = "piccolo_theme"
+#html_theme = "piccolo_theme"
+html_theme = "furo"
 # html_logo = '_static/logo.png'
 # html_favicon = '_static/thumb.png'
 
