@@ -25,8 +25,15 @@ if __name__ == "__main__":
                 f.write(f"### {backend}\n\n")
                 for option in options.values():
                     t_str = str(option.allowed_types)
-                    t_str = t_str.replace("<class", "").replace("'", "").replace(">", "")
-                    f.write(f"<details><summary><strong>{option.key}</strong></summary><p>\n")
+                    t_str = (
+                        t_str.replace("<class", "")
+                        .replace("'", "")
+                        .replace(">", "")
+                    )
+                    f.write(
+                        f"<details><summary><strong>{option.key}"
+                        "</strong></summary><p>\n"
+                    )
                     f.write(f"\n{option.description}  \n")
                     f.write(f"- _allowed types_: {t_str}  \n")
-                    f.write(f"</p></details> \n\n")
+                    f.write("</p></details> \n\n")

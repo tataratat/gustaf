@@ -33,7 +33,6 @@ import gustaf as gus
 
 
 def main():
-
     mesh_faces_box = gus.create.faces.box(
         bounds=[[0, 0], [2, 2]], resolutions=[2, 3]
     )

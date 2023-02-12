@@ -8,7 +8,6 @@ import pathlib
 from gustaf import io
 
 if __name__ == "__main__":
-
     base_samples_path = pathlib.Path("samples/faces")
     if not base_samples_path.exists():
         raise RuntimeError(

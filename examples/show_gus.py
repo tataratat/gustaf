@@ -2,7 +2,6 @@
 import gustaf as gus
 
 if __name__ == "__main__":
-
     l_eye = gus.spline.create.disk(0.15)
     l_eye.cps += [0.6, 0.2]
     l_eye.show_options["c"] = "black"
