@@ -1,4 +1,4 @@
-myst_parser
 furo
+myst_parser
 sphinx
 sphinx-mdinclude

@@ -5,7 +5,7 @@ gustaf currently supports linear elements:
 - triangle,
 - quadrilateral,
 - tetrahedron, and
-- hexahedron,  
+- hexahedron,
 
 as well as both single and multi-patch splines (with `splinepy` extension):
 - Bezier,
@@ -19,7 +19,7 @@ as well as both single and multi-patch splines (with `splinepy` extension):
 ```
 pip install gustaf
 ```
-To install all the [optional dependencies](#dependencies) at the same time, you can use:
+To install all the [optional dependencies](https://github.com/tataratat/gustaf#dependencies) at the same time, you can use:
 ```
 pip install gustaf[all]
 ```
