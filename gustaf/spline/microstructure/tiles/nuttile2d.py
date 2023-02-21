@@ -109,28 +109,28 @@ class NutTile2D(TileBase):
 
             left = np.array(
                 [
-                    [-v_h_void + v_one_half, -v_inner_c_h + v_one_half],
                     [v_zero, v_zero],
-                    [-v_h_void + v_one_half, v_inner_c_h + v_one_half],
+                    [-v_h_void + v_one_half, -v_inner_c_h + v_one_half],
                     [v_zero, v_one],
+                    [-v_h_void + v_one_half, v_inner_c_h + v_one_half],
                 ]
             )
 
             top_left = np.array(
                 [
-                    [-v_h_void + v_one_half, v_inner_c_h + v_one_half],
                     [v_zero, v_one],
-                    [-v_inner_c_h + v_one_half, v_h_void + v_one_half],
+                    [-v_h_void + v_one_half, v_inner_c_h + v_one_half],
                     [-v_outer_c_h + v_one_half, v_one],
+                    [-v_inner_c_h + v_one_half, v_h_void + v_one_half],
                 ]
             )
 
             bottom = np.array(
                 [
-                    [v_inner_c_h + v_one_half, -v_h_void + v_one_half],
                     [v_outer_c_h + v_one_half, v_zero],
-                    [-v_inner_c_h + v_one_half, -v_h_void + v_one_half],
+                    [v_inner_c_h + v_one_half, -v_h_void + v_one_half],
                     [-v_outer_c_h + v_one_half, v_zero],
+                    [-v_inner_c_h + v_one_half, -v_h_void + v_one_half],
                 ]
             )
 
@@ -182,28 +182,28 @@ class NutTile2D(TileBase):
 
             left = np.array(
                 [
-                    [-v_h_void + v_one_half, -v_inner_c_h + v_one_half],
                     [v_zero, -v_outer_c_h + v_one_half],
-                    [-v_h_void + v_one_half, v_inner_c_h + v_one_half],
+                    [-v_h_void + v_one_half, -v_inner_c_h + v_one_half],
                     [v_zero, v_outer_c_h + v_one_half],
+                    [-v_h_void + v_one_half, v_inner_c_h + v_one_half],
                 ]
             )
 
             top_left = np.array(
                 [
-                    [-v_h_void + v_one_half, v_inner_c_h + v_one_half],
                     [v_zero, v_outer_c_h + v_one_half],
-                    [-v_inner_c_h + v_one_half, v_h_void + v_one_half],
+                    [-v_h_void + v_one_half, v_inner_c_h + v_one_half],
                     [-v_outer_c_h + v_one_half, v_one],
+                    [-v_inner_c_h + v_one_half, v_h_void + v_one_half],
                 ]
             )
 
             bottom = np.array(
                 [
-                    [v_inner_c_h + v_one_half, -v_h_void + v_one_half],
                     [v_outer_c_h + v_one_half, v_zero],
-                    [-v_inner_c_h + v_one_half, -v_h_void + v_one_half],
+                    [v_inner_c_h + v_one_half, -v_h_void + v_one_half],
                     [-v_outer_c_h + v_one_half, v_zero],
+                    [-v_inner_c_h + v_one_half, -v_h_void + v_one_half],
                 ]
             )
 
@@ -256,28 +256,28 @@ class NutTile2D(TileBase):
 
             left = np.array(
                 [
-                    [-v_h_void + v_one_half, -v_inner_c_h + v_one_half],
                     [v_zero, -v_outer_c_h + v_one_half],
-                    [-v_h_void + v_one_half, v_inner_c_h + v_one_half],
+                    [-v_h_void + v_one_half, -v_inner_c_h + v_one_half],
                     [v_zero, v_outer_c_h + v_one_half],
+                    [-v_h_void + v_one_half, v_inner_c_h + v_one_half],
                 ]
             )
 
             top_left = np.array(
                 [
-                    [-v_h_void + v_one_half, v_inner_c_h + v_one_half],
                     [v_zero, v_outer_c_h + v_one_half],
-                    [-v_inner_c_h + v_one_half, v_h_void + v_one_half],
+                    [-v_h_void + v_one_half, v_inner_c_h + v_one_half],
                     [-v_outer_c_h + v_one_half, v_one],
+                    [-v_inner_c_h + v_one_half, v_h_void + v_one_half],
                 ]
             )
 
             bottom = np.array(
                 [
-                    [v_inner_c_h + v_one_half, -v_h_void + v_one_half],
                     [v_one, v_zero],
-                    [-v_inner_c_h + v_one_half, -v_h_void + v_one_half],
+                    [v_inner_c_h + v_one_half, -v_h_void + v_one_half],
                     [v_zero, v_zero],
+                    [-v_inner_c_h + v_one_half, -v_h_void + v_one_half],
                 ]
             )
 
@@ -330,28 +330,28 @@ class NutTile2D(TileBase):
 
             left = np.array(
                 [
-                    [-v_h_void + v_one_half, -v_inner_c_h + v_one_half],
                     [v_zero, -v_outer_c_h + v_one_half],
-                    [-v_h_void + v_one_half, v_inner_c_h + v_one_half],
+                    [-v_h_void + v_one_half, -v_inner_c_h + v_one_half],
                     [v_zero, v_outer_c_h + v_one_half],
+                    [-v_h_void + v_one_half, v_inner_c_h + v_one_half],
                 ]
             )
 
             top_left = np.array(
                 [
-                    [-v_h_void + v_one_half, v_inner_c_h + v_one_half],
                     [v_zero, v_outer_c_h + v_one_half],
-                    [-v_inner_c_h + v_one_half, v_h_void + v_one_half],
+                    [-v_h_void + v_one_half, v_inner_c_h + v_one_half],
                     [v_zero, v_one],
+                    [-v_inner_c_h + v_one_half, v_h_void + v_one_half],
                 ]
             )
 
             bottom = np.array(
                 [
-                    [v_inner_c_h + v_one_half, -v_h_void + v_one_half],
                     [v_outer_c_h + v_one_half, v_zero],
-                    [-v_inner_c_h + v_one_half, -v_h_void + v_one_half],
+                    [v_inner_c_h + v_one_half, -v_h_void + v_one_half],
                     [-v_outer_c_h + v_one_half, v_zero],
+                    [-v_inner_c_h + v_one_half, -v_h_void + v_one_half],
                 ]
             )
 
