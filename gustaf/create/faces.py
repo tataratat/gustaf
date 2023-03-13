@@ -98,7 +98,6 @@ def tosimplex(quad, backslash=False):
         )
 
     if quad.whatami.startswith("quad"):
-
         # split variants
         split_slash = [[0, 1, 2], [2, 3, 0]]
         split_backslash = [[0, 1, 3], [3, 1, 2]]

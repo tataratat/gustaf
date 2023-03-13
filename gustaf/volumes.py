@@ -66,7 +66,6 @@ class VolumesShowOption(helpers.options.ShowOption):
 
 
 class Volumes(Faces):
-
     kind = "volume"
 
     const_faces = helpers.raise_if.invalid_inherited_attr(
