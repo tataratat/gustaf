@@ -19,11 +19,13 @@ from gustaf.spline.microstructure.tiles.inversecrosstile3d import (
     InverseCrossTile3D,
 )
 from gustaf.spline.microstructure.tiles.nuttile2d import NutTile2D
+from gustaf.spline.microstructure.tiles.nuttile3d import NutTile3D
 from gustaf.spline.microstructure.tiles.tilebase import TileBase
 
 __all__ = [
     "tilebase",
     "NutTile2D",
+    "NutTile3D",
     "crosstile3d",
     "crosstile2d",
     "inversecrosstile3d",
