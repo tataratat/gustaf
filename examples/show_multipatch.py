@@ -39,7 +39,7 @@ multipatch.boundaries_from_continuity()
 multipatch.show(
     boundary_ids=True, knots=False, control_points=False, resolutions=4
 )
-multipatch.boundary_from_function(split_plane, mask=[1, 2])
+multipatch.boundary_from_function(split_plane, from_boundaries=[1, 2])
 multipatch.show(
     boundary_ids=True,
     knots=False,

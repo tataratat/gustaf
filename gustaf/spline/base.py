@@ -603,7 +603,7 @@ class Multipatch(GustafBase, splinepy.Multipatch):
         # Retrieve show options out of valid options
         spline_list = self.splines.copy()
         if kwargs.get("boundary_ids", False):
-            bsp = self.boundary_patches().splines
+            bsp = self.boundary_patches
             bsp_id = np.abs(self.interfaces[self.interfaces < 0])
 
             # Create a custom color-map

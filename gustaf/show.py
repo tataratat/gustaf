@@ -209,7 +209,7 @@ def _vedo_showable(obj, as_dict=False, **kwargs):
     -----------
     obj: gustaf obj
     as_dict: bool
-      If True, returns vedo objects in a dict. Corresponding main objecst will
+      If True, returns vedo objects in a dict. Corresponding main object will
       be available with ["main"] key. Else, returns vedo.Assembly object,
       where all the objects are grouped together.
     **kwargs: kwargs
@@ -236,7 +236,7 @@ def _vedo_showable(obj, as_dict=False, **kwargs):
                 )
                 continue
 
-    # minimal-initalization of vedo objects
+    # minimal-initialization of vedo objects
     vedo_obj = obj.show_options._initialize_showable()
     # as dict?
     if as_dict:
@@ -268,7 +268,7 @@ def _vedo_showable(obj, as_dict=False, **kwargs):
             )
             element_ids = False
     if vertex_ids:
-        # use vtk font. supposedly faster. And differs from cellid.
+        # use vtk font. supposedly faster. And differs from cell id.
         vertex_ids = vedo_obj.labels("id", on="points", font="VTK")
         if not as_dict:
             vedo_obj += vertex_ids
@@ -298,7 +298,7 @@ def _vedo_showable(obj, as_dict=False, **kwargs):
         cmap_keys = ("vmin", "vmax")
         cmap_kwargs = obj.show_options[cmap_keys]
         # set adefault cmap if needed
-        cmap_kwargs["cname"] = obj.show_options.get("cmap", "plasma")
+        cmap_kwargs["input_cmap"] = obj.show_options.get("cmap", "plasma")
         cmap_kwargs["alpha"] = obj.show_options.get("cmapalpha", 1)
         # add dataname
         cmap_kwargs["input_array"] = dataname
