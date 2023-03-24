@@ -1,7 +1,8 @@
 import gustaf as gus
 
 if __name__ == "__main__":
-    gus.utils.log.configure(debug=True)
+    # Add the following line to your script to enable logging
+    # gus.utils.log.configure(debug=True)
 
     # Lets start with a 2D example
     gus.utils.log.info(

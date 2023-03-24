@@ -4,7 +4,7 @@ import gustaf as gus
 
 if __name__ == "__main__":
     # turn on debug logs
-    gus.utils.log.configure(debug=True)
+    # gus.utils.log.configure(debug=True)
 
     # curve
     # define degrees
