@@ -407,7 +407,7 @@ class Microstructure(GustafBase):
                     index = i
                     for ipd in range(closing_face_dim):
                         index -= index % element_resolutions[ipd]
-                        index /= element_resolutions[ipd]
+                        index = int(index/element_resolutions[ipd])
                     index = index % element_resolutions[closing_face_dim]
                     if index == 0:
                         # Closure at minimum id

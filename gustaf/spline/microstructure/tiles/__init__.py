@@ -20,7 +20,7 @@ from gustaf.spline.microstructure.tiles.inversecrosstile3d import (
     InverseCrossTile3D,
 )
 from gustaf.spline.microstructure.tiles.nuttile2d import NutTile2D
-from gustaf.spline.microstructure.tiles.nuttile3d import NutTile3D
+from gustaf.spline.microstructure.tiles.snappytile import SnappyTile
 from gustaf.spline.microstructure.tiles.tilebase import TileBase
 
 __all__ = [
@@ -29,12 +29,14 @@ __all__ = [
     "NutTile3D",
     "Armadillo",
     "crosstile3d",
+    "snappytile",
     "crosstile2d",
     "inversecrosstile3d",
     "double_lattice_tile",
     "TileBase",
     "CrossTile3D",
     "CrossTile2D",
+    "SnappyTile",
     "InverseCrossTile3D",
     "DoubleLatticeTile",
 ]
