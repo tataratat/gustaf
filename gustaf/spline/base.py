@@ -6,16 +6,21 @@ from copy import deepcopy
 
 import numpy as np
 import splinepy
-from vedo import build_lut
 
 from gustaf import show as showmodule
 from gustaf import utils
 from gustaf._base import GustafBase
 from gustaf.helpers.data import SplineData
+from gustaf.helpers.raise_if import ModuleImportRaiser
 from gustaf.spline import visualize
 from gustaf.spline.create import Creator
 from gustaf.spline.extract import Extractor
 from gustaf.spline.proximity import Proximity
+
+try:
+    from vedo import build_lut
+except ImportError as e:
+    build_lut = ModuleImportRaiser("vedo", e)
 
 
 def show(spline, **kwargs):
@@ -105,7 +110,7 @@ class GustafSpline(GustafBase):
     __show_option__ = visualize.SplineShowOption
 
     def __init__(self):
-        """Contructor as abstractmethod.
+        """Constructor as abstractmethod.
 
         This needs to be inherited first to make sure duplicating
         functions properly override splinepy.Spline
@@ -154,7 +159,7 @@ class GustafSpline(GustafBase):
 
         Examples
         ---------
-        >>> splinefaces = spline.extract.faces()
+        >>> spline_faces = spline.extract.faces()
 
         Parameters
         -----------
@@ -615,10 +620,10 @@ class Multipatch(GustafBase, splinepy.Multipatch):
                 ),
                 (3, -1),
             ).T
-            colorlist = [
+            color_list = [
                 (i + 0.5, rgb_color_list[i, :]) for i in range(max_id + 1)
             ]
-            lut = build_lut(colorlist)
+            lut = build_lut(color_list)
 
             for patch, id in zip(bsp, bsp_id):
                 patch.splinedata["bid" + str(id)] = BSpline(
