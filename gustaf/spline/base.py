@@ -148,9 +148,9 @@ class GustafSpline(GustafBase):
 
     @property
     def extract(self):
-        """Returns spline extracter. Can directly perform extractions available
+        """Returns spline extractor. Can directly perform extractions available
         at `gustaf/spline/extract.py`. For more info, take a look at
-        `gustaf/spline/extract.py`: Extracter.
+        `gustaf/spline/extract.py`: Extractor.
 
         Examples
         ---------
@@ -162,7 +162,7 @@ class GustafSpline(GustafBase):
 
         Returns
         --------
-        spline_extracter: Extracter
+        spline_extractor: Extractor
         """
         return self._extractor
 
@@ -565,11 +565,11 @@ class Multipatch(GustafBase, splinepy.Multipatch):
         splines : list-like
           List of splines to store as multipatch
         interfaces : array-like
-          Defines the connectivity inbetween patches
+          Defines the connectivity in between patches
         as_boundary : bool
           Multipatch is a boundary object of a higher dimensional geometry. If
           set to true, additional checks are performed on the interfaces,
-          requiring strict interconnectivity between all patches
+          requiring strict inter connectivity between all patches
 
         Returns
         -------

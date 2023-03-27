@@ -72,7 +72,7 @@ def show_vedo(
     # vedo plotter parameter
     N = len(args)
     offs = kwargs.get("offscreen", False)
-    interac = kwargs.get("interactive", True)
+    interact = kwargs.get("interactive", True)
     plt = kwargs.get("vedoplot", None)
     skip_clear = kwargs.get("skip_clear", False)
     close = kwargs.get("close", None)
@@ -142,11 +142,11 @@ def show_vedo(
             )
             showlist = [arg]
 
-        # quickcheck if the list is gustaf or non-gustaf
+        # quick check if the list is gustaf or non-gustaf
         # if gustaf, make it vedo-showable.
         # if there's spline, we need to pop the element and
         # extend showables to the list.
-        # A showlist is a list to be plotted into a single subframe of the
+        # A ShowList is a list to be plotted into a single sub frame of the
         # plot
         list_of_showables = []
         for sl in showlist:
@@ -172,7 +172,7 @@ def show_vedo(
             plt.show(
                 list_of_showables,
                 at=i,
-                interactive=interac,
+                interactive=interact,
                 camera=cam_tuple_to_list(cam),
                 # offscreen=offs,
             )
@@ -186,7 +186,7 @@ def show_vedo(
                 # offscreen=offs,
             )
 
-    if interac and not offs:
+    if interact and not offs:
         # only way to ensure memory is released
         clear_vedoplotter(plt, np.prod(plt.shape))
 
@@ -297,7 +297,7 @@ def _vedo_showable(obj, as_dict=False, **kwargs):
         # form cmap kwargs for init
         cmap_keys = ("vmin", "vmax")
         cmap_kwargs = obj.show_options[cmap_keys]
-        # set adefault cmap if needed
+        # set a default cmap if needed
         cmap_kwargs["input_cmap"] = obj.show_options.get("cmap", "plasma")
         cmap_kwargs["alpha"] = obj.show_options.get("cmapalpha", 1)
         # add dataname
@@ -383,7 +383,7 @@ def make_showable(obj, backend=settings.VISUALIZATION_BACKEND, **kwargs):
     """Since gustaf does not natively support visualization, one of the
     following library is used to visualize gustaf (visualizable) objects: (1)
     vedo -> Fast, offers a lot of features (2) trimesh -> Fast, compatible with
-    old opengl (3) matplotlib -> Slow, offers vector graphics.
+    old OpenGL (3) matplotlib -> Slow, offers vector graphics.
 
     This determines showing types using `whatami`.
 
@@ -396,7 +396,7 @@ def make_showable(obj, backend=settings.VISUALIZATION_BACKEND, **kwargs):
 
     Returns
     --------
-    showalbe_objs: list
+    showable_objs: list
       List of showable objects.
     """
     if backend.startswith("vedo"):

@@ -146,7 +146,7 @@ generator.tiling = [3, 3, 5]
 generator.parametrization_function = foo
 
 microstructure = generator.create(
-    closing_face="z", seperator_distance=0.4, center_expansion=1.3
+    closing_face="z", separator_distance=0.4, center_expansion=1.3
 )
 
 

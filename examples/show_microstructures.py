@@ -50,7 +50,7 @@ generator.show(
     use_saved=True,
     knots=True,
     control_points=False,
-    title="2D Crosstile Parametrized Microstructure",
+    title="2D CrossTile Parametrized Microstructure",
 )
 
 # Third test
@@ -100,7 +100,7 @@ generator.deformation_function = gus.Bezier(
 generator.microtile = gus.spline.microstructure.tiles.CrossTile3D()
 generator.tiling = [2, 2, 3]
 generator.show(
-    control_points=False, resolutions=2, title="3D Crosstile Microstructure"
+    control_points=False, resolutions=2, title="3D CrossTile Microstructure"
 )
 
 # Fifth test
@@ -156,13 +156,13 @@ generator.tiling = [3, 3, 5]
 generator.parametrization_function = foo
 
 inverse_microstructure = generator.create(
-    closing_face="z", seperator_distance=0.4, center_expansion=1.3
+    closing_face="z", separator_distance=0.4, center_expansion=1.3
 )
 
 # Plot the results
 _, showables_inverse = generator.show(
     closing_face="z",
-    seperator_distance=0.4,
+    separator_distance=0.4,
     center_expansion=1.3,
     title="Parametrized Inverse Microstructure",
     control_points=False,
@@ -174,7 +174,7 @@ _, showables_inverse = generator.show(
 # Corresponding Structure
 generator.microtile = gus.spline.microstructure.tiles.CrossTile3D()
 microstructure = generator.create(
-    closing_face="z", seperator_distance=0.4, center_expansion=1.3
+    closing_face="z", separator_distance=0.4, center_expansion=1.3
 )
 _, showables = generator.show(
     closing_face="z",
