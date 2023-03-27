@@ -190,10 +190,6 @@ class DataHolder(GustafBase):
     def __init__(self, helpee):
         """Base class for any data holder. Behaves similar to dict.
 
-        Attributes
-        -----------
-        None
-
         Parameters
         -----------
         helpee: object
@@ -209,10 +205,6 @@ class DataHolder(GustafBase):
         -----------
         key: str
         value: object
-
-        Returns
-        --------
-        None
         """
         raise NotImplementedError(
             "Sorry, you can't set items directly for "
@@ -254,14 +246,6 @@ class DataHolder(GustafBase):
     def clear(self):
         """
         Clears saved data by reassigning new dict
-
-        Parameters
-        ----------
-        None
-
-        Returns
-        -------
-        None
         """
         self._saved = dict()
 
@@ -287,10 +271,6 @@ class DataHolder(GustafBase):
     def keys(self):
         """Returns keys of data holding dict.
 
-        Parameters
-        -----------
-        None
-
         Returns
         --------
         keys: dict_keys
@@ -300,10 +280,6 @@ class DataHolder(GustafBase):
     def values(self):
         """Returns values of data holding dict.
 
-        Parameters
-        -----------
-        None
-
         Returns
         --------
         values: dict_values
@@ -312,10 +288,6 @@ class DataHolder(GustafBase):
 
     def items(self):
         """Returns items of data holding dict.
-
-        Parameters
-        -----------
-        None
 
         Returns
         --------
@@ -331,12 +303,10 @@ class ComputedData(DataHolder):
     __slots__ = ()
 
     def __init__(self, helpee, **kwargs):
-        """Stores last computed values. Keys are expected to be the same as
-        helpee's function that computes the value.
+        """Stores last computed values.
 
-        Attributes
-        -----------
-        None
+        Keys are expected to be the same as helpee's function that computes the
+         value.
 
         Parameters
         -----------
@@ -451,17 +421,12 @@ class VertexData(DataHolder):
     __slots__ = ()
 
     def __init__(self, helpee):
-        """
-        Checks if helpee has vertices as attr beforehand.
+        """Checks if helpee has vertices as attr beforehand.
 
         Parameters
         ----------
         helpee: Vertices
           Vertices and its derived classes.
-
-        Returns
-        -------
-        None
         """
         if not hasattr(helpee, "vertices"):
             raise AttributeError("Helpee does not have `vertices`.")
@@ -469,8 +434,8 @@ class VertexData(DataHolder):
         super().__init__(helpee)
 
     def _validate_len(self, value=None, raise_=True):
-        """
-        Checks if given value is a valid vertexdata based of its length.
+        """Checks if given value is a valid vertexdata based of its length.
+
         If raise_, throws error, else, deletes all incompatible values.
         Only checks len(). If array has (1, len) shape, this will still return
         False.
@@ -525,7 +490,7 @@ class VertexData(DataHolder):
 
     def __setitem__(self, key, value):
         """
-        Performs len() based check before stroing vertexdata.
+        Performs len() based check before storing vertexdata.
 
         Parameters
         ----------
@@ -706,10 +671,10 @@ class SplineDataAdaptor(GustafBase):
                         "Data cannot be represented at specified locations."
                         "Requires one of the following requirements: "
                         "1) is a spline derived from splinepy's spline; "
-                        "2) data has `data.evalauate()`; "
+                        "2) data has `data.evaluate()`; "
                         "3) length of the data and location should match."
                     )
-            # location is sepcified, meaning we don't need sample()
+            # location is specified, meaning we don't need sample()
             return None
 
         # can call sample or has a function?
