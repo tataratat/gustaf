@@ -2,9 +2,15 @@
 
 Classes to help organize options.
 """
-import vedo
+from typing import Any
 
 from gustaf import settings
+from gustaf.helpers.raise_if import ModuleImportRaiser
+
+try:
+    import vedo
+except ImportError as e:
+    vedo = ModuleImportRaiser("vedo", e)
 
 
 class Option:
@@ -72,10 +78,7 @@ vedo_common_options = (
         "vedo",
         "cmap",
         "Colormap for vertexdata plots.",
-        (
-            str,
-            type(vedo.build_lut(())),
-        ),
+        (str, Any),
     ),
     Option("vedo", "vmin", "Minimum value for cmap", (float, int)),
     Option("vedo", "vmax", "Maximum value for cmap", (float, int)),
@@ -156,7 +159,7 @@ def make_valid_options(*options):
 class ShowOption:
     """
     Behaves similar to dict, but will only accept a set of options that's
-    applicable to the helpee class. Intented use is to create a
+    applicable to the helpee class. Intended use is to create a
     subclass that would define valid options for helpee.
     Options should be described by Option object.
     Helps all the way up to initializing backend showables up to their backend
