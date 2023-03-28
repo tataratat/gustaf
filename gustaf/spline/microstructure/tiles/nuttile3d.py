@@ -21,11 +21,11 @@ class NutTile3D(TileBase):
         self._parameter_space_dimension = 1
 
     def create_tile(
-            self,
-            parameters=None,
-            parameter_sensitivities=None,
-            contact_length=0.2,
-            **kwargs
+        self,
+        parameters=None,
+        parameter_sensitivities=None,
+        contact_length=0.2,
+        **kwargs
     ):
         """Create a microtile based on the parameters that describe the wall
         thicknesses.
@@ -77,14 +77,13 @@ class NutTile3D(TileBase):
         right = np.array(
             [
                 [v_h_void + v_one_half, -v_inner_c_h + v_one_half, v_zero],
-                [v_one, -v_outer_c_h + v_one_half, 0.],
-                [v_h_void + v_one_half, v_inner_c_h + v_one_half, 0.],
-                [v_one, v_outer_c_h + v_one_half, 0.],
+                [v_one, -v_outer_c_h + v_one_half, 0.0],
+                [v_h_void + v_one_half, v_inner_c_h + v_one_half, 0.0],
+                [v_one, v_outer_c_h + v_one_half, 0.0],
                 [v_h_void + v_one_half, -v_inner_c_h + v_one_half, v_one],
                 [v_one, -v_outer_c_h + v_one_half, v_one],
                 [v_h_void + v_one_half, v_inner_c_h + v_one_half, v_one],
                 [v_one, v_outer_c_h + v_one_half, v_one],
-
             ]
         )
 
@@ -179,15 +178,17 @@ class NutTile3D(TileBase):
             ]
         )
 
-
-
-        spline_list.append(base.Bezier(degrees=[1, 1, 1], control_points=right))
+        spline_list.append(
+            base.Bezier(degrees=[1, 1, 1], control_points=right)
+        )
 
         spline_list.append(
             base.Bezier(degrees=[1, 1, 1], control_points=right_top)
         )
 
-        spline_list.append(base.Bezier(degrees=[1, 1, 1], control_points=bottom))
+        spline_list.append(
+            base.Bezier(degrees=[1, 1, 1], control_points=bottom)
+        )
 
         spline_list.append(
             base.Bezier(degrees=[1, 1, 1], control_points=bottom_left)
@@ -208,13 +209,12 @@ class NutTile3D(TileBase):
         return spline_list
 
 
-
 def closing_tile(
-        self,
-        parameters=None,
-        parameter_sensitivities=None,
-        contact_length=0.2,
-        closure=None,
+    self,
+    parameters=None,
+    parameter_sensitivities=None,
+    contact_length=0.2,
+    closure=None,
 ):
     """Create a closing tile to match with closed surface.
 
@@ -560,21 +560,15 @@ def closing_tile(
 
     spline_list.append(base.Bezier(degrees=[1, 1], control_points=right))
 
-    spline_list.append(
-        base.Bezier(degrees=[1, 1], control_points=right_top)
-    )
+    spline_list.append(base.Bezier(degrees=[1, 1], control_points=right_top))
 
     spline_list.append(base.Bezier(degrees=[1, 1], control_points=bottom))
 
-    spline_list.append(
-        base.Bezier(degrees=[1, 1], control_points=bottom_left)
-    )
+    spline_list.append(base.Bezier(degrees=[1, 1], control_points=bottom_left))
 
     spline_list.append(base.Bezier(degrees=[1, 1], control_points=left))
 
-    spline_list.append(
-        base.Bezier(degrees=[1, 1], control_points=top_left)
-    )
+    spline_list.append(base.Bezier(degrees=[1, 1], control_points=top_left))
 
     spline_list.append(base.Bezier(degrees=[1, 1], control_points=top))
 

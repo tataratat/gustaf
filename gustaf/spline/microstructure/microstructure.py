@@ -223,6 +223,10 @@ class Microstructure(GustafBase):
 
     @parameter_sensitivity_function.setter
     def parameter_sensitivity_function(self, parameter_sensitivity_function):
+        if parameter_sensitivity_function is None:
+            self._parameter_sensitivity_function = None
+            self._sanity_check()
+            return
         if not callable(parameter_sensitivity_function):
             raise TypeError("parametrization_function must be callable")
         self._parameter_sensitivity_function = parameter_sensitivity_function
@@ -360,9 +364,11 @@ class Microstructure(GustafBase):
                 control_points=np.ascontiguousarray(parametric_corners),
             ).bspline
             for i_pd in range(deformation_function_copy.para_dim):
-                def_fun_para_space.insert_knots(
-                    i_pd, deformation_function_copy.unique_knots[i_pd][1:-1]
-                )
+                if len(deformation_function_copy.unique_knots[i_pd][1:-1]) > 0:
+                    def_fun_para_space.insert_knots(
+                        i_pd,
+                        deformation_function_copy.unique_knots[i_pd][1:-1],
+                    )
             def_fun_para_space = def_fun_para_space.extract.beziers()
 
         # Determine element resolution
@@ -407,7 +413,7 @@ class Microstructure(GustafBase):
                     index = i
                     for ipd in range(closing_face_dim):
                         index -= index % element_resolutions[ipd]
-                        index = int(index/element_resolutions[ipd])
+                        index = int(index / element_resolutions[ipd])
                     index = index % element_resolutions[closing_face_dim]
                     if index == 0:
                         # Closure at minimum id

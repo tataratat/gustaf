@@ -6,11 +6,11 @@ from gustaf.spline.microstructure.tiles.tilebase import TileBase
 
 class SnappyTile(TileBase):
     def __init__(self):
-        """Snap-through tile consisting of a thin truss and a thick truss that 
+        """Snap-through tile consisting of a thin truss and a thick truss that
         collide into each other"""
         self._dim = 2
         # Dummy point
-        self._evaluation_points = np.array([[.5,.5]])
+        self._evaluation_points = np.array([[0.5, 0.5]])
         self._parameter_space_dimension = 1
 
     def closing_tile(
@@ -20,9 +20,10 @@ class SnappyTile(TileBase):
         closure=None,
         contact_length=0.1,
         a=0.1,
-                b=0.2,
-                        c=0.3,      
-                        r=0.15,  **kwargs
+        b=0.2,
+        c=0.3,
+        r=0.15,
+        **kwargs,
     ):
         """Create a closing tile to match with closed surface.
 
@@ -40,11 +41,12 @@ class SnappyTile(TileBase):
           the length of the wall that contacts neighboring microstructures
         a : float
           height/ thickness of the thinner/upper beam
-        b : float 
+        b : float
           height/ thickness of the lower/thicker beam
-        c : float 
-          offset to to the upper beam (for consistent snap-through must fullfil 2*c<1-b)
-        r : float 
+        c : float
+          offset to to the upper beam (for consistent snap-through must fullfil
+          2*c<1-b)
+        r : float
           'radius' of the cubic bezier
 
         Results
@@ -57,19 +59,19 @@ class SnappyTile(TileBase):
         spline_list = []
         v_zero = 0.0
         v_one_half = 0.5
-        v_one = 1.0  
-        cl_2 = contact_length * .5
-        cl_2_inv = 1-contact_length * .5
+        v_one = 1.0
+        cl_2 = contact_length * 0.5
+        cl_2_inv = 1 - contact_length * 0.5
         a_inv = v_one - a
-        
+
         if closure == "y_min":
             # set points:
             spline_1 = np.array(
                 [
-                    [v_zero,v_zero],
-                    [cl_2,v_zero],
-                    [v_zero,b],
-                    [cl_2,b],
+                    [v_zero, v_zero],
+                    [cl_2, v_zero],
+                    [v_zero, b],
+                    [cl_2, b],
                 ]
             )
 
@@ -78,10 +80,10 @@ class SnappyTile(TileBase):
             )
             spline_2 = np.array(
                 [
-                    [cl_2_inv,v_zero],
-                    [v_one,v_zero],
-                    [cl_2_inv,b],
-                    [v_one,b],
+                    [cl_2_inv, v_zero],
+                    [v_one, v_zero],
+                    [cl_2_inv, b],
+                    [v_one, b],
                 ]
             )
 
@@ -90,10 +92,10 @@ class SnappyTile(TileBase):
             )
             spline_3 = np.array(
                 [
-                    [v_zero,a_inv],
-                    [cl_2,a_inv],
-                    [v_zero,v_one],
-                    [cl_2,v_one],
+                    [v_zero, a_inv],
+                    [cl_2, a_inv],
+                    [v_zero, v_one],
+                    [cl_2, v_one],
                 ]
             )
 
@@ -102,10 +104,10 @@ class SnappyTile(TileBase):
             )
             spline_4 = np.array(
                 [
-                    [cl_2_inv,a_inv],
-                    [v_one,a_inv],
-                    [cl_2_inv,v_one],
-                    [v_one,v_one],
+                    [cl_2_inv, a_inv],
+                    [v_one, a_inv],
+                    [cl_2_inv, v_one],
+                    [v_one, v_one],
                 ]
             )
 
@@ -113,12 +115,12 @@ class SnappyTile(TileBase):
                 base.Bezier(degrees=[1, 1], control_points=spline_4)
             )
 
-            spline_5 =  np.array(
+            spline_5 = np.array(
                 [
-                    [v_one_half - cl_2,v_zero],
-                    [v_one_half + cl_2,v_zero],
-                    [v_one_half - cl_2,v_one_half],
-                    [v_one_half + cl_2,v_one_half],
+                    [v_one_half - cl_2, v_zero],
+                    [v_one_half + cl_2, v_zero],
+                    [v_one_half - cl_2, v_one_half],
+                    [v_one_half + cl_2, v_one_half],
                 ]
             )
 
@@ -126,12 +128,12 @@ class SnappyTile(TileBase):
                 base.Bezier(degrees=[1, 1], control_points=spline_5)
             )
 
-            spline_6 =  np.array(
+            spline_6 = np.array(
                 [
-                    [v_one_half - cl_2,v_one_half],
-                    [v_one_half + cl_2,v_one_half],
-                    [v_one_half - cl_2,v_one_half + a],
-                    [v_one_half + cl_2,v_one_half + a],
+                    [v_one_half - cl_2, v_one_half],
+                    [v_one_half + cl_2, v_one_half],
+                    [v_one_half - cl_2, v_one_half + a],
+                    [v_one_half + cl_2, v_one_half + a],
                 ]
             )
 
@@ -139,16 +141,16 @@ class SnappyTile(TileBase):
                 base.Bezier(degrees=[1, 1], control_points=spline_6)
             )
 
-            spline_7 =  np.array(
+            spline_7 = np.array(
                 [
-                    [cl_2,v_zero],
-                    [cl_2 +r,v_zero],
-                    [v_one_half - cl_2-r,v_zero],
-                    [v_one_half - cl_2,v_zero],
-                    [cl_2,b],
-                    [cl_2 +r,b],
-                    [v_one_half - cl_2-r,v_one_half],
-                    [v_one_half - cl_2,v_one_half],
+                    [cl_2, v_zero],
+                    [cl_2 + r, v_zero],
+                    [v_one_half - cl_2 - r, v_zero],
+                    [v_one_half - cl_2, v_zero],
+                    [cl_2, b],
+                    [cl_2 + r, b],
+                    [v_one_half - cl_2 - r, v_one_half],
+                    [v_one_half - cl_2, v_one_half],
                 ]
             )
 
@@ -156,33 +158,33 @@ class SnappyTile(TileBase):
                 base.Bezier(degrees=[3, 1], control_points=spline_7)
             )
 
-            spline_8 =  np.array(
+            spline_8 = np.array(
                 [
-                    [cl_2,v_zero],
-                    [cl_2 +r,v_zero],
-                    [v_one_half - cl_2-r,v_zero],
-                    [v_one_half - cl_2,v_zero],
-                    [cl_2,v_one_half],
-                    [cl_2 +r,v_one_half],
-                    [v_one_half - cl_2-r,b],
-                    [v_one_half - cl_2,b],
+                    [cl_2, v_zero],
+                    [cl_2 + r, v_zero],
+                    [v_one_half - cl_2 - r, v_zero],
+                    [v_one_half - cl_2, v_zero],
+                    [cl_2, v_one_half],
+                    [cl_2 + r, v_one_half],
+                    [v_one_half - cl_2 - r, b],
+                    [v_one_half - cl_2, b],
                 ]
-            ) + [v_one_half,v_zero]
+            ) + [v_one_half, v_zero]
 
             spline_list.append(
                 base.Bezier(degrees=[3, 1], control_points=spline_8)
             )
 
-            spline_9 =  np.array(
+            spline_9 = np.array(
                 [
-                    [cl_2,a_inv],
-                    [cl_2 +r,a_inv],
-                    [v_one_half - cl_2-r,v_one_half],
-                    [v_one_half - cl_2,v_one_half],
-                    [cl_2,v_one],
-                    [cl_2 +r,v_one],
-                    [v_one_half - cl_2-r,v_one_half+a],
-                    [v_one_half - cl_2,v_one_half+a],
+                    [cl_2, a_inv],
+                    [cl_2 + r, a_inv],
+                    [v_one_half - cl_2 - r, v_one_half],
+                    [v_one_half - cl_2, v_one_half],
+                    [cl_2, v_one],
+                    [cl_2 + r, v_one],
+                    [v_one_half - cl_2 - r, v_one_half + a],
+                    [v_one_half - cl_2, v_one_half + a],
                 ]
             )
 
@@ -190,18 +192,18 @@ class SnappyTile(TileBase):
                 base.Bezier(degrees=[3, 1], control_points=spline_9)
             )
 
-            spline_10 =  np.array(
+            spline_10 = np.array(
                 [
-                    [cl_2,v_one_half],
-                    [cl_2 +r,v_one_half],
-                    [v_one_half - cl_2-r,a_inv],
-                    [v_one_half - cl_2,a_inv],
-                    [cl_2,v_one_half + a],
-                    [cl_2 +r,v_one_half + a],
-                    [v_one_half - cl_2-r,v_one],
-                    [v_one_half - cl_2,v_one],
+                    [cl_2, v_one_half],
+                    [cl_2 + r, v_one_half],
+                    [v_one_half - cl_2 - r, a_inv],
+                    [v_one_half - cl_2, a_inv],
+                    [cl_2, v_one_half + a],
+                    [cl_2 + r, v_one_half + a],
+                    [v_one_half - cl_2 - r, v_one],
+                    [v_one_half - cl_2, v_one],
                 ]
-            ) + [v_one_half,v_zero]
+            ) + [v_one_half, v_zero]
 
             spline_list.append(
                 base.Bezier(degrees=[3, 1], control_points=spline_10)
@@ -210,10 +212,10 @@ class SnappyTile(TileBase):
         elif closure == "y_max":
             spline_1 = np.array(
                 [
-                    [v_zero,v_zero],
-                    [cl_2,v_zero],
-                    [v_zero,v_one],
-                    [cl_2,v_one],
+                    [v_zero, v_zero],
+                    [cl_2, v_zero],
+                    [v_zero, v_one],
+                    [cl_2, v_one],
                 ]
             )
             spline_list.append(
@@ -221,70 +223,73 @@ class SnappyTile(TileBase):
             )
             spline_2 = np.array(
                 [
-                    [cl_2_inv,v_zero],
-                    [v_one,v_zero],
-                    [cl_2_inv,v_one],
-                    [v_one,v_one],
+                    [cl_2_inv, v_zero],
+                    [v_one, v_zero],
+                    [cl_2_inv, v_one],
+                    [v_one, v_one],
                 ]
             )
             spline_list.append(
                 base.Bezier(degrees=[1, 1], control_points=spline_2)
             )
-            spline_3 =  np.array(
+            spline_3 = np.array(
                 [
-                    [v_one_half - cl_2,v_one_half - b],
-                    [v_one_half + cl_2,v_one_half - b],
-                    [v_one_half - cl_2,v_one],
-                    [v_one_half + cl_2,v_one],
+                    [v_one_half - cl_2, v_one_half - b],
+                    [v_one_half + cl_2, v_one_half - b],
+                    [v_one_half - cl_2, v_one],
+                    [v_one_half + cl_2, v_one],
                 ]
             )
             spline_list.append(
                 base.Bezier(degrees=[1, 1], control_points=spline_3)
             )
-            spline_4 =  np.array(
+            spline_4 = np.array(
                 [
-                    [cl_2,v_zero],
-                    [cl_2 +r,v_zero],
-                    [v_one_half - cl_2-r,v_one_half - b],
-                    [v_one_half - cl_2,v_one_half - b],
-                    [cl_2,v_one],
-                    [cl_2 +r,v_one],
-                    [v_one_half - cl_2-r,v_one],
-                    [v_one_half - cl_2,v_one],
+                    [cl_2, v_zero],
+                    [cl_2 + r, v_zero],
+                    [v_one_half - cl_2 - r, v_one_half - b],
+                    [v_one_half - cl_2, v_one_half - b],
+                    [cl_2, v_one],
+                    [cl_2 + r, v_one],
+                    [v_one_half - cl_2 - r, v_one],
+                    [v_one_half - cl_2, v_one],
                 ]
             )
             spline_list.append(
                 base.Bezier(degrees=[3, 1], control_points=spline_4)
             )
-            spline_5 =  np.array(
+            spline_5 = np.array(
                 [
-                    [cl_2,v_one_half - b],
-                    [cl_2 +r,v_one_half - b],
-                    [v_one_half - cl_2-r,v_zero],
-                    [v_one_half - cl_2,v_zero],
-                    [cl_2,v_one],
-                    [cl_2 +r,v_one],
-                    [v_one_half - cl_2-r,v_one],
-                    [v_one_half - cl_2,v_one],
+                    [cl_2, v_one_half - b],
+                    [cl_2 + r, v_one_half - b],
+                    [v_one_half - cl_2 - r, v_zero],
+                    [v_one_half - cl_2, v_zero],
+                    [cl_2, v_one],
+                    [cl_2 + r, v_one],
+                    [v_one_half - cl_2 - r, v_one],
+                    [v_one_half - cl_2, v_one],
                 ]
-            ) + [v_one_half,v_zero]
+            ) + [v_one_half, v_zero]
 
             spline_list.append(
                 base.Bezier(degrees=[3, 1], control_points=spline_5)
             )
             return spline_list
-        else : 
-            raise ValueError("Closing tile is only implemented for y-enclosure")
-            
+        else:
+            raise ValueError(
+                "Closing tile is only implemented for y-enclosure"
+            )
+
     def create_tile(
         self,
         parameters=None,
         parameter_sensitivities=None,
         contact_length=0.1,
         a=0.1,
-                b=0.2,
-                        c=0.3,      
-                        r=0.15,  **kwargs
+        b=0.2,
+        c=0.3,
+        r=0.15,
+        **kwargs,
     ):
         """Create a microtile based on the parameters that describe the wall
         thicknesses.
@@ -304,11 +309,12 @@ class SnappyTile(TileBase):
           the length of the wall that contacts neighboring microstructures
         a : float
           height/ thickness of the thinner/upper beam
-        b : float 
+        b : float
           height/ thickness of the lower/thicker beam
-        c : float 
-          offset to to the upper beam (for consistent snap-through must fullfil 2*c<1-b)
-        r : float 
+        c : float
+          offset to to the upper beam (for consistent snap-through must fullfil
+          2*c<1-b)
+        r : float
           'radius' of the cubic bezier
 
         Returns
@@ -316,28 +322,33 @@ class SnappyTile(TileBase):
         microtile_list : list(splines)
         """
 
-        for param in [a,b,c,r,contact_length]:
-          if not isinstance(param, float):
-              raise ValueError(f"Invalid Type, {param} is not float")
-          if param < 0:
-              raise ValueError("Invalid parameter, must be > 0.")
+        for param in [a, b, c, r, contact_length]:
+            if not isinstance(param, float):
+                raise ValueError(f"Invalid Type, {param} is not float")
+            if param < 0:
+                raise ValueError("Invalid parameter, must be > 0.")
 
         if not ((contact_length > 0) and (contact_length < 0.49)):
             raise ValueError("The length of a side must be in (0.01, 0.49)")
-        
+
         # Check horizontal parameters
         if not ((r + contact_length) < 0.5):
-            raise ValueError("Inconsistent parameters, must fullfil : 2*r + contact_length < 0.5")
-        
+            raise ValueError(
+                "Inconsistent parameters, must fullfil : 2*r + contact_length"
+                " < 0.5"
+            )
+
         # Check vertical parameters
-        if not (( 2*c + b) < 1.) or a>c:
-            raise ValueError("Inconsistent parameters, must be 2*c<1-c and a<c")
+        if not ((2 * c + b) < 1.0) or a > c:
+            raise ValueError(
+                "Inconsistent parameters, must be 2*c<1-c and a<c"
+            )
 
         v_zero = 0.0
         v_one_half = 0.5
-        v_one = 1.0  
-        cl_2 = contact_length * .5
-        cl_2_inv = 1-contact_length * .5
+        v_one = 1.0
+        cl_2 = contact_length * 0.5
+        cl_2_inv = 1 - contact_length * 0.5
         a_inv = v_one - a
 
         spline_list = []
@@ -345,10 +356,10 @@ class SnappyTile(TileBase):
         # set points:
         spline_1 = np.array(
             [
-                [v_zero,v_zero],
-                [cl_2,v_zero],
-                [v_zero,b],
-                [cl_2,b],
+                [v_zero, v_zero],
+                [cl_2, v_zero],
+                [v_zero, b],
+                [cl_2, b],
             ]
         )
 
@@ -357,10 +368,10 @@ class SnappyTile(TileBase):
         )
         spline_2 = np.array(
             [
-                [cl_2_inv,v_zero],
-                [v_one,v_zero],
-                [cl_2_inv,b],
-                [v_one,b],
+                [cl_2_inv, v_zero],
+                [v_one, v_zero],
+                [cl_2_inv, b],
+                [v_one, b],
             ]
         )
 
@@ -369,10 +380,10 @@ class SnappyTile(TileBase):
         )
         spline_3 = np.array(
             [
-                [v_zero,a_inv],
-                [cl_2,a_inv],
-                [v_zero,v_one],
-                [cl_2,v_one],
+                [v_zero, a_inv],
+                [cl_2, a_inv],
+                [v_zero, v_one],
+                [cl_2, v_one],
             ]
         )
 
@@ -381,10 +392,10 @@ class SnappyTile(TileBase):
         )
         spline_4 = np.array(
             [
-                [cl_2_inv,a_inv],
-                [v_one,a_inv],
-                [cl_2_inv,v_one],
-                [v_one,v_one],
+                [cl_2_inv, a_inv],
+                [v_one, a_inv],
+                [cl_2_inv, v_one],
+                [v_one, v_one],
             ]
         )
 
@@ -392,12 +403,12 @@ class SnappyTile(TileBase):
             base.Bezier(degrees=[1, 1], control_points=spline_4)
         )
 
-        spline_5 =  np.array(
+        spline_5 = np.array(
             [
-                [v_one_half - cl_2,v_one_half - b],
-                [v_one_half + cl_2,v_one_half - b],
-                [v_one_half - cl_2,v_one_half],
-                [v_one_half + cl_2,v_one_half],
+                [v_one_half - cl_2, v_one_half - b],
+                [v_one_half + cl_2, v_one_half - b],
+                [v_one_half - cl_2, v_one_half],
+                [v_one_half + cl_2, v_one_half],
             ]
         )
 
@@ -405,12 +416,12 @@ class SnappyTile(TileBase):
             base.Bezier(degrees=[1, 1], control_points=spline_5)
         )
 
-        spline_6 =  np.array(
+        spline_6 = np.array(
             [
-                [v_one_half - cl_2,v_one_half],
-                [v_one_half + cl_2,v_one_half],
-                [v_one_half - cl_2,v_one_half + a],
-                [v_one_half + cl_2,v_one_half + a],
+                [v_one_half - cl_2, v_one_half],
+                [v_one_half + cl_2, v_one_half],
+                [v_one_half - cl_2, v_one_half + a],
+                [v_one_half + cl_2, v_one_half + a],
             ]
         )
 
@@ -418,16 +429,16 @@ class SnappyTile(TileBase):
             base.Bezier(degrees=[1, 1], control_points=spline_6)
         )
 
-        spline_7 =  np.array(
+        spline_7 = np.array(
             [
-                [cl_2,v_zero],
-                [cl_2 +r,v_zero],
-                [v_one_half - cl_2-r,v_one_half - b],
-                [v_one_half - cl_2,v_one_half - b],
-                [cl_2,b],
-                [cl_2 +r,b],
-                [v_one_half - cl_2-r,v_one_half],
-                [v_one_half - cl_2,v_one_half],
+                [cl_2, v_zero],
+                [cl_2 + r, v_zero],
+                [v_one_half - cl_2 - r, v_one_half - b],
+                [v_one_half - cl_2, v_one_half - b],
+                [cl_2, b],
+                [cl_2 + r, b],
+                [v_one_half - cl_2 - r, v_one_half],
+                [v_one_half - cl_2, v_one_half],
             ]
         )
 
@@ -435,33 +446,33 @@ class SnappyTile(TileBase):
             base.Bezier(degrees=[3, 1], control_points=spline_7)
         )
 
-        spline_8 =  np.array(
+        spline_8 = np.array(
             [
-                [cl_2,v_one_half - b],
-                [cl_2 +r,v_one_half - b],
-                [v_one_half - cl_2-r,v_zero],
-                [v_one_half - cl_2,v_zero],
-                [cl_2,v_one_half],
-                [cl_2 +r,v_one_half],
-                [v_one_half - cl_2-r,b],
-                [v_one_half - cl_2,b],
+                [cl_2, v_one_half - b],
+                [cl_2 + r, v_one_half - b],
+                [v_one_half - cl_2 - r, v_zero],
+                [v_one_half - cl_2, v_zero],
+                [cl_2, v_one_half],
+                [cl_2 + r, v_one_half],
+                [v_one_half - cl_2 - r, b],
+                [v_one_half - cl_2, b],
             ]
-        ) + [v_one_half,v_zero]
+        ) + [v_one_half, v_zero]
 
         spline_list.append(
             base.Bezier(degrees=[3, 1], control_points=spline_8)
         )
 
-        spline_9 =  np.array(
+        spline_9 = np.array(
             [
-                [cl_2,a_inv],
-                [cl_2 +r,a_inv],
-                [v_one_half - cl_2-r,v_one_half],
-                [v_one_half - cl_2,v_one_half],
-                [cl_2,v_one],
-                [cl_2 +r,v_one],
-                [v_one_half - cl_2-r,v_one_half+a],
-                [v_one_half - cl_2,v_one_half+a],
+                [cl_2, a_inv],
+                [cl_2 + r, a_inv],
+                [v_one_half - cl_2 - r, v_one_half],
+                [v_one_half - cl_2, v_one_half],
+                [cl_2, v_one],
+                [cl_2 + r, v_one],
+                [v_one_half - cl_2 - r, v_one_half + a],
+                [v_one_half - cl_2, v_one_half + a],
             ]
         )
 
@@ -469,22 +480,21 @@ class SnappyTile(TileBase):
             base.Bezier(degrees=[3, 1], control_points=spline_9)
         )
 
-        spline_10 =  np.array(
+        spline_10 = np.array(
             [
-                [cl_2,v_one_half],
-                [cl_2 +r,v_one_half],
-                [v_one_half - cl_2-r,a_inv],
-                [v_one_half - cl_2,a_inv],
-                [cl_2,v_one_half + a],
-                [cl_2 +r,v_one_half + a],
-                [v_one_half - cl_2-r,v_one],
-                [v_one_half - cl_2,v_one],
+                [cl_2, v_one_half],
+                [cl_2 + r, v_one_half],
+                [v_one_half - cl_2 - r, a_inv],
+                [v_one_half - cl_2, a_inv],
+                [cl_2, v_one_half + a],
+                [cl_2 + r, v_one_half + a],
+                [v_one_half - cl_2 - r, v_one],
+                [v_one_half - cl_2, v_one],
             ]
-        ) + [v_one_half,v_zero]
+        ) + [v_one_half, v_zero]
 
         spline_list.append(
             base.Bezier(degrees=[3, 1], control_points=spline_10)
         )
-
 
         return spline_list
