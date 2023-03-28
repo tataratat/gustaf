@@ -88,7 +88,6 @@ def main():
 
 
 def define_mesh():
-
     v = np.array(
         [
             [0.0, 0.0],
