@@ -1,3 +1,5 @@
+import numpy as np
+
 from gustaf.spline import base
 
 
@@ -12,17 +14,7 @@ class TileBase(base.GustafBase):
         """
         self._dim = None
         self._evaluation_points = None
-        self._parameter_space_dimension = None
 
-    @property
-    def parameter_space_dimension(self):
-        """Number of parameters per evaluation point."""
-        if self._parameter_space_dimension is None:
-            raise TypeError(
-                "Inherited Tile-types need to provide "
-                "_parameter_space_dimension, see documentation."
-            )
-        return self._parameter_space_dimension
 
     @property
     def evaluation_points(self):
@@ -75,21 +67,16 @@ class TileBase(base.GustafBase):
         True: Boolean
         """
         # check if tuple
-        if not (isinstance(params, tuple)):
-            raise TypeError("parameters must be a Tuple with array as entries")
+
+        if not (isinstance(params, np.ndarray) and params.ndim == 1):
+            raise TypeError("parameters must be a array as entries")
         # check if the tuple has the correct number of entries
-        if not (len(params) == self._parameter_space_dimension):
-            raise TypeError(
-                f"Size mismatch in param, expected "
-                f"{self._parameter_space_dimension} "
-                f"entries got {len(params)} entries"
-            )
-        # check if all entries in the tuple has the correct length
-        if not (all([len(self._evaluation_points) == e.size for e in params])):
+
+            # check if all entries in the tuple has the correct length
+        if not ([len(self._evaluation_points) == e.size for e in params]):
             raise TypeError(
                 f"Mismatch amount of parameter entries, expected "
-                f"{self._evaluation_points}"
-            )
+                f"{self._evaluation_points}")
 
         return True
 
@@ -108,11 +95,11 @@ class TileBase(base.GustafBase):
         if derivatives is None:
             return False
 
-        if not (isinstance(derivatives, list)):
+        if not (isinstance(derivatives, np.ndarray) and derivatives.ndim == 2):
             raise TypeError(
                 f"The parameter_sensitives passed have the wrong "
                 "format. The expected format is list(tuple(np.ndarray)),"
-                f" found type({type(derivatives) })"
+                f" found type({type(derivatives)})"
             )
         for i in derivatives:
             self.check_params(i)
