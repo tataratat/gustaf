@@ -223,6 +223,10 @@ class Microstructure(GustafBase):
 
     @parameter_sensitivity_function.setter
     def parameter_sensitivity_function(self, parameter_sensitivity_function):
+        if parameter_sensitivity_function is None:
+            self._parameter_sensitivity_function = None
+            self._sanity_check()
+            return
         if not callable(parameter_sensitivity_function):
             raise TypeError("parametrization_function must be callable")
         self._parameter_sensitivity_function = parameter_sensitivity_function
@@ -255,6 +259,12 @@ class Microstructure(GustafBase):
             knot_span_wise = True
 
         # check if user wants closed structure
+        if (closing_face is not None) and (
+            not hasattr(self.microtile, "closing_tile")
+        ):
+            raise ValueError(
+                "Microtile does not provide closing tile definition"
+            )
         closing_face_dim = {"x": 0, "y": 1, "z": 2}.get(closing_face)
         is_closed = closing_face_dim is not None
         if not is_closed and (closing_face is not None):
@@ -291,7 +301,8 @@ class Microstructure(GustafBase):
                     continue
                 inv_t = 1 / self.tiling[i_pd]
                 new_knots = [
-                    j * inv_t * (ukvs[i_pd][i] - ukvs[i_pd][i - 1])
+                    ukvs[i_pd][i - 1]
+                    + j * inv_t * (ukvs[i_pd][i] - ukvs[i_pd][i - 1])
                     for i in range(1, len(ukvs[i_pd]))
                     for j in range(1, self.tiling[i_pd])
                 ]
@@ -351,9 +362,11 @@ class Microstructure(GustafBase):
                 control_points=np.ascontiguousarray(parametric_corners),
             ).bspline
             for i_pd in range(deformation_function_copy.para_dim):
-                def_fun_para_space.insert_knots(
-                    i_pd, deformation_function_copy.unique_knots[i_pd][1:-1]
-                )
+                if len(deformation_function_copy.unique_knots[i_pd][1:-1]) > 0:
+                    def_fun_para_space.insert_knots(
+                        i_pd,
+                        deformation_function_copy.unique_knots[i_pd][1:-1],
+                    )
             def_fun_para_space = def_fun_para_space.extract.beziers()
 
         # Determine element resolution
@@ -398,7 +411,7 @@ class Microstructure(GustafBase):
                     index = i
                     for ipd in range(closing_face_dim):
                         index -= index % element_resolutions[ipd]
-                        index /= element_resolutions[ipd]
+                        index = int(index / element_resolutions[ipd])
                     index = index % element_resolutions[closing_face_dim]
                     if index == 0:
                         # Closure at minimum id
@@ -409,7 +422,7 @@ class Microstructure(GustafBase):
                             **kwargs,
                         )
                     elif (index + 1) == element_resolutions[closing_face_dim]:
-                        # Closure at minimum id
+                        # Closure at maximum
                         tile = self._microtile.closing_tile(
                             parameters=tile_parameters,
                             parameter_sensitivities=tile_sensitivities,
