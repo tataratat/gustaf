@@ -14,7 +14,7 @@ class DoubleLatticeTile(TileBase):
                 [0.5, 0.5],
             ]
         )
-        self._parameter_space_dimension = 1
+        self._n_info_per_eval_point = 1
 
     def create_tile(
         self,
@@ -31,10 +31,10 @@ class DoubleLatticeTile(TileBase):
 
         Parameters
         ----------
-        parameters : tuple(np.array)
+        parameters : np.array
           only first entry is used, defines the internal radii of the
           branches
-        parameter_sensitivities: list(tuple(np.ndarray))
+        parameter_sensitivities: np.ndarray
           correlates with thickness of branches and entouring wall
         contact_length : double
           required for conformity between tiles, sets the length of the center
@@ -52,10 +52,10 @@ class DoubleLatticeTile(TileBase):
         # set to default if nothing is given
         if parameters is None:
             self._logd("Tile request is not parametrized, setting default 0.2")
-            parameters = tuple([np.ones(1) * 0.1])
+            parameters = np.ones(1) * 0.1
         else:
             if not (
-                np.all(parameters[0] > 0) and np.all(parameters[0] < 0.25)
+                np.all(parameters > 0) and np.all(parameters < 0.25)
             ):
                 raise ValueError("The parameter must be in 0.01 and 0.25")
             pass
@@ -63,7 +63,7 @@ class DoubleLatticeTile(TileBase):
 
         # Check if user requests derivative splines
         if self.check_param_derivatives(parameter_sensitivities):
-            n_derivatives = len(parameter_sensitivities)
+            n_derivatives = parameter_sensitivities.shape[2]
         else:
             n_derivatives = 0
 
@@ -73,13 +73,13 @@ class DoubleLatticeTile(TileBase):
             # Constant auxiliary values
             if i_derivative == 0:
                 cl = contact_length
-                pp = parameters[0][0]  # Should be the only one
+                pp = parameters[0]  # parameters.shape == [1]
                 v_one_half = 0.5
                 v_one = 1.0
                 v_zero = 0.0
             else:
                 cl = 0.0
-                pp = parameter_sensitivities[i_derivative - 1][0][0]
+                pp = parameter_sensitivities[0,0,i_derivative - 1]
                 v_one_half = 0.0
                 v_one = 0.0
                 v_zero = 0.0
