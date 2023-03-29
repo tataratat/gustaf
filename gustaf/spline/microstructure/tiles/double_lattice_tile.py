@@ -71,7 +71,7 @@ class DoubleLatticeTile(TileBase):
             # Constant auxiliary values
             if i_derivative == 0:
                 cl = contact_length
-                pp = parameters[0]  # parameters.shape == [1]
+                pp = parameters[0, 0]  # parameters.shape == [1]
                 v_one_half = 0.5
                 v_one = 1.0
                 v_zero = 0.0
