@@ -54,9 +54,7 @@ class DoubleLatticeTile(TileBase):
             self._logd("Tile request is not parametrized, setting default 0.2")
             parameters = np.ones(1) * 0.1
         else:
-            if not (
-                np.all(parameters > 0) and np.all(parameters < 0.25)
-            ):
+            if not (np.all(parameters > 0) and np.all(parameters < 0.25)):
                 raise ValueError("The parameter must be in 0.01 and 0.25")
             pass
         self.check_params(parameters)
@@ -79,7 +77,7 @@ class DoubleLatticeTile(TileBase):
                 v_zero = 0.0
             else:
                 cl = 0.0
-                pp = parameter_sensitivities[0,0,i_derivative - 1]
+                pp = parameter_sensitivities[0, 0, i_derivative - 1]
                 v_one_half = 0.0
                 v_one = 0.0
                 v_zero = 0.0

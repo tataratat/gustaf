@@ -16,7 +16,6 @@ class TileBase(base.GustafBase):
         self._evaluation_points = None
         self._n_info_per_eval_point = None
 
-
     @property
     def evaluation_points(self):
         """Positions in the parametrization function to be evaluated when tile
@@ -71,13 +70,16 @@ class TileBase(base.GustafBase):
 
         if not (isinstance(params, np.ndarray) and params.ndim == 2):
             raise TypeError("parameters must be two-dimensional np array")
-        
-        if not ((self._evaluation_points.shape[0] == params.shape[0]) and 
-                 (self._n_info_per_eval_point == params.shape[1])):
+
+        if not (
+            (self._evaluation_points.shape[0] == params.shape[0])
+            and (self._n_info_per_eval_point == params.shape[1])
+        ):
             raise TypeError(
                 f"Mismatch in parameter size, expected "
                 f"{self._evaluation_points.shape[0]} x "
-                f"{self._n_info_per_eval_point}")
+                f"{self._n_info_per_eval_point}"
+            )
 
         return True
 
@@ -98,12 +100,15 @@ class TileBase(base.GustafBase):
 
         if not (isinstance(derivatives, np.ndarray) and derivatives.ndim == 3):
             raise TypeError("parameters must be three-dimensional np array")
-        
-        if not ((self._evaluation_points.shape[0] == derivatives.shape[0]) and 
-                 (self._n_info_per_eval_point == derivatives.shape[1])):
+
+        if not (
+            (self._evaluation_points.shape[0] == derivatives.shape[0])
+            and (self._n_info_per_eval_point == derivatives.shape[1])
+        ):
             raise TypeError(
                 f"Mismatch in parameter size, expected "
                 f"{self._evaluation_points.shape[0]} x "
-                f"{self._n_info_per_eval_point} x n_sensitivities")
+                f"{self._n_info_per_eval_point} x n_sensitivities"
+            )
 
         return True
