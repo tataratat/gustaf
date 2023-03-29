@@ -14,6 +14,7 @@ class TileBase(base.GustafBase):
         """
         self._dim = None
         self._evaluation_points = None
+        self._n_info_per_eval_point = None
 
 
     @property
@@ -59,7 +60,7 @@ class TileBase(base.GustafBase):
 
         Parameters
         ----------
-        params: tuple(np.ndarray)
+        params: np.ndarray
             the parameters for the tile
 
         Returns
@@ -68,15 +69,15 @@ class TileBase(base.GustafBase):
         """
         # check if tuple
 
-        if not (isinstance(params, np.ndarray) and params.ndim == 1):
-            raise TypeError("parameters must be a array as entries")
-        # check if the tuple has the correct number of entries
-
-            # check if all entries in the tuple has the correct length
-        if not ([len(self._evaluation_points) == e.size for e in params]):
+        if not (isinstance(params, np.ndarray) and params.ndim == 2):
+            raise TypeError("parameters must be two-dimensional np array")
+        
+        if not ((self._evaluation_points.shape[0] == params.shape[0]) and 
+                 (self._n_info_per_eval_point == params.shape[1])):
             raise TypeError(
-                f"Mismatch amount of parameter entries, expected "
-                f"{self._evaluation_points}")
+                f"Mismatch in parameter size, expected "
+                f"{self._evaluation_points.shape[0]} x "
+                f"{self._n_info_per_eval_point}")
 
         return True
 
@@ -85,8 +86,8 @@ class TileBase(base.GustafBase):
 
         Parameters
         ----------
-        derivatives: list(tuple(np.ndarray)
-            all derivatives as list
+        derivatives: np.ndarray
+            all derivatives as 3D array
 
         Returns
         -------
@@ -95,13 +96,14 @@ class TileBase(base.GustafBase):
         if derivatives is None:
             return False
 
-        if not (isinstance(derivatives, np.ndarray) and derivatives.ndim == 2):
+        if not (isinstance(derivatives, np.ndarray) and derivatives.ndim == 3):
+            raise TypeError("parameters must be three-dimensional np array")
+        
+        if not ((self._evaluation_points.shape[0] == derivatives.shape[0]) and 
+                 (self._n_info_per_eval_point == derivatives.shape[1])):
             raise TypeError(
-                f"The parameter_sensitives passed have the wrong "
-                "format. The expected format is list(tuple(np.ndarray)),"
-                f" found type({type(derivatives)})"
-            )
-        for i in derivatives:
-            self.check_params(i)
+                f"Mismatch in parameter size, expected "
+                f"{self._evaluation_points.shape[0]} x "
+                f"{self._n_info_per_eval_point} x n_sensitivities")
 
         return True
