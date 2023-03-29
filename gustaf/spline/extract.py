@@ -522,6 +522,8 @@ class Extractor:
         return control_mesh(self._spline)
 
     def beziers(self):
+        if self._spline.has_knot_vectors:
+            return [self._spline]
         return self._spline.extract_bezier_patches()
 
     def boundaries(self, *args, **kwargs):
