@@ -474,7 +474,6 @@ class Microstructure(GustafBase):
                     )
 
                 if isinstance(tile, tuple):
-                    n_previous_splines = len(self._microstructure)
                     # Returned tile and derivatives
                     (splines, derivatives) = tile
                     for tile_patch in splines:
@@ -483,8 +482,6 @@ class Microstructure(GustafBase):
                         )
                     n_splines_per_tile = len(splines)
                     empty_splines = [None] * n_splines_per_tile
-                    # for i in range(len(splines)):
-                    #     empty_splines.append(EmtpySpline(self._microstructure[n_previous_splines + i]))
                     for i in anti_support:
                         self._microstructure_derivatives[i].extend(
                             empty_splines
