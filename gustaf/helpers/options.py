@@ -216,6 +216,25 @@ class ShowOption:
         ]
         return "\n".join(header + valid_and_current)
 
+    def _is_in_allowed_types(self, key, value) -> bool:
+        """
+        Checks if value is in allowed types.
+
+        Parameters
+        ----------
+        key: str
+        value: object
+
+        Returns
+        -------
+        is_in: bool
+        """
+        return Any in self._valid_options[self._backend][
+            key
+        ].allowed_types or isinstance(
+            value, self._valid_options[self._backend][key].allowed_types
+        )
+
     def __setitem__(self, key, value):
         """
         Sets option after checking its validity.
@@ -231,9 +250,7 @@ class ShowOption:
         """
         if key in self._valid_options[self._backend].keys():
             # valid type check
-            if not isinstance(
-                value, self._valid_options[self._backend][key].allowed_types
-            ):
+            if not self._is_in_allowed_types(key, value):
                 raise TypeError(
                     f"{type(value)} is invalid value type for '{key}'. "
                     f"Details for '{key}':\n"

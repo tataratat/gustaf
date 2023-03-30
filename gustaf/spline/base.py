@@ -604,11 +604,20 @@ class Multipatch(GustafBase, splinepy.Multipatch):
         return self._show_options
 
     def show(self, **kwargs):
-        """ """
+        """Show the multipatch system.
+
+        Parameters
+        -----------
+        boundary_ids : bool
+            Show boundary patches with different colors. Default is False.
+        **kwargs : dict
+
+
+        """
         # Retrieve show options out of valid options
         spline_list = self.splines.copy()
         if kwargs.get("boundary_ids", False):
-            bsp = self.boundary_patches
+            bsp = self.boundary_patches().splines
             bsp_id = np.abs(self.interfaces[self.interfaces < 0])
 
             # Create a custom color-map
@@ -637,10 +646,14 @@ class Multipatch(GustafBase, splinepy.Multipatch):
                 patch.show_options["cmap"] = lut
 
             spline_list.extend(bsp)
+        # if kwargs.get("common_cmap", False):
+        #     for spline in self.splines:
+        #         spline.splinedata.pre_compute_field()
+        #         spline.splinedata
 
         # Check if return showable is requested and ensure it is set to false
         # when enquiring show module
-        showmodule(spline_list, **kwargs)
+        return showmodule(spline_list, **kwargs)
 
     def showable(self, **kwargs):
         kwargs["return_showable"] = False

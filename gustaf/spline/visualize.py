@@ -108,6 +108,13 @@ class MultipatchShowOption(options.ShowOption):
             "Show multipatch boundaries with ID",
             (bool,),
         ),
+        # options.Option(
+        #     "vedo",
+        #     "common_cmap",
+        #     "Color map for all patches has the same range, exclusive with "
+        #     "patch_borders.",
+        #     (bool,),
+        # ),
         options.Option(
             "vedo",
             "patch_borders",
@@ -142,7 +149,7 @@ def make_showable(spline):
 
 def _vedo_showable(spline):
     """
-    Goes through common precedures for preparing showable splines.
+    Goes through common procedures for preparing showable splines.
 
     Parameters
     ----------

@@ -39,7 +39,7 @@ multipatch.boundaries_from_continuity()
 multipatch.show(
     boundary_ids=True, knots=False, control_points=False, resolutions=4
 )
-multipatch.boundary_from_function(split_plane, from_boundaries=[1, 2])
+multipatch.boundary_from_function(split_plane, mask=[1, 2])
 multipatch.show(
     boundary_ids=True,
     knots=False,
@@ -110,9 +110,7 @@ b4 = gus.Bezier(
 # Multipatch
 multipatch = gus.Multipatch([b1, b2, b3, b4])
 multipatch.boundaries_from_continuity()
-multipatch.show(
-    boundary_ids=True, resolutions=5, knots=True, control_points=False
-)
+multipatch.show(resolutions=5, knots=True, control_points=False)
 
 
 # Test 2

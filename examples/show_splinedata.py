@@ -45,25 +45,26 @@ if __name__ == "__main__":
     # turn on debug logs
     # gus.utils.log.configure(debug=True)
 
-    # define splinedata
-    # 1. see coordinates's norm
+    # define spline data
+    # 1. sample the spline with a default resolution and see the 2 norm of
+    # coordinate as value
     b = bspline2p3d()
     b.splinedata["me"] = b
     b.show_options["dataname"] = "me"
+    b.show_options["lighting"] = "off"
     gus.show(["1. Show norm of coordinates.", b])
 
-    # 1.1 default scalarbar
-    b = bspline2p3d()
-    b.splinedata["me"] = b
-    b.show_options["dataname"] = "me"
+    # 1.1 add the default scalarbar
     b.show_options["scalarbar"] = True
     gus.show(["1.1. Show 1. plus scalarbar", b])
 
-    # 2. see coordinate's norm and as arrow
+    # 2. see coordinate's norm and an arrow at each sampled point with the norm
+    # values length and direction normal to the spline
     b = bspline2p3d()
     b.splinedata["me"] = b
     b.show_options["dataname"] = "me"
     b.show_options["arrowdata"] = "me"
+    b.show_options["lighting"] = "off"
     gus.show(
         ["2. Show coordinate norm as scalar field and coordinate as arrows", b]
     )
@@ -73,6 +74,7 @@ if __name__ == "__main__":
     b.splinedata["me"] = b
     b.show_options["dataname"] = "me"
     b.show_options["arrowdata"] = "me"
+    b.show_options["lighting"] = "off"
     b.show_options["arrowdata_on"] = np.random.random((100, 2))  # para_coords
     gus.show(
         ["3. Show coordinates norm and as arrows on 100 random points.", b]
@@ -85,6 +87,7 @@ if __name__ == "__main__":
     b.show_options["arrowdata"] = "me"
     b.show_options["arrowdata_on"] = np.random.random((100, 2))  # para_coords
     b.show_options["scalarbar"] = True
+    b.show_options["lighting"] = "off"
     gus.show(
         ["4. Show 3. and 3. in parametric space view with scalarbar.", b],
         b.create.parametric_view(),
@@ -104,15 +107,16 @@ if __name__ == "__main__":
         elif on is not None:
             return data.derivative(on, [0, 1])
 
-    # use adaptor to defie a data
+    # 5. use SplineDataAdaptor to define the shown data
     plot_func_data = gus.spline.SplineDataAdaptor(b, function=plot_func)
     # the rest is the same
     b = bspline2p3d()
+    b.show_options["lighting"] = "off"
     b.splinedata["der01"] = plot_func_data
-    b.show_options["arrowdata"] = "der01"
+    b.show_options["dataname"] = "der01"
     gus.show(
         [
-            "5. Show partial derivative of seconda parametric dimension.\n"
+            "5. Show partial derivative of second parametric dimension.\n"
             "This uses a callback function and SplineDataAdaptor.\n"
             "Also achievable with derivative spline.",
             b,
@@ -122,6 +126,7 @@ if __name__ == "__main__":
     # remove on to sample same way as spline.
     # however, gold
     b = bspline2p3d()
+    b.show_options["lighting"] = "off"
     b.splinedata["der01"] = plot_func_data
     b.show_options["arrowdata"] = "der01"
     b.show_options["arrowdata_on"] = np.random.random((100, 2))  # para_coords
@@ -139,6 +144,7 @@ if __name__ == "__main__":
     values = np.repeat(np.linspace(1, 2, 15), 3).reshape(-1, 3) + [0, 0, 2]
     fixed_data = gus.spline.SplineDataAdaptor(values, locations=locations)
     b = bspline2p3d()
+    b.show_options["lighting"] = "off"
     b.splinedata["fixed"] = fixed_data
     b.show_options["arrowdata"] = "fixed"
     gus.show(
@@ -157,6 +163,7 @@ if __name__ == "__main__":
     # 7. plot any data with a function
     # some manually defined deformed spline
     deformed = bspline2p3d()  # minimal copy - properties and cached data only
+    deformed.show_options["lighting"] = "off"
     deformed.cps[11, -1] -= 4
     deformed.cps *= [5.5, 5.5, 5.5]
     deformed.cps += [-5, 0, 8]
