@@ -293,6 +293,28 @@ class Microstructure(GustafBase):
             deformation_function_copy = self._deformation_function.bspline
         else:
             deformation_function_copy = self._deformation_function.nurbs
+
+        # # Create empty class with spline reference
+        # class EmtpySpline():
+        #     def __init__(self, spline_reference):
+        #         self._spline_ref = spline_reference
+
+        #     @property
+        #     def para_dim(self):
+        #         return self._spline_ref.para_dim
+        #     @property
+        #     def dim(self):
+        #         return self._spline_ref.dim
+        #     @property
+        #     def control_points(self):
+        #         return self._spline_ref.control_points * 0
+        #     @property
+        #     def control_mesh_resolutions(self):
+        #         return self._spline_ref.control_mesh_resolutions
+        #     @property
+        #     def degrees(self):
+        #         return self._spline_ref.degrees
+
         # Create Spline that will be used to iterate over parametric space
         ukvs = deformation_function_copy.unique_knots
         if knot_span_wise:
@@ -401,7 +423,14 @@ class Microstructure(GustafBase):
                         positions
                     )
                     support = np.where(
-                        [np.any(p != 0.0) for p in tile_sensitivities]
+                        np.any(
+                            np.any(tile_sensitivities != 0.0, axis=0), axis=0
+                        )
+                    )[0]
+                    anti_support = np.where(
+                        np.any(
+                            np.all(tile_sensitivities == 0.0, axis=0), axis=0
+                        )
                     )[0]
                     tile_sens_on_support = tile_sensitivities[:, :, support]
                 else:
@@ -445,6 +474,7 @@ class Microstructure(GustafBase):
                     )
 
                 if isinstance(tile, tuple):
+                    n_previous_splines = len(self._microstructure)
                     # Returned tile and derivatives
                     (splines, derivatives) = tile
                     for tile_patch in splines:
@@ -452,18 +482,23 @@ class Microstructure(GustafBase):
                             def_fun.compose(tile_patch)
                         )
                     n_splines_per_tile = len(splines)
-                    for i in range(n_sensitivities):
+                    empty_splines = [None] * n_splines_per_tile
+                    # for i in range(len(splines)):
+                    #     empty_splines.append(EmtpySpline(self._microstructure[n_previous_splines + i]))
+                    for i in anti_support:
                         self._microstructure_derivatives[i].extend(
-                            [None] * n_splines_per_tile
+                            empty_splines
                         )
                     for i, deris in enumerate(derivatives):
                         for j, (tile_v, tile_deriv) in enumerate(
                             zip(splines, deris)
                         ):
-                            self._microstructure_derivatives[support[i]][
-                                j
-                            ] = def_fun.composition_derivative(
-                                tile_v, tile_deriv
+                            self._microstructure_derivatives[
+                                support[i]
+                            ].append(
+                                def_fun.composition_derivative(
+                                    tile_v, tile_deriv
+                                )
                             )
                 else:
                     # Perform composition
