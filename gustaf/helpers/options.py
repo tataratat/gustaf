@@ -6,9 +6,9 @@ from gustaf import settings
 from gustaf.helpers.raise_if import ModuleImportRaiser
 
 try:
-    import vtkmodules.all as vtk
+    from vtkmodules.all import vtkLookupTable
 except ImportError as e:
-    vtk = ModuleImportRaiser("vedo", e)
+    vtkLookupTable = ModuleImportRaiser("vedo", e)
 
 
 class Option:
@@ -76,7 +76,7 @@ vedo_common_options = (
         "vedo",
         "cmap",
         "Colormap for vertexdata plots.",
-        (str, vtk.vtkLookupTable),
+        (str, vtkLookupTable),
     ),
     Option("vedo", "vmin", "Minimum value for cmap", (float, int)),
     Option("vedo", "vmax", "Maximum value for cmap", (float, int)),

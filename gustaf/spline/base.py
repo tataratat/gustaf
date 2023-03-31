@@ -12,17 +12,11 @@ import splinepy
 from gustaf import show as showmodule
 from gustaf._base import GustafBase
 from gustaf.helpers.data import SplineData, SplineDataAdaptor
-from gustaf.helpers.raise_if import ModuleImportRaiser
 from gustaf.spline import visualize
 from gustaf.spline.create import Creator
 from gustaf.spline.extract import Extractor
 from gustaf.spline.proximity import Proximity
 from gustaf.utils.arr import enforce_len
-
-try:
-    from vedo import build_lut
-except ImportError as e:
-    build_lut = ModuleImportRaiser("vedo", e)
 
 
 def show(
