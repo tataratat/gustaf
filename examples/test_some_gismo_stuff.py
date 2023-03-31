@@ -55,6 +55,12 @@ ms_mp.boundary_from_function(boundary_function(1, 10 * gus.settings.TOLERANCE))
 ms_mp.boundary_from_function(boundary_function(2, 10 * gus.settings.TOLERANCE))
 ms_mp.boundary_from_function(boundary_function(3, 10 * gus.settings.TOLERANCE))
 
-ms_mp.show(boundary_ids=True, resolutions=4, knots=True, control_points=False)
+ms_mp.show_options["boundary_ids"] = True
+ms_mp.show_options["resolutions"] = 4
+ms_mp.show_options["knots"] = True
+ms_mp.show_options["control_points"] = False
+ms_mp.show_options["overwrite_spline_options"] = True
+
+ms_mp.show()
 
 # gus.spline.io.gismo.export("microstructure_2d_gismo.xml", multipatch=ms_mp)

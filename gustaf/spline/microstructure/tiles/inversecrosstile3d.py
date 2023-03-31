@@ -78,8 +78,8 @@ class InverseCrossTile3D(TileBase):
 
         # Precompute auxiliary values
         inv_filling_height = 1.0 - filling_height
-        cpts_mid_height_top = (1 + filling_height) * 0.5
-        cpts_mid_height_bottom = 1.0 - cpts_mid_height_top
+        cps_mid_height_top = (1 + filling_height) * 0.5
+        cps_mid_height_bottom = 1.0 - cps_mid_height_top
         center_width = 1.0 - 2 * boundary_width
         r_center = center_width * 0.5
         half_r_center = (r_center + 0.5) * 0.5
@@ -88,7 +88,7 @@ class InverseCrossTile3D(TileBase):
         spline_list = []
         if closure == "z_min":
             branch_thickness = parameters[5]
-            branch_neighbor_x_min_cpts = np.array(
+            branch_neighbor_x_min_cps = np.array(
                 [
                     [-0.5, -r_center, filling_height],
                     [-half_r_center, -r_center, filling_height],
@@ -96,24 +96,24 @@ class InverseCrossTile3D(TileBase):
                     [-0.5, r_center, filling_height],
                     [-half_r_center, r_center, filling_height],
                     [-r_center, r_center, filling_height],
-                    [-0.5, -aux_column_width, cpts_mid_height_top],
+                    [-0.5, -aux_column_width, cps_mid_height_top],
                     [
                         -separator_distance,
                         -aux_column_width,
-                        cpts_mid_height_top,
+                        cps_mid_height_top,
                     ],
                     [
                         -branch_thickness,
                         -branch_thickness,
-                        cpts_mid_height_top,
+                        cps_mid_height_top,
                     ],
-                    [-0.5, aux_column_width, cpts_mid_height_top],
+                    [-0.5, aux_column_width, cps_mid_height_top],
                     [
                         -separator_distance,
                         aux_column_width,
-                        cpts_mid_height_top,
+                        cps_mid_height_top,
                     ],
-                    [-branch_thickness, branch_thickness, cpts_mid_height_top],
+                    [-branch_thickness, branch_thickness, cps_mid_height_top],
                     [-0.5, -aux_column_width, 1.0],
                     [-separator_distance, -aux_column_width, 1.0],
                     [-branch_thickness, -branch_thickness, 1.0],
@@ -126,11 +126,11 @@ class InverseCrossTile3D(TileBase):
             spline_list.append(
                 base.Bezier(
                     degrees=[2, 1, 2],
-                    control_points=branch_neighbor_x_min_cpts,
+                    control_points=branch_neighbor_x_min_cps,
                 )
             )
 
-            branch_neighbor_x_max_cpts = np.array(
+            branch_neighbor_x_max_cps = np.array(
                 [
                     [r_center, -r_center, filling_height],
                     [half_r_center, -r_center, filling_height],
@@ -138,20 +138,20 @@ class InverseCrossTile3D(TileBase):
                     [r_center, r_center, filling_height],
                     [half_r_center, r_center, filling_height],
                     [0.5, r_center, filling_height],
-                    [branch_thickness, -branch_thickness, cpts_mid_height_top],
+                    [branch_thickness, -branch_thickness, cps_mid_height_top],
                     [
                         separator_distance,
                         -aux_column_width,
-                        cpts_mid_height_top,
+                        cps_mid_height_top,
                     ],
-                    [0.5, -aux_column_width, cpts_mid_height_top],
-                    [branch_thickness, branch_thickness, cpts_mid_height_top],
+                    [0.5, -aux_column_width, cps_mid_height_top],
+                    [branch_thickness, branch_thickness, cps_mid_height_top],
                     [
                         separator_distance,
                         aux_column_width,
-                        cpts_mid_height_top,
+                        cps_mid_height_top,
                     ],
-                    [0.5, aux_column_width, cpts_mid_height_top],
+                    [0.5, aux_column_width, cps_mid_height_top],
                     [branch_thickness, -branch_thickness, 1.0],
                     [separator_distance, -aux_column_width, 1.0],
                     [0.5, -aux_column_width, 1.0],
@@ -164,11 +164,11 @@ class InverseCrossTile3D(TileBase):
             spline_list.append(
                 base.Bezier(
                     degrees=[2, 1, 2],
-                    control_points=branch_neighbor_x_max_cpts,
+                    control_points=branch_neighbor_x_max_cps,
                 )
             )
 
-            branch_neighbor_y_min_cpts = np.array(
+            branch_neighbor_y_min_cps = np.array(
                 [
                     [-r_center, -0.5, filling_height],
                     [r_center, -0.5, filling_height],
@@ -176,24 +176,24 @@ class InverseCrossTile3D(TileBase):
                     [r_center, -half_r_center, filling_height],
                     [-r_center, -r_center, filling_height],
                     [r_center, -r_center, filling_height],
-                    [-aux_column_width, -0.5, cpts_mid_height_top],
-                    [aux_column_width, -0.5, cpts_mid_height_top],
+                    [-aux_column_width, -0.5, cps_mid_height_top],
+                    [aux_column_width, -0.5, cps_mid_height_top],
                     [
                         -aux_column_width,
                         -separator_distance,
-                        cpts_mid_height_top,
+                        cps_mid_height_top,
                     ],
                     [
                         aux_column_width,
                         -separator_distance,
-                        cpts_mid_height_top,
+                        cps_mid_height_top,
                     ],
                     [
                         -branch_thickness,
                         -branch_thickness,
-                        cpts_mid_height_top,
+                        cps_mid_height_top,
                     ],
-                    [branch_thickness, -branch_thickness, cpts_mid_height_top],
+                    [branch_thickness, -branch_thickness, cps_mid_height_top],
                     [-aux_column_width, -0.5, 1.0],
                     [aux_column_width, -0.5, 1.0],
                     [-aux_column_width, -separator_distance, 1.0],
@@ -206,11 +206,11 @@ class InverseCrossTile3D(TileBase):
             spline_list.append(
                 base.Bezier(
                     degrees=[1, 2, 2],
-                    control_points=branch_neighbor_y_min_cpts,
+                    control_points=branch_neighbor_y_min_cps,
                 )
             )
 
-            branch_neighbor_y_max_cpts = np.array(
+            branch_neighbor_y_max_cps = np.array(
                 [
                     [-r_center, r_center, filling_height],
                     [r_center, r_center, filling_height],
@@ -218,20 +218,20 @@ class InverseCrossTile3D(TileBase):
                     [r_center, half_r_center, filling_height],
                     [-r_center, 0.5, filling_height],
                     [r_center, 0.5, filling_height],
-                    [-branch_thickness, branch_thickness, cpts_mid_height_top],
-                    [branch_thickness, branch_thickness, cpts_mid_height_top],
+                    [-branch_thickness, branch_thickness, cps_mid_height_top],
+                    [branch_thickness, branch_thickness, cps_mid_height_top],
                     [
                         -aux_column_width,
                         separator_distance,
-                        cpts_mid_height_top,
+                        cps_mid_height_top,
                     ],
                     [
                         aux_column_width,
                         separator_distance,
-                        cpts_mid_height_top,
+                        cps_mid_height_top,
                     ],
-                    [-aux_column_width, 0.5, cpts_mid_height_top],
-                    [aux_column_width, 0.5, cpts_mid_height_top],
+                    [-aux_column_width, 0.5, cps_mid_height_top],
+                    [aux_column_width, 0.5, cps_mid_height_top],
                     [-branch_thickness, branch_thickness, 1.0],
                     [branch_thickness, branch_thickness, 1.0],
                     [-aux_column_width, separator_distance, 1.0],
@@ -244,11 +244,11 @@ class InverseCrossTile3D(TileBase):
             spline_list.append(
                 base.Bezier(
                     degrees=[1, 2, 2],
-                    control_points=branch_neighbor_y_max_cpts,
+                    control_points=branch_neighbor_y_max_cps,
                 )
             )
 
-            branch_x_min_y_min_cpts = np.array(
+            branch_x_min_y_min_cps = np.array(
                 [
                     [-0.5, -0.5, filling_height],
                     [-half_r_center, -0.5, filling_height],
@@ -259,30 +259,30 @@ class InverseCrossTile3D(TileBase):
                     [-0.5, -r_center, filling_height],
                     [-half_r_center, -r_center, filling_height],
                     [-r_center, -r_center, filling_height],
-                    [-0.5, -0.5, cpts_mid_height_top],
-                    [-separator_distance, -0.5, cpts_mid_height_top],
-                    [-aux_column_width, -0.5, cpts_mid_height_top],
-                    [-0.5, -separator_distance, cpts_mid_height_top],
+                    [-0.5, -0.5, cps_mid_height_top],
+                    [-separator_distance, -0.5, cps_mid_height_top],
+                    [-aux_column_width, -0.5, cps_mid_height_top],
+                    [-0.5, -separator_distance, cps_mid_height_top],
                     [
                         -separator_distance,
                         -separator_distance,
-                        cpts_mid_height_top,
+                        cps_mid_height_top,
                     ],
                     [
                         -aux_column_width,
                         -separator_distance,
-                        cpts_mid_height_top,
+                        cps_mid_height_top,
                     ],
-                    [-0.5, -aux_column_width, cpts_mid_height_top],
+                    [-0.5, -aux_column_width, cps_mid_height_top],
                     [
                         -separator_distance,
                         -aux_column_width,
-                        cpts_mid_height_top,
+                        cps_mid_height_top,
                     ],
                     [
                         -branch_thickness,
                         -branch_thickness,
-                        cpts_mid_height_top,
+                        cps_mid_height_top,
                     ],
                     [-0.5, -0.5, 1.0],
                     [-separator_distance, -0.5, 1.0],
@@ -298,11 +298,11 @@ class InverseCrossTile3D(TileBase):
 
             spline_list.append(
                 base.Bezier(
-                    degrees=[2, 2, 2], control_points=branch_x_min_y_min_cpts
+                    degrees=[2, 2, 2], control_points=branch_x_min_y_min_cps
                 )
             )
 
-            branch_x_min_y_max_cpts = np.array(
+            branch_x_min_y_max_cps = np.array(
                 [
                     [-0.5, r_center, filling_height],
                     [-half_r_center, r_center, filling_height],
@@ -313,27 +313,27 @@ class InverseCrossTile3D(TileBase):
                     [-0.5, 0.5, filling_height],
                     [-half_r_center, 0.5, filling_height],
                     [-r_center, 0.5, filling_height],
-                    [-0.5, aux_column_width, cpts_mid_height_top],
+                    [-0.5, aux_column_width, cps_mid_height_top],
                     [
                         -separator_distance,
                         aux_column_width,
-                        cpts_mid_height_top,
+                        cps_mid_height_top,
                     ],
-                    [-branch_thickness, branch_thickness, cpts_mid_height_top],
-                    [-0.5, separator_distance, cpts_mid_height_top],
+                    [-branch_thickness, branch_thickness, cps_mid_height_top],
+                    [-0.5, separator_distance, cps_mid_height_top],
                     [
                         -separator_distance,
                         separator_distance,
-                        cpts_mid_height_top,
+                        cps_mid_height_top,
                     ],
                     [
                         -aux_column_width,
                         separator_distance,
-                        cpts_mid_height_top,
+                        cps_mid_height_top,
                     ],
-                    [-0.5, 0.5, cpts_mid_height_top],
-                    [-separator_distance, 0.5, cpts_mid_height_top],
-                    [-aux_column_width, 0.5, cpts_mid_height_top],
+                    [-0.5, 0.5, cps_mid_height_top],
+                    [-separator_distance, 0.5, cps_mid_height_top],
+                    [-aux_column_width, 0.5, cps_mid_height_top],
                     [-0.5, aux_column_width, 1.0],
                     [-separator_distance, aux_column_width, 1.0],
                     [-branch_thickness, branch_thickness, 1.0],
@@ -348,11 +348,11 @@ class InverseCrossTile3D(TileBase):
 
             spline_list.append(
                 base.Bezier(
-                    degrees=[2, 2, 2], control_points=branch_x_min_y_max_cpts
+                    degrees=[2, 2, 2], control_points=branch_x_min_y_max_cps
                 )
             )
 
-            branch_x_max_y_min_cpts = np.array(
+            branch_x_max_y_min_cps = np.array(
                 [
                     [r_center, -0.5, filling_height],
                     [half_r_center, -0.5, filling_height],
@@ -363,27 +363,27 @@ class InverseCrossTile3D(TileBase):
                     [r_center, -r_center, filling_height],
                     [half_r_center, -r_center, filling_height],
                     [0.5, -r_center, filling_height],
-                    [aux_column_width, -0.5, cpts_mid_height_top],
-                    [separator_distance, -0.5, cpts_mid_height_top],
-                    [0.5, -0.5, cpts_mid_height_top],
+                    [aux_column_width, -0.5, cps_mid_height_top],
+                    [separator_distance, -0.5, cps_mid_height_top],
+                    [0.5, -0.5, cps_mid_height_top],
                     [
                         aux_column_width,
                         -separator_distance,
-                        cpts_mid_height_top,
+                        cps_mid_height_top,
                     ],
                     [
                         separator_distance,
                         -separator_distance,
-                        cpts_mid_height_top,
+                        cps_mid_height_top,
                     ],
-                    [0.5, -separator_distance, cpts_mid_height_top],
-                    [branch_thickness, -branch_thickness, cpts_mid_height_top],
+                    [0.5, -separator_distance, cps_mid_height_top],
+                    [branch_thickness, -branch_thickness, cps_mid_height_top],
                     [
                         separator_distance,
                         -aux_column_width,
-                        cpts_mid_height_top,
+                        cps_mid_height_top,
                     ],
-                    [0.5, -aux_column_width, cpts_mid_height_top],
+                    [0.5, -aux_column_width, cps_mid_height_top],
                     [aux_column_width, -0.5, 1.0],
                     [separator_distance, -0.5, 1.0],
                     [0.5, -0.5, 1.0],
@@ -398,11 +398,11 @@ class InverseCrossTile3D(TileBase):
 
             spline_list.append(
                 base.Bezier(
-                    degrees=[2, 2, 2], control_points=branch_x_max_y_min_cpts
+                    degrees=[2, 2, 2], control_points=branch_x_max_y_min_cps
                 )
             )
 
-            branch_x_max_y_max_cpts = np.array(
+            branch_x_max_y_max_cps = np.array(
                 [
                     [r_center, r_center, filling_height],
                     [half_r_center, r_center, filling_height],
@@ -413,27 +413,27 @@ class InverseCrossTile3D(TileBase):
                     [r_center, 0.5, filling_height],
                     [half_r_center, 0.5, filling_height],
                     [0.5, 0.5, filling_height],
-                    [branch_thickness, branch_thickness, cpts_mid_height_top],
+                    [branch_thickness, branch_thickness, cps_mid_height_top],
                     [
                         separator_distance,
                         aux_column_width,
-                        cpts_mid_height_top,
+                        cps_mid_height_top,
                     ],
-                    [0.5, aux_column_width, cpts_mid_height_top],
+                    [0.5, aux_column_width, cps_mid_height_top],
                     [
                         aux_column_width,
                         separator_distance,
-                        cpts_mid_height_top,
+                        cps_mid_height_top,
                     ],
                     [
                         separator_distance,
                         separator_distance,
-                        cpts_mid_height_top,
+                        cps_mid_height_top,
                     ],
-                    [0.5, separator_distance, cpts_mid_height_top],
-                    [aux_column_width, 0.5, cpts_mid_height_top],
-                    [separator_distance, 0.5, cpts_mid_height_top],
-                    [0.5, 0.5, cpts_mid_height_top],
+                    [0.5, separator_distance, cps_mid_height_top],
+                    [aux_column_width, 0.5, cps_mid_height_top],
+                    [separator_distance, 0.5, cps_mid_height_top],
+                    [0.5, 0.5, cps_mid_height_top],
                     [branch_thickness, branch_thickness, 1.0],
                     [separator_distance, aux_column_width, 1.0],
                     [0.5, aux_column_width, 1.0],
@@ -448,7 +448,7 @@ class InverseCrossTile3D(TileBase):
 
             spline_list.append(
                 base.Bezier(
-                    degrees=[2, 2, 2], control_points=branch_x_max_y_max_cpts
+                    degrees=[2, 2, 2], control_points=branch_x_max_y_max_cps
                 )
             )
 
@@ -456,7 +456,7 @@ class InverseCrossTile3D(TileBase):
 
         elif closure == "z_max":
             branch_thickness = parameters[4]
-            branch_neighbor_x_min_cpts = np.array(
+            branch_neighbor_x_min_cps = np.array(
                 [
                     [-0.5, -aux_column_width, 0.0],
                     [-separator_distance, -aux_column_width, 0.0],
@@ -464,27 +464,27 @@ class InverseCrossTile3D(TileBase):
                     [-0.5, aux_column_width, 0.0],
                     [-separator_distance, aux_column_width, 0.0],
                     [-branch_thickness, branch_thickness, 0.0],
-                    [-0.5, -aux_column_width, cpts_mid_height_bottom],
+                    [-0.5, -aux_column_width, cps_mid_height_bottom],
                     [
                         -separator_distance,
                         -aux_column_width,
-                        cpts_mid_height_bottom,
+                        cps_mid_height_bottom,
                     ],
                     [
                         -branch_thickness,
                         -branch_thickness,
-                        cpts_mid_height_bottom,
+                        cps_mid_height_bottom,
                     ],
-                    [-0.5, aux_column_width, cpts_mid_height_bottom],
+                    [-0.5, aux_column_width, cps_mid_height_bottom],
                     [
                         -separator_distance,
                         aux_column_width,
-                        cpts_mid_height_bottom,
+                        cps_mid_height_bottom,
                     ],
                     [
                         -branch_thickness,
                         branch_thickness,
-                        cpts_mid_height_bottom,
+                        cps_mid_height_bottom,
                     ],
                     [-0.5, -r_center, inv_filling_height],
                     [-half_r_center, -r_center, inv_filling_height],
@@ -498,11 +498,11 @@ class InverseCrossTile3D(TileBase):
             spline_list.append(
                 base.Bezier(
                     degrees=[2, 1, 2],
-                    control_points=branch_neighbor_x_min_cpts,
+                    control_points=branch_neighbor_x_min_cps,
                 )
             )
 
-            branch_neighbor_x_max_cpts = np.array(
+            branch_neighbor_x_max_cps = np.array(
                 [
                     [branch_thickness, -branch_thickness, 0.0],
                     [separator_distance, -aux_column_width, 0.0],
@@ -513,25 +513,25 @@ class InverseCrossTile3D(TileBase):
                     [
                         branch_thickness,
                         -branch_thickness,
-                        cpts_mid_height_bottom,
+                        cps_mid_height_bottom,
                     ],
                     [
                         separator_distance,
                         -aux_column_width,
-                        cpts_mid_height_bottom,
+                        cps_mid_height_bottom,
                     ],
-                    [0.5, -aux_column_width, cpts_mid_height_bottom],
+                    [0.5, -aux_column_width, cps_mid_height_bottom],
                     [
                         branch_thickness,
                         branch_thickness,
-                        cpts_mid_height_bottom,
+                        cps_mid_height_bottom,
                     ],
                     [
                         separator_distance,
                         aux_column_width,
-                        cpts_mid_height_bottom,
+                        cps_mid_height_bottom,
                     ],
-                    [0.5, aux_column_width, cpts_mid_height_bottom],
+                    [0.5, aux_column_width, cps_mid_height_bottom],
                     [r_center, -r_center, inv_filling_height],
                     [half_r_center, -r_center, inv_filling_height],
                     [0.5, -r_center, inv_filling_height],
@@ -544,11 +544,11 @@ class InverseCrossTile3D(TileBase):
             spline_list.append(
                 base.Bezier(
                     degrees=[2, 1, 2],
-                    control_points=branch_neighbor_x_max_cpts,
+                    control_points=branch_neighbor_x_max_cps,
                 )
             )
 
-            branch_neighbor_y_min_cpts = np.array(
+            branch_neighbor_y_min_cps = np.array(
                 [
                     [-aux_column_width, -0.5, 0.0],
                     [aux_column_width, -0.5, 0.0],
@@ -556,27 +556,27 @@ class InverseCrossTile3D(TileBase):
                     [aux_column_width, -separator_distance, 0.0],
                     [-branch_thickness, -branch_thickness, 0.0],
                     [branch_thickness, -branch_thickness, 0.0],
-                    [-aux_column_width, -0.5, cpts_mid_height_bottom],
-                    [aux_column_width, -0.5, cpts_mid_height_bottom],
+                    [-aux_column_width, -0.5, cps_mid_height_bottom],
+                    [aux_column_width, -0.5, cps_mid_height_bottom],
                     [
                         -aux_column_width,
                         -separator_distance,
-                        cpts_mid_height_bottom,
+                        cps_mid_height_bottom,
                     ],
                     [
                         aux_column_width,
                         -separator_distance,
-                        cpts_mid_height_bottom,
+                        cps_mid_height_bottom,
                     ],
                     [
                         -branch_thickness,
                         -branch_thickness,
-                        cpts_mid_height_bottom,
+                        cps_mid_height_bottom,
                     ],
                     [
                         branch_thickness,
                         -branch_thickness,
-                        cpts_mid_height_bottom,
+                        cps_mid_height_bottom,
                     ],
                     [-r_center, -0.5, inv_filling_height],
                     [r_center, -0.5, inv_filling_height],
@@ -590,11 +590,11 @@ class InverseCrossTile3D(TileBase):
             spline_list.append(
                 base.Bezier(
                     degrees=[1, 2, 2],
-                    control_points=branch_neighbor_y_min_cpts,
+                    control_points=branch_neighbor_y_min_cps,
                 )
             )
 
-            branch_neighbor_y_max_cpts = np.array(
+            branch_neighbor_y_max_cps = np.array(
                 [
                     [-branch_thickness, branch_thickness, 0.0],
                     [branch_thickness, branch_thickness, 0.0],
@@ -605,25 +605,25 @@ class InverseCrossTile3D(TileBase):
                     [
                         -branch_thickness,
                         branch_thickness,
-                        cpts_mid_height_bottom,
+                        cps_mid_height_bottom,
                     ],
                     [
                         branch_thickness,
                         branch_thickness,
-                        cpts_mid_height_bottom,
+                        cps_mid_height_bottom,
                     ],
                     [
                         -aux_column_width,
                         separator_distance,
-                        cpts_mid_height_bottom,
+                        cps_mid_height_bottom,
                     ],
                     [
                         aux_column_width,
                         separator_distance,
-                        cpts_mid_height_bottom,
+                        cps_mid_height_bottom,
                     ],
-                    [-aux_column_width, 0.5, cpts_mid_height_bottom],
-                    [aux_column_width, 0.5, cpts_mid_height_bottom],
+                    [-aux_column_width, 0.5, cps_mid_height_bottom],
+                    [aux_column_width, 0.5, cps_mid_height_bottom],
                     [-r_center, r_center, inv_filling_height],
                     [r_center, r_center, inv_filling_height],
                     [-r_center, half_r_center, inv_filling_height],
@@ -636,11 +636,11 @@ class InverseCrossTile3D(TileBase):
             spline_list.append(
                 base.Bezier(
                     degrees=[1, 2, 2],
-                    control_points=branch_neighbor_y_max_cpts,
+                    control_points=branch_neighbor_y_max_cps,
                 )
             )
 
-            branch_x_min_y_min_cpts = np.array(
+            branch_x_min_y_min_cps = np.array(
                 [
                     [-0.5, -0.5, 0.0],
                     [-separator_distance, -0.5, 0.0],
@@ -651,30 +651,30 @@ class InverseCrossTile3D(TileBase):
                     [-0.5, -aux_column_width, 0.0],
                     [-separator_distance, -aux_column_width, 0.0],
                     [-branch_thickness, -branch_thickness, 0.0],
-                    [-0.5, -0.5, cpts_mid_height_bottom],
-                    [-separator_distance, -0.5, cpts_mid_height_bottom],
-                    [-aux_column_width, -0.5, cpts_mid_height_bottom],
-                    [-0.5, -separator_distance, cpts_mid_height_bottom],
+                    [-0.5, -0.5, cps_mid_height_bottom],
+                    [-separator_distance, -0.5, cps_mid_height_bottom],
+                    [-aux_column_width, -0.5, cps_mid_height_bottom],
+                    [-0.5, -separator_distance, cps_mid_height_bottom],
                     [
                         -separator_distance,
                         -separator_distance,
-                        cpts_mid_height_bottom,
+                        cps_mid_height_bottom,
                     ],
                     [
                         -aux_column_width,
                         -separator_distance,
-                        cpts_mid_height_bottom,
+                        cps_mid_height_bottom,
                     ],
-                    [-0.5, -aux_column_width, cpts_mid_height_bottom],
+                    [-0.5, -aux_column_width, cps_mid_height_bottom],
                     [
                         -separator_distance,
                         -aux_column_width,
-                        cpts_mid_height_bottom,
+                        cps_mid_height_bottom,
                     ],
                     [
                         -branch_thickness,
                         -branch_thickness,
-                        cpts_mid_height_bottom,
+                        cps_mid_height_bottom,
                     ],
                     [-0.5, -0.5, inv_filling_height],
                     [-half_r_center, -0.5, inv_filling_height],
@@ -690,11 +690,11 @@ class InverseCrossTile3D(TileBase):
 
             spline_list.append(
                 base.Bezier(
-                    degrees=[2, 2, 2], control_points=branch_x_min_y_min_cpts
+                    degrees=[2, 2, 2], control_points=branch_x_min_y_min_cps
                 )
             )
 
-            branch_x_max_y_max_cpts = np.array(
+            branch_x_max_y_max_cps = np.array(
                 [
                     [branch_thickness, branch_thickness, 0.0],
                     [separator_distance, aux_column_width, 0.0],
@@ -708,28 +708,28 @@ class InverseCrossTile3D(TileBase):
                     [
                         branch_thickness,
                         branch_thickness,
-                        cpts_mid_height_bottom,
+                        cps_mid_height_bottom,
                     ],
                     [
                         separator_distance,
                         aux_column_width,
-                        cpts_mid_height_bottom,
+                        cps_mid_height_bottom,
                     ],
-                    [0.5, aux_column_width, cpts_mid_height_bottom],
+                    [0.5, aux_column_width, cps_mid_height_bottom],
                     [
                         aux_column_width,
                         separator_distance,
-                        cpts_mid_height_bottom,
+                        cps_mid_height_bottom,
                     ],
                     [
                         separator_distance,
                         separator_distance,
-                        cpts_mid_height_bottom,
+                        cps_mid_height_bottom,
                     ],
-                    [0.5, separator_distance, cpts_mid_height_bottom],
-                    [aux_column_width, 0.5, cpts_mid_height_bottom],
-                    [separator_distance, 0.5, cpts_mid_height_bottom],
-                    [0.5, 0.5, cpts_mid_height_bottom],
+                    [0.5, separator_distance, cps_mid_height_bottom],
+                    [aux_column_width, 0.5, cps_mid_height_bottom],
+                    [separator_distance, 0.5, cps_mid_height_bottom],
+                    [0.5, 0.5, cps_mid_height_bottom],
                     [r_center, r_center, inv_filling_height],
                     [half_r_center, r_center, inv_filling_height],
                     [0.5, r_center, inv_filling_height],
@@ -744,11 +744,11 @@ class InverseCrossTile3D(TileBase):
 
             spline_list.append(
                 base.Bezier(
-                    degrees=[2, 2, 2], control_points=branch_x_max_y_max_cpts
+                    degrees=[2, 2, 2], control_points=branch_x_max_y_max_cps
                 )
             )
 
-            branch_x_max_y_min_cpts = np.array(
+            branch_x_max_y_min_cps = np.array(
                 [
                     [aux_column_width, -0.5, 0.0],
                     [separator_distance, -0.5, 0.0],
@@ -759,31 +759,31 @@ class InverseCrossTile3D(TileBase):
                     [branch_thickness, -branch_thickness, 0.0],
                     [separator_distance, -aux_column_width, 0.0],
                     [0.5, -aux_column_width, 0.0],
-                    [aux_column_width, -0.5, cpts_mid_height_bottom],
-                    [separator_distance, -0.5, cpts_mid_height_bottom],
-                    [0.5, -0.5, cpts_mid_height_bottom],
+                    [aux_column_width, -0.5, cps_mid_height_bottom],
+                    [separator_distance, -0.5, cps_mid_height_bottom],
+                    [0.5, -0.5, cps_mid_height_bottom],
                     [
                         aux_column_width,
                         -separator_distance,
-                        cpts_mid_height_bottom,
+                        cps_mid_height_bottom,
                     ],
                     [
                         separator_distance,
                         -separator_distance,
-                        cpts_mid_height_bottom,
+                        cps_mid_height_bottom,
                     ],
-                    [0.5, -separator_distance, cpts_mid_height_bottom],
+                    [0.5, -separator_distance, cps_mid_height_bottom],
                     [
                         branch_thickness,
                         -branch_thickness,
-                        cpts_mid_height_bottom,
+                        cps_mid_height_bottom,
                     ],
                     [
                         separator_distance,
                         -aux_column_width,
-                        cpts_mid_height_bottom,
+                        cps_mid_height_bottom,
                     ],
-                    [0.5, -aux_column_width, cpts_mid_height_bottom],
+                    [0.5, -aux_column_width, cps_mid_height_bottom],
                     [r_center, -0.5, inv_filling_height],
                     [half_r_center, -0.5, inv_filling_height],
                     [0.5, -0.5, inv_filling_height],
@@ -798,11 +798,11 @@ class InverseCrossTile3D(TileBase):
 
             spline_list.append(
                 base.Bezier(
-                    degrees=[2, 2, 2], control_points=branch_x_max_y_min_cpts
+                    degrees=[2, 2, 2], control_points=branch_x_max_y_min_cps
                 )
             )
 
-            branch_x_min_y_max_cpts = np.array(
+            branch_x_min_y_max_cps = np.array(
                 [
                     [-0.5, aux_column_width, 0.0],
                     [-separator_distance, aux_column_width, 0.0],
@@ -813,31 +813,31 @@ class InverseCrossTile3D(TileBase):
                     [-0.5, 0.5, 0.0],
                     [-separator_distance, 0.5, 0.0],
                     [-aux_column_width, 0.5, 0.0],
-                    [-0.5, aux_column_width, cpts_mid_height_bottom],
+                    [-0.5, aux_column_width, cps_mid_height_bottom],
                     [
                         -separator_distance,
                         aux_column_width,
-                        cpts_mid_height_bottom,
+                        cps_mid_height_bottom,
                     ],
                     [
                         -branch_thickness,
                         branch_thickness,
-                        cpts_mid_height_bottom,
+                        cps_mid_height_bottom,
                     ],
-                    [-0.5, separator_distance, cpts_mid_height_bottom],
+                    [-0.5, separator_distance, cps_mid_height_bottom],
                     [
                         -separator_distance,
                         separator_distance,
-                        cpts_mid_height_bottom,
+                        cps_mid_height_bottom,
                     ],
                     [
                         -aux_column_width,
                         separator_distance,
-                        cpts_mid_height_bottom,
+                        cps_mid_height_bottom,
                     ],
-                    [-0.5, 0.5, cpts_mid_height_bottom],
-                    [-separator_distance, 0.5, cpts_mid_height_bottom],
-                    [-aux_column_width, 0.5, cpts_mid_height_bottom],
+                    [-0.5, 0.5, cps_mid_height_bottom],
+                    [-separator_distance, 0.5, cps_mid_height_bottom],
+                    [-aux_column_width, 0.5, cps_mid_height_bottom],
                     [-0.5, r_center, inv_filling_height],
                     [-half_r_center, r_center, inv_filling_height],
                     [-r_center, r_center, inv_filling_height],
@@ -852,7 +852,7 @@ class InverseCrossTile3D(TileBase):
 
             spline_list.append(
                 base.Bezier(
-                    degrees=[2, 2, 2], control_points=branch_x_min_y_max_cpts
+                    degrees=[2, 2, 2], control_points=branch_x_min_y_max_cps
                 )
             )
 

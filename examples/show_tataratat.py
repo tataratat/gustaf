@@ -187,7 +187,9 @@ if __name__ == "__main__":
     face_showables = []
     spline_showables = []
     for f in fanfare:
-        showables = f.showable(resolutions=500, c=(255, 215, 0))
+        f.show_options["resolutions"] = 500
+        f.show_options["c"] = (255, 215, 0)
+        showables = f.showable()
         faces = showables["spline"]
         face_showables.append(faces)
         spline_showables.extend(list(showables.values()))

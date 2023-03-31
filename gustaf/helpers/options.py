@@ -2,15 +2,13 @@
 
 Classes to help organize options.
 """
-from typing import Any
-
 from gustaf import settings
 from gustaf.helpers.raise_if import ModuleImportRaiser
 
 try:
-    import vedo
+    import vtkmodules.all as vtk
 except ImportError as e:
-    vedo = ModuleImportRaiser("vedo", e)
+    vtk = ModuleImportRaiser("vedo", e)
 
 
 class Option:
@@ -60,7 +58,7 @@ vedo_common_options = (
     Option("vedo", "alpha", "Transparency in range [0, 1].", (float, int)),
     Option(
         "vedo",
-        "dataname",
+        "field_name",
         "Name of vertexdata to show. "
         "Object must have vertexdata with the same name.",
         (str,),
@@ -78,13 +76,13 @@ vedo_common_options = (
         "vedo",
         "cmap",
         "Colormap for vertexdata plots.",
-        (str, Any),
+        (str, vtk.vtkLookupTable),
     ),
     Option("vedo", "vmin", "Minimum value for cmap", (float, int)),
     Option("vedo", "vmax", "Maximum value for cmap", (float, int)),
     Option(
         "vedo",
-        "cmapalpha",
+        "cmap_alpha",
         "Colormap Transparency in range [0, 1].",
         (float, int),
     ),
@@ -100,7 +98,7 @@ vedo_common_options = (
     ),
     Option(
         "vedo",
-        "arrowdata",
+        "arrow_data",
         "Name of vertexdata to plot as arrow. Corresponding data should be "
         "at least 2D. If you want more control over arrows, consider creating "
         "edges using gus.create.edges.from_data().",
@@ -108,13 +106,13 @@ vedo_common_options = (
     ),
     Option(
         "vedo",
-        "arrowdata_scale",
+        "arrow_data_scale",
         "Scaling factor for arrow data.",
         (float, int),
     ),
     Option(
         "vedo",
-        "arrowdata_color",
+        "arrow_data_color",
         "Color for arrow data. Can be either cmap name or color. For "
         "cmap, colors are based on the size of the arrows.",
         (str, tuple, list, int),
@@ -229,9 +227,7 @@ class ShowOption:
         -------
         is_in: bool
         """
-        return Any in self._valid_options[self._backend][
-            key
-        ].allowed_types or isinstance(
+        return isinstance(
             value, self._valid_options[self._backend][key].allowed_types
         )
 
@@ -440,6 +436,31 @@ class ShowOption:
         for key, value in items:
             if key in valid_keys:
                 copy_to[key] = value
+
+    def overwrite_from_dict(self, copy_from, keys=None):
+        """
+        Copies valid option from dictionary.
+
+        Parameters
+        ----------
+        copy_from: dict
+        keys: tuple or list
+          Can specify keys
+
+        Returns
+        -------
+        None
+        """
+        valid_keys = self.valid_keys()
+
+        if keys is not None:
+            items = copy_from[keys].items()
+        else:
+            items = copy_from.items()
+
+        for key, value in items:
+            if key in valid_keys:
+                self[key] = value
 
     def _initialize_showable(self):
         """

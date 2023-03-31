@@ -36,18 +36,17 @@ random.shuffle(spline_list)
 
 multipatch = gus.Multipatch(splines=spline_list)
 multipatch.boundaries_from_continuity()
-multipatch.show(
-    boundary_ids=True, knots=False, control_points=False, resolutions=4
-)
+multipatch.show_options["boundary_ids"] = True
+multipatch.show_options["knots"] = False
+multipatch.show_options["control_points"] = False
+multipatch.show_options["resolutions"] = 4
+multipatch.show_options["overwrite_spline_options"] = True
+multipatch.show()
+
 multipatch.boundary_from_function(split_plane, mask=[1, 2])
-multipatch.show(
-    boundary_ids=True,
-    knots=False,
-    contours=True,
-    control_points=True,
-    control_mesh=False,
-    resolutions=4,
-)
+multipatch.show_options["control_points"] = True
+multipatch.show_options["control_mesh"] = False
+multipatch.show()
 
 gus.spline.io.gismo.export(
     "rectangle_test_mesh.xml", multipatch=multipatch, indent=True
@@ -57,60 +56,79 @@ gus.spline.io.gismo.export(
 b1 = gus.Bezier(
     degrees=[1, 1, 1],
     control_points=[
-        [-2, 0, 3],
-        [0, 0, 3],
-        [-2, 1, 3],
-        [0, 1, 3],
-        [-2, 0, 0],
-        [0, 0, 0],
-        [-2, 1, 0],
-        [0, 1, 0],
+        [-2 + 2, 0 + 2, 3 + 2],
+        [0 + 2, 0 + 2, 3 + 2],
+        [-2 + 2, 1 + 2, 3 + 2],
+        [0 + 2, 1 + 2, 3 + 2],
+        [-2 + 2, 0 + 2, 0 + 2],
+        [0 + 2, 0 + 2, 0 + 2],
+        [-2 + 2, 1 + 2, 0 + 2],
+        [0 + 2, 1 + 2, 0 + 2],
     ],
 )
 b2 = gus.Bezier(
     degrees=[1, 1, 1],
     control_points=[
-        [0, -1, 0],
-        [-2, -1, 0],
-        [0, 0, 0],
-        [-2, 0, 0],
-        [0, -1, 3],
-        [-2, -1, 3],
-        [0, 0, 3],
-        [-2, 0, 3],
+        [0 + 2, -1 + 2, 0 + 2],
+        [-2 + 2, -1 + 2, 0 + 2],
+        [0 + 2, 0 + 2, 0 + 2],
+        [-2 + 2, 0 + 2, 0 + 2],
+        [0 + 2, -1 + 2, 3 + 2],
+        [-2 + 2, -1 + 2, 3 + 2],
+        [0 + 2, 0 + 2, 3 + 2],
+        [-2 + 2, 0 + 2, 3 + 2],
     ],
 )
 b3 = gus.Bezier(
     degrees=[1, 1, 1],
     control_points=[
-        [1, 1, 3],
-        [0, 1, 3],
-        [1, 0, 3],
-        [0, 0, 3],
-        [1, 1, 0],
-        [0, 1, 0],
-        [1, 0, 0],
-        [0, 0, 0],
+        [1 + 2, 1 + 2, 3 + 2],
+        [0 + 2, 1 + 2, 3 + 2],
+        [1 + 2, 0 + 2, 3 + 2],
+        [0 + 2, 0 + 2, 3 + 2],
+        [1 + 2, 1 + 2, 0 + 2],
+        [0 + 2, 1 + 2, 0 + 2],
+        [1 + 2, 0 + 2, 0 + 2],
+        [0 + 2, 0 + 2, 0 + 2],
     ],
 )
 b4 = gus.Bezier(
     degrees=[1, 1, 1],
     control_points=[
-        [0, 0, 0],
-        [0, -1, 0],
-        [1, 0, 0],
-        [1, -1, 0],
-        [0, 0, 3],
-        [0, -1, 3],
-        [1, 0, 3],
-        [1, -1, 3],
+        [0 + 2, 0 + 2, 0 + 2],
+        [0 + 2, -1 + 2, 0 + 2],
+        [1 + 2, 0 + 2, 0 + 2],
+        [1 + 2, -1 + 2, 0 + 2],
+        [0 + 2, 0 + 2, 3 + 2],
+        [0 + 2, -1 + 2, 3 + 2],
+        [1 + 2, 0 + 2, 3 + 2],
+        [1 + 2, -1 + 2, 3 + 2],
     ],
 )
 
-# Multipatch
+# Multipatch - custom function for all fields
+
+
+def plot_func(data, resolutions=None, on=None):
+    """
+    callback to evaluate derivatives
+    """
+    if resolutions is not None:
+        q = gus.create.vertices.raster([[0, 0], [1, 1]], resolutions).vertices
+        return data.derivative(q, [0, 1])
+    elif on is not None:
+        return data.derivative(on, [0, 1])
+
+
 multipatch = gus.Multipatch([b1, b2, b3, b4])
 multipatch.boundaries_from_continuity()
-multipatch.show(resolutions=5, knots=True, control_points=False)
+multipatch.show_options["resolutions"] = 5
+multipatch.show_options["knots"] = True
+multipatch.show_options["control_points"] = False
+multipatch.show_options["overwrite_spline_options"] = True
+multipatch.show_options["field_function"] = "me"
+multipatch.show_options["scalarbar"] = True
+multipatch.show()
 
 
 # Test 2
@@ -151,6 +169,12 @@ microstructure = generator.create(
 # Multipatch
 multipatch = gus.Multipatch(microstructure)
 multipatch.boundaries_from_continuity()
+multipatch.show_options["boundary_ids"] = True
+multipatch.show_options["resolutions"] = 3
+multipatch.show_options["knots"] = True
+multipatch.show_options["control_points"] = False
+multipatch.show_options["overwrite_spline_options"] = True
+
 multipatch.show(
-    boundary_ids=True, resolutions=3, knots=True, control_points=False
+    # boundary_ids=True, resolutions=3, knots=True, control_points=False
 )

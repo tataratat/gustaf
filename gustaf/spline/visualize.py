@@ -10,6 +10,62 @@ from gustaf.helpers import options
 from gustaf.utils import log
 from gustaf.utils.arr import enforce_len
 
+spline_show_options = [
+    options.Option(
+        "vedo",
+        "control_points",
+        "Show spline's control points."
+        "Options propagates to control mesh, unless it is specified.",
+        (bool,),
+    ),
+    options.Option(
+        "vedo",
+        "control_mesh",
+        "Show spline's control mesh.",
+        (bool,),
+    ),
+    options.Option("vedo", "knots", "Show spline's knots.", (bool,)),
+    options.Option(
+        "vedo", "contours", "Show spline's contour - 2D edges.", (bool,)
+    ),
+    options.Option(
+        "vedo",
+        "fitting_queries",
+        "Shows fitting queries if they are locally saved in splines.",
+        (bool,),
+    ),
+    options.Option(
+        "vedo",
+        "control_points_alpha",
+        "Transparency of control points in range [0, 1].",
+        (float, int),
+    ),
+    options.Option(
+        "vedo",
+        "control_point_ids",
+        "Show ids of control_points.",
+        (bool,),
+    ),
+    options.Option(
+        "vedo",
+        "resolutions",
+        "Sampling resolution for spline.",
+        (int, list, tuple, np.ndarray),
+    ),
+    options.Option(
+        "vedo",
+        "arrow_data_coordinates",
+        "Specify parametric coordinates to place arrow_data.",
+        (list, tuple, np.ndarray),
+    ),
+    # options.Option( # old option that is currently not supported anymore
+    #     "vedo",
+    #     "surface_alpha",
+    #     "Alpha of a possible surface the spline spans open.",
+    #     (float),
+    # ),
+]
+
 
 class SplineShowOption(options.ShowOption):
     """
@@ -22,53 +78,7 @@ class SplineShowOption(options.ShowOption):
     # some sort of spline common.
     _valid_options = options.make_valid_options(
         *options.vedo_common_options,
-        options.Option(
-            "vedo",
-            "control_points",
-            "Show spline's control points."
-            "Options propagates to control mesh, unless it is specified.",
-            (bool,),
-        ),
-        options.Option(
-            "vedo",
-            "control_mesh",
-            "Show spline's control mesh.",
-            (bool,),
-        ),
-        options.Option("vedo", "knots", "Show spline's knots.", (bool,)),
-        options.Option(
-            "vedo", "contours", "Show spline's contour - 2D edges.", (bool,)
-        ),
-        options.Option(
-            "vedo",
-            "fitting_queries",
-            "Shows fitting queries if they are locally saved in splines.",
-            (bool,),
-        ),
-        options.Option(
-            "vedo",
-            "control_points_alpha",
-            "Transparency of control points in range [0, 1].",
-            (float, int),
-        ),
-        options.Option(
-            "vedo",
-            "control_point_ids",
-            "Show ids of control_points.",
-            (bool,),
-        ),
-        options.Option(
-            "vedo",
-            "resolutions",
-            "Sampling resolution for spline.",
-            (int, list, tuple, np.ndarray),
-        ),
-        options.Option(
-            "vedo",
-            "arrowdata_on",
-            "Specify parametric coordinates to place arrowdata.",
-            (list, tuple, np.ndarray),
-        ),
+        *spline_show_options,
     )
 
     _helps = "GustafSpline"
@@ -100,26 +110,45 @@ class MultipatchShowOption(options.ShowOption):
 
     # if we start to support more backends, most of this options should become
     # some sort of spline common.
+
     _valid_options = options.make_valid_options(
         *options.vedo_common_options,
+        *spline_show_options,
+        options.Option(
+            "vedo",
+            "overwrite_spline_options",
+            "Overwrite spline options with multipatch options. This will only "
+            "fire once the show/showable method is called. It will also only "
+            "work on a copy of the underlying splines.",
+            (bool,),
+        ),
         options.Option(
             "vedo",
             "boundary_ids",
             "Show multipatch boundaries with ID",
             (bool,),
         ),
-        # options.Option(
-        #     "vedo",
-        #     "common_cmap",
-        #     "Color map for all patches has the same range, exclusive with "
-        #     "patch_borders.",
-        #     (bool,),
-        # ),
+        options.Option(
+            "vedo",
+            "common_cmap",
+            "Color map for all patches has the same range, exclusive with "
+            "patch_borders.",
+            (bool,),
+        ),
         options.Option(
             "vedo",
             "patch_borders",
             "Show individual knot-lines with ID",
             (bool,),
+        ),
+        options.Option(
+            "vedo",
+            "field_function",
+            "Show individual knot-lines with ID",
+            (
+                str,
+                callable,
+            ),
         ),
     )
 
@@ -183,41 +212,41 @@ def _vedo_showable(spline):
     res = enforce_len(
         spline.show_options.get("resolutions", 100), spline.para_dim
     )
-    dataname = spline.show_options.get("dataname", None)
-    sampled_splinedata = spline.splinedata.as_scalar(
-        dataname, res, default=None
+    field_name = spline.show_options.get("field_name", None)
+    sampled_spline_data = spline.spline_data.as_scalar(
+        field_name, res, default=None
     )
-    if dataname is not None and sampled_splinedata is not None:
+    if field_name is not None and sampled_spline_data is not None:
         # transfer data
-        sampled_spline.vertexdata[dataname] = sampled_splinedata
+        sampled_spline.vertexdata[field_name] = sampled_spline_data
 
         # transfer options - maybe vectorized query?
-        keys = ("vmin", "vmax", "scalarbar", "cmap", "cmapalpha")
+        keys = ("vmin", "vmax", "scalarbar", "cmap", "cmap_alpha")
         spline.show_options.copy_valid_options(
             sampled_spline.show_options, keys
         )
 
         # mark that we want to see this data
-        sampled_spline.show_options["dataname"] = dataname
+        sampled_spline.show_options["field_name"] = field_name
 
-    elif dataname is not None and sampled_splinedata is None:
-        log.debug(f"No splinedata named ({dataname}) for {spline}. Skipping")
+    elif field_name is not None and sampled_spline_data is None:
+        log.debug(f"No SplineData named ({field_name}) for {spline}. Skipping")
 
     # with arrow representable, vector data
-    adata_name = spline.show_options.get("arrowdata", None)
-    adapted_adata = spline.splinedata.get(adata_name, None)
+    adata_name = spline.show_options.get("arrow_data", None)
+    adapted_adata = spline.spline_data.get(adata_name, None)
     if adata_name is not None and adapted_adata is not None:
         # if location is specified, this will be a separate Vertices obj with
-        # configured arrowdata
+        # configured arrow_data
         has_locations = adapted_adata.has_locations
-        adata_on = "arrowdata_on" in spline.show_options.keys()
+        adata_on = "arrow_data_coordinates" in spline.show_options.keys()
         create_vertices = has_locations or adata_on
 
         # this case causes conflict of interest. raise
         if has_locations and adata_on:
             raise ValueError(
-                f"arrowdata-({adata_name}) has fixed location, "
-                "but and `arrowdata_on` is set.",
+                f"arrow_data-({adata_name}) has fixed location, "
+                "but and `arrow_data_coordinates` is set.",
             )
 
         if create_vertices:
@@ -226,14 +255,14 @@ def _vedo_showable(spline):
                 queries = adapted_adata.locations
                 on = None
             else:
-                queries = spline.show_options["arrowdata_on"]
+                queries = spline.show_options["arrow_data_coordinates"]
                 on = queries
 
             # bound /  dim check
             bounds = spline.parametric_bounds
             if queries.shape[1] != len(bounds[0]):
                 raise ValueError(
-                    "Dimension mismatch: arrowdata locations-"
+                    "Dimension mismatch: arrow_data locations-"
                     f"{queries.shape[1]} / para_dim-{spline.para_dim}."
                 )
             # tolerance padding. may still cause issues in splinepy.
@@ -247,27 +276,27 @@ def _vedo_showable(spline):
                 )
 
             # get arrow
-            adata = spline.splinedata.as_arrow(adata_name, on=on)
+            adata = spline.spline_data.as_arrow(adata_name, on=on)
 
             # create vertices that can be shown as arrows
             loc_vertices = Vertices(spline.evaluate(queries), copy=False)
             loc_vertices.vertexdata[adata_name] = adata
 
             # transfer options
-            keys = ("arrowdata_scale", "arrowdata_color", "arrowdata")
+            keys = ("arrow_data_scale", "arrow_data_color", "arrow_data")
             spline.show_options.copy_valid_options(
                 loc_vertices.show_options, keys
             )
 
             # add to primitives
-            gus_primitives["arrowdata"] = loc_vertices
+            gus_primitives["arrow_data"] = loc_vertices
 
         else:  # sample arrows and append to sampled spline.
-            sampled_spline.vertexdata[adata_name] = spline.splinedata.as_arrow(
-                adata_name, resolutions=res
-            )
+            sampled_spline.vertexdata[
+                adata_name
+            ] = spline.spline_data.as_arrow(adata_name, resolutions=res)
             # transfer options
-            keys = ("arrowdata_scale", "arrowdata_color", "arrowdata")
+            keys = ("arrow_data_scale", "arrow_data_color", "arrow_data")
             spline.show_options.copy_valid_options(
                 sampled_spline.show_options, keys
             )
@@ -382,6 +411,7 @@ def _vedo_showable_para_dim_2(spline):
     # knots
     if spline.show_options.get("knots", True):
         knot_lines = spline.extract.edges(res, all_knots=True)
+        knot_lines._show_options = type(knot_lines.show_options)(knot_lines)
         knot_lines.show_options["c"] = "grey"
         knot_lines.show_options["lw"] = 2
         gus_primitives["knots"] = knot_lines

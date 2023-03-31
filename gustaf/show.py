@@ -81,13 +81,13 @@ def show_vedo(
     title = kwargs.get("title", "gustaf")
     return_show_list = kwargs.get("return_showable_list", False)
 
-    def clear_vedoplotter(plotter, numrenderers, skipcl=skip_clear):
+    def clear_vedoplotter(plotter, num_renderers, skip_cl=skip_clear):
         """enough said."""
         # for whatever reason it is desired
-        if skipcl:
+        if skip_cl:
             return None
 
-        for i in range(numrenderers):
+        for i in range(num_renderers):
             plotter.clear(at=i)
 
         return None
@@ -120,7 +120,7 @@ def show_vedo(
             )
             title = plt.title
             if close:  # only if it is explicitly stated
-                plt.close()  # Hope that this truely releases..
+                plt.close()  # Hope that this truly releases..
             # assign a new one
             plt = vedo.Plotter(
                 N=N, sharecam=False, offscreen=offs, size=size, title=title
@@ -154,7 +154,8 @@ def show_vedo(
                 sl = [sl]
             for k, item in enumerate(sl):
                 if isinstance(item, GustafBase):
-                    tmp_showable = item.showable(backend="vedo", **kwargs)
+                    item.show_options.overwrite_from_dict(kwargs)
+                    tmp_showable = item.showable()
 
                     # splines return dict
                     # - maybe it is time to do some typing..
@@ -283,25 +284,25 @@ def _vedo_showable(obj, as_dict=False, **kwargs):
             return_as_dict["element_ids"] = element_ids
 
     # data plotting
-    dataname = obj.show_options.get("dataname", None)
-    vertexdata = obj.vertexdata.as_scalar(dataname, None)
-    if dataname is not None and vertexdata is not None:
+    field_name = obj.show_options.get("field_name", None)
+    vertexdata = obj.vertexdata.as_scalar(field_name, None)
+    if field_name is not None and vertexdata is not None:
         # transfer data
         if obj.kind.startswith("edge"):
-            vedo_obj.pointdata[dataname] = vertexdata[obj.edges].reshape(
+            vedo_obj.pointdata[field_name] = vertexdata[obj.edges].reshape(
                 -1, vertexdata.shape[1]
             )
         else:
-            vedo_obj.pointdata[dataname] = vertexdata
+            vedo_obj.pointdata[field_name] = vertexdata
 
         # form cmap kwargs for init
         cmap_keys = ("vmin", "vmax")
         cmap_kwargs = obj.show_options[cmap_keys]
         # set a default cmap if needed
         cmap_kwargs["input_cmap"] = obj.show_options.get("cmap", "plasma")
-        cmap_kwargs["alpha"] = obj.show_options.get("cmapalpha", 1)
-        # add dataname
-        cmap_kwargs["input_array"] = dataname
+        cmap_kwargs["alpha"] = obj.show_options.get("cmap_alpha", 1)
+        # add field_name
+        cmap_kwargs["input_array"] = field_name
 
         # set cmap
         vedo_obj.cmap(**cmap_kwargs)
@@ -313,40 +314,40 @@ def _vedo_showable(obj, as_dict=False, **kwargs):
             sb_kwargs = dict() if isinstance(sb_kwargs, bool) else sb_kwargs
             vedo_obj.addScalarBar(**sb_kwargs)
 
-    elif dataname is not None and vertexdata is None:
+    elif field_name is not None and vertexdata is None:
         utils.log.debug(
-            f"No vertexdata named '{dataname}' for {obj}. Skipping"
+            f"No vertexdata named '{field_name}' for {obj}. Skipping"
         )
 
     # arrow plots - this is independent from data plotting.
-    arrowdata_name = obj.show_options.get("arrowdata", None)
+    arrow_data_name = obj.show_options.get("arrow_data", None)
     # will raise if data is scalar
-    arrowdata_value = obj.vertexdata.as_arrow(arrowdata_name, None, True)
-    if arrowdata_name is not None and arrowdata_value is not None:
+    arrow_data_value = obj.vertexdata.as_arrow(arrow_data_name, None, True)
+    if arrow_data_name is not None and arrow_data_value is not None:
         from gustaf.create.edges import from_data
 
         # we are here because this data is not a scalar
         # is showable?
-        if arrowdata_value.shape[1] not in (2, 3):
+        if arrow_data_value.shape[1] not in (2, 3):
             raise ValueError(
                 "Only 2D or 3D data can be shown.",
-                f"Requested data is {arrowdata_value.shape[1]}",
+                f"Requested data is {arrow_data_value.shape[1]}",
             )
 
         as_edges = from_data(
             obj,
-            arrowdata_value,
-            obj.show_options.get("arrowdata_scale", None),
-            data_norm=obj.vertexdata.as_scalar(arrowdata_name),
+            arrow_data_value,
+            obj.show_options.get("arrow_data_scale", None),
+            data_norm=obj.vertexdata.as_scalar(arrow_data_name),
         )
         arrows = vedo.Arrows(
             as_edges.vertices[as_edges.edges],
-            c=obj.show_options.get("arrowdata_color", "plasma"),
+            c=obj.show_options.get("arrow_data_color", "plasma"),
         )
         if not as_dict:
             vedo_obj += arrows
         else:
-            return_as_dict["arrowdata"] = arrows
+            return_as_dict["arrow_data"] = arrows
 
     axes_kw = obj.show_options.get("axes", None)
     # need to explicitly check if it is false
@@ -379,7 +380,7 @@ def _matplotlib_showable(obj):
     pass
 
 
-def make_showable(obj, backend=settings.VISUALIZATION_BACKEND, **kwargs):
+def make_showable(obj, **kwargs):
     """Since gustaf does not natively support visualization, one of the
     following library is used to visualize gustaf (visualizable) objects: (1)
     vedo -> Fast, offers a lot of features (2) trimesh -> Fast, compatible with
@@ -399,6 +400,7 @@ def make_showable(obj, backend=settings.VISUALIZATION_BACKEND, **kwargs):
     showable_objs: list
       List of showable objects.
     """
+    backend = settings.VISUALIZATION_BACKEND
     if backend.startswith("vedo"):
         return _vedo_showable(obj, **kwargs)
     elif backend.startswith("trimesh"):

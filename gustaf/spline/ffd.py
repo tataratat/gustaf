@@ -391,7 +391,12 @@ class FFD(GustafBase):
             )
         self._spline.reduce_degree(*args, **kwargs)
 
-    def show(self, **kwargs) -> Any:
+    def show(
+        self,
+        title: str = "gustaf - FFD",
+        return_showable: bool = False,
+        return_discrete: bool = False,
+    ) -> Any:
         """Visualize. Shows the deformed mesh and the current spline. Currently
         visualization is limited to vedo.
 
@@ -418,10 +423,7 @@ class FFD(GustafBase):
         """
         if self._spline is None and self._mesh is None:
             raise ValueError("Please set a mesh before calling show()")
-        backend = kwargs.pop("backend", None)
-        return_showable = kwargs.pop("return_showable", False)
-        return_discrete = kwargs.pop("return_discrete", False)
-        title = kwargs.pop("title", "gustaf - FFD")
+        backend = settings.VISUALIZATION_BACKEND
 
         if return_discrete and return_showable:
             raise ValueError(
@@ -429,9 +431,6 @@ class FFD(GustafBase):
                 "{return_discrete, return_showable} "
                 "You've set both True."
             )
-
-        if backend is None:
-            backend = settings.VISUALIZATION_BACKEND
 
         # prepare originals
         o_mesh = self._o_mesh.copy()
@@ -469,9 +468,10 @@ class FFD(GustafBase):
             return things_to_show
 
         # current workaround to set spline's surface alpha correctly
-        # TODO: support this situation better
+        # TODO: support surface_aplha again
         spl = things_to_show.pop("deformed_spline")
-        spl_showable = spl.showable(surface_alpha=0.3)
+        # spl.show_options["surface_alpha"] = 0.3
+        spl_showable = spl.showable()
 
         return show_vedo(
             [

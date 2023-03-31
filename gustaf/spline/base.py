@@ -2,20 +2,22 @@
 
 Base for splines. Contains show and inherited classes from `spline`.
 """
+import colorsys
 from copy import deepcopy
+from typing import List
 
 import numpy as np
 import splinepy
 
 from gustaf import show as showmodule
-from gustaf import utils
 from gustaf._base import GustafBase
-from gustaf.helpers.data import SplineData
+from gustaf.helpers.data import SplineData, SplineDataAdaptor
 from gustaf.helpers.raise_if import ModuleImportRaiser
 from gustaf.spline import visualize
 from gustaf.spline.create import Creator
 from gustaf.spline.extract import Extractor
 from gustaf.spline.proximity import Proximity
+from gustaf.utils.arr import enforce_len
 
 try:
     from vedo import build_lut
@@ -23,17 +25,18 @@ except ImportError as e:
     build_lut = ModuleImportRaiser("vedo", e)
 
 
-def show(spline, **kwargs):
+def show(
+    spline,
+    return_discrete=False,
+    return_showable=False,
+    parametric_space=False,
+):
     """Shows splines with various options. They are excessively listed, so that
     it can be adjustable.
 
     Parameters
     -----------
     spline: BSpline or NURBS
-    resolutions: int or (spline.para_dim,) array-like
-    control_points: bool
-    knots: bool
-    fitting_queries: bool
     return_discrete: bool
       Return dict of gustaf discrete objects, for example,
       {Vertices, Edges, Faces}, instead of opening a window
@@ -41,13 +44,6 @@ def show(spline, **kwargs):
       Return dict of showable objects.
     parametric_space: bool
       Only relevant for `vedo` backend.
-    c: str
-      Default is None. Black for curves, else green.
-    alpha: float
-    lighting: str
-    control_point_ids: bool
-    color_spline: str
-    cmap: str
 
     Returns
     --------
@@ -66,44 +62,28 @@ def show(spline, **kwargs):
     if (spline.para_dim, spline.dim) not in allowed_dim_combo:
         raise ValueError("Sorry, can't show given spline.")
 
-    if kwargs:
-        orig_show_options = spline.show_options
-        spline._show_options = spline.__show_option__(spline)
-        orig_show_options.copy_valid_options(spline.show_options)
-        for key, value in kwargs.items():
-            try:
-                spline.show_options[key] = value
-            except BaseException:
-                utils.log.debug(
-                    f"Skipping invalid option {key} for "
-                    f"{spline.show_options._helps}."
-                )
-                continue
-
     # Prepare things to show dict.
     things_to_show = visualize.make_showable(spline)
 
-    para_space = kwargs.pop("parametric_space", False)
-    if para_space:
+    if parametric_space:
         p_spline = spline.create.parametric_view()
         things_to_show["parametric_spline"] = p_spline
 
-    if kwargs.get("return_discrete", False):
+    if return_discrete:
         return things_to_show
 
-    if kwargs.get("return_showable", False):
+    if return_showable:
         return {key: value.showable() for key, value in things_to_show.items()}
 
-    if para_space:
+    if parametric_space:
         things_to_show.pop("parametric_spline")
 
         return showmodule.show_vedo(
             ["Parametric Space", p_spline],
             ["Physical Space", *things_to_show.values()],
-            **kwargs,
         )
 
-    return showmodule.show_vedo(things_to_show, **kwargs)
+    return showmodule.show_vedo(things_to_show)
 
 
 class GustafSpline(GustafBase):
@@ -119,7 +99,7 @@ class GustafSpline(GustafBase):
         self._proximity = Proximity(self)
         self._creator = Creator(self)
         self._show_options = self.__show_option__(self)
-        self._splinedata = SplineData(self)
+        self._spline_data = SplineData(self)
 
     @property
     def show_options(self):
@@ -137,7 +117,7 @@ class GustafSpline(GustafBase):
         return self._show_options
 
     @property
-    def splinedata(self):
+    def spline_data(self):
         """
         Spline data helper for splines.
 
@@ -147,9 +127,9 @@ class GustafSpline(GustafBase):
 
         Returns
         -------
-        splinedata: SplineData
+        SplineData: spline_data
         """
-        return self._splinedata
+        return self._spline_data
 
     @property
     def extract(self):
@@ -603,57 +583,65 @@ class Multipatch(GustafBase, splinepy.Multipatch):
         """
         return self._show_options
 
-    def show(self, **kwargs):
-        """Show the multipatch system.
-
-        Parameters
-        -----------
-        boundary_ids : bool
-            Show boundary patches with different colors. Default is False.
-        **kwargs : dict
-
-
-        """
+    def show(self):
+        """Show the multipatch system."""
         # Retrieve show options out of valid options
-        spline_list = self.splines.copy()
-        if kwargs.get("boundary_ids", False):
+        spline_list: List[GustafSpline] = self.splines.copy()
+        if self.show_options.get("boundary_ids", False):
             bsp = self.boundary_patches().splines
             bsp_id = np.abs(self.interfaces[self.interfaces < 0])
-
-            # Create a custom color-map
-            max_id = np.max(bsp_id)
-            colors_per_dim = int(np.ceil((1 + max_id) ** (1 / 3)))
-            rgb_color_list = np.reshape(
-                np.meshgrid(
-                    *(np.linspace(0, 1, colors_per_dim) for _ in range(3))
-                ),
-                (3, -1),
-            ).T
-            color_list = [
-                (i + 0.5, rgb_color_list[i, :]) for i in range(max_id + 1)
+            n_unique = len(np.unique(bsp_id))
+            colors = [
+                tuple(np.array(colorsys.hsv_to_rgb(i / n_unique, 1, 1)) * 255)
+                for i in range(n_unique)
             ]
-            lut = build_lut(color_list)
-
-            for patch, id in zip(bsp, bsp_id):
-                patch.splinedata["bid" + str(id)] = BSpline(
-                    degrees=[1] * patch.para_dim,
-                    knot_vectors=np.repeat(
-                        patch.parametric_bounds.T, 2
-                    ).reshape(patch.para_dim, -1),
-                    control_points=[[id]] * (2**patch.para_dim),
-                )
-                patch.show_options["dataname"] = "bid" + str(id)
-                patch.show_options["cmap"] = lut
-
+            np.random.shuffle(colors)
+            for id, patch in zip(bsp_id, bsp):
+                patch.show_options["c"] = colors[bsp_id[id] - 1]
             spline_list.extend(bsp)
-        # if kwargs.get("common_cmap", False):
-        #     for spline in self.splines:
-        #         spline.splinedata.pre_compute_field()
-        #         spline.splinedata
+        # field data adaptation for multipatch
+        field_data = self.show_options.get("field_function", False)
+        v_min, v_max = np.inf, -np.inf
+        if field_data:
+            if type(field_data) is callable:
+                for spline in self.splines:
+                    res = enforce_len(
+                        spline.show_options.get("resolutions", 100),
+                        spline.para_dim,
+                    )
+                    spline.spline_data["field_data"] = SplineDataAdaptor(
+                        spline, function=field_data
+                    )
+                    a = spline.spline_data.as_scalar("field_data", res)
+                    v_min = min(v_min, np.min(a))
+                    v_max = max(v_max, np.max(a))
+            elif type(field_data) is str and field_data == "me":
+                for spline in self.splines:
+                    res = enforce_len(
+                        spline.show_options.get("resolutions", 100),
+                        spline.para_dim,
+                    )
+                    spline.spline_data["field_data"] = spline
+                    spline.show_options["field_name"] = "field_data"
+                    a = spline.spline_data.as_scalar("field_data", res)
+                    v_min = min(v_min, np.min(a))
+                    v_max = max(v_max, np.max(a))
+            else:
+                self._logw("The field function is not valid.")
+        self.show_options["vmin"] = float(v_min)
+        self.show_options["vmax"] = float(v_max)
 
         # Check if return showable is requested and ensure it is set to false
         # when enquiring show module
-        return showmodule(spline_list, **kwargs)
+
+        # first copy the show options of the multipatch to all splines
+        if self.show_options.get("overwrite_spline_options", False):
+            for spline in spline_list:
+                # print(self.show_options["control_points"],spline.show_options["control_points"])
+                self.show_options.copy_valid_options(spline.show_options)
+                # print(self.show_options["control_points"],spline.show_options["control_points"])
+
+        return showmodule(spline_list)
 
     def showable(self, **kwargs):
         kwargs["return_showable"] = False

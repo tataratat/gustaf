@@ -49,8 +49,8 @@ if __name__ == "__main__":
     # 1. sample the spline with a default resolution and see the 2 norm of
     # coordinate as value
     b = bspline2p3d()
-    b.splinedata["me"] = b
-    b.show_options["dataname"] = "me"
+    b.spline_data["me"] = b
+    b.show_options["field_name"] = "me"
     b.show_options["lighting"] = "off"
     gus.show(["1. Show norm of coordinates.", b])
 
@@ -61,9 +61,9 @@ if __name__ == "__main__":
     # 2. see coordinate's norm and an arrow at each sampled point with the norm
     # values length and direction normal to the spline
     b = bspline2p3d()
-    b.splinedata["me"] = b
-    b.show_options["dataname"] = "me"
-    b.show_options["arrowdata"] = "me"
+    b.spline_data["me"] = b
+    b.show_options["field_name"] = "me"
+    b.show_options["arrow_data"] = "me"
     b.show_options["lighting"] = "off"
     gus.show(
         ["2. Show coordinate norm as scalar field and coordinate as arrows", b]
@@ -71,21 +71,25 @@ if __name__ == "__main__":
 
     # 3. see coordinates norm and as arrows only on specified places
     b = bspline2p3d()
-    b.splinedata["me"] = b
-    b.show_options["dataname"] = "me"
-    b.show_options["arrowdata"] = "me"
+    b.spline_data["me"] = b
+    b.show_options["field_name"] = "me"
+    b.show_options["arrow_data"] = "me"
     b.show_options["lighting"] = "off"
-    b.show_options["arrowdata_on"] = np.random.random((100, 2))  # para_coords
+    b.show_options["arrow_data_coordinates"] = np.random.random(
+        (100, 2)
+    )  # para_coords
     gus.show(
         ["3. Show coordinates norm and as arrows on 100 random points.", b]
     )
 
     # 4. see 3. with parametric_view
     b = bspline2p3d()
-    b.splinedata["me"] = b
-    b.show_options["dataname"] = "me"
-    b.show_options["arrowdata"] = "me"
-    b.show_options["arrowdata_on"] = np.random.random((100, 2))  # para_coords
+    b.spline_data["me"] = b
+    b.show_options["field_name"] = "me"
+    b.show_options["arrow_data"] = "me"
+    b.show_options["arrow_data_coordinates"] = np.random.random(
+        (100, 2)
+    )  # para_coords
     b.show_options["scalarbar"] = True
     b.show_options["lighting"] = "off"
     gus.show(
@@ -112,8 +116,8 @@ if __name__ == "__main__":
     # the rest is the same
     b = bspline2p3d()
     b.show_options["lighting"] = "off"
-    b.splinedata["der01"] = plot_func_data
-    b.show_options["dataname"] = "der01"
+    b.spline_data["der01"] = plot_func_data
+    b.show_options["field_name"] = "der01"
     gus.show(
         [
             "5. Show partial derivative of second parametric dimension.\n"
@@ -127,10 +131,12 @@ if __name__ == "__main__":
     # however, gold
     b = bspline2p3d()
     b.show_options["lighting"] = "off"
-    b.splinedata["der01"] = plot_func_data
-    b.show_options["arrowdata"] = "der01"
-    b.show_options["arrowdata_on"] = np.random.random((100, 2))  # para_coords
-    b.show_options["arrowdata_color"] = "gold"
+    b.spline_data["der01"] = plot_func_data
+    b.show_options["arrow_data"] = "der01"
+    b.show_options["arrow_data_coordinates"] = np.random.random(
+        (100, 2)
+    )  # para_coords
+    b.show_options["arrow_data_color"] = "gold"
     gus.show(
         [
             "5.1. Same data as 5. However, on 100 random places with gold "
@@ -145,8 +151,8 @@ if __name__ == "__main__":
     fixed_data = gus.spline.SplineDataAdaptor(values, locations=locations)
     b = bspline2p3d()
     b.show_options["lighting"] = "off"
-    b.splinedata["fixed"] = fixed_data
-    b.show_options["arrowdata"] = "fixed"
+    b.spline_data["fixed"] = fixed_data
+    b.show_options["arrow_data"] = "fixed"
     gus.show(
         [
             "6. Show arbitrary array data on predefined locations using "
@@ -157,7 +163,7 @@ if __name__ == "__main__":
 
     # fixed location data can't be shown in other requested locations.
     # followings won't work
-    # b.show_options["arrowdata_on"] = locations[:5]
+    # b.show_options["arrow_data_coordinates"] = locations[:5]
     # b.show()
 
     # 7. plot any data with a function
@@ -187,16 +193,16 @@ if __name__ == "__main__":
         data=(b, deformed),
         function=func,
     )
-    b.splinedata["deformed"] = deformed_data
-    b.show_options["arrowdata"] = "deformed"
+    b.spline_data["deformed"] = deformed_data
+    b.show_options["arrow_data"] = "deformed"
     # arrows are always automatically scaled. for this one, let's not
-    b.show_options["arrowdata_scale"] = 1
-    b.show_options["arrowdata_on"] = locations
+    b.show_options["arrow_data_scale"] = 1
+    b.show_options["arrow_data_coordinates"] = locations
     # let's see in parametric space
     p_view = b.create.parametric_view()  # shallow copies data and options
-    p_view.show_options.pop("arrowdata_scale")  # we want automatic scaling
-    p_view.show_options["arrowdata_color"] = "gold"
-    p_view.show_options["dataname"] = "deformed"
+    p_view.show_options.pop("arrow_data_scale")  # we want automatic scaling
+    p_view.show_options["arrow_data_color"] = "gold"
+    p_view.show_options["field_name"] = "deformed"
     # plot side by side
     gus.show(
         [
@@ -263,9 +269,9 @@ if __name__ == "__main__":
     )
     disc = gus.spline.create.disk(2, angle=123)
     disc.normalize_knot_vectors()
-    disc.splinedata["nice"] = nice_data
-    disc.show_options["arrowdata"] = "nice"
-    disc.show_options["arrowdata_color"] = "jet"
+    disc.spline_data["nice"] = nice_data
+    disc.show_options["arrow_data"] = "nice"
+    disc.show_options["arrow_data_color"] = "jet"
     gus.show(
         [
             "8. Showing arbitrary data with callback.\n"

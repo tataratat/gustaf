@@ -37,9 +37,9 @@ class VolumesShowOption(helpers.options.ShowOption):
         # without a data to plot on the surface, return vedo.UGrid
         # if vertex_ids is on, we will go with mesh
         if (
-            self.get("dataname", None) is None
+            self.get("field_name", None) is None
             and not self.get("vertex_ids", False)
-            and not self.get("arrowdata", False)
+            and not self.get("arrow_data", False)
         ):
             from vtk import VTK_HEXAHEDRON as herr_hexa
             from vtk import VTK_TETRA as frau_tetra
