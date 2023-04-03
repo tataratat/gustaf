@@ -20,6 +20,13 @@ class Tic(GustafBase):
     def __init__(self, title="untitled", log_level="debug"):
         """
         Configures the timer and logger. Marks the starting point.
+
+        Parameters
+        ----------
+        title: str
+          title for this measurement.
+        log_level: str
+          Valid options are {"info", "debug", "warning"}
         """
         # select logger based on logger level
         self._logger = eval(f"self._log{str(log_level).lower()[0]}")
@@ -33,9 +40,17 @@ class Tic(GustafBase):
         # start
         self._laps = [now()]
 
-    def toc(self, name=None, log=True):
+    def toc(self, name=None, log=False):
         """
         Adds now to the measurements.
+
+        Parameters
+        ----------
+        name: str
+          name of this specific measurement.
+          By default it assign a number to this lap.
+        log: bool
+          If True, will log lapsed time.
 
         Returns
         -------
