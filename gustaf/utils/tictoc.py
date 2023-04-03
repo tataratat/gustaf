@@ -24,9 +24,9 @@ class Tic(GustafBase):
         Parameters
         ----------
         title: str
-          title for this measurement.
+          Title for this measurement. Defaults to "untitled".
         log_level: str
-          Valid options are {"info", "debug", "warning"}
+          Valid options are {"info", "debug", "warning"}. Defaults to "debug".
         """
         # select logger based on logger level
         self._logger = eval(f"self._log{str(log_level).lower()[0]}")
@@ -47,10 +47,10 @@ class Tic(GustafBase):
         Parameters
         ----------
         name: str
-          name of this specific measurement.
-          By default it assign a number to this lap.
+          Name of this specific measurement lap.
+          By default, it assigns a number to this lap.
         log: bool
-          If True, will log lapsed time.
+          If True, will log lapsed time. Defaults to None.
 
         Returns
         -------
@@ -64,22 +64,22 @@ class Tic(GustafBase):
         )
 
         if log:
-            self._logger("time lapsed: ", self._laps[-2] - self._laps[-1])
+            self._logger(f"{self._title} - Lap {name}:  {self._laps[-2] - self._laps[-1]}")
 
     def summary(self, print_=False):
         """
-        Prints measurement summany.
+        Prints measurement summary to the log.
 
         Parameters
         ----------
-        print_: bool
+        print_: Print the summary also to stdout. Defaults to False.
 
 
         Returns
         -------
         records: tuple
-          Records starting from starting point. tuple of names and cummulative
-          lapsed time.
+          Lap timings in a tuple consisting of a list of the lap names and
+           times for each lap from the timer start (cumulative time).
         """
         message = [f"\n+++ {self._title} - time logs +++\n"]
 
@@ -87,8 +87,7 @@ class Tic(GustafBase):
 
         # extract info
         start = self._laps[0]
-        cummulative_raw = [lap - start for lap in self._laps[1:]]
-        cummulative = [f"{c:.10f}" for c in cummulative_raw]
+        cummulative = [f"{lap-start:.10f}" for lap in self._laps[1:]]
         diff = [
             f"{l1 - l0:.10f}"
             for l0, l1 in zip(self._laps[:-1], self._laps[1:])
