@@ -65,16 +65,19 @@ class Tic(GustafBase):
 
         if log:
             self._logger(
-                f"{self._title} - Lap {name}:  {self._laps[-2] - self._laps[-1]}"
+                f"{self._title} - {name}:  {self._laps[-2] - self._laps[-1]}"
             )
 
-    def summary(self, print_=False):
+    def summary(self, log=True, print_=False):
         """
         Prints measurement summary to the log.
 
         Parameters
         ----------
-        print_: Print the summary also to stdout. Defaults to False.
+        log: bool
+          Logs the summary. Default is True.
+        print_: bool
+          Prints the summary. Default is False.
 
 
         Returns
@@ -83,36 +86,39 @@ class Tic(GustafBase):
           Lap timings in a tuple consisting of a list of the lap names and
            times for each lap from the timer start (cumulative time).
         """
-        message = [f"\n+++ {self._title} - time logs +++\n"]
-
-        name_width = int(max([len(n) for n in self._names]))
-
-        # extract info
         start = self._laps[0]
         cummulative = [f"{lap-start:.10f}" for lap in self._laps[1:]]
-        diff = [
-            f"{l1 - l0:.10f}"
-            for l0, l1 in zip(self._laps[:-1], self._laps[1:])
-        ]
-        diff_width = int(max([len(d) for d in diff]))
-        cumm_width = int(max([len(c) for c in cummulative]))
 
-        message.append(
-            f"{'names'.ljust(name_width)} | "
-            f"{'diff'.rjust(diff_width)} | "
-            f"{'cummulative'.rjust(cumm_width)}\n"
-        )
+        if log or print_:
+            message = [f"\n+++ {self._title} - time logs +++\n"]
 
-        for n, d, c in zip(self._names, diff, cummulative):
-            this_line = (
-                f"{n.ljust(name_width)} | "
-                f"{d.rjust(diff_width)} | "
-                f"{c.rjust(cumm_width)}\n"
+            name_width = int(max([len(n) for n in self._names]))
+
+            # extract info
+            diff = [
+                f"{l1 - l0:.10f}"
+                for l0, l1 in zip(self._laps[:-1], self._laps[1:])
+            ]
+            diff_width = int(max([len(d) for d in diff]))
+            cumm_width = int(max([len(c) for c in cummulative]))
+
+            message.append(
+                f"{'names'.ljust(name_width)} | "
+                f"{'diff'.rjust(diff_width)} | "
+                f"{'cummulative'.rjust(cumm_width)}\n"
             )
-            message.append(this_line)
 
-        self._logger(*message)
-        if print_:
-            print(*message)
+            for n, d, c in zip(self._names, diff, cummulative):
+                this_line = (
+                    f"{n.ljust(name_width)} | "
+                    f"{d.rjust(diff_width)} | "
+                    f"{c.rjust(cumm_width)}\n"
+                )
+                message.append(this_line)
+
+            if log:
+                self._logger(*message)
+            if print_:
+                print(*message)
 
         return self._names.copy(), cummulative
