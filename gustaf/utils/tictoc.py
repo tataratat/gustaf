@@ -64,7 +64,9 @@ class Tic(GustafBase):
         )
 
         if log:
-            self._logger(f"{self._title} - Lap {name}:  {self._laps[-2] - self._laps[-1]}")
+            self._logger(
+                f"{self._title} - Lap {name}:  {self._laps[-2] - self._laps[-1]}"
+            )
 
     def summary(self, print_=False):
         """
