@@ -94,7 +94,7 @@ assert np.allclose(
 tet.vertexdata["arange"] = np.arange(len(tet.vertices))  # scalar
 tet.show_options["data_name"] = "arange"
 tet.vertexdata["random"] = np.random.random((len(tet.vertices), 3))  # vector
-tet.show_options["arrowdata"] = "random"
+tet.show_options["arrow_data"] = "random"
 tet.show()
 
 

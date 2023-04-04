@@ -89,7 +89,7 @@ vedo_common_options = (
     ),
     Option(
         "vedo",
-        "arrowdata",
+        "arrow_data",
         "Name of vertexdata to plot as arrow. Corresponding data should be "
         "at least 2D. If you want more control over arrows, consider creating "
         "edges using gus.create.edges.from_data().",
@@ -97,13 +97,13 @@ vedo_common_options = (
     ),
     Option(
         "vedo",
-        "arrowdata_scale",
+        "arrow_data_scale",
         "Scaling factor for arrow data.",
         (float, int),
     ),
     Option(
         "vedo",
-        "arrowdata_color",
+        "arrow_data_color",
         "Color for arrow data. Can be either cmap name or color. For "
         "cmap, colors are based on the size of the arrows.",
         (str, tuple, list, int),

@@ -620,7 +620,7 @@ class SplineDataAdaptor(GustafBase):
         "has_function",
         "has_locations",
         "has_evaluate",
-        "arrowdata_only",
+        "arrow_data_only",
         "_user_created",
     )
 
@@ -633,7 +633,7 @@ class SplineDataAdaptor(GustafBase):
         self.has_function = False
         self.has_locations = False
         self.has_evaluate = False
-        self.arrowdata_only = False
+        self.arrow_data_only = False
 
         # is spline we know?
         if "CoreSpline" in str(type(data).__mro__):
@@ -655,7 +655,7 @@ class SplineDataAdaptor(GustafBase):
         if locations is not None:
             # set what holds true
             self.has_locations = True
-            self.arrowdata_only = True
+            self.arrow_data_only = True
             self.locations = np.asanyarray(locations)
 
             # if this is not a spline we know, it doesn't have a function,

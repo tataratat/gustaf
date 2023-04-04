@@ -318,34 +318,34 @@ def _vedo_showable(obj, as_dict=False, **kwargs):
         )
 
     # arrow plots - this is independent from data plotting.
-    arrowdata_name = obj.show_options.get("arrowdata", None)
+    arrow_data_name = obj.show_options.get("arrow_data", None)
     # will raise if data is scalar
-    arrowdata_value = obj.vertexdata.as_arrow(arrowdata_name, None, True)
-    if arrowdata_name is not None and arrowdata_value is not None:
+    arrow_data_value = obj.vertexdata.as_arrow(arrow_data_name, None, True)
+    if arrow_data_name is not None and arrow_data_value is not None:
         from gustaf.create.edges import from_data
 
         # we are here because this data is not a scalar
         # is showable?
-        if arrowdata_value.shape[1] not in (2, 3):
+        if arrow_data_value.shape[1] not in (2, 3):
             raise ValueError(
                 "Only 2D or 3D data can be shown.",
-                f"Requested data is {arrowdata_value.shape[1]}",
+                f"Requested data is {arrow_data_value.shape[1]}",
             )
 
         as_edges = from_data(
             obj,
-            arrowdata_value,
-            obj.show_options.get("arrowdata_scale", None),
-            data_norm=obj.vertexdata.as_scalar(arrowdata_name),
+            arrow_data_value,
+            obj.show_options.get("arrow_data_scale", None),
+            data_norm=obj.vertexdata.as_scalar(arrow_data_name),
         )
         arrows = vedo.Arrows(
             as_edges.vertices[as_edges.edges],
-            c=obj.show_options.get("arrowdata_color", "plasma"),
+            c=obj.show_options.get("arrow_data_color", "plasma"),
         )
         if not as_dict:
             vedo_obj += arrows
         else:
-            return_as_dict["arrowdata"] = arrows
+            return_as_dict["arrow_data"] = arrows
 
     axes_kw = obj.show_options.get("axes", None)
     # need to explicitly check if it is false
