@@ -62,7 +62,7 @@ def edges(
 
         # This may take awhile.
         if all_knots:
-            edgess = []  # edges' is not a valid syntax
+            temp_edges = []  # edges' is not a valid syntax
             unique_knots = np.array(spline.unique_knots, dtype=object)
             for i in range(spline.para_dim):
                 mask = np.ones(spline.para_dim, dtype=bool)
@@ -73,9 +73,11 @@ def edges(
                 )
 
                 for ekq in extract_knot_queries:
-                    edgess.append(edges(spline, resolution[i], i, ekq, False))
+                    temp_edges.append(
+                        edges(spline, resolution[i], i, ekq, False)
+                    )
 
-            return Edges.concat(edgess)
+            return Edges.concat(temp_edges)
 
         # Get parametric points to extract
         queries = np.empty(
@@ -142,8 +144,8 @@ def faces(
         vertices = []
         faces = []
         offset = 0
-        # accomodate bezier Splines
-        ukvs = spline.unique_knots
+        # accommodate bezier Splines
+        u_kvs = spline.unique_knots
 
         for i in range(spline.para_dim):
             extract = i
@@ -154,18 +156,18 @@ def faces(
             # Extract range
             extract_range = [
                 [
-                    min(ukvs[extract_along[0]]),
-                    max(ukvs[extract_along[0]]),
+                    min(u_kvs[extract_along[0]]),
+                    max(u_kvs[extract_along[0]]),
                 ],
                 [
-                    min(ukvs[extract_along[1]]),
-                    max(ukvs[extract_along[1]]),
+                    min(u_kvs[extract_along[1]]),
+                    max(u_kvs[extract_along[1]]),
                 ],
             ]
 
             extract_list = [
-                min(ukvs[extract]),
-                max(ukvs[extract]),
+                min(u_kvs[extract]),
+                max(u_kvs[extract]),
             ]
 
             # surface point queries (spq)
@@ -374,14 +376,14 @@ def control_mesh(spline):
 
 
 def spline(spline, para_dim, split_plane):
-    """Extract a subspline from a given representation.
+    """Extract a sub spline from a given representation.
 
     Parameters
     ----------
     para_dim : int
-      parametric dimension to be extrac ted
+      parametric dimension to be extract ted
     split_plane : float / tuple<float, float>
-      intervall or value in parametric space to be extracted from the spline
+      interval or value in parametric space to be extracted from the spline
       representation
 
     Returns
@@ -392,7 +394,7 @@ def spline(spline, para_dim, split_plane):
 
     # Check type
     if not issubclass(type(spline), GustafSpline):
-        raise TypeError("Unknown spline representation passed to subspline")
+        raise TypeError("Unknown spline representation passed to sub spline")
 
     # Check arguments for sanity
     if para_dim > spline.para_dim:
@@ -435,7 +437,7 @@ def spline(spline, para_dim, split_plane):
 
     # Start extraction
     cps_res = spline_copy.control_mesh_resolutions
-    # start and end id. indicies correspond to [first dim][first appearance]
+    # start and end id. indices correspond to [first dim][first appearance]
     start_id = np.where(
         abs(spline_copy.knot_vectors[para_dim] - split_plane[0])
         < settings.TOLERANCE
@@ -465,7 +467,7 @@ def spline(spline, para_dim, split_plane):
             spline_info["knot_vectors"].pop(para_dim)
         else:
             start_knot = spline_copy.knot_vectors[para_dim][start_id]
-            knots_inbetween = spline_copy.knot_vectors[para_dim][
+            knots_in_between = spline_copy.knot_vectors[para_dim][
                 start_id : (end_id + spline_copy.degrees[para_dim])
             ]
             end_knot = spline_copy.knot_vectors[para_dim][
@@ -473,7 +475,7 @@ def spline(spline, para_dim, split_plane):
             ]
 
             spline_info["knot_vectors"][para_dim] = np.concatenate(
-                ([start_knot], knots_inbetween, [end_knot])
+                ([start_knot], knots_in_between, [end_knot])
             )
 
     if is_rational:
@@ -490,8 +492,8 @@ class Extractor:
 
     Examples
     ---------
-    >>> myspline = <your-spline>
-    >>> spline_faces = myspline.extract.faces()
+    >>> my_spline = <your-spline>
+    >>> spline_faces = my_spline.extract.faces()
     """
 
     def __init__(self, spl):
@@ -527,7 +529,7 @@ class Extractor:
     def boundaries(self, *args, **kwargs):
         return self._spline.extract_boundaries(*args, **kwargs)
 
-    def spline(self, splittin_plane=None, interval=None):
+    def spline(self, splitting_plane=None, interval=None):
         """Extract a spline from a spline.
 
         Use a (number of) splitting planes to extract a subsection from the
@@ -539,21 +541,21 @@ class Extractor:
           if integer : parametric dimension to be extracted
           if dictionary : list of splitting planes and ranges to be passed
         interval : float / tuple<float,float>
-          intervall or value in parametric space to be extracted from the
+          interval or value in parametric space to be extracted from the
           spline representation
         Returns
         -------
         spline
         """
-        if isinstance(splittin_plane, dict):
+        if isinstance(splitting_plane, dict):
             if interval is not None:
                 raise ValueError("Arguments incompatible expect dictionary")
-            splittin_plane = dict(
-                sorted(splittin_plane.items(), key=lambda x: x[0])[::-1]
+            splitting_plane = dict(
+                sorted(splitting_plane.items(), key=lambda x: x[0])[::-1]
             )
             spline_copy = self._spline.copy()
-            for key, item in splittin_plane.items():
+            for key, item in splitting_plane.items():
                 spline_copy = spline(spline_copy, key, item)
             return spline_copy
         else:
-            return spline(self._spline, splittin_plane, interval)
+            return spline(self._spline, splitting_plane, interval)

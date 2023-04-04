@@ -461,7 +461,7 @@ class FFD(GustafBase):
             return things_to_show
 
         if return_showable:
-            # let's turn everthing into showable and return
+            # let's turn everything into showable and return
             for k, v in things_to_show.items():
                 if isinstance(v, GustafBase):
                     things_to_show[k] = v.showable()

@@ -54,8 +54,8 @@ class Proximity:
 
     Examples
     ---------
-    >>> myspline = <your-spline>
-    >>> closest_cp_ids = myspline.proximity.closest_control_points(queries)
+    >>> my_spline = <your-spline>
+    >>> closest_cp_ids = my_spline.proximity.closest_control_points(queries)
     """
 
     def __init__(self, spl):

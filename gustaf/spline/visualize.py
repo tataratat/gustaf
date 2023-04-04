@@ -94,7 +94,7 @@ def make_showable(spline):
 
 def _vedo_showable(spline):
     """
-    Goes through common precedures for preparing showable splines.
+    Goes through common procedures for preparing showable splines.
 
     Parameters
     ----------
@@ -242,17 +242,17 @@ def _vedo_showable(spline):
 
     if spline.show_options.get("control_mesh", show_cps):
         # pure control mesh
-        cmesh = spline.extract.control_mesh()  # either edges or faces
+        c_mesh = spline.extract.control_mesh()  # either edges or faces
         if spline.para_dim != 1:
-            cmesh = cmesh.toedges(unique=True)
+            c_mesh = c_mesh.toedges(unique=True)
 
-        cmesh.show_options["c"] = "red"
-        cmesh.show_options["lw"] = 4
-        cmesh.show_options["alpha"] = spline.show_options.get(
+        c_mesh.show_options["c"] = "red"
+        c_mesh.show_options["lw"] = 4
+        c_mesh.show_options["alpha"] = spline.show_options.get(
             "control_points_alpha", 0.8
         )
         # add
-        gus_primitives["control_mesh"] = cmesh
+        gus_primitives["control_mesh"] = c_mesh
 
     # fitting queries
     if hasattr(spline, "_fitting_queries") and spline.show_options.get(
@@ -267,8 +267,7 @@ def _vedo_showable(spline):
 
 
 def _vedo_showable_para_dim_1(spline):
-    """
-    Assumes showability check has been already performed
+    """Assumes showability check has been already performed.
 
     Parameters
     ----------

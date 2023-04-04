@@ -18,8 +18,9 @@ from gustaf.spline.proximity import Proximity
 
 
 def show(spline, **kwargs):
-    """Shows splines with various options. They are excessively listed, so that
-    it can be adjustable.
+    """Shows splines with various options.
+
+    They are excessively listed, so that it can be adjustable.
 
     Parameters
     -----------
@@ -104,7 +105,7 @@ class GustafSpline(GustafBase):
     __show_option__ = visualize.SplineShowOption
 
     def __init__(self):
-        """Contructor as abstractmethod.
+        """Constructor as abstractmethod.
 
         This needs to be inherited first to make sure duplicating
         functions properly override splinepy.Spline
@@ -147,13 +148,13 @@ class GustafSpline(GustafBase):
 
     @property
     def extract(self):
-        """Returns spline extracter. Can directly perform extractions available
+        """Returns spline extractor. Can directly perform extractions available
         at `gustaf/spline/extract.py`. For more info, take a look at
-        `gustaf/spline/extract.py`: Extracter.
+        `gustaf/spline/extract.py`: Extractor.
 
         Examples
         ---------
-        >>> splinefaces = spline.extract.faces()
+        >>> spline_faces = spline.extract.faces()
 
         Parameters
         -----------
@@ -161,7 +162,7 @@ class GustafSpline(GustafBase):
 
         Returns
         --------
-        spline_extracter: Extracter
+        spline_extractor: Extractor
         """
         return self._extractor
 
