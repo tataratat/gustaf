@@ -10,6 +10,7 @@ import numpy as np
 import splinepy
 
 from gustaf import show as showmodule
+from gustaf import utils
 from gustaf._base import GustafBase
 from gustaf.helpers.data import SplineData, SplineDataAdaptor
 from gustaf.spline import visualize
@@ -24,6 +25,7 @@ def show(
     return_discrete=False,
     return_showable=False,
     parametric_space=False,
+    **kwargs,
 ):
     """Shows splines with various options. They are excessively listed, so that
     it can be adjustable.
@@ -38,6 +40,8 @@ def show(
       Return dict of showable objects.
     parametric_space: bool
       Only relevant for `vedo` backend.
+    kwargs: dict
+        will overwrite if applicable show_options
 
     Returns
     --------
@@ -55,6 +59,20 @@ def show(
     )
     if (spline.para_dim, spline.dim) not in allowed_dim_combo:
         raise ValueError("Sorry, can't show given spline.")
+
+    if kwargs:
+        orig_show_options = spline.show_options
+        spline._show_options = spline.__show_option__(spline)
+        orig_show_options.copy_valid_options(spline.show_options)
+        for key, value in kwargs.items():
+            try:
+                spline.show_options[key] = value
+            except BaseException:
+                utils.log.debug(
+                    f"Skipping invalid option {key} for "
+                    f"{spline.show_options._helps}."
+                )
+                continue
 
     # Prepare things to show dict.
     things_to_show = visualize.make_showable(spline)
