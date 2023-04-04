@@ -61,6 +61,5 @@ if __name__ == "__main__":
         [l_eye, r_eye, upperlip, innermouth, lowerlip],
         control_points=False,
         knots=False,
-        lighting="off",
         close=False,
     )

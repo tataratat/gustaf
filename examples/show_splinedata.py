@@ -51,7 +51,6 @@ if __name__ == "__main__":
     b = bspline2p3d()
     b.spline_data["me"] = b
     b.show_options["field_name"] = "me"
-    b.show_options["lighting"] = "off"
     gus.show(["1. Show norm of coordinates.", b])
 
     # 1.1 add the default scalarbar
@@ -64,7 +63,6 @@ if __name__ == "__main__":
     b.spline_data["me"] = b
     b.show_options["field_name"] = "me"
     b.show_options["arrow_data"] = "me"
-    b.show_options["lighting"] = "off"
     gus.show(
         ["2. Show coordinate norm as scalar field and coordinate as arrows", b]
     )
@@ -74,7 +72,6 @@ if __name__ == "__main__":
     b.spline_data["me"] = b
     b.show_options["field_name"] = "me"
     b.show_options["arrow_data"] = "me"
-    b.show_options["lighting"] = "off"
     b.show_options["arrow_data_coordinates"] = np.random.random(
         (100, 2)
     )  # para_coords
@@ -91,7 +88,6 @@ if __name__ == "__main__":
         (100, 2)
     )  # para_coords
     b.show_options["scalarbar"] = True
-    b.show_options["lighting"] = "off"
     gus.show(
         ["4. Show 3. and 3. in parametric space view with scalarbar.", b],
         b.create.parametric_view(),
@@ -115,7 +111,6 @@ if __name__ == "__main__":
     plot_func_data = gus.spline.SplineDataAdaptor(b, function=plot_func)
     # the rest is the same
     b = bspline2p3d()
-    b.show_options["lighting"] = "off"
     b.spline_data["der01"] = plot_func_data
     b.show_options["field_name"] = "der01"
     gus.show(
@@ -130,7 +125,6 @@ if __name__ == "__main__":
     # remove on to sample same way as spline.
     # however, gold
     b = bspline2p3d()
-    b.show_options["lighting"] = "off"
     b.spline_data["der01"] = plot_func_data
     b.show_options["arrow_data"] = "der01"
     b.show_options["arrow_data_coordinates"] = np.random.random(
@@ -150,7 +144,6 @@ if __name__ == "__main__":
     values = np.repeat(np.linspace(1, 2, 15), 3).reshape(-1, 3) + [0, 0, 2]
     fixed_data = gus.spline.SplineDataAdaptor(values, locations=locations)
     b = bspline2p3d()
-    b.show_options["lighting"] = "off"
     b.spline_data["fixed"] = fixed_data
     b.show_options["arrow_data"] = "fixed"
     gus.show(
@@ -169,7 +162,6 @@ if __name__ == "__main__":
     # 7. plot any data with a function
     # some manually defined deformed spline
     deformed = bspline2p3d()  # minimal copy - properties and cached data only
-    deformed.show_options["lighting"] = "off"
     deformed.cps[11, -1] -= 4
     deformed.cps *= [5.5, 5.5, 5.5]
     deformed.cps += [-5, 0, 8]

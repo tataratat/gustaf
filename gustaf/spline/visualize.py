@@ -191,22 +191,24 @@ def _vedo_showable(spline):
     """
     # get spline and knots
     gus_primitives = eval(f"_vedo_showable_para_dim_{spline.para_dim}(spline)")
-
-    # apply spline color
+    # apply spline color TODO talk to jae about this
     sampled_spline = gus_primitives["spline"]
+    spline.show_options.copy_valid_options(sampled_spline.show_options)
     default_color = "green" if spline.para_dim > 1 else "black"
-    sampled_spline.show_options["c"] = spline.show_options.get(
+    sampled_spline.show_options["c"] = sampled_spline.show_options.get(
         "c", default_color
     )
-    sampled_spline.show_options["alpha"] = spline.show_options.get("alpha", 1)
-    sampled_spline.show_options["lighting"] = spline.show_options.get(
-        "lighting", "glossy"
-    )
+    # sampled_spline.show_options["alpha"] = spline.show_options.get(
+    #     "alpha", 1
+    # )
+    # sampled_spline.show_options["lighting"] = spline.show_options.get(
+    #     "lighting", "glossy"
+    # )
 
-    # axis?
-    sampled_spline.show_options["axes"] = spline.show_options.get(
-        "axes", False
-    )
+    # # axis?
+    # sampled_spline.show_options["axes"] = spline.show_options.get(
+    #     "axes", False
+    # )
 
     # with color representable, scalar field data
     res = enforce_len(
