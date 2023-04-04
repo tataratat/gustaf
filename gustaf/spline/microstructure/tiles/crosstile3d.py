@@ -19,7 +19,7 @@ class CrossTile3D(TileBase):
                 [0.5, 0.5, 1.0],
             ]
         )
-        self._parameter_space_dimension = 1
+        self._n_info_per_eval_point = 1
 
     def closing_tile(
         self,
@@ -54,7 +54,6 @@ class CrossTile3D(TileBase):
         if parameters is None:
             self._logd("Tile request is not parametrized, setting default 0.2")
             parameters = tuple([np.ones(6) * 0.2])
-        parameters = parameters[0]
         if not (np.all(parameters > 0) and np.all(parameters < 0.5)):
             raise ValueError("Thickness out of range (0, .5)")
 
@@ -378,10 +377,15 @@ class CrossTile3D(TileBase):
         # set to default if nothing is given
         if parameters is None:
             self._logd("Setting branch thickness to default 0.2")
-            parameters = tuple([np.ones(6) * 0.2])
-        [x_min_r, x_max_r, y_min_r, y_max_r, z_min_r, z_max_r] = parameters[
-            0
-        ].tolist()
+            parameters = np.ones(6) * 0.2
+        [
+            x_min_r,
+            x_max_r,
+            y_min_r,
+            y_max_r,
+            z_min_r,
+            z_max_r,
+        ] = parameters.tolist()
         for radius in [x_min_r, x_max_r, y_min_r, y_max_r, z_min_r, z_max_r]:
             if not isinstance(radius, float):
                 raise ValueError("Invalid type")

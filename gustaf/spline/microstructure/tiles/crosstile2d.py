@@ -17,7 +17,7 @@ class CrossTile2D(TileBase):
                 [0.5, 1.0],
             ]
         )
-        self._parameter_space_dimension = 1
+        self._n_info_per_eval_point = 1
 
     def closing_tile(
         self,
@@ -32,19 +32,19 @@ class CrossTile2D(TileBase):
 
         Parameters
         ----------
-        parameters : tuple(np.ndarray)
+        parameters : np.ndarray
           radii of fitting cylinder at evaluation points
-        parameter_sensitivities: list(tuple(np.ndarray))
+        parameter_sensitivities: list((np.ndarray))
           Describes the parameter sensitivities with respect to some design
           variable. In case the design variables directly apply to the
           parameter itself, they evaluate as delta_ij
         closure : int
-          parametric dimension that needs to be closed. Positiv values mean
+          parametric dimension that needs to be closed. Positive values mean
           that minimum parametric dimension is requested. That means,
           i.e. -2 closes the tile at maximum z-coordinate.
           (must currently be either -2 or 2)
         boundary_width : float
-          with of the boundary surronding branch
+          with of the boundary surrounding branch
         filling_height : float
           portion of the height that is filled in parametric domain
 
@@ -58,8 +58,9 @@ class CrossTile2D(TileBase):
 
         if parameters is None:
             self._logd("Tile request is not parametrized, setting default 0.2")
-            parameters = tuple([np.ones(6) * 0.2])
-        if not (np.all(parameters[0] > 0) and np.all(parameters[0] < 0.5)):
+            parameters = np.array(np.ones(4) * 0.2).reshape(-1, 1)
+
+        if not (np.all(parameters > 0) and np.all(parameters < 0.5)):
             raise ValueError("Thickness out of range (0, .5)")
 
         if not (0.0 < float(boundary_width) < 0.5):
@@ -71,16 +72,13 @@ class CrossTile2D(TileBase):
         # Check if user requests derivative splines
         if parameter_sensitivities is not None:
             # Check format
-            if not (
-                isinstance(parameter_sensitivities, list)
-                and isinstance(parameter_sensitivities[0], tuple)
-            ):
+            if not self.check_param_derivatives(parameter_sensitivities):
                 raise TypeError(
                     "The parameter_sensitivities passed have the wrong "
                     "format. The expected format is "
                     "list(tuple(np.ndarray)), where each list entry "
                 )
-            n_derivatives = len(parameter_sensitivities)
+            n_derivatives = parameter_sensitivities.shape[2]
         else:
             n_derivatives = 0
 
@@ -98,7 +96,7 @@ class CrossTile2D(TileBase):
                 v_one_half = 0.5
                 v_one = 1.0
                 v_zero = 0.0
-                parameters = parameters[0]
+                parameters = parameters
             else:
                 # Set constant values to zero for derivatives
                 fill_height = 0.0
@@ -110,7 +108,7 @@ class CrossTile2D(TileBase):
                 v_one_half = 0.0
                 v_one = 0.0
                 v_zero = 0.0
-                parameters = parameter_sensitivities[i_derivative - 1][0]
+                parameters = parameter_sensitivities[:, 0, i_derivative - 1]
 
             spline_list = []
             if closure == "x_min":
@@ -383,10 +381,10 @@ class CrossTile2D(TileBase):
 
         Parameters
         ----------
-        parameters : tuple(np.array)
+        parameters : np.array
           only first entry is used, defines the internal radii of the
           branches
-        parameter_sensitivities: list(tuple(np.ndarray))
+        parameter_sensitivities: list(np.ndarray)
           Describes the parameter sensitivities with respect to some design
           variable. In case the design variables directly apply to the
           parameter itself, they evaluate as delta_ij
@@ -405,29 +403,26 @@ class CrossTile2D(TileBase):
         # set to default if nothing is given
         if parameters is None:
             self._logd("Setting branch thickness to default 0.2")
-            parameters = tuple([np.ones(4) * 0.2])
-        for radius in parameters[0].tolist():
-            if not isinstance(radius, float):
-                raise ValueError("Invalid type")
-            if not (radius > 0 and radius < max_radius):
-                raise ValueError(
-                    f"Radii must be in (0,{max_radius}) for "
-                    f"center_expansion {center_expansion}"
-                )
+            parameters = np.array(np.ones(4) * 0.2).reshape(-1, 1)
 
+        self.check_params(parameters)
+        if not np.all(parameters > 0):
+            raise ValueError(
+                f"Radii must be in (0,{max_radius}) for "
+                f"center_expansion {center_expansion}"
+            )
+
+        self.check_param_derivatives(parameter_sensitivities)
         # Check if user requests derivative splines
         if parameter_sensitivities is not None:
             # Check format
-            if not (
-                isinstance(parameter_sensitivities, list)
-                and isinstance(parameter_sensitivities[0], tuple)
-            ):
+            if not self.check_param_derivatives(parameter_sensitivities):
                 raise TypeError(
                     "The parameter_sensitivities passed have the wrong "
                     "format. The expected format is "
-                    "list(tuple(np.ndarray)), where each list entry "
+                    "list(np.ndarray), where each list entry "
                 )
-            n_derivatives = len(parameter_sensitivities)
+            n_derivatives = parameter_sensitivities.shape[2]
         else:
             n_derivatives = 0
 
@@ -436,15 +431,14 @@ class CrossTile2D(TileBase):
         for i_derivative in range(n_derivatives + 1):
             # Constant auxiliary values
             if i_derivative == 0:
-                [x_min_r, x_max_r, y_min_r, y_max_r] = parameters[0].tolist()
-                parameters = parameters[0]
+                [x_min_r, x_max_r, y_min_r, y_max_r] = parameters
                 v_one_half = 0.5
                 # center radius
                 center_r = (
                     (x_min_r + x_max_r + y_min_r + y_max_r)
                     / 4.0
                     * center_expansion
-                )
+                ).item()
                 hd_center = 0.5 * (0.5 + center_r)
             else:
                 [x_min_r, x_max_r, y_min_r, y_max_r] = parameter_sensitivities[

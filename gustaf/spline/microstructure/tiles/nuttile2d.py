@@ -13,7 +13,7 @@ class NutTile2D(TileBase):
                 [0.5, 0.5],
             ]
         )
-        self._parameter_space_dimension = 1
+        self._n_info_per_eval_point = 1
 
     def closing_tile(
         self,
@@ -26,9 +26,9 @@ class NutTile2D(TileBase):
 
         Parameters
         ----------
-        parameters: tuple(np.ndarray)
+        parameters: np.ndarray
             thickness of the wall
-        parameter_sensitivities: list(tuple(np.ndarray))
+        parameter_sensitivities: list(np.ndarray)
           Describes the parameter sensitivities with respect to some design
           variable. In case the design variables directly apply to the
           parameter itself, they evaluate as delta_ij
@@ -49,14 +49,18 @@ class NutTile2D(TileBase):
 
         if parameters is None:
             self._log("Tile request is not parametrized, setting default 0.2")
-            parameters = tuple([np.ones(1) * 0.2])
+            parameters = np.array(np.ones(1) * 0.2).reshape(-1, 1)
 
-        if not (np.all(parameters[0] > 0) and np.all(parameters[0] < 0.5)):
+        if not (np.all(parameters > 0) and np.all(parameters < 0.5)):
             raise ValueError(
                 "The thickness of the wall must be in (0.01 and 0.49)"
             )
 
-        v_h_void = parameters[0][0]
+        self.check_params(parameters)
+
+        self.check_param_derivatives(parameter_sensitivities)
+
+        v_h_void = parameters[0][0]  # TODO this is wrong ?
         if not ((v_h_void > 0.01) and (v_h_void < 0.5)):
             raise ValueError(
                 "The thickness of the wall must be in (0.01 and 0.49)"
@@ -405,10 +409,10 @@ class NutTile2D(TileBase):
 
         Parameters
         ----------
-        parameters : tuple(np.array)
+        parameters : np.array
           only first entry is used, defines the thickness of the
           wall
-        parameter_sensitivities: list(tuple(np.ndarray))
+        parameter_sensitivities: list(np.ndarray)
           Describes the parameter sensitivities with respect to some design
           variable. In case the design variables directly apply to the
           parameter itself, they evaluate as delta_ij
@@ -427,7 +431,9 @@ class NutTile2D(TileBase):
 
         if parameters is None:
             self._logd("Setting parameters to default values (0.2)")
-            parameters = tuple([np.ones(1) * 0.2])
+            parameters = np.array(np.ones(1) * 0.2).reshape(-1, 1)
+
+        self.check_params(parameters)
 
         v_h_void = parameters[0][0]
         if not ((v_h_void > 0.01) and (v_h_void < 0.5)):
@@ -439,7 +445,7 @@ class NutTile2D(TileBase):
         v_one_half = 0.5
         v_one = 1.0
         v_outer_c_h = contact_length * 0.5
-        v_inner_c_h = contact_length * parameters[0][0]
+        v_inner_c_h = contact_length * parameters[0][0]  # TODO change this
 
         spline_list = []
 

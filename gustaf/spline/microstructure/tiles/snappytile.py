@@ -11,7 +11,7 @@ class SnappyTile(TileBase):
         self._dim = 2
         # Dummy point
         self._evaluation_points = np.array([[0.5, 0.5]])
-        self._parameter_space_dimension = 1
+        self._n_info_per_eval_point = 1
 
     def closing_tile(
         self,
@@ -29,12 +29,12 @@ class SnappyTile(TileBase):
 
         Parameters
         ----------
-        parameters: tuple(np.ndarray)
+        parameters: np.ndarray
           currently unused
-        parameter_sensitivities: list(tuple(np.ndarray))
+        parameter_sensitivities: list(np.ndarray)
           Describes the parameter sensitivities with respect to some design
           variable. In case the design variables directly apply to the
-          parameter itself, they evaluate as delta_ij unsused
+          parameter itself, they evaluate as delta_ij unused
         closure : str
           string specifying the closing dimensions (e.g., x_min)
         contact_length : float
@@ -44,7 +44,7 @@ class SnappyTile(TileBase):
         b : float
           height/ thickness of the lower/thicker beam
         c : float
-          offset to to the upper beam (for consistent snap-through must fullfil
+          offset to the upper beam (for consistent snap-through must fulfill
           2*c<1-b)
         r : float
           'radius' of the cubic bezier
@@ -55,6 +55,8 @@ class SnappyTile(TileBase):
         """
         if closure is None:
             raise ValueError("No closing direction given")
+
+        self.check_params(parameters)
 
         spline_list = []
         v_zero = 0.0
@@ -299,9 +301,9 @@ class SnappyTile(TileBase):
 
         Parameters
         ----------
-        parameters : tuple(np.array)
+        parameters : np.array
           Currently, no parameter is used, (First test)
-        parameter_sensitivities: list(tuple(np.ndarray))
+        parameter_sensitivities: list(np.ndarray)
           Describes the parameter sensitivities with respect to some design
           variable. In case the design variables directly apply to the
           parameter itself, they evaluate as delta_ij, currently unused
@@ -312,7 +314,7 @@ class SnappyTile(TileBase):
         b : float
           height/ thickness of the lower/thicker beam
         c : float
-          offset to to the upper beam (for consistent snap-through must fullfil
+          offset to the upper beam (for consistent snap-through must fulfill
           2*c<1-b)
         r : float
           'radius' of the cubic bezier
@@ -343,6 +345,12 @@ class SnappyTile(TileBase):
             raise ValueError(
                 "Inconsistent parameters, must be 2*c<1-c and a<c"
             )
+
+        if parameters is None:
+            self._logd("Setting parameters to default values (0.2)")
+            parameters = np.array(np.ones(1) * 0.2).reshape(-1, 1)
+
+        self.check_params(parameters)
 
         v_zero = 0.0
         v_one_half = 0.5

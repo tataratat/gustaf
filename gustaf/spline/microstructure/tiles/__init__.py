@@ -20,6 +20,7 @@ from gustaf.spline.microstructure.tiles.inversecrosstile3d import (
     InverseCrossTile3D,
 )
 from gustaf.spline.microstructure.tiles.nuttile2d import NutTile2D
+from gustaf.spline.microstructure.tiles.nuttile3d import NutTile3D
 from gustaf.spline.microstructure.tiles.snappytile import SnappyTile
 from gustaf.spline.microstructure.tiles.tilebase import TileBase
 
