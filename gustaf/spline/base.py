@@ -113,7 +113,7 @@ class GustafSpline(GustafBase):
         self._proximity = Proximity(self)
         self._creator = Creator(self)
         self._show_options = self.__show_option__(self)
-        self._splinedata = SplineData(self)
+        self._spline_data = SplineData(self)
 
     @property
     def show_options(self):
@@ -131,7 +131,7 @@ class GustafSpline(GustafBase):
         return self._show_options
 
     @property
-    def splinedata(self):
+    def spline_data(self):
         """
         Spline data helper for splines.
 
@@ -141,9 +141,9 @@ class GustafSpline(GustafBase):
 
         Returns
         -------
-        splinedata: SplineData
+        spline_data: SplineData
         """
-        return self._splinedata
+        return self._spline_data
 
     @property
     def extract(self):

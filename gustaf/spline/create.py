@@ -282,7 +282,7 @@ def parametric_view(spline, axes=True):
     `naive_spline()`. Degrees are always 1 and knot multiplicity is not
     preserved. Returns BSpline, as BSpline and NURBS should look the same as
     parametric view.
-    Will take shallow copy of underlying data of splinedata and show_options
+    Will take shallow copy of underlying data of spline_data and show_options
     from original spline.
 
     Parameters
@@ -306,7 +306,7 @@ def parametric_view(spline, axes=True):
             para_spline.insert_knots(i, kv[1:-1])
 
     # take shallow copy
-    para_spline._splinedata._saved = spline.splinedata._saved.copy()
+    para_spline._spline_data._saved = spline.spline_data._saved.copy()
     para_spline._show_options._options[
         para_spline._show_options._backend
     ] = spline.show_options._options[spline._show_options._backend].copy()

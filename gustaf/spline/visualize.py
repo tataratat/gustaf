@@ -129,12 +129,12 @@ def _vedo_showable(spline):
         spline.show_options.get("resolutions", 100), spline.para_dim
     )
     data_name = spline.show_options.get("data_name", None)
-    sampled_splinedata = spline.splinedata.as_scalar(
+    sampled_spline_data = spline.spline_data.as_scalar(
         data_name, res, default=None
     )
-    if data_name is not None and sampled_splinedata is not None:
+    if data_name is not None and sampled_spline_data is not None:
         # transfer data
-        sampled_spline.vertexdata[data_name] = sampled_splinedata
+        sampled_spline.vertexdata[data_name] = sampled_spline_data
 
         # transfer options - maybe vectorized query?
         keys = ("vmin", "vmax", "scalarbar", "cmap", "cmapalpha")
@@ -145,12 +145,12 @@ def _vedo_showable(spline):
         # mark that we want to see this data
         sampled_spline.show_options["data_name"] = data_name
 
-    elif data_name is not None and sampled_splinedata is None:
-        log.debug(f"No splinedata named ({data_name}) for {spline}. Skipping")
+    elif data_name is not None and sampled_spline_data is None:
+        log.debug(f"No spline_data named ({data_name}) for {spline}. Skipping")
 
     # with arrow representable, vector data
     adata_name = spline.show_options.get("arrow_data", None)
-    adapted_adata = spline.splinedata.get(adata_name, None)
+    adapted_adata = spline.spline_data.get(adata_name, None)
     if adata_name is not None and adapted_adata is not None:
         # if location is specified, this will be a separate Vertices obj with
         # configured arrow_data
@@ -192,7 +192,7 @@ def _vedo_showable(spline):
                 )
 
             # get arrow
-            adata = spline.splinedata.as_arrow(adata_name, on=on)
+            adata = spline.spline_data.as_arrow(adata_name, on=on)
 
             # create vertices that can be shown as arrows
             loc_vertices = Vertices(spline.evaluate(queries), copy=False)
@@ -208,9 +208,9 @@ def _vedo_showable(spline):
             gus_primitives["arrow_data"] = loc_vertices
 
         else:  # sample arrows and append to sampled spline.
-            sampled_spline.vertexdata[adata_name] = spline.splinedata.as_arrow(
-                adata_name, resolutions=res
-            )
+            sampled_spline.vertexdata[
+                adata_name
+            ] = spline.spline_data.as_arrow(adata_name, resolutions=res)
             # transfer options
             keys = ("arrow_data_scale", "arrow_data_color", "arrow_data")
             spline.show_options.copy_valid_options(

@@ -148,10 +148,10 @@ extruded = nurbs.create.extruded(extrusion_vector=[0, 0, 1])
 revolved = nurbs.create.revolved(axis=[1, 0, 0], angle=70)
 parametric_view = nurbs.create.parametric_view()
 
-# just like vertexdata, you can define splinedata
+# just like vertexdata, you can define spline_data
 # for more options, checkout `gus.spline.SplineDataAdaptor`
 # following will plot the norm of nurbs' physical coordinates
-nurbs.splinedata["coords"] = nurbs
+nurbs.spline_data["coords"] = nurbs
 nurbs.show_options["data_name"] = "coords"
 
 # show them all together. each arg is plotted on a separate subplot
