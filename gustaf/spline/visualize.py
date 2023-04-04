@@ -128,13 +128,13 @@ def _vedo_showable(spline):
     res = enforce_len(
         spline.show_options.get("resolutions", 100), spline.para_dim
     )
-    dataname = spline.show_options.get("dataname", None)
+    data_name = spline.show_options.get("data_name", None)
     sampled_splinedata = spline.splinedata.as_scalar(
-        dataname, res, default=None
+        data_name, res, default=None
     )
-    if dataname is not None and sampled_splinedata is not None:
+    if data_name is not None and sampled_splinedata is not None:
         # transfer data
-        sampled_spline.vertexdata[dataname] = sampled_splinedata
+        sampled_spline.vertexdata[data_name] = sampled_splinedata
 
         # transfer options - maybe vectorized query?
         keys = ("vmin", "vmax", "scalarbar", "cmap", "cmapalpha")
@@ -143,10 +143,10 @@ def _vedo_showable(spline):
         )
 
         # mark that we want to see this data
-        sampled_spline.show_options["dataname"] = dataname
+        sampled_spline.show_options["data_name"] = data_name
 
-    elif dataname is not None and sampled_splinedata is None:
-        log.debug(f"No splinedata named ({dataname}) for {spline}. Skipping")
+    elif data_name is not None and sampled_splinedata is None:
+        log.debug(f"No splinedata named ({data_name}) for {spline}. Skipping")
 
     # with arrow representable, vector data
     adata_name = spline.show_options.get("arrowdata", None)

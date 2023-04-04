@@ -282,16 +282,16 @@ def _vedo_showable(obj, as_dict=False, **kwargs):
             return_as_dict["element_ids"] = element_ids
 
     # data plotting
-    dataname = obj.show_options.get("dataname", None)
-    vertexdata = obj.vertexdata.as_scalar(dataname, None)
-    if dataname is not None and vertexdata is not None:
+    data_name = obj.show_options.get("data_name", None)
+    vertexdata = obj.vertexdata.as_scalar(data_name, None)
+    if data_name is not None and vertexdata is not None:
         # transfer data
         if obj.kind.startswith("edge"):
-            vedo_obj.pointdata[dataname] = vertexdata[obj.edges].reshape(
+            vedo_obj.pointdata[data_name] = vertexdata[obj.edges].reshape(
                 -1, vertexdata.shape[1]
             )
         else:
-            vedo_obj.pointdata[dataname] = vertexdata
+            vedo_obj.pointdata[data_name] = vertexdata
 
         # form cmap kwargs for init
         cmap_keys = ("vmin", "vmax")
@@ -299,8 +299,8 @@ def _vedo_showable(obj, as_dict=False, **kwargs):
         # set adefault cmap if needed
         cmap_kwargs["cname"] = obj.show_options.get("cmap", "plasma")
         cmap_kwargs["alpha"] = obj.show_options.get("cmapalpha", 1)
-        # add dataname
-        cmap_kwargs["input_array"] = dataname
+        # add data_name
+        cmap_kwargs["input_array"] = data_name
 
         # set cmap
         vedo_obj.cmap(**cmap_kwargs)
@@ -312,9 +312,9 @@ def _vedo_showable(obj, as_dict=False, **kwargs):
             sb_kwargs = dict() if isinstance(sb_kwargs, bool) else sb_kwargs
             vedo_obj.addScalarBar(**sb_kwargs)
 
-    elif dataname is not None and vertexdata is None:
+    elif data_name is not None and vertexdata is None:
         utils.log.debug(
-            f"No vertexdata named '{dataname}' for {obj}. Skipping"
+            f"No vertexdata named '{data_name}' for {obj}. Skipping"
         )
 
     # arrow plots - this is independent from data plotting.

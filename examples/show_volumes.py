@@ -53,5 +53,5 @@ if __name__ == "__main__":
     # assign values to vertexdata
     hexa.vertexdata["arange"] = np.arange(len(v))
     # set vertexdata to plot
-    hexa.show_options["dataname"] = "arange"
+    hexa.show_options["data_name"] = "arange"
     hexa.show()

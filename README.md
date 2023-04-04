@@ -92,7 +92,7 @@ assert np.allclose(
 
 # let's visualize some scalar data and vector data defined on vertices
 tet.vertexdata["arange"] = np.arange(len(tet.vertices))  # scalar
-tet.show_options["dataname"] = "arange"
+tet.show_options["data_name"] = "arange"
 tet.vertexdata["random"] = np.random.random((len(tet.vertices), 3))  # vector
 tet.show_options["arrowdata"] = "random"
 tet.show()
@@ -152,7 +152,7 @@ parametric_view = nurbs.create.parametric_view()
 # for more options, checkout `gus.spline.SplineDataAdaptor`
 # following will plot the norm of nurbs' physical coordinates
 nurbs.splinedata["coords"] = nurbs
-nurbs.show_options["dataname"] = "coords"
+nurbs.show_options["data_name"] = "coords"
 
 # show them all together. each arg is plotted on a separate subplot
 # translate tet a bit to avoid overlapping

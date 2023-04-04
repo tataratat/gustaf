@@ -49,20 +49,20 @@ if __name__ == "__main__":
     # 1. see coordinates's norm
     b = bspline2p3d()
     b.splinedata["me"] = b
-    b.show_options["dataname"] = "me"
+    b.show_options["data_name"] = "me"
     gus.show(["1. Show norm of coordinates.", b])
 
     # 1.1 default scalarbar
     b = bspline2p3d()
     b.splinedata["me"] = b
-    b.show_options["dataname"] = "me"
+    b.show_options["data_name"] = "me"
     b.show_options["scalarbar"] = True
     gus.show(["1.1. Show 1. plus scalarbar", b])
 
     # 2. see coordinate's norm and as arrow
     b = bspline2p3d()
     b.splinedata["me"] = b
-    b.show_options["dataname"] = "me"
+    b.show_options["data_name"] = "me"
     b.show_options["arrowdata"] = "me"
     gus.show(
         ["2. Show coordinate norm as scalar field and coordinate as arrows", b]
@@ -71,7 +71,7 @@ if __name__ == "__main__":
     # 3. see coordinates norm and as arrows only on specified places
     b = bspline2p3d()
     b.splinedata["me"] = b
-    b.show_options["dataname"] = "me"
+    b.show_options["data_name"] = "me"
     b.show_options["arrowdata"] = "me"
     b.show_options["arrowdata_on"] = np.random.random((100, 2))  # para_coords
     gus.show(
@@ -81,7 +81,7 @@ if __name__ == "__main__":
     # 4. see 3. with parametric_view
     b = bspline2p3d()
     b.splinedata["me"] = b
-    b.show_options["dataname"] = "me"
+    b.show_options["data_name"] = "me"
     b.show_options["arrowdata"] = "me"
     b.show_options["arrowdata_on"] = np.random.random((100, 2))  # para_coords
     b.show_options["scalarbar"] = True
@@ -189,7 +189,7 @@ if __name__ == "__main__":
     p_view = b.create.parametric_view()  # shallow copies data and options
     p_view.show_options.pop("arrowdata_scale")  # we want automatic scaling
     p_view.show_options["arrowdata_color"] = "gold"
-    p_view.show_options["dataname"] = "deformed"
+    p_view.show_options["data_name"] = "deformed"
     # plot side by side
     gus.show(
         [
