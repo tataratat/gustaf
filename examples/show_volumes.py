@@ -49,9 +49,9 @@ if __name__ == "__main__":
     tet.show_options["c"] = "green"
     tet.show()
 
-    # display vertexdata
-    # assign values to vertexdata
-    hexa.vertexdata["arange"] = np.arange(len(v))
-    # set vertexdata to plot
+    # display vertex_data
+    # assign values to vertex_data
+    hexa.vertex_data["arange"] = np.arange(len(v))
+    # set vertex_data to plot
     hexa.show_options["data_name"] = "arange"
     hexa.show()

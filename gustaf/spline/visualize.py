@@ -134,7 +134,7 @@ def _vedo_showable(spline):
     )
     if data_name is not None and sampled_spline_data is not None:
         # transfer data
-        sampled_spline.vertexdata[data_name] = sampled_spline_data
+        sampled_spline.vertex_data[data_name] = sampled_spline_data
 
         # transfer options - maybe vectorized query?
         keys = ("vmin", "vmax", "scalarbar", "cmap", "cmapalpha")
@@ -196,7 +196,7 @@ def _vedo_showable(spline):
 
             # create vertices that can be shown as arrows
             loc_vertices = Vertices(spline.evaluate(queries), copy=False)
-            loc_vertices.vertexdata[adata_name] = adata
+            loc_vertices.vertex_data[adata_name] = adata
 
             # transfer options
             keys = ("arrow_data_scale", "arrow_data_color", "arrow_data")
@@ -208,7 +208,7 @@ def _vedo_showable(spline):
             gus_primitives["arrow_data"] = loc_vertices
 
         else:  # sample arrows and append to sampled spline.
-            sampled_spline.vertexdata[
+            sampled_spline.vertex_data[
                 adata_name
             ] = spline.spline_data.as_arrow(adata_name, resolutions=res)
             # transfer options

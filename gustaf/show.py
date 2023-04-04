@@ -283,15 +283,15 @@ def _vedo_showable(obj, as_dict=False, **kwargs):
 
     # data plotting
     data_name = obj.show_options.get("data_name", None)
-    vertexdata = obj.vertexdata.as_scalar(data_name, None)
-    if data_name is not None and vertexdata is not None:
+    vertex_data = obj.vertex_data.as_scalar(data_name, None)
+    if data_name is not None and vertex_data is not None:
         # transfer data
         if obj.kind.startswith("edge"):
-            vedo_obj.pointdata[data_name] = vertexdata[obj.edges].reshape(
-                -1, vertexdata.shape[1]
+            vedo_obj.pointdata[data_name] = vertex_data[obj.edges].reshape(
+                -1, vertex_data.shape[1]
             )
         else:
-            vedo_obj.pointdata[data_name] = vertexdata
+            vedo_obj.pointdata[data_name] = vertex_data
 
         # form cmap kwargs for init
         cmap_keys = ("vmin", "vmax")
@@ -312,15 +312,15 @@ def _vedo_showable(obj, as_dict=False, **kwargs):
             sb_kwargs = dict() if isinstance(sb_kwargs, bool) else sb_kwargs
             vedo_obj.addScalarBar(**sb_kwargs)
 
-    elif data_name is not None and vertexdata is None:
+    elif data_name is not None and vertex_data is None:
         utils.log.debug(
-            f"No vertexdata named '{data_name}' for {obj}. Skipping"
+            f"No vertex_data named '{data_name}' for {obj}. Skipping"
         )
 
     # arrow plots - this is independent from data plotting.
     arrow_data_name = obj.show_options.get("arrow_data", None)
     # will raise if data is scalar
-    arrow_data_value = obj.vertexdata.as_arrow(arrow_data_name, None, True)
+    arrow_data_value = obj.vertex_data.as_arrow(arrow_data_name, None, True)
     if arrow_data_name is not None and arrow_data_value is not None:
         from gustaf.create.edges import from_data
 
@@ -336,7 +336,7 @@ def _vedo_showable(obj, as_dict=False, **kwargs):
             obj,
             arrow_data_value,
             obj.show_options.get("arrow_data_scale", None),
-            data_norm=obj.vertexdata.as_scalar(arrow_data_name),
+            data_norm=obj.vertex_data.as_scalar(arrow_data_name),
         )
         arrows = vedo.Arrows(
             as_edges.vertices[as_edges.edges],

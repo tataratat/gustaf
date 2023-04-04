@@ -434,7 +434,7 @@ class VertexData(DataHolder):
         super().__init__(helpee)
 
     def _validate_len(self, value=None, raise_=True):
-        """Checks if given value is a valid vertexdata based of its length.
+        """Checks if given value is a valid vertex_data based of its length.
 
         If raise_, throws error, else, deletes all incompatible values.
         Only checks len(). If array has (1, len) shape, this will still return
@@ -490,7 +490,7 @@ class VertexData(DataHolder):
 
     def __setitem__(self, key, value):
         """
-        Performs len() based check before storing vertexdata.
+        Performs len() based check before storing vertex_data.
 
         Parameters
         ----------
@@ -684,7 +684,7 @@ class SplineDataAdaptor(GustafBase):
                 "function."
             )
 
-    def as_vertexdata(self, resolutions=None, on=None):
+    def as_vertex_data(self, resolutions=None, on=None):
         """
         Parameters
         ----------
@@ -693,7 +693,7 @@ class SplineDataAdaptor(GustafBase):
 
         Returns
         -------
-        vertexdata: (m, r) array-like
+        vertex_data: (m, r) array-like
         """
         if resolutions is not None and on is not None:
             raise ValueError(
@@ -815,7 +815,7 @@ class SplineData(DataHolder):
 
         saved = super().__getitem__(key)
         # will raise
-        return saved.as_vertexdata(resolutions=resolutions)
+        return saved.as_vertex_data(resolutions=resolutions)
 
     def as_arrow(self, key, resolutions=None, on=None, default=None):
         """
@@ -833,7 +833,7 @@ class SplineData(DataHolder):
 
         saved = super().__getitem__(key)
         # will raise
-        return saved.as_vertexdata(resolutions=resolutions, on=on)
+        return saved.as_vertex_data(resolutions=resolutions, on=on)
 
 
 Unique2DFloats = namedtuple(

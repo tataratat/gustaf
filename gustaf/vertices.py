@@ -91,7 +91,7 @@ class Vertices(GustafBase):
         "_computed",
         "_show_options",
         "_setter_copies",
-        "_vertexdata",
+        "_vertex_data",
     )
 
     # define freuqently used types as dunder variable
@@ -119,7 +119,7 @@ class Vertices(GustafBase):
         self.vertices = vertices
 
         # init helpers
-        self._vertexdata = helpers.data.VertexData(self)
+        self._vertex_data = helpers.data.VertexData(self)
         self._computed = helpers.data.ComputedMeshData(self)
         self._show_options = self.__show_option__(self)
 
@@ -168,10 +168,10 @@ class Vertices(GustafBase):
         self._const_vertices = self._vertices.view()
         self._const_vertices.flags.writeable = False
 
-        # at each setting, validate vertexdata
+        # at each setting, validate vertex_data
         # --> by len mismatch, will clear data
-        if hasattr(self, "vertexdata"):
-            self.vertexdata._validate_len(raise_=False)
+        if hasattr(self, "vertex_data"):
+            self.vertex_data._validate_len(raise_=False)
 
     @property
     def const_vertices(self):
@@ -190,9 +190,9 @@ class Vertices(GustafBase):
         return self._const_vertices
 
     @property
-    def vertexdata(self):
+    def vertex_data(self):
         """
-        Returns vertexdata manager. Behaves similar to dict() and can be used
+        Returns vertex_data manager. Behaves similar to dict() and can be used
         to store values/data associated with each vertex.
 
         Parameters
@@ -201,10 +201,10 @@ class Vertices(GustafBase):
 
         Returns
         -------
-        vertexdata: VertexData
+        vertex_data: VertexData
         """
-        self._logd("returning vertexdata")
-        return self._vertexdata
+        self._logd("returning vertex_data")
+        return self._vertex_data
 
     @property
     def setter_copies(self):
@@ -417,17 +417,17 @@ class Vertices(GustafBase):
         # apply mask
         vertices = vertices[mask]
 
-        def update_vertexdata(obj, m, vertex_data=None):
+        def update_vertex_data(obj, m, vertex_data=None):
             """apply mask to vertex data if there's any."""
             newdata = helpers.data.VertexData(obj)
             if vertex_data is None:
-                vertex_data = obj.vertexdata
+                vertex_data = obj.vertex_data
 
             for key, values in vertex_data.items():
                 # should work, since this is called after updating vertices
                 newdata[key] = values[m]
 
-            obj._vertexdata = newdata
+            obj._vertex_data = newdata
 
             return obj
 
@@ -436,7 +436,7 @@ class Vertices(GustafBase):
         if elements is not None:
             self.elements = elements
 
-        update_vertexdata(self, mask)
+        update_vertex_data(self, mask)
 
         return self
 

@@ -55,8 +55,8 @@ vedo_common_options = (
     Option(
         "vedo",
         "data_name",
-        "Name of vertexdata to show. "
-        "Object must have vertexdata with the same name.",
+        "Name of vertex_data to show. "
+        "Object must have vertex_data with the same name.",
         (str,),
     ),
     Option("vedo", "vertex_ids", "Show ids of vertices", (bool,)),
@@ -68,7 +68,7 @@ vedo_common_options = (
         "'glossy', 'ambient', 'off'}",
         (str,),
     ),
-    Option("vedo", "cmap", "Colormap for vertexdata plots.", (str,)),
+    Option("vedo", "cmap", "Colormap for vertex_data plots.", (str,)),
     Option("vedo", "vmin", "Minimum value for cmap", (float, int)),
     Option("vedo", "vmax", "Maximum value for cmap", (float, int)),
     Option(
@@ -90,7 +90,7 @@ vedo_common_options = (
     Option(
         "vedo",
         "arrow_data",
-        "Name of vertexdata to plot as arrow. Corresponding data should be "
+        "Name of vertex_data to plot as arrow. Corresponding data should be "
         "at least 2D. If you want more control over arrows, consider creating "
         "edges using gus.create.edges.from_data().",
         (str,),

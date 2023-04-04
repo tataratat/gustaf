@@ -413,15 +413,15 @@ class Edges(Vertices):
 
         return Edges(vertices=new_vs, edges=new_es)
 
-    def shrink(self, ratio=0.8, map_vertexdata=True):
+    def shrink(self, ratio=0.8, map_vertex_data=True):
         """Returns shrunk elements.
 
         Parameters
         -----------
         ratio: float
           Default is 0.8
-        map_vertexdata: bool
-          Default is True. Maps all vertexdata.
+        map_vertex_data: bool
+          Default is True. Maps all vertex_data.
 
         Returns
         --------
@@ -443,10 +443,10 @@ class Edges(Vertices):
 
         s_elements = type(self)(vertices=vs, elements=es)
 
-        if map_vertexdata:
+        if map_vertex_data:
             elements_flat = elements.ravel()
-            for key, value in self.vertexdata.items():
-                s_elements.vertexdata[key] = value[elements_flat]
+            for key, value in self.vertex_data.items():
+                s_elements.vertex_data[key] = value[elements_flat]
 
             # probably wanna take visulation options too
             s_elements._show_options._options = deepcopy(
