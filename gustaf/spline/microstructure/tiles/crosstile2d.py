@@ -58,7 +58,12 @@ class CrossTile2D(TileBase):
 
         if parameters is None:
             self._logd("Tile request is not parametrized, setting default 0.2")
-            parameters = np.array(np.ones((len(self._evaluation_points), self._n_info_per_eval_point)) * 0.2)
+            parameters = np.array(
+                np.ones(
+                    (len(self._evaluation_points), self._n_info_per_eval_point)
+                )
+                * 0.2
+            )
 
         if not (np.all(parameters > 0) and np.all(parameters < 0.5)):
             raise ValueError("Thickness out of range (0, .5)")
@@ -403,7 +408,12 @@ class CrossTile2D(TileBase):
         # set to default if nothing is given
         if parameters is None:
             self._logd("Setting branch thickness to default 0.2")
-            parameters = np.array(np.ones((len(self._evaluation_points), self._n_info_per_eval_point)) * 0.2)
+            parameters = np.array(
+                np.ones(
+                    (len(self._evaluation_points), self._n_info_per_eval_point)
+                )
+                * 0.2
+            )
 
         self.check_params(parameters)
         if not np.all(parameters > 0):

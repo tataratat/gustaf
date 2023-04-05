@@ -66,7 +66,11 @@ class InverseCrossTile3D(TileBase):
         if parameters is None:
             self._logd("Tile request is not parametrized, setting default 0.2")
             parameters = np.array(
-                np.ones((len(self._evaluation_points), self._n_info_per_eval_point)) * 0.2)
+                np.ones(
+                    (len(self._evaluation_points), self._n_info_per_eval_point)
+                )
+                * 0.2
+            )
 
         if not (np.all(parameters > 0) and np.all(parameters < 0.5)):
             raise ValueError("Thickness out of range (0, .5)")
@@ -912,7 +916,11 @@ class InverseCrossTile3D(TileBase):
         if parameters is None:
             self._logd("Setting branch thickness to default 0.2")
             parameters = np.array(
-                np.ones((len(self._evaluation_points), self._n_info_per_eval_point)) * 0.2)
+                np.ones(
+                    (len(self._evaluation_points), self._n_info_per_eval_point)
+                )
+                * 0.2
+            )
 
         [x_min_r, x_max_r, y_min_r, y_max_r, z_min_r, z_max_r] = parameters
 

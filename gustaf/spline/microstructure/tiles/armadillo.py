@@ -56,7 +56,12 @@ class Armadillo(TileBase):
 
         if parameters is None:
             self._logd("Setting parameters to default values (0.2)")
-            parameters = np.array(np.ones((len(self._evaluation_points), self._n_info_per_eval_point)) * 0.2)
+            parameters = np.array(
+                np.ones(
+                    (len(self._evaluation_points), self._n_info_per_eval_point)
+                )
+                * 0.2
+            )
 
         v_h_void = parameters[0, 0]
         if not ((v_h_void > 0.01) and (v_h_void < 0.5)):
@@ -5064,7 +5069,12 @@ class Armadillo(TileBase):
 
         if parameters is None:
             self._logd("Setting parameters to default values (0.2)")
-            parameters = np.array(np.ones((len(self._evaluation_points), self._n_info_per_eval_point)) * 0.2)
+            parameters = np.array(
+                np.ones(
+                    (len(self._evaluation_points), self._n_info_per_eval_point)
+                )
+                * 0.2
+            )
 
         self.check_params(parameters)
         v_h_void = parameters[0, 0]
