@@ -50,12 +50,13 @@ class NutTile2D(TileBase):
         if parameters is None:
             self._log("Tile request is not parametrized, setting default 0.2")
             parameters = np.array(
-                np.ones((len(self.evaluation_points), self._n_info_per_eval_point)) * 0.2
+                np.ones(
+                    (len(self.evaluation_points), self._n_info_per_eval_point)
+                )
+                * 0.2
             )
 
-        if not (
-            np.all(parameters[0] > 0) and np.all(parameters[0] < 0.5)
-        ):
+        if not (np.all(parameters[0] > 0) and np.all(parameters[0] < 0.5)):
             raise ValueError(
                 "The thickness of the wall must be in (0.01 and 0.49)"
             )
@@ -73,9 +74,7 @@ class NutTile2D(TileBase):
         v_one_half = 0.5
         v_one = 1.0
         v_outer_c_h = contact_length * 0.5
-        v_inner_c_h = (
-            contact_length * parameters[0, 0]
-        )
+        v_inner_c_h = contact_length * parameters[0, 0]
 
         if closure == "x_min":
             # set points:
@@ -436,7 +435,11 @@ class NutTile2D(TileBase):
         if parameters is None:
             self._logd("Setting parameters to default values (0.2)")
             parameters = np.array(
-                np.ones((len(self._evaluation_points), self._n_info_per_eval_point)) * 0.2)
+                np.ones(
+                    (len(self._evaluation_points), self._n_info_per_eval_point)
+                )
+                * 0.2
+            )
 
         self.check_params(parameters)
 
@@ -450,9 +453,7 @@ class NutTile2D(TileBase):
         v_one_half = 0.5
         v_one = 1.0
         v_outer_c_h = contact_length * 0.5
-        v_inner_c_h = (
-            contact_length * parameters[0, 0]
-        )
+        v_inner_c_h = contact_length * parameters[0, 0]
 
         spline_list = []
 
