@@ -34,7 +34,7 @@ class CrossTile2D(TileBase):
         ----------
         parameters : np.ndarray
           radii of fitting cylinder at evaluation points
-        parameter_sensitivities: list((np.ndarray))
+        parameter_sensitivities: np.ndarray
           Describes the parameter sensitivities with respect to some design
           variable. In case the design variables directly apply to the
           parameter itself, they evaluate as delta_ij
@@ -58,7 +58,7 @@ class CrossTile2D(TileBase):
 
         if parameters is None:
             self._logd("Tile request is not parametrized, setting default 0.2")
-            parameters = np.array(np.ones(4) * 0.2).reshape(-1, 1)
+            parameters = np.array(np.ones((len(self._evaluation_points), self._n_info_per_eval_point)) * 0.2)
 
         if not (np.all(parameters > 0) and np.all(parameters < 0.5)):
             raise ValueError("Thickness out of range (0, .5)")
@@ -403,7 +403,7 @@ class CrossTile2D(TileBase):
         # set to default if nothing is given
         if parameters is None:
             self._logd("Setting branch thickness to default 0.2")
-            parameters = np.array(np.ones(4) * 0.2).reshape(-1, 1)
+            parameters = np.array(np.ones((len(self._evaluation_points), self._n_info_per_eval_point)) * 0.2)
 
         self.check_params(parameters)
         if not np.all(parameters > 0):

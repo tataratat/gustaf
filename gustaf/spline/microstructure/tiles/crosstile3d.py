@@ -53,7 +53,8 @@ class CrossTile3D(TileBase):
 
         if parameters is None:
             self._logd("Tile request is not parametrized, setting default 0.2")
-            parameters = tuple([np.ones(6) * 0.2])
+            parameters = np.array(np.ones((len(self._evaluation_points), self._n_info_per_eval_point)) * 0.2)
+
         if not (np.all(parameters > 0) and np.all(parameters < 0.5)):
             raise ValueError("Thickness out of range (0, .5)")
 
@@ -73,7 +74,7 @@ class CrossTile3D(TileBase):
         spline_list = []
         if closure == "z_min":
             # The branch is located at zmin of current tile
-            branch_thickness = parameters[5]
+            branch_thickness = parameters[5, 0]
             ctps_corner = np.array(
                 [
                     [0.0, 0.0, 0.0],
@@ -201,7 +202,7 @@ class CrossTile3D(TileBase):
             return spline_list
         elif closure == "z_max":
             # The branch is located at zmax of current tile
-            branch_thickness = parameters[4]
+            branch_thickness = parameters[4, 0]
             ctps_corner = np.array(
                 [
                     [0.0, 0.0, inv_filling_height],
@@ -358,7 +359,7 @@ class CrossTile3D(TileBase):
 
         Parameters
         ----------
-        parameters : tuple(np.array)
+        parameters : np.array
           only first entry is used, defines the internal radii of the
           branches
         center_expansion : float
@@ -377,7 +378,10 @@ class CrossTile3D(TileBase):
         # set to default if nothing is given
         if parameters is None:
             self._logd("Setting branch thickness to default 0.2")
-            parameters = np.ones(6) * 0.2
+            parameters = np.array(np.ones((len(self._evaluation_points), self._n_info_per_eval_point)) * 0.2)
+
+        parameters = np.reshape(parameters, -1).tolist()
+
         [
             x_min_r,
             x_max_r,
@@ -385,7 +389,7 @@ class CrossTile3D(TileBase):
             y_max_r,
             z_min_r,
             z_max_r,
-        ] = parameters.tolist()
+        ] = parameters
         for radius in [x_min_r, x_max_r, y_min_r, y_max_r, z_min_r, z_max_r]:
             if not isinstance(radius, float):
                 raise ValueError("Invalid type")

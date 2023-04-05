@@ -31,7 +31,7 @@ class SnappyTile(TileBase):
         ----------
         parameters: np.ndarray
           currently unused
-        parameter_sensitivities: list(np.ndarray)
+        parameter_sensitivities: np.ndarray
           Describes the parameter sensitivities with respect to some design
           variable. In case the design variables directly apply to the
           parameter itself, they evaluate as delta_ij unused
@@ -348,7 +348,7 @@ class SnappyTile(TileBase):
 
         if parameters is None:
             self._logd("Setting parameters to default values (0.2)")
-            parameters = np.array(np.ones(1) * 0.2).reshape(-1, 1)
+            parameters = np.array(np.ones((len(self._evaluation_points), self._n_info_per_eval_point)) * 0.2)
 
         self.check_params(parameters)
 
