@@ -6,7 +6,7 @@ from gustaf.spline.microstructure.tiles.tilebase import TileBase
 
 class CrossTile3D(TileBase):
     def __init__(self):
-        """Simple crosstile with linear-quadratic branches and a trilinear
+        """Simple CrossTIle with linear-quadratic branches and a trilinear
         center spline."""
         self._dim = 3
         self._evaluation_points = np.array(
@@ -39,7 +39,7 @@ class CrossTile3D(TileBase):
           parametric dimension that needs to be closed.
           Must be {"z_min", "z_max"}
         boundary_width : float
-          with of the boundary surronding branch
+          with of the boundary surrounding branch
         filling_height : float
           portion of the height that is filled in parametric domain
 
@@ -73,7 +73,7 @@ class CrossTile3D(TileBase):
 
         spline_list = []
         if closure == "z_min":
-            # The branch is located at zmin of current tile
+            # The branch is located at z_min of current tile
             branch_thickness = parameters[5]
             ctps_corner = np.array(
                 [
@@ -201,7 +201,7 @@ class CrossTile3D(TileBase):
 
             return spline_list
         elif closure == "z_max":
-            # The branch is located at zmax of current tile
+            # The branch is located at z_max of current tile
             branch_thickness = parameters[4]
             ctps_corner = np.array(
                 [

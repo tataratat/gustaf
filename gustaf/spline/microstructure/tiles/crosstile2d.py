@@ -6,7 +6,7 @@ from gustaf.spline.microstructure.tiles.tilebase import TileBase
 
 class CrossTile2D(TileBase):
     def __init__(self):
-        """Simple crosstile with linear-quadratic branches and a trilinear
+        """Simple CrossTIle with linear-quadratic branches and a trilinear
         center spline."""
         self._dim = 2
         self._evaluation_points = np.array(
@@ -34,12 +34,12 @@ class CrossTile2D(TileBase):
         parameters : tuple(np.ndarray)
           radii of fitting cylinder at evaluation points
         closure : int
-          parametric dimension that needs to be closed. Positiv values mean
+          parametric dimension that needs to be closed. Positive values mean
           that minimum parametric dimension is requested. That means,
           i.e. -2 closes the tile at maximum z-coordinate.
           (must currently be either -2 or 2)
         boundary_width : float
-          with of the boundary surronding branch
+          with of the boundary surrounding branch
         filling_height : float
           portion of the height that is filled in parametric domain
 
