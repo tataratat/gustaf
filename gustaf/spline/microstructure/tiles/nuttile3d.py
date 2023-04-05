@@ -10,12 +10,7 @@ class NutTile3D(TileBase):
         self._dim = 3
         self._evaluation_points = np.array(
             [
-                [0.0, 0.5, 0.5],
-                [1.0, 0.5, 0.5],
-                [0.5, 0.0, 0.5],
-                [0.5, 1.0, 0.5],
-                [0.5, 0.5, 0.0],
-                [0.5, 0.5, 1.0],
+                [0.5, 0.5, 0.5],
             ]
         )
         self._n_info_per_eval_point = 1
@@ -35,10 +30,10 @@ class NutTile3D(TileBase):
 
         Parameters
         ----------
-        parameters : tuple(np.array)
+        parameters : np.array
           only first entry is used, defines the thickness of the
           wall
-        parameter_sensitivities: list(tuple(np.ndarray))
+        parameter_sensitivities: np.ndarray
           Describes the parameter sensitivities with respect to some design
           variable. In case the design variables directly apply to the
           parameter itself, they evaluate as delta_ij
@@ -58,12 +53,11 @@ class NutTile3D(TileBase):
         if parameters is None:
             self._logd("Setting parameters to default values (0.2)")
             parameters = np.array(
-                np.ones(len(self.evaluation_points)) * 0.2
-            ).reshape(-1, 1)
+                np.ones((len(self._evaluation_points), self._n_info_per_eval_point)) * 0.2)
 
         self.check_params(parameters)
 
-        v_h_void = parameters[0]
+        v_h_void = parameters[0, 0]
         if not ((v_h_void > 0.01) and (v_h_void < 0.5)):
             raise ValueError(
                 "The thickness of the wall must be in (0.01 and 0.49)"
@@ -73,7 +67,7 @@ class NutTile3D(TileBase):
         v_one_half = 0.5
         v_one = 1.0
         v_outer_c_h = contact_length * 0.5
-        v_inner_c_h = contact_length * parameters[0]
+        v_inner_c_h = contact_length * parameters[0, 0]
 
         spline_list = []
 
@@ -226,7 +220,7 @@ def closing_tile(
     ----------
     parameters: np.ndarray
         thickness of the wall
-    parameter_sensitivities: list(np.ndarray)
+    parameter_sensitivities: np.ndarray
       Describes the parameter sensitivities with respect to some design
       variable. In case the design variables directly apply to the
       parameter itself, they evaluate as delta_ij
@@ -248,8 +242,7 @@ def closing_tile(
     if parameters is None:
         self._log("Tile request is not parametrized, setting default 0.2")
         parameters = np.array(
-            np.ones(len(self.evaluation_points)) * 0.2
-        ).reshape(-1, 1)
+            np.ones((len(self._evaluation_points), self._n_info_per_eval_point)) * 0.2)
 
     if not (np.all(parameters[0] > 0) and np.all(parameters[0] < 0.5)):
         raise ValueError(
@@ -258,7 +251,7 @@ def closing_tile(
 
     self.check_params(parameters)
 
-    v_h_void = parameters[0][0]
+    v_h_void = parameters[0, 0]
     if not ((v_h_void > 0.01) and (v_h_void < 0.5)):
         raise ValueError(
             "The thickness of the wall must be in (0.01 and 0.49)"
@@ -269,7 +262,7 @@ def closing_tile(
     v_one_half = 0.5
     v_one = 1.0
     v_outer_c_h = contact_length * 0.5
-    v_inner_c_h = contact_length * parameters[0][0]
+    v_inner_c_h = contact_length * parameters[0, 0]
 
     if closure == "x_min":
         # set points:
