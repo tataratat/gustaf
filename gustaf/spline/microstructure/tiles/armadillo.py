@@ -63,8 +63,8 @@ class Armadillo(TileBase):
                 * 0.2
             )
 
-        v_h_void = parameters[0, 0]
-        if not ((v_h_void > 0.01) and (v_h_void < 0.5)):
+        v_wall_thickness = parameters[0, 0]
+        if not ((v_wall_thickness > 0.01) and (v_wall_thickness < 0.5)):
             raise ValueError(
                 "The thickness of the wall must be in (0.01 and 0.49)"
             )
@@ -73,52 +73,51 @@ class Armadillo(TileBase):
         v_zero = 0.0
         v_one_half = 0.5
         v_one = 1.0
-        v_outer_c_h = contact_length * 0.5
         v_half_contact_length = contact_length * 0.5
-        v_inner_c_h = contact_length * parameters[0, 0]
+        v_inner_half_contact_length = contact_length * parameters[0, 0]
 
         if closure == "x_min":
             # set points:
             right = np.array(
                 [
                     [
-                        v_h_void + v_one_half,
-                        -v_inner_c_h + v_one_half,
-                        v_one_half + v_inner_c_h,
+                        v_wall_thickness + v_one_half,
+                        -v_inner_half_contact_length + v_one_half,
+                        v_one_half + v_inner_half_contact_length,
                     ],
                     [
                         v_one,
-                        -v_outer_c_h + v_one_half,
+                        -v_half_contact_length + v_one_half,
                         v_one_half + v_half_contact_length,
                     ],
                     [
-                        v_h_void + v_one_half,
-                        -v_inner_c_h + v_one_half,
-                        v_one_half - v_inner_c_h,
+                        v_wall_thickness + v_one_half,
+                        -v_inner_half_contact_length + v_one_half,
+                        v_one_half - v_inner_half_contact_length,
                     ],
                     [
                         v_one,
-                        -v_outer_c_h + v_one_half,
+                        -v_half_contact_length + v_one_half,
                         v_one_half - v_half_contact_length,
                     ],
                     [
-                        v_h_void + v_one_half,
-                        v_inner_c_h + v_one_half,
-                        v_one_half + v_inner_c_h,
+                        v_wall_thickness + v_one_half,
+                        v_inner_half_contact_length + v_one_half,
+                        v_one_half + v_inner_half_contact_length,
                     ],
                     [
                         v_one,
-                        v_outer_c_h + v_one_half,
+                        v_half_contact_length + v_one_half,
                         v_one_half + v_half_contact_length,
                     ],
                     [
-                        v_h_void + v_one_half,
-                        v_inner_c_h + v_one_half,
-                        v_one_half - v_inner_c_h,
+                        v_wall_thickness + v_one_half,
+                        v_inner_half_contact_length + v_one_half,
+                        v_one_half - v_inner_half_contact_length,
                     ],
                     [
                         v_one,
-                        v_outer_c_h + v_one_half,
+                        v_half_contact_length + v_one_half,
                         v_one_half - v_half_contact_length,
                     ],
                 ]
@@ -127,42 +126,42 @@ class Armadillo(TileBase):
             connection_front_right = np.array(
                 [
                     [
-                        v_h_void + v_one_half,
-                        v_inner_c_h + v_one_half,
-                        v_one_half + v_inner_c_h,
+                        v_wall_thickness + v_one_half,
+                        v_inner_half_contact_length + v_one_half,
+                        v_one_half + v_inner_half_contact_length,
                     ],
                     [
                         v_one,
-                        v_outer_c_h + v_one_half,
+                        v_half_contact_length + v_one_half,
                         v_one_half + v_half_contact_length,
                     ],
                     [
-                        v_h_void + v_one_half,
-                        v_inner_c_h + v_one_half,
-                        v_one_half - v_inner_c_h,
+                        v_wall_thickness + v_one_half,
+                        v_inner_half_contact_length + v_one_half,
+                        v_one_half - v_inner_half_contact_length,
                     ],
                     [
                         v_one,
-                        v_outer_c_h + v_one_half,
+                        v_half_contact_length + v_one_half,
                         v_one_half - v_half_contact_length,
                     ],
                     [
-                        v_inner_c_h + v_one_half,
-                        v_h_void + v_one_half,
-                        v_one_half + v_inner_c_h,
+                        v_inner_half_contact_length + v_one_half,
+                        v_wall_thickness + v_one_half,
+                        v_one_half + v_inner_half_contact_length,
                     ],
                     [
-                        v_outer_c_h + v_one_half,
+                        v_half_contact_length + v_one_half,
                         v_one,
                         v_one_half + v_half_contact_length,
                     ],
                     [
-                        v_inner_c_h + v_one_half,
-                        v_h_void + v_one_half,
-                        v_one_half - v_inner_c_h,
+                        v_inner_half_contact_length + v_one_half,
+                        v_wall_thickness + v_one_half,
+                        v_one_half - v_inner_half_contact_length,
                     ],
                     [
-                        v_outer_c_h + v_one_half,
+                        v_half_contact_length + v_one_half,
                         v_one,
                         v_one_half - v_half_contact_length,
                     ],
@@ -172,42 +171,42 @@ class Armadillo(TileBase):
             front = np.array(
                 [
                     [
-                        v_inner_c_h + v_one_half,
-                        v_h_void + v_one_half,
-                        v_one_half + v_inner_c_h,
+                        v_inner_half_contact_length + v_one_half,
+                        v_wall_thickness + v_one_half,
+                        v_one_half + v_inner_half_contact_length,
                     ],
                     [
-                        v_outer_c_h + v_one_half,
+                        v_half_contact_length + v_one_half,
                         v_one,
                         v_one_half + v_half_contact_length,
                     ],
                     [
-                        v_inner_c_h + v_one_half,
-                        v_h_void + v_one_half,
-                        v_one_half - v_inner_c_h,
+                        v_inner_half_contact_length + v_one_half,
+                        v_wall_thickness + v_one_half,
+                        v_one_half - v_inner_half_contact_length,
                     ],
                     [
-                        v_outer_c_h + v_one_half,
+                        v_half_contact_length + v_one_half,
                         v_one,
                         v_one_half - v_half_contact_length,
                     ],
                     [
-                        -v_inner_c_h + v_one_half,
-                        v_h_void + v_one_half,
-                        v_one_half + v_inner_c_h,
+                        -v_inner_half_contact_length + v_one_half,
+                        v_wall_thickness + v_one_half,
+                        v_one_half + v_inner_half_contact_length,
                     ],
                     [
-                        -v_outer_c_h + v_one_half,
+                        -v_half_contact_length + v_one_half,
                         v_one,
                         v_one_half + v_half_contact_length,
                     ],
                     [
-                        -v_inner_c_h + v_one_half,
-                        v_h_void + v_one_half,
-                        v_one_half - v_inner_c_h,
+                        -v_inner_half_contact_length + v_one_half,
+                        v_wall_thickness + v_one_half,
+                        v_one_half - v_inner_half_contact_length,
                     ],
                     [
-                        -v_outer_c_h + v_one_half,
+                        -v_half_contact_length + v_one_half,
                         v_one,
                         v_one_half - v_half_contact_length,
                     ],
@@ -217,9 +216,9 @@ class Armadillo(TileBase):
             connection_back_left = np.array(
                 [
                     [
-                        -v_h_void + v_one_half,
-                        -v_inner_c_h + v_one_half,
-                        v_one_half + v_inner_c_h,
+                        -v_wall_thickness + v_one_half,
+                        -v_inner_half_contact_length + v_one_half,
+                        v_one_half + v_inner_half_contact_length,
                     ],
                     [
                         v_zero,
@@ -227,9 +226,9 @@ class Armadillo(TileBase):
                         v_one,
                     ],
                     [
-                        -v_h_void + v_one_half,
-                        -v_inner_c_h + v_one_half,
-                        v_one_half - v_inner_c_h,
+                        -v_wall_thickness + v_one_half,
+                        -v_inner_half_contact_length + v_one_half,
+                        v_one_half - v_inner_half_contact_length,
                     ],
                     [
                         v_zero,
@@ -237,22 +236,22 @@ class Armadillo(TileBase):
                         v_zero,
                     ],
                     [
-                        -v_inner_c_h + v_one_half,
-                        -v_h_void + v_one_half,
-                        v_one_half + v_inner_c_h,
+                        -v_inner_half_contact_length + v_one_half,
+                        -v_wall_thickness + v_one_half,
+                        v_one_half + v_inner_half_contact_length,
                     ],
                     [
-                        -v_outer_c_h + v_one_half,
+                        -v_half_contact_length + v_one_half,
                         v_zero,
                         v_one_half + v_half_contact_length,
                     ],
                     [
-                        -v_inner_c_h + v_one_half,
-                        -v_h_void + v_one_half,
-                        v_one_half - v_inner_c_h,
+                        -v_inner_half_contact_length + v_one_half,
+                        -v_wall_thickness + v_one_half,
+                        v_one_half - v_inner_half_contact_length,
                     ],
                     [
-                        -v_outer_c_h + v_one_half,
+                        -v_half_contact_length + v_one_half,
                         v_zero,
                         v_one_half - v_half_contact_length,
                     ],
@@ -267,9 +266,9 @@ class Armadillo(TileBase):
                         v_one,
                     ],
                     [
-                        -v_h_void + v_one_half,
-                        -v_inner_c_h + v_one_half,
-                        v_one_half + v_inner_c_h,
+                        -v_wall_thickness + v_one_half,
+                        -v_inner_half_contact_length + v_one_half,
+                        v_one_half + v_inner_half_contact_length,
                     ],
                     [
                         v_zero,
@@ -277,9 +276,9 @@ class Armadillo(TileBase):
                         v_one,
                     ],
                     [
-                        -v_h_void + v_one_half,
-                        -v_inner_c_h + v_one_half,
-                        v_one_half - v_inner_c_h,
+                        -v_wall_thickness + v_one_half,
+                        -v_inner_half_contact_length + v_one_half,
+                        v_one_half - v_inner_half_contact_length,
                     ],
                     [
                         v_zero,
@@ -287,9 +286,9 @@ class Armadillo(TileBase):
                         v_zero,
                     ],
                     [
-                        -v_h_void + v_one_half,
-                        v_inner_c_h + v_one_half,
-                        v_one_half + v_inner_c_h,
+                        -v_wall_thickness + v_one_half,
+                        v_inner_half_contact_length + v_one_half,
+                        v_one_half + v_inner_half_contact_length,
                     ],
                     [
                         v_zero,
@@ -297,9 +296,9 @@ class Armadillo(TileBase):
                         v_zero,
                     ],
                     [
-                        -v_h_void + v_one_half,
-                        v_inner_c_h + v_one_half,
-                        v_one_half - v_inner_c_h,
+                        -v_wall_thickness + v_one_half,
+                        v_inner_half_contact_length + v_one_half,
+                        v_one_half - v_inner_half_contact_length,
                     ],
                 ]
             )
@@ -312,9 +311,9 @@ class Armadillo(TileBase):
                         v_one,
                     ],
                     [
-                        -v_h_void + v_one_half,
-                        v_inner_c_h + v_one_half,
-                        v_one_half + v_inner_c_h,
+                        -v_wall_thickness + v_one_half,
+                        v_inner_half_contact_length + v_one_half,
+                        v_one_half + v_inner_half_contact_length,
                     ],
                     [
                         v_zero,
@@ -322,29 +321,29 @@ class Armadillo(TileBase):
                         v_zero,
                     ],
                     [
-                        -v_h_void + v_one_half,
-                        v_inner_c_h + v_one_half,
-                        v_one_half - v_inner_c_h,
+                        -v_wall_thickness + v_one_half,
+                        v_inner_half_contact_length + v_one_half,
+                        v_one_half - v_inner_half_contact_length,
                     ],
                     [
-                        -v_outer_c_h + v_one_half,
+                        -v_half_contact_length + v_one_half,
                         v_one,
                         v_one_half + v_half_contact_length,
                     ],
                     [
-                        -v_inner_c_h + v_one_half,
-                        v_h_void + v_one_half,
-                        v_one_half + v_inner_c_h,
+                        -v_inner_half_contact_length + v_one_half,
+                        v_wall_thickness + v_one_half,
+                        v_one_half + v_inner_half_contact_length,
                     ],
                     [
-                        -v_outer_c_h + v_one_half,
+                        -v_half_contact_length + v_one_half,
                         v_one,
                         v_one_half - v_half_contact_length,
                     ],
                     [
-                        -v_inner_c_h + v_one_half,
-                        v_h_void + v_one_half,
-                        v_one_half - v_inner_c_h,
+                        -v_inner_half_contact_length + v_one_half,
+                        v_wall_thickness + v_one_half,
+                        v_one_half - v_inner_half_contact_length,
                     ],
                 ]
             )
@@ -352,44 +351,44 @@ class Armadillo(TileBase):
             back = np.array(
                 [
                     [
-                        v_outer_c_h + v_one_half,
+                        v_half_contact_length + v_one_half,
                         v_zero,
                         v_one_half + v_half_contact_length,
                     ],
                     [
-                        v_inner_c_h + v_one_half,
-                        -v_h_void + v_one_half,
-                        v_one_half + v_inner_c_h,
+                        v_inner_half_contact_length + v_one_half,
+                        -v_wall_thickness + v_one_half,
+                        v_one_half + v_inner_half_contact_length,
                     ],
                     [
-                        v_outer_c_h + v_one_half,
+                        v_half_contact_length + v_one_half,
                         v_zero,
                         v_one_half - v_half_contact_length,
                     ],
                     [
-                        v_inner_c_h + v_one_half,
-                        -v_h_void + v_one_half,
-                        v_one_half - v_inner_c_h,
+                        v_inner_half_contact_length + v_one_half,
+                        -v_wall_thickness + v_one_half,
+                        v_one_half - v_inner_half_contact_length,
                     ],
                     [
-                        -v_outer_c_h + v_one_half,
+                        -v_half_contact_length + v_one_half,
                         v_zero,
                         v_one_half + v_half_contact_length,
                     ],
                     [
-                        -v_inner_c_h + v_one_half,
-                        -v_h_void + v_one_half,
-                        v_one_half + v_inner_c_h,
+                        -v_inner_half_contact_length + v_one_half,
+                        -v_wall_thickness + v_one_half,
+                        v_one_half + v_inner_half_contact_length,
                     ],
                     [
-                        -v_outer_c_h + v_one_half,
+                        -v_half_contact_length + v_one_half,
                         v_zero,
                         v_one_half - v_half_contact_length,
                     ],
                     [
-                        -v_inner_c_h + v_one_half,
-                        -v_h_void + v_one_half,
-                        v_one_half - v_inner_c_h,
+                        -v_inner_half_contact_length + v_one_half,
+                        -v_wall_thickness + v_one_half,
+                        v_one_half - v_inner_half_contact_length,
                     ],
                 ]
             )
@@ -397,43 +396,43 @@ class Armadillo(TileBase):
             connection_back_right = np.array(
                 [
                     [
-                        v_inner_c_h + v_one_half,
-                        -v_h_void + v_one_half,
-                        v_one_half + v_inner_c_h,
+                        v_inner_half_contact_length + v_one_half,
+                        -v_wall_thickness + v_one_half,
+                        v_one_half + v_inner_half_contact_length,
                     ],
                     [
-                        v_outer_c_h + v_one_half,
+                        v_half_contact_length + v_one_half,
                         v_zero,
                         v_one_half + v_half_contact_length,
                     ],
                     [
-                        v_inner_c_h + v_one_half,
-                        -v_h_void + v_one_half,
-                        v_one_half - v_inner_c_h,
+                        v_inner_half_contact_length + v_one_half,
+                        -v_wall_thickness + v_one_half,
+                        v_one_half - v_inner_half_contact_length,
                     ],
                     [
-                        v_outer_c_h + v_one_half,
+                        v_half_contact_length + v_one_half,
                         v_zero,
                         v_one_half - v_half_contact_length,
                     ],
                     [
-                        v_h_void + v_one_half,
-                        -v_inner_c_h + v_one_half,
-                        v_one_half + v_inner_c_h,
+                        v_wall_thickness + v_one_half,
+                        -v_inner_half_contact_length + v_one_half,
+                        v_one_half + v_inner_half_contact_length,
                     ],
                     [
                         v_one,
-                        -v_outer_c_h + v_one_half,
+                        -v_half_contact_length + v_one_half,
                         v_one_half + v_half_contact_length,
                     ],
                     [
-                        v_h_void + v_one_half,
-                        -v_inner_c_h + v_one_half,
-                        v_one_half - v_inner_c_h,
+                        v_wall_thickness + v_one_half,
+                        -v_inner_half_contact_length + v_one_half,
+                        v_one_half - v_inner_half_contact_length,
                     ],
                     [
                         v_one,
-                        -v_outer_c_h + v_one_half,
+                        -v_half_contact_length + v_one_half,
                         v_one_half - v_half_contact_length,
                     ],
                 ]
@@ -462,24 +461,24 @@ class Armadillo(TileBase):
                         v_zero,
                     ],
                     [
-                        v_one_half + v_inner_c_h,
-                        v_one_half + v_inner_c_h,
-                        v_one_half - v_h_void,
+                        v_one_half + v_inner_half_contact_length,
+                        v_one_half + v_inner_half_contact_length,
+                        v_one_half - v_wall_thickness,
                     ],
                     [
-                        v_one_half - v_inner_c_h,
-                        v_one_half + v_inner_c_h,
-                        v_one_half - v_h_void,
+                        v_one_half - v_inner_half_contact_length,
+                        v_one_half + v_inner_half_contact_length,
+                        v_one_half - v_wall_thickness,
                     ],
                     [
-                        v_one_half + v_inner_c_h,
-                        v_one_half - v_inner_c_h,
-                        v_one_half - v_h_void,
+                        v_one_half + v_inner_half_contact_length,
+                        v_one_half - v_inner_half_contact_length,
+                        v_one_half - v_wall_thickness,
                     ],
                     [
-                        v_one_half - v_inner_c_h,
-                        v_one_half - v_inner_c_h,
-                        v_one_half - v_h_void,
+                        v_one_half - v_inner_half_contact_length,
+                        v_one_half - v_inner_half_contact_length,
+                        v_one_half - v_wall_thickness,
                     ],
                 ]
             )
@@ -487,24 +486,24 @@ class Armadillo(TileBase):
             top = np.array(
                 [
                     [
-                        v_one_half + v_inner_c_h,
-                        v_one_half + v_inner_c_h,
-                        v_one_half + v_h_void,
+                        v_one_half + v_inner_half_contact_length,
+                        v_one_half + v_inner_half_contact_length,
+                        v_one_half + v_wall_thickness,
                     ],
                     [
-                        v_one_half - v_inner_c_h,
-                        v_one_half + v_inner_c_h,
-                        v_one_half + v_h_void,
+                        v_one_half - v_inner_half_contact_length,
+                        v_one_half + v_inner_half_contact_length,
+                        v_one_half + v_wall_thickness,
                     ],
                     [
-                        v_one_half + v_inner_c_h,
-                        v_one_half - v_inner_c_h,
-                        v_one_half + v_h_void,
+                        v_one_half + v_inner_half_contact_length,
+                        v_one_half - v_inner_half_contact_length,
+                        v_one_half + v_wall_thickness,
                     ],
                     [
-                        v_one_half - v_inner_c_h,
-                        v_one_half - v_inner_c_h,
-                        v_one_half + v_h_void,
+                        v_one_half - v_inner_half_contact_length,
+                        v_one_half - v_inner_half_contact_length,
+                        v_one_half + v_wall_thickness,
                     ],
                     [
                         v_one_half + v_half_contact_length,
@@ -552,24 +551,24 @@ class Armadillo(TileBase):
                         v_zero,
                     ],
                     [
-                        v_inner_c_h + v_one_half,
-                        v_one_half + v_h_void,
-                        v_one_half - v_inner_c_h,
+                        v_inner_half_contact_length + v_one_half,
+                        v_one_half + v_wall_thickness,
+                        v_one_half - v_inner_half_contact_length,
                     ],
                     [
-                        -v_inner_c_h + v_one_half,
-                        v_one_half + v_h_void,
-                        v_one_half - v_inner_c_h,
+                        -v_inner_half_contact_length + v_one_half,
+                        v_one_half + v_wall_thickness,
+                        v_one_half - v_inner_half_contact_length,
                     ],
                     [
-                        v_one_half + v_inner_c_h,
-                        v_one_half + v_inner_c_h,
-                        v_one_half - v_h_void,
+                        v_one_half + v_inner_half_contact_length,
+                        v_one_half + v_inner_half_contact_length,
+                        v_one_half - v_wall_thickness,
                     ],
                     [
-                        v_one_half - v_inner_c_h,
-                        v_one_half + v_inner_c_h,
-                        v_one_half - v_h_void,
+                        v_one_half - v_inner_half_contact_length,
+                        v_one_half + v_inner_half_contact_length,
+                        v_one_half - v_wall_thickness,
                     ],
                 ]
             )
@@ -587,14 +586,14 @@ class Armadillo(TileBase):
                         v_one_half + v_half_contact_length,
                     ],
                     [
-                        v_inner_c_h + v_one_half,
-                        v_one_half + v_h_void,
-                        v_one_half + v_inner_c_h,
+                        v_inner_half_contact_length + v_one_half,
+                        v_one_half + v_wall_thickness,
+                        v_one_half + v_inner_half_contact_length,
                     ],
                     [
-                        -v_inner_c_h + v_one_half,
-                        v_one_half + v_h_void,
-                        v_one_half + v_inner_c_h,
+                        -v_inner_half_contact_length + v_one_half,
+                        v_one_half + v_wall_thickness,
+                        v_one_half + v_inner_half_contact_length,
                     ],
                     [
                         v_one_half + v_half_contact_length,
@@ -607,14 +606,14 @@ class Armadillo(TileBase):
                         v_one,
                     ],
                     [
-                        v_one_half + v_inner_c_h,
-                        v_one_half + v_inner_c_h,
-                        v_one_half + v_h_void,
+                        v_one_half + v_inner_half_contact_length,
+                        v_one_half + v_inner_half_contact_length,
+                        v_one_half + v_wall_thickness,
                     ],
                     [
-                        v_one_half - v_inner_c_h,
-                        v_one_half + v_inner_c_h,
-                        v_one_half + v_h_void,
+                        v_one_half - v_inner_half_contact_length,
+                        v_one_half + v_inner_half_contact_length,
+                        v_one_half + v_wall_thickness,
                     ],
                 ]
             )
@@ -642,24 +641,24 @@ class Armadillo(TileBase):
                         v_one_half - v_half_contact_length,
                     ],
                     [
-                        v_one_half + v_inner_c_h,
-                        v_one_half - v_inner_c_h,
-                        v_one_half - v_h_void,
+                        v_one_half + v_inner_half_contact_length,
+                        v_one_half - v_inner_half_contact_length,
+                        v_one_half - v_wall_thickness,
                     ],
                     [
-                        v_one_half - v_inner_c_h,
-                        v_one_half - v_inner_c_h,
-                        v_one_half - v_h_void,
+                        v_one_half - v_inner_half_contact_length,
+                        v_one_half - v_inner_half_contact_length,
+                        v_one_half - v_wall_thickness,
                     ],
                     [
-                        v_inner_c_h + v_one_half,
-                        v_one_half - v_h_void,
-                        v_one_half - v_inner_c_h,
+                        v_inner_half_contact_length + v_one_half,
+                        v_one_half - v_wall_thickness,
+                        v_one_half - v_inner_half_contact_length,
                     ],
                     [
-                        -v_inner_c_h + v_one_half,
-                        v_one_half - v_h_void,
-                        v_one_half - v_inner_c_h,
+                        -v_inner_half_contact_length + v_one_half,
+                        v_one_half - v_wall_thickness,
+                        v_one_half - v_inner_half_contact_length,
                     ],
                 ]
             )
@@ -677,14 +676,14 @@ class Armadillo(TileBase):
                         v_one,
                     ],
                     [
-                        v_one_half + v_inner_c_h,
-                        v_one_half - v_inner_c_h,
-                        v_one_half + v_h_void,
+                        v_one_half + v_inner_half_contact_length,
+                        v_one_half - v_inner_half_contact_length,
+                        v_one_half + v_wall_thickness,
                     ],
                     [
-                        v_one_half - v_inner_c_h,
-                        v_one_half - v_inner_c_h,
-                        v_one_half + v_h_void,
+                        v_one_half - v_inner_half_contact_length,
+                        v_one_half - v_inner_half_contact_length,
+                        v_one_half + v_wall_thickness,
                     ],
                     [
                         v_half_contact_length + v_one_half,
@@ -697,14 +696,14 @@ class Armadillo(TileBase):
                         v_one_half + v_half_contact_length,
                     ],
                     [
-                        v_inner_c_h + v_one_half,
-                        v_one_half - v_h_void,
-                        v_one_half + v_inner_c_h,
+                        v_inner_half_contact_length + v_one_half,
+                        v_one_half - v_wall_thickness,
+                        v_one_half + v_inner_half_contact_length,
                     ],
                     [
-                        -v_inner_c_h + v_one_half,
-                        v_one_half - v_h_void,
-                        v_one_half + v_inner_c_h,
+                        -v_inner_half_contact_length + v_one_half,
+                        v_one_half - v_wall_thickness,
+                        v_one_half + v_inner_half_contact_length,
                     ],
                 ]
             )
@@ -722,14 +721,14 @@ class Armadillo(TileBase):
                         v_one,
                     ],
                     [
-                        v_one_half + v_inner_c_h,
-                        v_one_half + v_inner_c_h,
-                        v_one_half + v_h_void,
+                        v_one_half + v_inner_half_contact_length,
+                        v_one_half + v_inner_half_contact_length,
+                        v_one_half + v_wall_thickness,
                     ],
                     [
-                        v_one_half + v_inner_c_h,
-                        v_one_half - v_inner_c_h,
-                        v_one_half + v_h_void,
+                        v_one_half + v_inner_half_contact_length,
+                        v_one_half - v_inner_half_contact_length,
+                        v_one_half + v_wall_thickness,
                     ],
                     [
                         v_one,
@@ -742,14 +741,14 @@ class Armadillo(TileBase):
                         v_one_half + v_half_contact_length,
                     ],
                     [
-                        v_one_half + v_h_void,
-                        v_one_half + v_inner_c_h,
-                        v_one_half + v_inner_c_h,
+                        v_one_half + v_wall_thickness,
+                        v_one_half + v_inner_half_contact_length,
+                        v_one_half + v_inner_half_contact_length,
                     ],
                     [
-                        v_one_half + v_h_void,
-                        v_one_half - v_inner_c_h,
-                        v_one_half + v_inner_c_h,
+                        v_one_half + v_wall_thickness,
+                        v_one_half - v_inner_half_contact_length,
+                        v_one_half + v_inner_half_contact_length,
                     ],
                 ]
             )
@@ -777,24 +776,24 @@ class Armadillo(TileBase):
                         v_one,
                     ],
                     [
-                        v_one_half - v_inner_c_h,
-                        v_one_half + v_inner_c_h,
-                        v_one_half + v_h_void,
+                        v_one_half - v_inner_half_contact_length,
+                        v_one_half + v_inner_half_contact_length,
+                        v_one_half + v_wall_thickness,
                     ],
                     [
-                        v_one_half - v_inner_c_h,
-                        v_one_half - v_inner_c_h,
-                        v_one_half + v_h_void,
+                        v_one_half - v_inner_half_contact_length,
+                        v_one_half - v_inner_half_contact_length,
+                        v_one_half + v_wall_thickness,
                     ],
                     [
-                        v_one_half - v_h_void,
-                        v_one_half + v_inner_c_h,
-                        v_one_half + v_inner_c_h,
+                        v_one_half - v_wall_thickness,
+                        v_one_half + v_inner_half_contact_length,
+                        v_one_half + v_inner_half_contact_length,
                     ],
                     [
-                        v_one_half - v_h_void,
-                        v_one_half - v_inner_c_h,
-                        v_one_half + v_inner_c_h,
+                        v_one_half - v_wall_thickness,
+                        v_one_half - v_inner_half_contact_length,
+                        v_one_half + v_inner_half_contact_length,
                     ],
                 ]
             )
@@ -822,24 +821,24 @@ class Armadillo(TileBase):
                         v_zero,
                     ],
                     [
-                        v_one_half - v_h_void,
-                        v_one_half + v_inner_c_h,
-                        v_one_half - v_inner_c_h,
+                        v_one_half - v_wall_thickness,
+                        v_one_half + v_inner_half_contact_length,
+                        v_one_half - v_inner_half_contact_length,
                     ],
                     [
-                        v_one_half - v_h_void,
-                        v_one_half - v_inner_c_h,
-                        v_one_half - v_inner_c_h,
+                        v_one_half - v_wall_thickness,
+                        v_one_half - v_inner_half_contact_length,
+                        v_one_half - v_inner_half_contact_length,
                     ],
                     [
-                        v_one_half - v_inner_c_h,
-                        v_one_half + v_inner_c_h,
-                        v_one_half - v_h_void,
+                        v_one_half - v_inner_half_contact_length,
+                        v_one_half + v_inner_half_contact_length,
+                        v_one_half - v_wall_thickness,
                     ],
                     [
-                        v_one_half - v_inner_c_h,
-                        v_one_half - v_inner_c_h,
-                        v_one_half - v_h_void,
+                        v_one_half - v_inner_half_contact_length,
+                        v_one_half - v_inner_half_contact_length,
+                        v_one_half - v_wall_thickness,
                     ],
                 ]
             )
@@ -848,23 +847,23 @@ class Armadillo(TileBase):
                 [
                     [
                         v_one,
-                        v_outer_c_h + v_one_half,
+                        v_half_contact_length + v_one_half,
                         v_one_half - v_half_contact_length,
                     ],
                     [
                         v_one,
-                        -v_outer_c_h + v_one_half,
+                        -v_half_contact_length + v_one_half,
                         v_one_half - v_half_contact_length,
                     ],
                     [
-                        v_h_void + v_one_half,
-                        v_inner_c_h + v_one_half,
-                        v_one_half - v_inner_c_h,
+                        v_wall_thickness + v_one_half,
+                        v_inner_half_contact_length + v_one_half,
+                        v_one_half - v_inner_half_contact_length,
                     ],
                     [
-                        v_h_void + v_one_half,
-                        -v_inner_c_h + v_one_half,
-                        v_one_half - v_inner_c_h,
+                        v_wall_thickness + v_one_half,
+                        -v_inner_half_contact_length + v_one_half,
+                        v_one_half - v_inner_half_contact_length,
                     ],
                     [
                         v_one_half + v_half_contact_length,
@@ -877,14 +876,14 @@ class Armadillo(TileBase):
                         v_zero,
                     ],
                     [
-                        v_one_half + v_inner_c_h,
-                        v_one_half + v_inner_c_h,
-                        v_one_half - v_h_void,
+                        v_one_half + v_inner_half_contact_length,
+                        v_one_half + v_inner_half_contact_length,
+                        v_one_half - v_wall_thickness,
                     ],
                     [
-                        v_one_half + v_inner_c_h,
-                        v_one_half - v_inner_c_h,
-                        v_one_half - v_h_void,
+                        v_one_half + v_inner_half_contact_length,
+                        v_one_half - v_inner_half_contact_length,
+                        v_one_half - v_wall_thickness,
                     ],
                 ]
             )
@@ -894,9 +893,9 @@ class Armadillo(TileBase):
             right = np.array(
                 [
                     [
-                        v_h_void + v_one_half,
-                        -v_inner_c_h + v_one_half,
-                        v_one_half + v_inner_c_h,
+                        v_wall_thickness + v_one_half,
+                        -v_inner_half_contact_length + v_one_half,
+                        v_one_half + v_inner_half_contact_length,
                     ],
                     [
                         v_one,
@@ -904,9 +903,9 @@ class Armadillo(TileBase):
                         v_one,
                     ],
                     [
-                        v_h_void + v_one_half,
-                        -v_inner_c_h + v_one_half,
-                        v_one_half - v_inner_c_h,
+                        v_wall_thickness + v_one_half,
+                        -v_inner_half_contact_length + v_one_half,
+                        v_one_half - v_inner_half_contact_length,
                     ],
                     [
                         v_one,
@@ -914,9 +913,9 @@ class Armadillo(TileBase):
                         v_zero,
                     ],
                     [
-                        v_h_void + v_one_half,
-                        v_inner_c_h + v_one_half,
-                        v_one_half + v_inner_c_h,
+                        v_wall_thickness + v_one_half,
+                        v_inner_half_contact_length + v_one_half,
+                        v_one_half + v_inner_half_contact_length,
                     ],
                     [
                         v_one,
@@ -924,9 +923,9 @@ class Armadillo(TileBase):
                         v_one,
                     ],
                     [
-                        v_h_void + v_one_half,
-                        v_inner_c_h + v_one_half,
-                        v_one_half - v_inner_c_h,
+                        v_wall_thickness + v_one_half,
+                        v_inner_half_contact_length + v_one_half,
+                        v_one_half - v_inner_half_contact_length,
                     ],
                     [
                         v_one,
@@ -939,9 +938,9 @@ class Armadillo(TileBase):
             connection_front_right = np.array(
                 [
                     [
-                        v_h_void + v_one_half,
-                        v_inner_c_h + v_one_half,
-                        v_one_half + v_inner_c_h,
+                        v_wall_thickness + v_one_half,
+                        v_inner_half_contact_length + v_one_half,
+                        v_one_half + v_inner_half_contact_length,
                     ],
                     [
                         v_one,
@@ -949,9 +948,9 @@ class Armadillo(TileBase):
                         v_one,
                     ],
                     [
-                        v_h_void + v_one_half,
-                        v_inner_c_h + v_one_half,
-                        v_one_half - v_inner_c_h,
+                        v_wall_thickness + v_one_half,
+                        v_inner_half_contact_length + v_one_half,
+                        v_one_half - v_inner_half_contact_length,
                     ],
                     [
                         v_one,
@@ -959,22 +958,22 @@ class Armadillo(TileBase):
                         v_zero,
                     ],
                     [
-                        v_inner_c_h + v_one_half,
-                        v_h_void + v_one_half,
-                        v_one_half + v_inner_c_h,
+                        v_inner_half_contact_length + v_one_half,
+                        v_wall_thickness + v_one_half,
+                        v_one_half + v_inner_half_contact_length,
                     ],
                     [
-                        v_outer_c_h + v_one_half,
+                        v_half_contact_length + v_one_half,
                         v_one,
                         v_one_half + v_half_contact_length,
                     ],
                     [
-                        v_inner_c_h + v_one_half,
-                        v_h_void + v_one_half,
-                        v_one_half - v_inner_c_h,
+                        v_inner_half_contact_length + v_one_half,
+                        v_wall_thickness + v_one_half,
+                        v_one_half - v_inner_half_contact_length,
                     ],
                     [
-                        v_outer_c_h + v_one_half,
+                        v_half_contact_length + v_one_half,
                         v_one,
                         v_one_half - v_half_contact_length,
                     ],
@@ -984,42 +983,42 @@ class Armadillo(TileBase):
             front = np.array(
                 [
                     [
-                        v_inner_c_h + v_one_half,
-                        v_h_void + v_one_half,
-                        v_one_half + v_inner_c_h,
+                        v_inner_half_contact_length + v_one_half,
+                        v_wall_thickness + v_one_half,
+                        v_one_half + v_inner_half_contact_length,
                     ],
                     [
-                        v_outer_c_h + v_one_half,
+                        v_half_contact_length + v_one_half,
                         v_one,
                         v_one_half + v_half_contact_length,
                     ],
                     [
-                        v_inner_c_h + v_one_half,
-                        v_h_void + v_one_half,
-                        v_one_half - v_inner_c_h,
+                        v_inner_half_contact_length + v_one_half,
+                        v_wall_thickness + v_one_half,
+                        v_one_half - v_inner_half_contact_length,
                     ],
                     [
-                        v_outer_c_h + v_one_half,
+                        v_half_contact_length + v_one_half,
                         v_one,
                         v_one_half - v_half_contact_length,
                     ],
                     [
-                        -v_inner_c_h + v_one_half,
-                        v_h_void + v_one_half,
-                        v_one_half + v_inner_c_h,
+                        -v_inner_half_contact_length + v_one_half,
+                        v_wall_thickness + v_one_half,
+                        v_one_half + v_inner_half_contact_length,
                     ],
                     [
-                        -v_outer_c_h + v_one_half,
+                        -v_half_contact_length + v_one_half,
                         v_one,
                         v_one_half + v_half_contact_length,
                     ],
                     [
-                        -v_inner_c_h + v_one_half,
-                        v_h_void + v_one_half,
-                        v_one_half - v_inner_c_h,
+                        -v_inner_half_contact_length + v_one_half,
+                        v_wall_thickness + v_one_half,
+                        v_one_half - v_inner_half_contact_length,
                     ],
                     [
-                        -v_outer_c_h + v_one_half,
+                        -v_half_contact_length + v_one_half,
                         v_one,
                         v_one_half - v_half_contact_length,
                     ],
@@ -1029,42 +1028,42 @@ class Armadillo(TileBase):
             connection_back_left = np.array(
                 [
                     [
-                        -v_h_void + v_one_half,
-                        -v_inner_c_h + v_one_half,
-                        v_one_half + v_inner_c_h,
+                        -v_wall_thickness + v_one_half,
+                        -v_inner_half_contact_length + v_one_half,
+                        v_one_half + v_inner_half_contact_length,
                     ],
                     [
                         v_zero,
-                        -v_outer_c_h + v_one_half,
+                        -v_half_contact_length + v_one_half,
                         v_one_half + v_half_contact_length,
                     ],
                     [
-                        -v_h_void + v_one_half,
-                        -v_inner_c_h + v_one_half,
-                        v_one_half - v_inner_c_h,
+                        -v_wall_thickness + v_one_half,
+                        -v_inner_half_contact_length + v_one_half,
+                        v_one_half - v_inner_half_contact_length,
                     ],
                     [
                         v_zero,
-                        -v_outer_c_h + v_one_half,
+                        -v_half_contact_length + v_one_half,
                         v_one_half - v_half_contact_length,
                     ],
                     [
-                        -v_inner_c_h + v_one_half,
-                        -v_h_void + v_one_half,
-                        v_one_half + v_inner_c_h,
+                        -v_inner_half_contact_length + v_one_half,
+                        -v_wall_thickness + v_one_half,
+                        v_one_half + v_inner_half_contact_length,
                     ],
                     [
-                        -v_outer_c_h + v_one_half,
+                        -v_half_contact_length + v_one_half,
                         v_zero,
                         v_one_half + v_half_contact_length,
                     ],
                     [
-                        -v_inner_c_h + v_one_half,
-                        -v_h_void + v_one_half,
-                        v_one_half - v_inner_c_h,
+                        -v_inner_half_contact_length + v_one_half,
+                        -v_wall_thickness + v_one_half,
+                        v_one_half - v_inner_half_contact_length,
                     ],
                     [
-                        -v_outer_c_h + v_one_half,
+                        -v_half_contact_length + v_one_half,
                         v_zero,
                         v_one_half - v_half_contact_length,
                     ],
@@ -1075,43 +1074,43 @@ class Armadillo(TileBase):
                 [
                     [
                         v_zero,
-                        -v_outer_c_h + v_one_half,
+                        -v_half_contact_length + v_one_half,
                         v_one_half + v_half_contact_length,
                     ],
                     [
-                        -v_h_void + v_one_half,
-                        -v_inner_c_h + v_one_half,
-                        v_one_half + v_inner_c_h,
+                        -v_wall_thickness + v_one_half,
+                        -v_inner_half_contact_length + v_one_half,
+                        v_one_half + v_inner_half_contact_length,
                     ],
                     [
                         v_zero,
-                        -v_outer_c_h + v_one_half,
+                        -v_half_contact_length + v_one_half,
                         v_one_half - v_half_contact_length,
                     ],
                     [
-                        -v_h_void + v_one_half,
-                        -v_inner_c_h + v_one_half,
-                        v_one_half - v_inner_c_h,
+                        -v_wall_thickness + v_one_half,
+                        -v_inner_half_contact_length + v_one_half,
+                        v_one_half - v_inner_half_contact_length,
                     ],
                     [
                         v_zero,
-                        v_outer_c_h + v_one_half,
+                        v_half_contact_length + v_one_half,
                         v_one_half + v_half_contact_length,
                     ],
                     [
-                        -v_h_void + v_one_half,
-                        v_inner_c_h + v_one_half,
-                        v_one_half + v_inner_c_h,
+                        -v_wall_thickness + v_one_half,
+                        v_inner_half_contact_length + v_one_half,
+                        v_one_half + v_inner_half_contact_length,
                     ],
                     [
                         v_zero,
-                        v_outer_c_h + v_one_half,
+                        v_half_contact_length + v_one_half,
                         v_one_half - v_half_contact_length,
                     ],
                     [
-                        -v_h_void + v_one_half,
-                        v_inner_c_h + v_one_half,
-                        v_one_half - v_inner_c_h,
+                        -v_wall_thickness + v_one_half,
+                        v_inner_half_contact_length + v_one_half,
+                        v_one_half - v_inner_half_contact_length,
                     ],
                 ]
             )
@@ -1120,43 +1119,43 @@ class Armadillo(TileBase):
                 [
                     [
                         v_zero,
-                        v_outer_c_h + v_one_half,
+                        v_half_contact_length + v_one_half,
                         v_one_half + v_half_contact_length,
                     ],
                     [
-                        -v_h_void + v_one_half,
-                        v_inner_c_h + v_one_half,
-                        v_one_half + v_inner_c_h,
+                        -v_wall_thickness + v_one_half,
+                        v_inner_half_contact_length + v_one_half,
+                        v_one_half + v_inner_half_contact_length,
                     ],
                     [
                         v_zero,
-                        v_outer_c_h + v_one_half,
+                        v_half_contact_length + v_one_half,
                         v_one_half - v_half_contact_length,
                     ],
                     [
-                        -v_h_void + v_one_half,
-                        v_inner_c_h + v_one_half,
-                        v_one_half - v_inner_c_h,
+                        -v_wall_thickness + v_one_half,
+                        v_inner_half_contact_length + v_one_half,
+                        v_one_half - v_inner_half_contact_length,
                     ],
                     [
-                        -v_outer_c_h + v_one_half,
+                        -v_half_contact_length + v_one_half,
                         v_one,
                         v_one_half + v_half_contact_length,
                     ],
                     [
-                        -v_inner_c_h + v_one_half,
-                        v_h_void + v_one_half,
-                        v_one_half + v_inner_c_h,
+                        -v_inner_half_contact_length + v_one_half,
+                        v_wall_thickness + v_one_half,
+                        v_one_half + v_inner_half_contact_length,
                     ],
                     [
-                        -v_outer_c_h + v_one_half,
+                        -v_half_contact_length + v_one_half,
                         v_one,
                         v_one_half - v_half_contact_length,
                     ],
                     [
-                        -v_inner_c_h + v_one_half,
-                        v_h_void + v_one_half,
-                        v_one_half - v_inner_c_h,
+                        -v_inner_half_contact_length + v_one_half,
+                        v_wall_thickness + v_one_half,
+                        v_one_half - v_inner_half_contact_length,
                     ],
                 ]
             )
@@ -1164,44 +1163,44 @@ class Armadillo(TileBase):
             back = np.array(
                 [
                     [
-                        v_outer_c_h + v_one_half,
+                        v_half_contact_length + v_one_half,
                         v_zero,
                         v_one_half + v_half_contact_length,
                     ],
                     [
-                        v_inner_c_h + v_one_half,
-                        -v_h_void + v_one_half,
-                        v_one_half + v_inner_c_h,
+                        v_inner_half_contact_length + v_one_half,
+                        -v_wall_thickness + v_one_half,
+                        v_one_half + v_inner_half_contact_length,
                     ],
                     [
-                        v_outer_c_h + v_one_half,
+                        v_half_contact_length + v_one_half,
                         v_zero,
                         v_one_half - v_half_contact_length,
                     ],
                     [
-                        v_inner_c_h + v_one_half,
-                        -v_h_void + v_one_half,
-                        v_one_half - v_inner_c_h,
+                        v_inner_half_contact_length + v_one_half,
+                        -v_wall_thickness + v_one_half,
+                        v_one_half - v_inner_half_contact_length,
                     ],
                     [
-                        -v_outer_c_h + v_one_half,
+                        -v_half_contact_length + v_one_half,
                         v_zero,
                         v_one_half + v_half_contact_length,
                     ],
                     [
-                        -v_inner_c_h + v_one_half,
-                        -v_h_void + v_one_half,
-                        v_one_half + v_inner_c_h,
+                        -v_inner_half_contact_length + v_one_half,
+                        -v_wall_thickness + v_one_half,
+                        v_one_half + v_inner_half_contact_length,
                     ],
                     [
-                        -v_outer_c_h + v_one_half,
+                        -v_half_contact_length + v_one_half,
                         v_zero,
                         v_one_half - v_half_contact_length,
                     ],
                     [
-                        -v_inner_c_h + v_one_half,
-                        -v_h_void + v_one_half,
-                        v_one_half - v_inner_c_h,
+                        -v_inner_half_contact_length + v_one_half,
+                        -v_wall_thickness + v_one_half,
+                        v_one_half - v_inner_half_contact_length,
                     ],
                 ]
             )
@@ -1209,29 +1208,29 @@ class Armadillo(TileBase):
             connection_back_right = np.array(
                 [
                     [
-                        v_inner_c_h + v_one_half,
-                        -v_h_void + v_one_half,
-                        v_one_half + v_inner_c_h,
+                        v_inner_half_contact_length + v_one_half,
+                        -v_wall_thickness + v_one_half,
+                        v_one_half + v_inner_half_contact_length,
                     ],
                     [
-                        v_outer_c_h + v_one_half,
+                        v_half_contact_length + v_one_half,
                         v_zero,
                         v_one_half + v_half_contact_length,
                     ],
                     [
-                        v_inner_c_h + v_one_half,
-                        -v_h_void + v_one_half,
-                        v_one_half - v_inner_c_h,
+                        v_inner_half_contact_length + v_one_half,
+                        -v_wall_thickness + v_one_half,
+                        v_one_half - v_inner_half_contact_length,
                     ],
                     [
-                        v_outer_c_h + v_one_half,
+                        v_half_contact_length + v_one_half,
                         v_zero,
                         v_one_half - v_half_contact_length,
                     ],
                     [
-                        v_h_void + v_one_half,
-                        -v_inner_c_h + v_one_half,
-                        v_one_half + v_inner_c_h,
+                        v_wall_thickness + v_one_half,
+                        -v_inner_half_contact_length + v_one_half,
+                        v_one_half + v_inner_half_contact_length,
                     ],
                     [
                         v_one,
@@ -1239,9 +1238,9 @@ class Armadillo(TileBase):
                         v_one,
                     ],
                     [
-                        v_h_void + v_one_half,
-                        -v_inner_c_h + v_one_half,
-                        v_one_half - v_inner_c_h,
+                        v_wall_thickness + v_one_half,
+                        -v_inner_half_contact_length + v_one_half,
+                        v_one_half - v_inner_half_contact_length,
                     ],
                     [
                         v_one,
@@ -1274,24 +1273,24 @@ class Armadillo(TileBase):
                         v_zero,
                     ],
                     [
-                        v_one_half + v_inner_c_h,
-                        v_one_half + v_inner_c_h,
-                        v_one_half - v_h_void,
+                        v_one_half + v_inner_half_contact_length,
+                        v_one_half + v_inner_half_contact_length,
+                        v_one_half - v_wall_thickness,
                     ],
                     [
-                        v_one_half - v_inner_c_h,
-                        v_one_half + v_inner_c_h,
-                        v_one_half - v_h_void,
+                        v_one_half - v_inner_half_contact_length,
+                        v_one_half + v_inner_half_contact_length,
+                        v_one_half - v_wall_thickness,
                     ],
                     [
-                        v_one_half + v_inner_c_h,
-                        v_one_half - v_inner_c_h,
-                        v_one_half - v_h_void,
+                        v_one_half + v_inner_half_contact_length,
+                        v_one_half - v_inner_half_contact_length,
+                        v_one_half - v_wall_thickness,
                     ],
                     [
-                        v_one_half - v_inner_c_h,
-                        v_one_half - v_inner_c_h,
-                        v_one_half - v_h_void,
+                        v_one_half - v_inner_half_contact_length,
+                        v_one_half - v_inner_half_contact_length,
+                        v_one_half - v_wall_thickness,
                     ],
                 ]
             )
@@ -1299,24 +1298,24 @@ class Armadillo(TileBase):
             top = np.array(
                 [
                     [
-                        v_one_half + v_inner_c_h,
-                        v_one_half + v_inner_c_h,
-                        v_one_half + v_h_void,
+                        v_one_half + v_inner_half_contact_length,
+                        v_one_half + v_inner_half_contact_length,
+                        v_one_half + v_wall_thickness,
                     ],
                     [
-                        v_one_half - v_inner_c_h,
-                        v_one_half + v_inner_c_h,
-                        v_one_half + v_h_void,
+                        v_one_half - v_inner_half_contact_length,
+                        v_one_half + v_inner_half_contact_length,
+                        v_one_half + v_wall_thickness,
                     ],
                     [
-                        v_one_half + v_inner_c_h,
-                        v_one_half - v_inner_c_h,
-                        v_one_half + v_h_void,
+                        v_one_half + v_inner_half_contact_length,
+                        v_one_half - v_inner_half_contact_length,
+                        v_one_half + v_wall_thickness,
                     ],
                     [
-                        v_one_half - v_inner_c_h,
-                        v_one_half - v_inner_c_h,
-                        v_one_half + v_h_void,
+                        v_one_half - v_inner_half_contact_length,
+                        v_one_half - v_inner_half_contact_length,
+                        v_one_half + v_wall_thickness,
                     ],
                     [
                         v_one_half + v_half_contact_length,
@@ -1364,24 +1363,24 @@ class Armadillo(TileBase):
                         v_zero,
                     ],
                     [
-                        v_inner_c_h + v_one_half,
-                        v_one_half + v_h_void,
-                        v_one_half - v_inner_c_h,
+                        v_inner_half_contact_length + v_one_half,
+                        v_one_half + v_wall_thickness,
+                        v_one_half - v_inner_half_contact_length,
                     ],
                     [
-                        -v_inner_c_h + v_one_half,
-                        v_one_half + v_h_void,
-                        v_one_half - v_inner_c_h,
+                        -v_inner_half_contact_length + v_one_half,
+                        v_one_half + v_wall_thickness,
+                        v_one_half - v_inner_half_contact_length,
                     ],
                     [
-                        v_one_half + v_inner_c_h,
-                        v_one_half + v_inner_c_h,
-                        v_one_half - v_h_void,
+                        v_one_half + v_inner_half_contact_length,
+                        v_one_half + v_inner_half_contact_length,
+                        v_one_half - v_wall_thickness,
                     ],
                     [
-                        v_one_half - v_inner_c_h,
-                        v_one_half + v_inner_c_h,
-                        v_one_half - v_h_void,
+                        v_one_half - v_inner_half_contact_length,
+                        v_one_half + v_inner_half_contact_length,
+                        v_one_half - v_wall_thickness,
                     ],
                 ]
             )
@@ -1399,14 +1398,14 @@ class Armadillo(TileBase):
                         v_one_half + v_half_contact_length,
                     ],
                     [
-                        v_inner_c_h + v_one_half,
-                        v_one_half + v_h_void,
-                        v_one_half + v_inner_c_h,
+                        v_inner_half_contact_length + v_one_half,
+                        v_one_half + v_wall_thickness,
+                        v_one_half + v_inner_half_contact_length,
                     ],
                     [
-                        -v_inner_c_h + v_one_half,
-                        v_one_half + v_h_void,
-                        v_one_half + v_inner_c_h,
+                        -v_inner_half_contact_length + v_one_half,
+                        v_one_half + v_wall_thickness,
+                        v_one_half + v_inner_half_contact_length,
                     ],
                     [
                         v_one_half + v_half_contact_length,
@@ -1419,14 +1418,14 @@ class Armadillo(TileBase):
                         v_one,
                     ],
                     [
-                        v_one_half + v_inner_c_h,
-                        v_one_half + v_inner_c_h,
-                        v_one_half + v_h_void,
+                        v_one_half + v_inner_half_contact_length,
+                        v_one_half + v_inner_half_contact_length,
+                        v_one_half + v_wall_thickness,
                     ],
                     [
-                        v_one_half - v_inner_c_h,
-                        v_one_half + v_inner_c_h,
-                        v_one_half + v_h_void,
+                        v_one_half - v_inner_half_contact_length,
+                        v_one_half + v_inner_half_contact_length,
+                        v_one_half + v_wall_thickness,
                     ],
                 ]
             )
@@ -1454,24 +1453,24 @@ class Armadillo(TileBase):
                         v_one_half - v_half_contact_length,
                     ],
                     [
-                        v_one_half + v_inner_c_h,
-                        v_one_half - v_inner_c_h,
-                        v_one_half - v_h_void,
+                        v_one_half + v_inner_half_contact_length,
+                        v_one_half - v_inner_half_contact_length,
+                        v_one_half - v_wall_thickness,
                     ],
                     [
-                        v_one_half - v_inner_c_h,
-                        v_one_half - v_inner_c_h,
-                        v_one_half - v_h_void,
+                        v_one_half - v_inner_half_contact_length,
+                        v_one_half - v_inner_half_contact_length,
+                        v_one_half - v_wall_thickness,
                     ],
                     [
-                        v_inner_c_h + v_one_half,
-                        v_one_half - v_h_void,
-                        v_one_half - v_inner_c_h,
+                        v_inner_half_contact_length + v_one_half,
+                        v_one_half - v_wall_thickness,
+                        v_one_half - v_inner_half_contact_length,
                     ],
                     [
-                        -v_inner_c_h + v_one_half,
-                        v_one_half - v_h_void,
-                        v_one_half - v_inner_c_h,
+                        -v_inner_half_contact_length + v_one_half,
+                        v_one_half - v_wall_thickness,
+                        v_one_half - v_inner_half_contact_length,
                     ],
                 ]
             )
@@ -1489,14 +1488,14 @@ class Armadillo(TileBase):
                         v_one,
                     ],
                     [
-                        v_one_half + v_inner_c_h,
-                        v_one_half - v_inner_c_h,
-                        v_one_half + v_h_void,
+                        v_one_half + v_inner_half_contact_length,
+                        v_one_half - v_inner_half_contact_length,
+                        v_one_half + v_wall_thickness,
                     ],
                     [
-                        v_one_half - v_inner_c_h,
-                        v_one_half - v_inner_c_h,
-                        v_one_half + v_h_void,
+                        v_one_half - v_inner_half_contact_length,
+                        v_one_half - v_inner_half_contact_length,
+                        v_one_half + v_wall_thickness,
                     ],
                     [
                         v_half_contact_length + v_one_half,
@@ -1509,14 +1508,14 @@ class Armadillo(TileBase):
                         v_one_half + v_half_contact_length,
                     ],
                     [
-                        v_inner_c_h + v_one_half,
-                        v_one_half - v_h_void,
-                        v_one_half + v_inner_c_h,
+                        v_inner_half_contact_length + v_one_half,
+                        v_one_half - v_wall_thickness,
+                        v_one_half + v_inner_half_contact_length,
                     ],
                     [
-                        -v_inner_c_h + v_one_half,
-                        v_one_half - v_h_void,
-                        v_one_half + v_inner_c_h,
+                        -v_inner_half_contact_length + v_one_half,
+                        v_one_half - v_wall_thickness,
+                        v_one_half + v_inner_half_contact_length,
                     ],
                 ]
             )
@@ -1534,14 +1533,14 @@ class Armadillo(TileBase):
                         v_one,
                     ],
                     [
-                        v_one_half + v_inner_c_h,
-                        v_one_half + v_inner_c_h,
-                        v_one_half + v_h_void,
+                        v_one_half + v_inner_half_contact_length,
+                        v_one_half + v_inner_half_contact_length,
+                        v_one_half + v_wall_thickness,
                     ],
                     [
-                        v_one_half + v_inner_c_h,
-                        v_one_half - v_inner_c_h,
-                        v_one_half + v_h_void,
+                        v_one_half + v_inner_half_contact_length,
+                        v_one_half - v_inner_half_contact_length,
+                        v_one_half + v_wall_thickness,
                     ],
                     [
                         v_one,
@@ -1554,14 +1553,14 @@ class Armadillo(TileBase):
                         v_one,
                     ],
                     [
-                        v_one_half + v_h_void,
-                        v_one_half + v_inner_c_h,
-                        v_one_half + v_inner_c_h,
+                        v_one_half + v_wall_thickness,
+                        v_one_half + v_inner_half_contact_length,
+                        v_one_half + v_inner_half_contact_length,
                     ],
                     [
-                        v_one_half + v_h_void,
-                        v_one_half - v_inner_c_h,
-                        v_one_half + v_inner_c_h,
+                        v_one_half + v_wall_thickness,
+                        v_one_half - v_inner_half_contact_length,
+                        v_one_half + v_inner_half_contact_length,
                     ],
                 ]
             )
@@ -1589,24 +1588,24 @@ class Armadillo(TileBase):
                         v_one_half + v_half_contact_length,
                     ],
                     [
-                        v_one_half - v_inner_c_h,
-                        v_one_half + v_inner_c_h,
-                        v_one_half + v_h_void,
+                        v_one_half - v_inner_half_contact_length,
+                        v_one_half + v_inner_half_contact_length,
+                        v_one_half + v_wall_thickness,
                     ],
                     [
-                        v_one_half - v_inner_c_h,
-                        v_one_half - v_inner_c_h,
-                        v_one_half + v_h_void,
+                        v_one_half - v_inner_half_contact_length,
+                        v_one_half - v_inner_half_contact_length,
+                        v_one_half + v_wall_thickness,
                     ],
                     [
-                        v_one_half - v_h_void,
-                        v_one_half + v_inner_c_h,
-                        v_one_half + v_inner_c_h,
+                        v_one_half - v_wall_thickness,
+                        v_one_half + v_inner_half_contact_length,
+                        v_one_half + v_inner_half_contact_length,
                     ],
                     [
-                        v_one_half - v_h_void,
-                        v_one_half - v_inner_c_h,
-                        v_one_half + v_inner_c_h,
+                        v_one_half - v_wall_thickness,
+                        v_one_half - v_inner_half_contact_length,
+                        v_one_half + v_inner_half_contact_length,
                     ],
                 ]
             )
@@ -1634,24 +1633,24 @@ class Armadillo(TileBase):
                         v_zero,
                     ],
                     [
-                        v_one_half - v_h_void,
-                        v_one_half + v_inner_c_h,
-                        v_one_half - v_inner_c_h,
+                        v_one_half - v_wall_thickness,
+                        v_one_half + v_inner_half_contact_length,
+                        v_one_half - v_inner_half_contact_length,
                     ],
                     [
-                        v_one_half - v_h_void,
-                        v_one_half - v_inner_c_h,
-                        v_one_half - v_inner_c_h,
+                        v_one_half - v_wall_thickness,
+                        v_one_half - v_inner_half_contact_length,
+                        v_one_half - v_inner_half_contact_length,
                     ],
                     [
-                        v_one_half - v_inner_c_h,
-                        v_one_half + v_inner_c_h,
-                        v_one_half - v_h_void,
+                        v_one_half - v_inner_half_contact_length,
+                        v_one_half + v_inner_half_contact_length,
+                        v_one_half - v_wall_thickness,
                     ],
                     [
-                        v_one_half - v_inner_c_h,
-                        v_one_half - v_inner_c_h,
-                        v_one_half - v_h_void,
+                        v_one_half - v_inner_half_contact_length,
+                        v_one_half - v_inner_half_contact_length,
+                        v_one_half - v_wall_thickness,
                     ],
                 ]
             )
@@ -1669,14 +1668,14 @@ class Armadillo(TileBase):
                         v_zero,
                     ],
                     [
-                        v_h_void + v_one_half,
-                        v_inner_c_h + v_one_half,
-                        v_one_half - v_inner_c_h,
+                        v_wall_thickness + v_one_half,
+                        v_inner_half_contact_length + v_one_half,
+                        v_one_half - v_inner_half_contact_length,
                     ],
                     [
-                        v_h_void + v_one_half,
-                        -v_inner_c_h + v_one_half,
-                        v_one_half - v_inner_c_h,
+                        v_wall_thickness + v_one_half,
+                        -v_inner_half_contact_length + v_one_half,
+                        v_one_half - v_inner_half_contact_length,
                     ],
                     [
                         v_one_half + v_half_contact_length,
@@ -1689,14 +1688,14 @@ class Armadillo(TileBase):
                         v_zero,
                     ],
                     [
-                        v_one_half + v_inner_c_h,
-                        v_one_half + v_inner_c_h,
-                        v_one_half - v_h_void,
+                        v_one_half + v_inner_half_contact_length,
+                        v_one_half + v_inner_half_contact_length,
+                        v_one_half - v_wall_thickness,
                     ],
                     [
-                        v_one_half + v_inner_c_h,
-                        v_one_half - v_inner_c_h,
-                        v_one_half - v_h_void,
+                        v_one_half + v_inner_half_contact_length,
+                        v_one_half - v_inner_half_contact_length,
+                        v_one_half - v_wall_thickness,
                     ],
                 ]
             )
@@ -1706,43 +1705,43 @@ class Armadillo(TileBase):
             right = np.array(
                 [
                     [
-                        v_h_void + v_one_half,
-                        -v_inner_c_h + v_one_half,
-                        v_one_half + v_inner_c_h,
+                        v_wall_thickness + v_one_half,
+                        -v_inner_half_contact_length + v_one_half,
+                        v_one_half + v_inner_half_contact_length,
                     ],
                     [
                         v_one,
-                        -v_outer_c_h + v_one_half,
+                        -v_half_contact_length + v_one_half,
                         v_one_half + v_half_contact_length,
                     ],
                     [
-                        v_h_void + v_one_half,
-                        -v_inner_c_h + v_one_half,
-                        v_one_half - v_inner_c_h,
+                        v_wall_thickness + v_one_half,
+                        -v_inner_half_contact_length + v_one_half,
+                        v_one_half - v_inner_half_contact_length,
                     ],
                     [
                         v_one,
-                        -v_outer_c_h + v_one_half,
+                        -v_half_contact_length + v_one_half,
                         v_one_half - v_half_contact_length,
                     ],
                     [
-                        v_h_void + v_one_half,
-                        v_inner_c_h + v_one_half,
-                        v_one_half + v_inner_c_h,
+                        v_wall_thickness + v_one_half,
+                        v_inner_half_contact_length + v_one_half,
+                        v_one_half + v_inner_half_contact_length,
                     ],
                     [
                         v_one,
-                        v_outer_c_h + v_one_half,
+                        v_half_contact_length + v_one_half,
                         v_one_half + v_half_contact_length,
                     ],
                     [
-                        v_h_void + v_one_half,
-                        v_inner_c_h + v_one_half,
-                        v_one_half - v_inner_c_h,
+                        v_wall_thickness + v_one_half,
+                        v_inner_half_contact_length + v_one_half,
+                        v_one_half - v_inner_half_contact_length,
                     ],
                     [
                         v_one,
-                        v_outer_c_h + v_one_half,
+                        v_half_contact_length + v_one_half,
                         v_one_half - v_half_contact_length,
                     ],
                 ]
@@ -1751,42 +1750,42 @@ class Armadillo(TileBase):
             connection_front_right = np.array(
                 [
                     [
-                        v_h_void + v_one_half,
-                        v_inner_c_h + v_one_half,
-                        v_one_half + v_inner_c_h,
+                        v_wall_thickness + v_one_half,
+                        v_inner_half_contact_length + v_one_half,
+                        v_one_half + v_inner_half_contact_length,
                     ],
                     [
                         v_one,
-                        v_outer_c_h + v_one_half,
+                        v_half_contact_length + v_one_half,
                         v_one_half + v_half_contact_length,
                     ],
                     [
-                        v_h_void + v_one_half,
-                        v_inner_c_h + v_one_half,
-                        v_one_half - v_inner_c_h,
+                        v_wall_thickness + v_one_half,
+                        v_inner_half_contact_length + v_one_half,
+                        v_one_half - v_inner_half_contact_length,
                     ],
                     [
                         v_one,
-                        v_outer_c_h + v_one_half,
+                        v_half_contact_length + v_one_half,
                         v_one_half - v_half_contact_length,
                     ],
                     [
-                        v_inner_c_h + v_one_half,
-                        v_h_void + v_one_half,
-                        v_one_half + v_inner_c_h,
+                        v_inner_half_contact_length + v_one_half,
+                        v_wall_thickness + v_one_half,
+                        v_one_half + v_inner_half_contact_length,
                     ],
                     [
-                        v_outer_c_h + v_one_half,
+                        v_half_contact_length + v_one_half,
                         v_one,
                         v_one_half + v_half_contact_length,
                     ],
                     [
-                        v_inner_c_h + v_one_half,
-                        v_h_void + v_one_half,
-                        v_one_half - v_inner_c_h,
+                        v_inner_half_contact_length + v_one_half,
+                        v_wall_thickness + v_one_half,
+                        v_one_half - v_inner_half_contact_length,
                     ],
                     [
-                        v_outer_c_h + v_one_half,
+                        v_half_contact_length + v_one_half,
                         v_one,
                         v_one_half - v_half_contact_length,
                     ],
@@ -1796,42 +1795,42 @@ class Armadillo(TileBase):
             front = np.array(
                 [
                     [
-                        v_inner_c_h + v_one_half,
-                        v_h_void + v_one_half,
-                        v_one_half + v_inner_c_h,
+                        v_inner_half_contact_length + v_one_half,
+                        v_wall_thickness + v_one_half,
+                        v_one_half + v_inner_half_contact_length,
                     ],
                     [
-                        v_outer_c_h + v_one_half,
+                        v_half_contact_length + v_one_half,
                         v_one,
                         v_one_half + v_half_contact_length,
                     ],
                     [
-                        v_inner_c_h + v_one_half,
-                        v_h_void + v_one_half,
-                        v_one_half - v_inner_c_h,
+                        v_inner_half_contact_length + v_one_half,
+                        v_wall_thickness + v_one_half,
+                        v_one_half - v_inner_half_contact_length,
                     ],
                     [
-                        v_outer_c_h + v_one_half,
+                        v_half_contact_length + v_one_half,
                         v_one,
                         v_one_half - v_half_contact_length,
                     ],
                     [
-                        -v_inner_c_h + v_one_half,
-                        v_h_void + v_one_half,
-                        v_one_half + v_inner_c_h,
+                        -v_inner_half_contact_length + v_one_half,
+                        v_wall_thickness + v_one_half,
+                        v_one_half + v_inner_half_contact_length,
                     ],
                     [
-                        -v_outer_c_h + v_one_half,
+                        -v_half_contact_length + v_one_half,
                         v_one,
                         v_one_half + v_half_contact_length,
                     ],
                     [
-                        -v_inner_c_h + v_one_half,
-                        v_h_void + v_one_half,
-                        v_one_half - v_inner_c_h,
+                        -v_inner_half_contact_length + v_one_half,
+                        v_wall_thickness + v_one_half,
+                        v_one_half - v_inner_half_contact_length,
                     ],
                     [
-                        -v_outer_c_h + v_one_half,
+                        -v_half_contact_length + v_one_half,
                         v_one,
                         v_one_half - v_half_contact_length,
                     ],
@@ -1841,29 +1840,29 @@ class Armadillo(TileBase):
             connection_back_left = np.array(
                 [
                     [
-                        -v_h_void + v_one_half,
-                        -v_inner_c_h + v_one_half,
-                        v_one_half + v_inner_c_h,
+                        -v_wall_thickness + v_one_half,
+                        -v_inner_half_contact_length + v_one_half,
+                        v_one_half + v_inner_half_contact_length,
                     ],
                     [
                         v_zero,
-                        -v_outer_c_h + v_one_half,
+                        -v_half_contact_length + v_one_half,
                         v_one_half + v_half_contact_length,
                     ],
                     [
-                        -v_h_void + v_one_half,
-                        -v_inner_c_h + v_one_half,
-                        v_one_half - v_inner_c_h,
+                        -v_wall_thickness + v_one_half,
+                        -v_inner_half_contact_length + v_one_half,
+                        v_one_half - v_inner_half_contact_length,
                     ],
                     [
                         v_zero,
-                        -v_outer_c_h + v_one_half,
+                        -v_half_contact_length + v_one_half,
                         v_one_half - v_half_contact_length,
                     ],
                     [
-                        -v_inner_c_h + v_one_half,
-                        -v_h_void + v_one_half,
-                        v_one_half + v_inner_c_h,
+                        -v_inner_half_contact_length + v_one_half,
+                        -v_wall_thickness + v_one_half,
+                        v_one_half + v_inner_half_contact_length,
                     ],
                     [
                         v_zero,
@@ -1871,9 +1870,9 @@ class Armadillo(TileBase):
                         v_one,
                     ],
                     [
-                        -v_inner_c_h + v_one_half,
-                        -v_h_void + v_one_half,
-                        v_one_half - v_inner_c_h,
+                        -v_inner_half_contact_length + v_one_half,
+                        -v_wall_thickness + v_one_half,
+                        v_one_half - v_inner_half_contact_length,
                     ],
                     [
                         v_zero,
@@ -1887,43 +1886,43 @@ class Armadillo(TileBase):
                 [
                     [
                         v_zero,
-                        -v_outer_c_h + v_one_half,
+                        -v_half_contact_length + v_one_half,
                         v_one_half + v_half_contact_length,
                     ],
                     [
-                        -v_h_void + v_one_half,
-                        -v_inner_c_h + v_one_half,
-                        v_one_half + v_inner_c_h,
+                        -v_wall_thickness + v_one_half,
+                        -v_inner_half_contact_length + v_one_half,
+                        v_one_half + v_inner_half_contact_length,
                     ],
                     [
                         v_zero,
-                        -v_outer_c_h + v_one_half,
+                        -v_half_contact_length + v_one_half,
                         v_one_half - v_half_contact_length,
                     ],
                     [
-                        -v_h_void + v_one_half,
-                        -v_inner_c_h + v_one_half,
-                        v_one_half - v_inner_c_h,
+                        -v_wall_thickness + v_one_half,
+                        -v_inner_half_contact_length + v_one_half,
+                        v_one_half - v_inner_half_contact_length,
                     ],
                     [
                         v_zero,
-                        v_outer_c_h + v_one_half,
+                        v_half_contact_length + v_one_half,
                         v_one_half + v_half_contact_length,
                     ],
                     [
-                        -v_h_void + v_one_half,
-                        v_inner_c_h + v_one_half,
-                        v_one_half + v_inner_c_h,
+                        -v_wall_thickness + v_one_half,
+                        v_inner_half_contact_length + v_one_half,
+                        v_one_half + v_inner_half_contact_length,
                     ],
                     [
                         v_zero,
-                        v_outer_c_h + v_one_half,
+                        v_half_contact_length + v_one_half,
                         v_one_half - v_half_contact_length,
                     ],
                     [
-                        -v_h_void + v_one_half,
-                        v_inner_c_h + v_one_half,
-                        v_one_half - v_inner_c_h,
+                        -v_wall_thickness + v_one_half,
+                        v_inner_half_contact_length + v_one_half,
+                        v_one_half - v_inner_half_contact_length,
                     ],
                 ]
             )
@@ -1932,43 +1931,43 @@ class Armadillo(TileBase):
                 [
                     [
                         v_zero,
-                        v_outer_c_h + v_one_half,
+                        v_half_contact_length + v_one_half,
                         v_one_half + v_half_contact_length,
                     ],
                     [
-                        -v_h_void + v_one_half,
-                        v_inner_c_h + v_one_half,
-                        v_one_half + v_inner_c_h,
+                        -v_wall_thickness + v_one_half,
+                        v_inner_half_contact_length + v_one_half,
+                        v_one_half + v_inner_half_contact_length,
                     ],
                     [
                         v_zero,
-                        v_outer_c_h + v_one_half,
+                        v_half_contact_length + v_one_half,
                         v_one_half - v_half_contact_length,
                     ],
                     [
-                        -v_h_void + v_one_half,
-                        v_inner_c_h + v_one_half,
-                        v_one_half - v_inner_c_h,
+                        -v_wall_thickness + v_one_half,
+                        v_inner_half_contact_length + v_one_half,
+                        v_one_half - v_inner_half_contact_length,
                     ],
                     [
-                        -v_outer_c_h + v_one_half,
+                        -v_half_contact_length + v_one_half,
                         v_one,
                         v_one_half + v_half_contact_length,
                     ],
                     [
-                        -v_inner_c_h + v_one_half,
-                        v_h_void + v_one_half,
-                        v_one_half + v_inner_c_h,
+                        -v_inner_half_contact_length + v_one_half,
+                        v_wall_thickness + v_one_half,
+                        v_one_half + v_inner_half_contact_length,
                     ],
                     [
-                        -v_outer_c_h + v_one_half,
+                        -v_half_contact_length + v_one_half,
                         v_one,
                         v_one_half - v_half_contact_length,
                     ],
                     [
-                        -v_inner_c_h + v_one_half,
-                        v_h_void + v_one_half,
-                        v_one_half - v_inner_c_h,
+                        -v_inner_half_contact_length + v_one_half,
+                        v_wall_thickness + v_one_half,
+                        v_one_half - v_inner_half_contact_length,
                     ],
                 ]
             )
@@ -1981,9 +1980,9 @@ class Armadillo(TileBase):
                         v_one,
                     ],
                     [
-                        v_inner_c_h + v_one_half,
-                        -v_h_void + v_one_half,
-                        v_one_half + v_inner_c_h,
+                        v_inner_half_contact_length + v_one_half,
+                        -v_wall_thickness + v_one_half,
+                        v_one_half + v_inner_half_contact_length,
                     ],
                     [
                         v_one,
@@ -1991,9 +1990,9 @@ class Armadillo(TileBase):
                         v_zero,
                     ],
                     [
-                        v_inner_c_h + v_one_half,
-                        -v_h_void + v_one_half,
-                        v_one_half - v_inner_c_h,
+                        v_inner_half_contact_length + v_one_half,
+                        -v_wall_thickness + v_one_half,
+                        v_one_half - v_inner_half_contact_length,
                     ],
                     [
                         v_zero,
@@ -2001,9 +2000,9 @@ class Armadillo(TileBase):
                         v_one,
                     ],
                     [
-                        -v_inner_c_h + v_one_half,
-                        -v_h_void + v_one_half,
-                        v_one_half + v_inner_c_h,
+                        -v_inner_half_contact_length + v_one_half,
+                        -v_wall_thickness + v_one_half,
+                        v_one_half + v_inner_half_contact_length,
                     ],
                     [
                         v_zero,
@@ -2011,9 +2010,9 @@ class Armadillo(TileBase):
                         v_zero,
                     ],
                     [
-                        -v_inner_c_h + v_one_half,
-                        -v_h_void + v_one_half,
-                        v_one_half - v_inner_c_h,
+                        -v_inner_half_contact_length + v_one_half,
+                        -v_wall_thickness + v_one_half,
+                        v_one_half - v_inner_half_contact_length,
                     ],
                 ]
             )
@@ -2021,9 +2020,9 @@ class Armadillo(TileBase):
             connection_back_right = np.array(
                 [
                     [
-                        v_inner_c_h + v_one_half,
-                        -v_h_void + v_one_half,
-                        v_one_half + v_inner_c_h,
+                        v_inner_half_contact_length + v_one_half,
+                        -v_wall_thickness + v_one_half,
+                        v_one_half + v_inner_half_contact_length,
                     ],
                     [
                         v_one,
@@ -2031,9 +2030,9 @@ class Armadillo(TileBase):
                         v_one,
                     ],
                     [
-                        v_inner_c_h + v_one_half,
-                        -v_h_void + v_one_half,
-                        v_one_half - v_inner_c_h,
+                        v_inner_half_contact_length + v_one_half,
+                        -v_wall_thickness + v_one_half,
+                        v_one_half - v_inner_half_contact_length,
                     ],
                     [
                         v_one,
@@ -2041,23 +2040,23 @@ class Armadillo(TileBase):
                         v_zero,
                     ],
                     [
-                        v_h_void + v_one_half,
-                        -v_inner_c_h + v_one_half,
-                        v_one_half + v_inner_c_h,
+                        v_wall_thickness + v_one_half,
+                        -v_inner_half_contact_length + v_one_half,
+                        v_one_half + v_inner_half_contact_length,
                     ],
                     [
                         v_one,
-                        -v_outer_c_h + v_one_half,
+                        -v_half_contact_length + v_one_half,
                         v_one_half + v_half_contact_length,
                     ],
                     [
-                        v_h_void + v_one_half,
-                        -v_inner_c_h + v_one_half,
-                        v_one_half - v_inner_c_h,
+                        v_wall_thickness + v_one_half,
+                        -v_inner_half_contact_length + v_one_half,
+                        v_one_half - v_inner_half_contact_length,
                     ],
                     [
                         v_one,
-                        -v_outer_c_h + v_one_half,
+                        -v_half_contact_length + v_one_half,
                         v_one_half - v_half_contact_length,
                     ],
                 ]
@@ -2086,24 +2085,24 @@ class Armadillo(TileBase):
                         v_zero,
                     ],
                     [
-                        v_one_half + v_inner_c_h,
-                        v_one_half + v_inner_c_h,
-                        v_one_half - v_h_void,
+                        v_one_half + v_inner_half_contact_length,
+                        v_one_half + v_inner_half_contact_length,
+                        v_one_half - v_wall_thickness,
                     ],
                     [
-                        v_one_half - v_inner_c_h,
-                        v_one_half + v_inner_c_h,
-                        v_one_half - v_h_void,
+                        v_one_half - v_inner_half_contact_length,
+                        v_one_half + v_inner_half_contact_length,
+                        v_one_half - v_wall_thickness,
                     ],
                     [
-                        v_one_half + v_inner_c_h,
-                        v_one_half - v_inner_c_h,
-                        v_one_half - v_h_void,
+                        v_one_half + v_inner_half_contact_length,
+                        v_one_half - v_inner_half_contact_length,
+                        v_one_half - v_wall_thickness,
                     ],
                     [
-                        v_one_half - v_inner_c_h,
-                        v_one_half - v_inner_c_h,
-                        v_one_half - v_h_void,
+                        v_one_half - v_inner_half_contact_length,
+                        v_one_half - v_inner_half_contact_length,
+                        v_one_half - v_wall_thickness,
                     ],
                 ]
             )
@@ -2111,24 +2110,24 @@ class Armadillo(TileBase):
             top = np.array(
                 [
                     [
-                        v_one_half + v_inner_c_h,
-                        v_one_half + v_inner_c_h,
-                        v_one_half + v_h_void,
+                        v_one_half + v_inner_half_contact_length,
+                        v_one_half + v_inner_half_contact_length,
+                        v_one_half + v_wall_thickness,
                     ],
                     [
-                        v_one_half - v_inner_c_h,
-                        v_one_half + v_inner_c_h,
-                        v_one_half + v_h_void,
+                        v_one_half - v_inner_half_contact_length,
+                        v_one_half + v_inner_half_contact_length,
+                        v_one_half + v_wall_thickness,
                     ],
                     [
-                        v_one_half + v_inner_c_h,
-                        v_one_half - v_inner_c_h,
-                        v_one_half + v_h_void,
+                        v_one_half + v_inner_half_contact_length,
+                        v_one_half - v_inner_half_contact_length,
+                        v_one_half + v_wall_thickness,
                     ],
                     [
-                        v_one_half - v_inner_c_h,
-                        v_one_half - v_inner_c_h,
-                        v_one_half + v_h_void,
+                        v_one_half - v_inner_half_contact_length,
+                        v_one_half - v_inner_half_contact_length,
+                        v_one_half + v_wall_thickness,
                     ],
                     [
                         v_one_half + v_half_contact_length,
@@ -2176,24 +2175,24 @@ class Armadillo(TileBase):
                         v_zero,
                     ],
                     [
-                        v_inner_c_h + v_one_half,
-                        v_one_half + v_h_void,
-                        v_one_half - v_inner_c_h,
+                        v_inner_half_contact_length + v_one_half,
+                        v_one_half + v_wall_thickness,
+                        v_one_half - v_inner_half_contact_length,
                     ],
                     [
-                        -v_inner_c_h + v_one_half,
-                        v_one_half + v_h_void,
-                        v_one_half - v_inner_c_h,
+                        -v_inner_half_contact_length + v_one_half,
+                        v_one_half + v_wall_thickness,
+                        v_one_half - v_inner_half_contact_length,
                     ],
                     [
-                        v_one_half + v_inner_c_h,
-                        v_one_half + v_inner_c_h,
-                        v_one_half - v_h_void,
+                        v_one_half + v_inner_half_contact_length,
+                        v_one_half + v_inner_half_contact_length,
+                        v_one_half - v_wall_thickness,
                     ],
                     [
-                        v_one_half - v_inner_c_h,
-                        v_one_half + v_inner_c_h,
-                        v_one_half - v_h_void,
+                        v_one_half - v_inner_half_contact_length,
+                        v_one_half + v_inner_half_contact_length,
+                        v_one_half - v_wall_thickness,
                     ],
                 ]
             )
@@ -2211,14 +2210,14 @@ class Armadillo(TileBase):
                         v_one_half + v_half_contact_length,
                     ],
                     [
-                        v_inner_c_h + v_one_half,
-                        v_one_half + v_h_void,
-                        v_one_half + v_inner_c_h,
+                        v_inner_half_contact_length + v_one_half,
+                        v_one_half + v_wall_thickness,
+                        v_one_half + v_inner_half_contact_length,
                     ],
                     [
-                        -v_inner_c_h + v_one_half,
-                        v_one_half + v_h_void,
-                        v_one_half + v_inner_c_h,
+                        -v_inner_half_contact_length + v_one_half,
+                        v_one_half + v_wall_thickness,
+                        v_one_half + v_inner_half_contact_length,
                     ],
                     [
                         v_one_half + v_half_contact_length,
@@ -2231,14 +2230,14 @@ class Armadillo(TileBase):
                         v_one,
                     ],
                     [
-                        v_one_half + v_inner_c_h,
-                        v_one_half + v_inner_c_h,
-                        v_one_half + v_h_void,
+                        v_one_half + v_inner_half_contact_length,
+                        v_one_half + v_inner_half_contact_length,
+                        v_one_half + v_wall_thickness,
                     ],
                     [
-                        v_one_half - v_inner_c_h,
-                        v_one_half + v_inner_c_h,
-                        v_one_half + v_h_void,
+                        v_one_half - v_inner_half_contact_length,
+                        v_one_half + v_inner_half_contact_length,
+                        v_one_half + v_wall_thickness,
                     ],
                 ]
             )
@@ -2266,24 +2265,24 @@ class Armadillo(TileBase):
                         v_zero,
                     ],
                     [
-                        v_one_half + v_inner_c_h,
-                        v_one_half - v_inner_c_h,
-                        v_one_half - v_h_void,
+                        v_one_half + v_inner_half_contact_length,
+                        v_one_half - v_inner_half_contact_length,
+                        v_one_half - v_wall_thickness,
                     ],
                     [
-                        v_one_half - v_inner_c_h,
-                        v_one_half - v_inner_c_h,
-                        v_one_half - v_h_void,
+                        v_one_half - v_inner_half_contact_length,
+                        v_one_half - v_inner_half_contact_length,
+                        v_one_half - v_wall_thickness,
                     ],
                     [
-                        v_inner_c_h + v_one_half,
-                        v_one_half - v_h_void,
-                        v_one_half - v_inner_c_h,
+                        v_inner_half_contact_length + v_one_half,
+                        v_one_half - v_wall_thickness,
+                        v_one_half - v_inner_half_contact_length,
                     ],
                     [
-                        -v_inner_c_h + v_one_half,
-                        v_one_half - v_h_void,
-                        v_one_half - v_inner_c_h,
+                        -v_inner_half_contact_length + v_one_half,
+                        v_one_half - v_wall_thickness,
+                        v_one_half - v_inner_half_contact_length,
                     ],
                 ]
             )
@@ -2301,14 +2300,14 @@ class Armadillo(TileBase):
                         v_one,
                     ],
                     [
-                        v_one_half + v_inner_c_h,
-                        v_one_half - v_inner_c_h,
-                        v_one_half + v_h_void,
+                        v_one_half + v_inner_half_contact_length,
+                        v_one_half - v_inner_half_contact_length,
+                        v_one_half + v_wall_thickness,
                     ],
                     [
-                        v_one_half - v_inner_c_h,
-                        v_one_half - v_inner_c_h,
-                        v_one_half + v_h_void,
+                        v_one_half - v_inner_half_contact_length,
+                        v_one_half - v_inner_half_contact_length,
+                        v_one_half + v_wall_thickness,
                     ],
                     [
                         v_one,
@@ -2321,14 +2320,14 @@ class Armadillo(TileBase):
                         v_one,
                     ],
                     [
-                        v_inner_c_h + v_one_half,
-                        v_one_half - v_h_void,
-                        v_one_half + v_inner_c_h,
+                        v_inner_half_contact_length + v_one_half,
+                        v_one_half - v_wall_thickness,
+                        v_one_half + v_inner_half_contact_length,
                     ],
                     [
-                        -v_inner_c_h + v_one_half,
-                        v_one_half - v_h_void,
-                        v_one_half + v_inner_c_h,
+                        -v_inner_half_contact_length + v_one_half,
+                        v_one_half - v_wall_thickness,
+                        v_one_half + v_inner_half_contact_length,
                     ],
                 ]
             )
@@ -2346,14 +2345,14 @@ class Armadillo(TileBase):
                         v_one,
                     ],
                     [
-                        v_one_half + v_inner_c_h,
-                        v_one_half + v_inner_c_h,
-                        v_one_half + v_h_void,
+                        v_one_half + v_inner_half_contact_length,
+                        v_one_half + v_inner_half_contact_length,
+                        v_one_half + v_wall_thickness,
                     ],
                     [
-                        v_one_half + v_inner_c_h,
-                        v_one_half - v_inner_c_h,
-                        v_one_half + v_h_void,
+                        v_one_half + v_inner_half_contact_length,
+                        v_one_half - v_inner_half_contact_length,
+                        v_one_half + v_wall_thickness,
                     ],
                     [
                         v_one,
@@ -2366,14 +2365,14 @@ class Armadillo(TileBase):
                         v_one_half + v_half_contact_length,
                     ],
                     [
-                        v_one_half + v_h_void,
-                        v_one_half + v_inner_c_h,
-                        v_one_half + v_inner_c_h,
+                        v_one_half + v_wall_thickness,
+                        v_one_half + v_inner_half_contact_length,
+                        v_one_half + v_inner_half_contact_length,
                     ],
                     [
-                        v_one_half + v_h_void,
-                        v_one_half - v_inner_c_h,
-                        v_one_half + v_inner_c_h,
+                        v_one_half + v_wall_thickness,
+                        v_one_half - v_inner_half_contact_length,
+                        v_one_half + v_inner_half_contact_length,
                     ],
                 ]
             )
@@ -2401,24 +2400,24 @@ class Armadillo(TileBase):
                         v_one_half + v_half_contact_length,
                     ],
                     [
-                        v_one_half - v_inner_c_h,
-                        v_one_half + v_inner_c_h,
-                        v_one_half + v_h_void,
+                        v_one_half - v_inner_half_contact_length,
+                        v_one_half + v_inner_half_contact_length,
+                        v_one_half + v_wall_thickness,
                     ],
                     [
-                        v_one_half - v_inner_c_h,
-                        v_one_half - v_inner_c_h,
-                        v_one_half + v_h_void,
+                        v_one_half - v_inner_half_contact_length,
+                        v_one_half - v_inner_half_contact_length,
+                        v_one_half + v_wall_thickness,
                     ],
                     [
-                        v_one_half - v_h_void,
-                        v_one_half + v_inner_c_h,
-                        v_one_half + v_inner_c_h,
+                        v_one_half - v_wall_thickness,
+                        v_one_half + v_inner_half_contact_length,
+                        v_one_half + v_inner_half_contact_length,
                     ],
                     [
-                        v_one_half - v_h_void,
-                        v_one_half - v_inner_c_h,
-                        v_one_half + v_inner_c_h,
+                        v_one_half - v_wall_thickness,
+                        v_one_half - v_inner_half_contact_length,
+                        v_one_half + v_inner_half_contact_length,
                     ],
                 ]
             )
@@ -2446,24 +2445,24 @@ class Armadillo(TileBase):
                         v_zero,
                     ],
                     [
-                        v_one_half - v_h_void,
-                        v_one_half + v_inner_c_h,
-                        v_one_half - v_inner_c_h,
+                        v_one_half - v_wall_thickness,
+                        v_one_half + v_inner_half_contact_length,
+                        v_one_half - v_inner_half_contact_length,
                     ],
                     [
-                        v_one_half - v_h_void,
-                        v_one_half - v_inner_c_h,
-                        v_one_half - v_inner_c_h,
+                        v_one_half - v_wall_thickness,
+                        v_one_half - v_inner_half_contact_length,
+                        v_one_half - v_inner_half_contact_length,
                     ],
                     [
-                        v_one_half - v_inner_c_h,
-                        v_one_half + v_inner_c_h,
-                        v_one_half - v_h_void,
+                        v_one_half - v_inner_half_contact_length,
+                        v_one_half + v_inner_half_contact_length,
+                        v_one_half - v_wall_thickness,
                     ],
                     [
-                        v_one_half - v_inner_c_h,
-                        v_one_half - v_inner_c_h,
-                        v_one_half - v_h_void,
+                        v_one_half - v_inner_half_contact_length,
+                        v_one_half - v_inner_half_contact_length,
+                        v_one_half - v_wall_thickness,
                     ],
                 ]
             )
@@ -2472,23 +2471,23 @@ class Armadillo(TileBase):
                 [
                     [
                         v_one,
-                        v_outer_c_h + v_one_half,
+                        v_half_contact_length + v_one_half,
                         v_one_half - v_half_contact_length,
                     ],
                     [
                         v_one,
-                        -v_outer_c_h + v_one_half,
+                        -v_half_contact_length + v_one_half,
                         v_one_half - v_half_contact_length,
                     ],
                     [
-                        v_h_void + v_one_half,
-                        v_inner_c_h + v_one_half,
-                        v_one_half - v_inner_c_h,
+                        v_wall_thickness + v_one_half,
+                        v_inner_half_contact_length + v_one_half,
+                        v_one_half - v_inner_half_contact_length,
                     ],
                     [
-                        v_h_void + v_one_half,
-                        -v_inner_c_h + v_one_half,
-                        v_one_half - v_inner_c_h,
+                        v_wall_thickness + v_one_half,
+                        -v_inner_half_contact_length + v_one_half,
+                        v_one_half - v_inner_half_contact_length,
                     ],
                     [
                         v_one_half + v_half_contact_length,
@@ -2501,14 +2500,14 @@ class Armadillo(TileBase):
                         v_zero,
                     ],
                     [
-                        v_one_half + v_inner_c_h,
-                        v_one_half + v_inner_c_h,
-                        v_one_half - v_h_void,
+                        v_one_half + v_inner_half_contact_length,
+                        v_one_half + v_inner_half_contact_length,
+                        v_one_half - v_wall_thickness,
                     ],
                     [
-                        v_one_half + v_inner_c_h,
-                        v_one_half - v_inner_c_h,
-                        v_one_half - v_h_void,
+                        v_one_half + v_inner_half_contact_length,
+                        v_one_half - v_inner_half_contact_length,
+                        v_one_half - v_wall_thickness,
                     ],
                 ]
             )
@@ -2519,43 +2518,43 @@ class Armadillo(TileBase):
             right = np.array(
                 [
                     [
-                        v_h_void + v_one_half,
-                        -v_inner_c_h + v_one_half,
-                        v_one_half + v_inner_c_h,
+                        v_wall_thickness + v_one_half,
+                        -v_inner_half_contact_length + v_one_half,
+                        v_one_half + v_inner_half_contact_length,
                     ],
                     [
                         v_one,
-                        -v_outer_c_h + v_one_half,
+                        -v_half_contact_length + v_one_half,
                         v_one_half + v_half_contact_length,
                     ],
                     [
-                        v_h_void + v_one_half,
-                        -v_inner_c_h + v_one_half,
-                        v_one_half - v_inner_c_h,
+                        v_wall_thickness + v_one_half,
+                        -v_inner_half_contact_length + v_one_half,
+                        v_one_half - v_inner_half_contact_length,
                     ],
                     [
                         v_one,
-                        -v_outer_c_h + v_one_half,
+                        -v_half_contact_length + v_one_half,
                         v_one_half - v_half_contact_length,
                     ],
                     [
-                        v_h_void + v_one_half,
-                        v_inner_c_h + v_one_half,
-                        v_one_half + v_inner_c_h,
+                        v_wall_thickness + v_one_half,
+                        v_inner_half_contact_length + v_one_half,
+                        v_one_half + v_inner_half_contact_length,
                     ],
                     [
                         v_one,
-                        v_outer_c_h + v_one_half,
+                        v_half_contact_length + v_one_half,
                         v_one_half + v_half_contact_length,
                     ],
                     [
-                        v_h_void + v_one_half,
-                        v_inner_c_h + v_one_half,
-                        v_one_half - v_inner_c_h,
+                        v_wall_thickness + v_one_half,
+                        v_inner_half_contact_length + v_one_half,
+                        v_one_half - v_inner_half_contact_length,
                     ],
                     [
                         v_one,
-                        v_outer_c_h + v_one_half,
+                        v_half_contact_length + v_one_half,
                         v_one_half - v_half_contact_length,
                     ],
                 ]
@@ -2564,29 +2563,29 @@ class Armadillo(TileBase):
             connection_front_right = np.array(
                 [
                     [
-                        v_h_void + v_one_half,
-                        v_inner_c_h + v_one_half,
-                        v_one_half + v_inner_c_h,
+                        v_wall_thickness + v_one_half,
+                        v_inner_half_contact_length + v_one_half,
+                        v_one_half + v_inner_half_contact_length,
                     ],
                     [
                         v_one,
-                        v_outer_c_h + v_one_half,
+                        v_half_contact_length + v_one_half,
                         v_one_half + v_half_contact_length,
                     ],
                     [
-                        v_h_void + v_one_half,
-                        v_inner_c_h + v_one_half,
-                        v_one_half - v_inner_c_h,
+                        v_wall_thickness + v_one_half,
+                        v_inner_half_contact_length + v_one_half,
+                        v_one_half - v_inner_half_contact_length,
                     ],
                     [
                         v_one,
-                        v_outer_c_h + v_one_half,
+                        v_half_contact_length + v_one_half,
                         v_one_half - v_half_contact_length,
                     ],
                     [
-                        v_inner_c_h + v_one_half,
-                        v_h_void + v_one_half,
-                        v_one_half + v_inner_c_h,
+                        v_inner_half_contact_length + v_one_half,
+                        v_wall_thickness + v_one_half,
+                        v_one_half + v_inner_half_contact_length,
                     ],
                     [
                         v_one,
@@ -2594,9 +2593,9 @@ class Armadillo(TileBase):
                         v_one,
                     ],
                     [
-                        v_inner_c_h + v_one_half,
-                        v_h_void + v_one_half,
-                        v_one_half - v_inner_c_h,
+                        v_inner_half_contact_length + v_one_half,
+                        v_wall_thickness + v_one_half,
+                        v_one_half - v_inner_half_contact_length,
                     ],
                     [
                         v_one,
@@ -2609,9 +2608,9 @@ class Armadillo(TileBase):
             front = np.array(
                 [
                     [
-                        v_inner_c_h + v_one_half,
-                        v_h_void + v_one_half,
-                        v_one_half + v_inner_c_h,
+                        v_inner_half_contact_length + v_one_half,
+                        v_wall_thickness + v_one_half,
+                        v_one_half + v_inner_half_contact_length,
                     ],
                     [
                         v_one,
@@ -2619,9 +2618,9 @@ class Armadillo(TileBase):
                         v_one,
                     ],
                     [
-                        v_inner_c_h + v_one_half,
-                        v_h_void + v_one_half,
-                        v_one_half - v_inner_c_h,
+                        v_inner_half_contact_length + v_one_half,
+                        v_wall_thickness + v_one_half,
+                        v_one_half - v_inner_half_contact_length,
                     ],
                     [
                         v_one,
@@ -2629,9 +2628,9 @@ class Armadillo(TileBase):
                         v_zero,
                     ],
                     [
-                        -v_inner_c_h + v_one_half,
-                        v_h_void + v_one_half,
-                        v_one_half + v_inner_c_h,
+                        -v_inner_half_contact_length + v_one_half,
+                        v_wall_thickness + v_one_half,
+                        v_one_half + v_inner_half_contact_length,
                     ],
                     [
                         v_zero,
@@ -2639,9 +2638,9 @@ class Armadillo(TileBase):
                         v_one,
                     ],
                     [
-                        -v_inner_c_h + v_one_half,
-                        v_h_void + v_one_half,
-                        v_one_half - v_inner_c_h,
+                        -v_inner_half_contact_length + v_one_half,
+                        v_wall_thickness + v_one_half,
+                        v_one_half - v_inner_half_contact_length,
                     ],
                     [
                         v_zero,
@@ -2654,42 +2653,42 @@ class Armadillo(TileBase):
             connection_back_left = np.array(
                 [
                     [
-                        -v_h_void + v_one_half,
-                        -v_inner_c_h + v_one_half,
-                        v_one_half + v_inner_c_h,
+                        -v_wall_thickness + v_one_half,
+                        -v_inner_half_contact_length + v_one_half,
+                        v_one_half + v_inner_half_contact_length,
                     ],
                     [
                         v_zero,
-                        -v_outer_c_h + v_one_half,
+                        -v_half_contact_length + v_one_half,
                         v_one_half + v_half_contact_length,
                     ],
                     [
-                        -v_h_void + v_one_half,
-                        -v_inner_c_h + v_one_half,
-                        v_one_half - v_inner_c_h,
+                        -v_wall_thickness + v_one_half,
+                        -v_inner_half_contact_length + v_one_half,
+                        v_one_half - v_inner_half_contact_length,
                     ],
                     [
                         v_zero,
-                        -v_outer_c_h + v_one_half,
+                        -v_half_contact_length + v_one_half,
                         v_one_half - v_half_contact_length,
                     ],
                     [
-                        -v_inner_c_h + v_one_half,
-                        -v_h_void + v_one_half,
-                        v_one_half + v_inner_c_h,
+                        -v_inner_half_contact_length + v_one_half,
+                        -v_wall_thickness + v_one_half,
+                        v_one_half + v_inner_half_contact_length,
                     ],
                     [
-                        -v_outer_c_h + v_one_half,
+                        -v_half_contact_length + v_one_half,
                         v_zero,
                         v_one_half + v_half_contact_length,
                     ],
                     [
-                        -v_inner_c_h + v_one_half,
-                        -v_h_void + v_one_half,
-                        v_one_half - v_inner_c_h,
+                        -v_inner_half_contact_length + v_one_half,
+                        -v_wall_thickness + v_one_half,
+                        v_one_half - v_inner_half_contact_length,
                     ],
                     [
-                        -v_outer_c_h + v_one_half,
+                        -v_half_contact_length + v_one_half,
                         v_zero,
                         v_one_half - v_half_contact_length,
                     ],
@@ -2700,43 +2699,43 @@ class Armadillo(TileBase):
                 [
                     [
                         v_zero,
-                        -v_outer_c_h + v_one_half,
+                        -v_half_contact_length + v_one_half,
                         v_one_half + v_half_contact_length,
                     ],
                     [
-                        -v_h_void + v_one_half,
-                        -v_inner_c_h + v_one_half,
-                        v_one_half + v_inner_c_h,
+                        -v_wall_thickness + v_one_half,
+                        -v_inner_half_contact_length + v_one_half,
+                        v_one_half + v_inner_half_contact_length,
                     ],
                     [
                         v_zero,
-                        -v_outer_c_h + v_one_half,
+                        -v_half_contact_length + v_one_half,
                         v_one_half - v_half_contact_length,
                     ],
                     [
-                        -v_h_void + v_one_half,
-                        -v_inner_c_h + v_one_half,
-                        v_one_half - v_inner_c_h,
+                        -v_wall_thickness + v_one_half,
+                        -v_inner_half_contact_length + v_one_half,
+                        v_one_half - v_inner_half_contact_length,
                     ],
                     [
                         v_zero,
-                        v_outer_c_h + v_one_half,
+                        v_half_contact_length + v_one_half,
                         v_one_half + v_half_contact_length,
                     ],
                     [
-                        -v_h_void + v_one_half,
-                        v_inner_c_h + v_one_half,
-                        v_one_half + v_inner_c_h,
+                        -v_wall_thickness + v_one_half,
+                        v_inner_half_contact_length + v_one_half,
+                        v_one_half + v_inner_half_contact_length,
                     ],
                     [
                         v_zero,
-                        v_outer_c_h + v_one_half,
+                        v_half_contact_length + v_one_half,
                         v_one_half - v_half_contact_length,
                     ],
                     [
-                        -v_h_void + v_one_half,
-                        v_inner_c_h + v_one_half,
-                        v_one_half - v_inner_c_h,
+                        -v_wall_thickness + v_one_half,
+                        v_inner_half_contact_length + v_one_half,
+                        v_one_half - v_inner_half_contact_length,
                     ],
                 ]
             )
@@ -2745,23 +2744,23 @@ class Armadillo(TileBase):
                 [
                     [
                         v_zero,
-                        v_outer_c_h + v_one_half,
+                        v_half_contact_length + v_one_half,
                         v_one_half + v_half_contact_length,
                     ],
                     [
-                        -v_h_void + v_one_half,
-                        v_inner_c_h + v_one_half,
-                        v_one_half + v_inner_c_h,
+                        -v_wall_thickness + v_one_half,
+                        v_inner_half_contact_length + v_one_half,
+                        v_one_half + v_inner_half_contact_length,
                     ],
                     [
                         v_zero,
-                        v_outer_c_h + v_one_half,
+                        v_half_contact_length + v_one_half,
                         v_one_half - v_half_contact_length,
                     ],
                     [
-                        -v_h_void + v_one_half,
-                        v_inner_c_h + v_one_half,
-                        v_one_half - v_inner_c_h,
+                        -v_wall_thickness + v_one_half,
+                        v_inner_half_contact_length + v_one_half,
+                        v_one_half - v_inner_half_contact_length,
                     ],
                     [
                         v_zero,
@@ -2769,9 +2768,9 @@ class Armadillo(TileBase):
                         v_one,
                     ],
                     [
-                        -v_inner_c_h + v_one_half,
-                        v_h_void + v_one_half,
-                        v_one_half + v_inner_c_h,
+                        -v_inner_half_contact_length + v_one_half,
+                        v_wall_thickness + v_one_half,
+                        v_one_half + v_inner_half_contact_length,
                     ],
                     [
                         v_zero,
@@ -2779,9 +2778,9 @@ class Armadillo(TileBase):
                         v_zero,
                     ],
                     [
-                        -v_inner_c_h + v_one_half,
-                        v_h_void + v_one_half,
-                        v_one_half - v_inner_c_h,
+                        -v_inner_half_contact_length + v_one_half,
+                        v_wall_thickness + v_one_half,
+                        v_one_half - v_inner_half_contact_length,
                     ],
                 ]
             )
@@ -2789,44 +2788,44 @@ class Armadillo(TileBase):
             back = np.array(
                 [
                     [
-                        v_outer_c_h + v_one_half,
+                        v_half_contact_length + v_one_half,
                         v_zero,
                         v_one_half + v_half_contact_length,
                     ],
                     [
-                        v_inner_c_h + v_one_half,
-                        -v_h_void + v_one_half,
-                        v_one_half + v_inner_c_h,
+                        v_inner_half_contact_length + v_one_half,
+                        -v_wall_thickness + v_one_half,
+                        v_one_half + v_inner_half_contact_length,
                     ],
                     [
-                        v_outer_c_h + v_one_half,
+                        v_half_contact_length + v_one_half,
                         v_zero,
                         v_one_half - v_half_contact_length,
                     ],
                     [
-                        v_inner_c_h + v_one_half,
-                        -v_h_void + v_one_half,
-                        v_one_half - v_inner_c_h,
+                        v_inner_half_contact_length + v_one_half,
+                        -v_wall_thickness + v_one_half,
+                        v_one_half - v_inner_half_contact_length,
                     ],
                     [
-                        -v_outer_c_h + v_one_half,
+                        -v_half_contact_length + v_one_half,
                         v_zero,
                         v_one_half + v_half_contact_length,
                     ],
                     [
-                        -v_inner_c_h + v_one_half,
-                        -v_h_void + v_one_half,
-                        v_one_half + v_inner_c_h,
+                        -v_inner_half_contact_length + v_one_half,
+                        -v_wall_thickness + v_one_half,
+                        v_one_half + v_inner_half_contact_length,
                     ],
                     [
-                        -v_outer_c_h + v_one_half,
+                        -v_half_contact_length + v_one_half,
                         v_zero,
                         v_one_half - v_half_contact_length,
                     ],
                     [
-                        -v_inner_c_h + v_one_half,
-                        -v_h_void + v_one_half,
-                        v_one_half - v_inner_c_h,
+                        -v_inner_half_contact_length + v_one_half,
+                        -v_wall_thickness + v_one_half,
+                        v_one_half - v_inner_half_contact_length,
                     ],
                 ]
             )
@@ -2834,43 +2833,43 @@ class Armadillo(TileBase):
             connection_back_right = np.array(
                 [
                     [
-                        v_inner_c_h + v_one_half,
-                        -v_h_void + v_one_half,
-                        v_one_half + v_inner_c_h,
+                        v_inner_half_contact_length + v_one_half,
+                        -v_wall_thickness + v_one_half,
+                        v_one_half + v_inner_half_contact_length,
                     ],
                     [
-                        v_outer_c_h + v_one_half,
+                        v_half_contact_length + v_one_half,
                         v_zero,
                         v_one_half + v_half_contact_length,
                     ],
                     [
-                        v_inner_c_h + v_one_half,
-                        -v_h_void + v_one_half,
-                        v_one_half - v_inner_c_h,
+                        v_inner_half_contact_length + v_one_half,
+                        -v_wall_thickness + v_one_half,
+                        v_one_half - v_inner_half_contact_length,
                     ],
                     [
-                        v_outer_c_h + v_one_half,
+                        v_half_contact_length + v_one_half,
                         v_zero,
                         v_one_half - v_half_contact_length,
                     ],
                     [
-                        v_h_void + v_one_half,
-                        -v_inner_c_h + v_one_half,
-                        v_one_half + v_inner_c_h,
+                        v_wall_thickness + v_one_half,
+                        -v_inner_half_contact_length + v_one_half,
+                        v_one_half + v_inner_half_contact_length,
                     ],
                     [
                         v_one,
-                        -v_outer_c_h + v_one_half,
+                        -v_half_contact_length + v_one_half,
                         v_one_half + v_half_contact_length,
                     ],
                     [
-                        v_h_void + v_one_half,
-                        -v_inner_c_h + v_one_half,
-                        v_one_half - v_inner_c_h,
+                        v_wall_thickness + v_one_half,
+                        -v_inner_half_contact_length + v_one_half,
+                        v_one_half - v_inner_half_contact_length,
                     ],
                     [
                         v_one,
-                        -v_outer_c_h + v_one_half,
+                        -v_half_contact_length + v_one_half,
                         v_one_half - v_half_contact_length,
                     ],
                 ]
@@ -2899,24 +2898,24 @@ class Armadillo(TileBase):
                         v_zero,
                     ],
                     [
-                        v_one_half + v_inner_c_h,
-                        v_one_half + v_inner_c_h,
-                        v_one_half - v_h_void,
+                        v_one_half + v_inner_half_contact_length,
+                        v_one_half + v_inner_half_contact_length,
+                        v_one_half - v_wall_thickness,
                     ],
                     [
-                        v_one_half - v_inner_c_h,
-                        v_one_half + v_inner_c_h,
-                        v_one_half - v_h_void,
+                        v_one_half - v_inner_half_contact_length,
+                        v_one_half + v_inner_half_contact_length,
+                        v_one_half - v_wall_thickness,
                     ],
                     [
-                        v_one_half + v_inner_c_h,
-                        v_one_half - v_inner_c_h,
-                        v_one_half - v_h_void,
+                        v_one_half + v_inner_half_contact_length,
+                        v_one_half - v_inner_half_contact_length,
+                        v_one_half - v_wall_thickness,
                     ],
                     [
-                        v_one_half - v_inner_c_h,
-                        v_one_half - v_inner_c_h,
-                        v_one_half - v_h_void,
+                        v_one_half - v_inner_half_contact_length,
+                        v_one_half - v_inner_half_contact_length,
+                        v_one_half - v_wall_thickness,
                     ],
                 ]
             )
@@ -2924,24 +2923,24 @@ class Armadillo(TileBase):
             top = np.array(
                 [
                     [
-                        v_one_half + v_inner_c_h,
-                        v_one_half + v_inner_c_h,
-                        v_one_half + v_h_void,
+                        v_one_half + v_inner_half_contact_length,
+                        v_one_half + v_inner_half_contact_length,
+                        v_one_half + v_wall_thickness,
                     ],
                     [
-                        v_one_half - v_inner_c_h,
-                        v_one_half + v_inner_c_h,
-                        v_one_half + v_h_void,
+                        v_one_half - v_inner_half_contact_length,
+                        v_one_half + v_inner_half_contact_length,
+                        v_one_half + v_wall_thickness,
                     ],
                     [
-                        v_one_half + v_inner_c_h,
-                        v_one_half - v_inner_c_h,
-                        v_one_half + v_h_void,
+                        v_one_half + v_inner_half_contact_length,
+                        v_one_half - v_inner_half_contact_length,
+                        v_one_half + v_wall_thickness,
                     ],
                     [
-                        v_one_half - v_inner_c_h,
-                        v_one_half - v_inner_c_h,
-                        v_one_half + v_h_void,
+                        v_one_half - v_inner_half_contact_length,
+                        v_one_half - v_inner_half_contact_length,
+                        v_one_half + v_wall_thickness,
                     ],
                     [
                         v_one_half + v_half_contact_length,
@@ -2989,24 +2988,24 @@ class Armadillo(TileBase):
                         v_zero,
                     ],
                     [
-                        v_inner_c_h + v_one_half,
-                        v_one_half + v_h_void,
-                        v_one_half - v_inner_c_h,
+                        v_inner_half_contact_length + v_one_half,
+                        v_one_half + v_wall_thickness,
+                        v_one_half - v_inner_half_contact_length,
                     ],
                     [
-                        -v_inner_c_h + v_one_half,
-                        v_one_half + v_h_void,
-                        v_one_half - v_inner_c_h,
+                        -v_inner_half_contact_length + v_one_half,
+                        v_one_half + v_wall_thickness,
+                        v_one_half - v_inner_half_contact_length,
                     ],
                     [
-                        v_one_half + v_inner_c_h,
-                        v_one_half + v_inner_c_h,
-                        v_one_half - v_h_void,
+                        v_one_half + v_inner_half_contact_length,
+                        v_one_half + v_inner_half_contact_length,
+                        v_one_half - v_wall_thickness,
                     ],
                     [
-                        v_one_half - v_inner_c_h,
-                        v_one_half + v_inner_c_h,
-                        v_one_half - v_h_void,
+                        v_one_half - v_inner_half_contact_length,
+                        v_one_half + v_inner_half_contact_length,
+                        v_one_half - v_wall_thickness,
                     ],
                 ]
             )
@@ -3024,14 +3023,14 @@ class Armadillo(TileBase):
                         v_one,
                     ],
                     [
-                        v_inner_c_h + v_one_half,
-                        v_one_half + v_h_void,
-                        v_one_half + v_inner_c_h,
+                        v_inner_half_contact_length + v_one_half,
+                        v_one_half + v_wall_thickness,
+                        v_one_half + v_inner_half_contact_length,
                     ],
                     [
-                        -v_inner_c_h + v_one_half,
-                        v_one_half + v_h_void,
-                        v_one_half + v_inner_c_h,
+                        -v_inner_half_contact_length + v_one_half,
+                        v_one_half + v_wall_thickness,
+                        v_one_half + v_inner_half_contact_length,
                     ],
                     [
                         v_one_half + v_half_contact_length,
@@ -3044,14 +3043,14 @@ class Armadillo(TileBase):
                         v_one,
                     ],
                     [
-                        v_one_half + v_inner_c_h,
-                        v_one_half + v_inner_c_h,
-                        v_one_half + v_h_void,
+                        v_one_half + v_inner_half_contact_length,
+                        v_one_half + v_inner_half_contact_length,
+                        v_one_half + v_wall_thickness,
                     ],
                     [
-                        v_one_half - v_inner_c_h,
-                        v_one_half + v_inner_c_h,
-                        v_one_half + v_h_void,
+                        v_one_half - v_inner_half_contact_length,
+                        v_one_half + v_inner_half_contact_length,
+                        v_one_half + v_wall_thickness,
                     ],
                 ]
             )
@@ -3079,24 +3078,24 @@ class Armadillo(TileBase):
                         v_one_half - v_half_contact_length,
                     ],
                     [
-                        v_one_half + v_inner_c_h,
-                        v_one_half - v_inner_c_h,
-                        v_one_half - v_h_void,
+                        v_one_half + v_inner_half_contact_length,
+                        v_one_half - v_inner_half_contact_length,
+                        v_one_half - v_wall_thickness,
                     ],
                     [
-                        v_one_half - v_inner_c_h,
-                        v_one_half - v_inner_c_h,
-                        v_one_half - v_h_void,
+                        v_one_half - v_inner_half_contact_length,
+                        v_one_half - v_inner_half_contact_length,
+                        v_one_half - v_wall_thickness,
                     ],
                     [
-                        v_inner_c_h + v_one_half,
-                        v_one_half - v_h_void,
-                        v_one_half - v_inner_c_h,
+                        v_inner_half_contact_length + v_one_half,
+                        v_one_half - v_wall_thickness,
+                        v_one_half - v_inner_half_contact_length,
                     ],
                     [
-                        -v_inner_c_h + v_one_half,
-                        v_one_half - v_h_void,
-                        v_one_half - v_inner_c_h,
+                        -v_inner_half_contact_length + v_one_half,
+                        v_one_half - v_wall_thickness,
+                        v_one_half - v_inner_half_contact_length,
                     ],
                 ]
             )
@@ -3114,14 +3113,14 @@ class Armadillo(TileBase):
                         v_one,
                     ],
                     [
-                        v_one_half + v_inner_c_h,
-                        v_one_half - v_inner_c_h,
-                        v_one_half + v_h_void,
+                        v_one_half + v_inner_half_contact_length,
+                        v_one_half - v_inner_half_contact_length,
+                        v_one_half + v_wall_thickness,
                     ],
                     [
-                        v_one_half - v_inner_c_h,
-                        v_one_half - v_inner_c_h,
-                        v_one_half + v_h_void,
+                        v_one_half - v_inner_half_contact_length,
+                        v_one_half - v_inner_half_contact_length,
+                        v_one_half + v_wall_thickness,
                     ],
                     [
                         v_half_contact_length + v_one_half,
@@ -3134,14 +3133,14 @@ class Armadillo(TileBase):
                         v_one_half + v_half_contact_length,
                     ],
                     [
-                        v_inner_c_h + v_one_half,
-                        v_one_half - v_h_void,
-                        v_one_half + v_inner_c_h,
+                        v_inner_half_contact_length + v_one_half,
+                        v_one_half - v_wall_thickness,
+                        v_one_half + v_inner_half_contact_length,
                     ],
                     [
-                        -v_inner_c_h + v_one_half,
-                        v_one_half - v_h_void,
-                        v_one_half + v_inner_c_h,
+                        -v_inner_half_contact_length + v_one_half,
+                        v_one_half - v_wall_thickness,
+                        v_one_half + v_inner_half_contact_length,
                     ],
                 ]
             )
@@ -3159,14 +3158,14 @@ class Armadillo(TileBase):
                         v_one,
                     ],
                     [
-                        v_one_half + v_inner_c_h,
-                        v_one_half + v_inner_c_h,
-                        v_one_half + v_h_void,
+                        v_one_half + v_inner_half_contact_length,
+                        v_one_half + v_inner_half_contact_length,
+                        v_one_half + v_wall_thickness,
                     ],
                     [
-                        v_one_half + v_inner_c_h,
-                        v_one_half - v_inner_c_h,
-                        v_one_half + v_h_void,
+                        v_one_half + v_inner_half_contact_length,
+                        v_one_half - v_inner_half_contact_length,
+                        v_one_half + v_wall_thickness,
                     ],
                     [
                         v_one,
@@ -3179,14 +3178,14 @@ class Armadillo(TileBase):
                         v_one_half + v_half_contact_length,
                     ],
                     [
-                        v_one_half + v_h_void,
-                        v_one_half + v_inner_c_h,
-                        v_one_half + v_inner_c_h,
+                        v_one_half + v_wall_thickness,
+                        v_one_half + v_inner_half_contact_length,
+                        v_one_half + v_inner_half_contact_length,
                     ],
                     [
-                        v_one_half + v_h_void,
-                        v_one_half - v_inner_c_h,
-                        v_one_half + v_inner_c_h,
+                        v_one_half + v_wall_thickness,
+                        v_one_half - v_inner_half_contact_length,
+                        v_one_half + v_inner_half_contact_length,
                     ],
                 ]
             )
@@ -3214,24 +3213,24 @@ class Armadillo(TileBase):
                         v_one_half + v_half_contact_length,
                     ],
                     [
-                        v_one_half - v_inner_c_h,
-                        v_one_half + v_inner_c_h,
-                        v_one_half + v_h_void,
+                        v_one_half - v_inner_half_contact_length,
+                        v_one_half + v_inner_half_contact_length,
+                        v_one_half + v_wall_thickness,
                     ],
                     [
-                        v_one_half - v_inner_c_h,
-                        v_one_half - v_inner_c_h,
-                        v_one_half + v_h_void,
+                        v_one_half - v_inner_half_contact_length,
+                        v_one_half - v_inner_half_contact_length,
+                        v_one_half + v_wall_thickness,
                     ],
                     [
-                        v_one_half - v_h_void,
-                        v_one_half + v_inner_c_h,
-                        v_one_half + v_inner_c_h,
+                        v_one_half - v_wall_thickness,
+                        v_one_half + v_inner_half_contact_length,
+                        v_one_half + v_inner_half_contact_length,
                     ],
                     [
-                        v_one_half - v_h_void,
-                        v_one_half - v_inner_c_h,
-                        v_one_half + v_inner_c_h,
+                        v_one_half - v_wall_thickness,
+                        v_one_half - v_inner_half_contact_length,
+                        v_one_half + v_inner_half_contact_length,
                     ],
                 ]
             )
@@ -3259,24 +3258,24 @@ class Armadillo(TileBase):
                         v_zero,
                     ],
                     [
-                        v_one_half - v_h_void,
-                        v_one_half + v_inner_c_h,
-                        v_one_half - v_inner_c_h,
+                        v_one_half - v_wall_thickness,
+                        v_one_half + v_inner_half_contact_length,
+                        v_one_half - v_inner_half_contact_length,
                     ],
                     [
-                        v_one_half - v_h_void,
-                        v_one_half - v_inner_c_h,
-                        v_one_half - v_inner_c_h,
+                        v_one_half - v_wall_thickness,
+                        v_one_half - v_inner_half_contact_length,
+                        v_one_half - v_inner_half_contact_length,
                     ],
                     [
-                        v_one_half - v_inner_c_h,
-                        v_one_half + v_inner_c_h,
-                        v_one_half - v_h_void,
+                        v_one_half - v_inner_half_contact_length,
+                        v_one_half + v_inner_half_contact_length,
+                        v_one_half - v_wall_thickness,
                     ],
                     [
-                        v_one_half - v_inner_c_h,
-                        v_one_half - v_inner_c_h,
-                        v_one_half - v_h_void,
+                        v_one_half - v_inner_half_contact_length,
+                        v_one_half - v_inner_half_contact_length,
+                        v_one_half - v_wall_thickness,
                     ],
                 ]
             )
@@ -3285,23 +3284,23 @@ class Armadillo(TileBase):
                 [
                     [
                         v_one,
-                        v_outer_c_h + v_one_half,
+                        v_half_contact_length + v_one_half,
                         v_one_half - v_half_contact_length,
                     ],
                     [
                         v_one,
-                        -v_outer_c_h + v_one_half,
+                        -v_half_contact_length + v_one_half,
                         v_one_half - v_half_contact_length,
                     ],
                     [
-                        v_h_void + v_one_half,
-                        v_inner_c_h + v_one_half,
-                        v_one_half - v_inner_c_h,
+                        v_wall_thickness + v_one_half,
+                        v_inner_half_contact_length + v_one_half,
+                        v_one_half - v_inner_half_contact_length,
                     ],
                     [
-                        v_h_void + v_one_half,
-                        -v_inner_c_h + v_one_half,
-                        v_one_half - v_inner_c_h,
+                        v_wall_thickness + v_one_half,
+                        -v_inner_half_contact_length + v_one_half,
+                        v_one_half - v_inner_half_contact_length,
                     ],
                     [
                         v_one_half + v_half_contact_length,
@@ -3314,14 +3313,14 @@ class Armadillo(TileBase):
                         v_zero,
                     ],
                     [
-                        v_one_half + v_inner_c_h,
-                        v_one_half + v_inner_c_h,
-                        v_one_half - v_h_void,
+                        v_one_half + v_inner_half_contact_length,
+                        v_one_half + v_inner_half_contact_length,
+                        v_one_half - v_wall_thickness,
                     ],
                     [
-                        v_one_half + v_inner_c_h,
-                        v_one_half - v_inner_c_h,
-                        v_one_half - v_h_void,
+                        v_one_half + v_inner_half_contact_length,
+                        v_one_half - v_inner_half_contact_length,
+                        v_one_half - v_wall_thickness,
                     ],
                 ]
             )
@@ -3331,43 +3330,43 @@ class Armadillo(TileBase):
             right = np.array(
                 [
                     [
-                        v_h_void + v_one_half,
-                        -v_inner_c_h + v_one_half,
-                        v_one_half + v_inner_c_h,
+                        v_wall_thickness + v_one_half,
+                        -v_inner_half_contact_length + v_one_half,
+                        v_one_half + v_inner_half_contact_length,
                     ],
                     [
                         v_one,
-                        -v_outer_c_h + v_one_half,
+                        -v_half_contact_length + v_one_half,
                         v_one_half + v_half_contact_length,
                     ],
                     [
-                        v_h_void + v_one_half,
-                        -v_inner_c_h + v_one_half,
-                        v_one_half - v_inner_c_h,
+                        v_wall_thickness + v_one_half,
+                        -v_inner_half_contact_length + v_one_half,
+                        v_one_half - v_inner_half_contact_length,
                     ],
                     [
                         v_one,
-                        -v_outer_c_h + v_one_half,
+                        -v_half_contact_length + v_one_half,
                         v_one_half - v_half_contact_length,
                     ],
                     [
-                        v_h_void + v_one_half,
-                        v_inner_c_h + v_one_half,
-                        v_one_half + v_inner_c_h,
+                        v_wall_thickness + v_one_half,
+                        v_inner_half_contact_length + v_one_half,
+                        v_one_half + v_inner_half_contact_length,
                     ],
                     [
                         v_one,
-                        v_outer_c_h + v_one_half,
+                        v_half_contact_length + v_one_half,
                         v_one_half + v_half_contact_length,
                     ],
                     [
-                        v_h_void + v_one_half,
-                        v_inner_c_h + v_one_half,
-                        v_one_half - v_inner_c_h,
+                        v_wall_thickness + v_one_half,
+                        v_inner_half_contact_length + v_one_half,
+                        v_one_half - v_inner_half_contact_length,
                     ],
                     [
                         v_one,
-                        v_outer_c_h + v_one_half,
+                        v_half_contact_length + v_one_half,
                         v_one_half - v_half_contact_length,
                     ],
                 ]
@@ -3376,42 +3375,42 @@ class Armadillo(TileBase):
             connection_front_right = np.array(
                 [
                     [
-                        v_h_void + v_one_half,
-                        v_inner_c_h + v_one_half,
-                        v_one_half + v_inner_c_h,
+                        v_wall_thickness + v_one_half,
+                        v_inner_half_contact_length + v_one_half,
+                        v_one_half + v_inner_half_contact_length,
                     ],
                     [
                         v_one,
-                        v_outer_c_h + v_one_half,
+                        v_half_contact_length + v_one_half,
                         v_one_half + v_half_contact_length,
                     ],
                     [
-                        v_h_void + v_one_half,
-                        v_inner_c_h + v_one_half,
-                        v_one_half - v_inner_c_h,
+                        v_wall_thickness + v_one_half,
+                        v_inner_half_contact_length + v_one_half,
+                        v_one_half - v_inner_half_contact_length,
                     ],
                     [
                         v_one,
-                        v_outer_c_h + v_one_half,
+                        v_half_contact_length + v_one_half,
                         v_one_half - v_half_contact_length,
                     ],
                     [
-                        v_inner_c_h + v_one_half,
-                        v_h_void + v_one_half,
-                        v_one_half + v_inner_c_h,
+                        v_inner_half_contact_length + v_one_half,
+                        v_wall_thickness + v_one_half,
+                        v_one_half + v_inner_half_contact_length,
                     ],
                     [
-                        v_outer_c_h + v_one_half,
+                        v_half_contact_length + v_one_half,
                         v_one,
                         v_one_half + v_half_contact_length,
                     ],
                     [
-                        v_inner_c_h + v_one_half,
-                        v_h_void + v_one_half,
-                        v_one_half - v_inner_c_h,
+                        v_inner_half_contact_length + v_one_half,
+                        v_wall_thickness + v_one_half,
+                        v_one_half - v_inner_half_contact_length,
                     ],
                     [
-                        v_outer_c_h + v_one_half,
+                        v_half_contact_length + v_one_half,
                         v_one,
                         v_one_half - v_half_contact_length,
                     ],
@@ -3421,42 +3420,42 @@ class Armadillo(TileBase):
             front = np.array(
                 [
                     [
-                        v_inner_c_h + v_one_half,
-                        v_h_void + v_one_half,
-                        v_one_half + v_inner_c_h,
+                        v_inner_half_contact_length + v_one_half,
+                        v_wall_thickness + v_one_half,
+                        v_one_half + v_inner_half_contact_length,
                     ],
                     [
-                        v_outer_c_h + v_one_half,
+                        v_half_contact_length + v_one_half,
                         v_one,
                         v_one_half + v_half_contact_length,
                     ],
                     [
-                        v_inner_c_h + v_one_half,
-                        v_h_void + v_one_half,
-                        v_one_half - v_inner_c_h,
+                        v_inner_half_contact_length + v_one_half,
+                        v_wall_thickness + v_one_half,
+                        v_one_half - v_inner_half_contact_length,
                     ],
                     [
-                        v_outer_c_h + v_one_half,
+                        v_half_contact_length + v_one_half,
                         v_one,
                         v_one_half - v_half_contact_length,
                     ],
                     [
-                        -v_inner_c_h + v_one_half,
-                        v_h_void + v_one_half,
-                        v_one_half + v_inner_c_h,
+                        -v_inner_half_contact_length + v_one_half,
+                        v_wall_thickness + v_one_half,
+                        v_one_half + v_inner_half_contact_length,
                     ],
                     [
-                        -v_outer_c_h + v_one_half,
+                        -v_half_contact_length + v_one_half,
                         v_one,
                         v_one_half + v_half_contact_length,
                     ],
                     [
-                        -v_inner_c_h + v_one_half,
-                        v_h_void + v_one_half,
-                        v_one_half - v_inner_c_h,
+                        -v_inner_half_contact_length + v_one_half,
+                        v_wall_thickness + v_one_half,
+                        v_one_half - v_inner_half_contact_length,
                     ],
                     [
-                        -v_outer_c_h + v_one_half,
+                        -v_half_contact_length + v_one_half,
                         v_one,
                         v_one_half - v_half_contact_length,
                     ],
@@ -3466,42 +3465,42 @@ class Armadillo(TileBase):
             connection_back_left = np.array(
                 [
                     [
-                        -v_h_void + v_one_half,
-                        -v_inner_c_h + v_one_half,
-                        v_one_half + v_inner_c_h,
+                        -v_wall_thickness + v_one_half,
+                        -v_inner_half_contact_length + v_one_half,
+                        v_one_half + v_inner_half_contact_length,
                     ],
                     [
                         v_zero,
-                        -v_outer_c_h + v_one_half,
+                        -v_half_contact_length + v_one_half,
                         v_one_half + v_half_contact_length,
                     ],
                     [
-                        -v_h_void + v_one_half,
-                        -v_inner_c_h + v_one_half,
-                        v_one_half - v_inner_c_h,
+                        -v_wall_thickness + v_one_half,
+                        -v_inner_half_contact_length + v_one_half,
+                        v_one_half - v_inner_half_contact_length,
                     ],
                     [
                         v_zero,
-                        -v_outer_c_h + v_one_half,
+                        -v_half_contact_length + v_one_half,
                         v_one_half - v_half_contact_length,
                     ],
                     [
-                        -v_inner_c_h + v_one_half,
-                        -v_h_void + v_one_half,
-                        v_one_half + v_inner_c_h,
+                        -v_inner_half_contact_length + v_one_half,
+                        -v_wall_thickness + v_one_half,
+                        v_one_half + v_inner_half_contact_length,
                     ],
                     [
-                        -v_outer_c_h + v_one_half,
+                        -v_half_contact_length + v_one_half,
                         v_zero,
                         v_one_half + v_half_contact_length,
                     ],
                     [
-                        -v_inner_c_h + v_one_half,
-                        -v_h_void + v_one_half,
-                        v_one_half - v_inner_c_h,
+                        -v_inner_half_contact_length + v_one_half,
+                        -v_wall_thickness + v_one_half,
+                        v_one_half - v_inner_half_contact_length,
                     ],
                     [
-                        -v_outer_c_h + v_one_half,
+                        -v_half_contact_length + v_one_half,
                         v_zero,
                         v_one_half - v_half_contact_length,
                     ],
@@ -3512,43 +3511,43 @@ class Armadillo(TileBase):
                 [
                     [
                         v_zero,
-                        -v_outer_c_h + v_one_half,
+                        -v_half_contact_length + v_one_half,
                         v_one_half + v_half_contact_length,
                     ],
                     [
-                        -v_h_void + v_one_half,
-                        -v_inner_c_h + v_one_half,
-                        v_one_half + v_inner_c_h,
+                        -v_wall_thickness + v_one_half,
+                        -v_inner_half_contact_length + v_one_half,
+                        v_one_half + v_inner_half_contact_length,
                     ],
                     [
                         v_zero,
-                        -v_outer_c_h + v_one_half,
+                        -v_half_contact_length + v_one_half,
                         v_one_half - v_half_contact_length,
                     ],
                     [
-                        -v_h_void + v_one_half,
-                        -v_inner_c_h + v_one_half,
-                        v_one_half - v_inner_c_h,
+                        -v_wall_thickness + v_one_half,
+                        -v_inner_half_contact_length + v_one_half,
+                        v_one_half - v_inner_half_contact_length,
                     ],
                     [
                         v_zero,
-                        v_outer_c_h + v_one_half,
+                        v_half_contact_length + v_one_half,
                         v_one_half + v_half_contact_length,
                     ],
                     [
-                        -v_h_void + v_one_half,
-                        v_inner_c_h + v_one_half,
-                        v_one_half + v_inner_c_h,
+                        -v_wall_thickness + v_one_half,
+                        v_inner_half_contact_length + v_one_half,
+                        v_one_half + v_inner_half_contact_length,
                     ],
                     [
                         v_zero,
-                        v_outer_c_h + v_one_half,
+                        v_half_contact_length + v_one_half,
                         v_one_half - v_half_contact_length,
                     ],
                     [
-                        -v_h_void + v_one_half,
-                        v_inner_c_h + v_one_half,
-                        v_one_half - v_inner_c_h,
+                        -v_wall_thickness + v_one_half,
+                        v_inner_half_contact_length + v_one_half,
+                        v_one_half - v_inner_half_contact_length,
                     ],
                 ]
             )
@@ -3557,43 +3556,43 @@ class Armadillo(TileBase):
                 [
                     [
                         v_zero,
-                        v_outer_c_h + v_one_half,
+                        v_half_contact_length + v_one_half,
                         v_one_half + v_half_contact_length,
                     ],
                     [
-                        -v_h_void + v_one_half,
-                        v_inner_c_h + v_one_half,
-                        v_one_half + v_inner_c_h,
+                        -v_wall_thickness + v_one_half,
+                        v_inner_half_contact_length + v_one_half,
+                        v_one_half + v_inner_half_contact_length,
                     ],
                     [
                         v_zero,
-                        v_outer_c_h + v_one_half,
+                        v_half_contact_length + v_one_half,
                         v_one_half - v_half_contact_length,
                     ],
                     [
-                        -v_h_void + v_one_half,
-                        v_inner_c_h + v_one_half,
-                        v_one_half - v_inner_c_h,
+                        -v_wall_thickness + v_one_half,
+                        v_inner_half_contact_length + v_one_half,
+                        v_one_half - v_inner_half_contact_length,
                     ],
                     [
-                        -v_outer_c_h + v_one_half,
+                        -v_half_contact_length + v_one_half,
                         v_one,
                         v_one_half + v_half_contact_length,
                     ],
                     [
-                        -v_inner_c_h + v_one_half,
-                        v_h_void + v_one_half,
-                        v_one_half + v_inner_c_h,
+                        -v_inner_half_contact_length + v_one_half,
+                        v_wall_thickness + v_one_half,
+                        v_one_half + v_inner_half_contact_length,
                     ],
                     [
-                        -v_outer_c_h + v_one_half,
+                        -v_half_contact_length + v_one_half,
                         v_one,
                         v_one_half - v_half_contact_length,
                     ],
                     [
-                        -v_inner_c_h + v_one_half,
-                        v_h_void + v_one_half,
-                        v_one_half - v_inner_c_h,
+                        -v_inner_half_contact_length + v_one_half,
+                        v_wall_thickness + v_one_half,
+                        v_one_half - v_inner_half_contact_length,
                     ],
                 ]
             )
@@ -3601,44 +3600,44 @@ class Armadillo(TileBase):
             back = np.array(
                 [
                     [
-                        v_outer_c_h + v_one_half,
+                        v_half_contact_length + v_one_half,
                         v_zero,
                         v_one_half + v_half_contact_length,
                     ],
                     [
-                        v_inner_c_h + v_one_half,
-                        -v_h_void + v_one_half,
-                        v_one_half + v_inner_c_h,
+                        v_inner_half_contact_length + v_one_half,
+                        -v_wall_thickness + v_one_half,
+                        v_one_half + v_inner_half_contact_length,
                     ],
                     [
-                        v_outer_c_h + v_one_half,
+                        v_half_contact_length + v_one_half,
                         v_zero,
                         v_one_half - v_half_contact_length,
                     ],
                     [
-                        v_inner_c_h + v_one_half,
-                        -v_h_void + v_one_half,
-                        v_one_half - v_inner_c_h,
+                        v_inner_half_contact_length + v_one_half,
+                        -v_wall_thickness + v_one_half,
+                        v_one_half - v_inner_half_contact_length,
                     ],
                     [
-                        -v_outer_c_h + v_one_half,
+                        -v_half_contact_length + v_one_half,
                         v_zero,
                         v_one_half + v_half_contact_length,
                     ],
                     [
-                        -v_inner_c_h + v_one_half,
-                        -v_h_void + v_one_half,
-                        v_one_half + v_inner_c_h,
+                        -v_inner_half_contact_length + v_one_half,
+                        -v_wall_thickness + v_one_half,
+                        v_one_half + v_inner_half_contact_length,
                     ],
                     [
-                        -v_outer_c_h + v_one_half,
+                        -v_half_contact_length + v_one_half,
                         v_zero,
                         v_one_half - v_half_contact_length,
                     ],
                     [
-                        -v_inner_c_h + v_one_half,
-                        -v_h_void + v_one_half,
-                        v_one_half - v_inner_c_h,
+                        -v_inner_half_contact_length + v_one_half,
+                        -v_wall_thickness + v_one_half,
+                        v_one_half - v_inner_half_contact_length,
                     ],
                 ]
             )
@@ -3646,43 +3645,43 @@ class Armadillo(TileBase):
             connection_back_right = np.array(
                 [
                     [
-                        v_inner_c_h + v_one_half,
-                        -v_h_void + v_one_half,
-                        v_one_half + v_inner_c_h,
+                        v_inner_half_contact_length + v_one_half,
+                        -v_wall_thickness + v_one_half,
+                        v_one_half + v_inner_half_contact_length,
                     ],
                     [
-                        v_outer_c_h + v_one_half,
+                        v_half_contact_length + v_one_half,
                         v_zero,
                         v_one_half + v_half_contact_length,
                     ],
                     [
-                        v_inner_c_h + v_one_half,
-                        -v_h_void + v_one_half,
-                        v_one_half - v_inner_c_h,
+                        v_inner_half_contact_length + v_one_half,
+                        -v_wall_thickness + v_one_half,
+                        v_one_half - v_inner_half_contact_length,
                     ],
                     [
-                        v_outer_c_h + v_one_half,
+                        v_half_contact_length + v_one_half,
                         v_zero,
                         v_one_half - v_half_contact_length,
                     ],
                     [
-                        v_h_void + v_one_half,
-                        -v_inner_c_h + v_one_half,
-                        v_one_half + v_inner_c_h,
+                        v_wall_thickness + v_one_half,
+                        -v_inner_half_contact_length + v_one_half,
+                        v_one_half + v_inner_half_contact_length,
                     ],
                     [
                         v_one,
-                        -v_outer_c_h + v_one_half,
+                        -v_half_contact_length + v_one_half,
                         v_one_half + v_half_contact_length,
                     ],
                     [
-                        v_h_void + v_one_half,
-                        -v_inner_c_h + v_one_half,
-                        v_one_half - v_inner_c_h,
+                        v_wall_thickness + v_one_half,
+                        -v_inner_half_contact_length + v_one_half,
+                        v_one_half - v_inner_half_contact_length,
                     ],
                     [
                         v_one,
-                        -v_outer_c_h + v_one_half,
+                        -v_half_contact_length + v_one_half,
                         v_one_half - v_half_contact_length,
                     ],
                 ]
@@ -3711,24 +3710,24 @@ class Armadillo(TileBase):
                         v_zero,
                     ],
                     [
-                        v_one_half + v_inner_c_h,
-                        v_one_half + v_inner_c_h,
-                        v_one_half - v_h_void,
+                        v_one_half + v_inner_half_contact_length,
+                        v_one_half + v_inner_half_contact_length,
+                        v_one_half - v_wall_thickness,
                     ],
                     [
-                        v_one_half - v_inner_c_h,
-                        v_one_half + v_inner_c_h,
-                        v_one_half - v_h_void,
+                        v_one_half - v_inner_half_contact_length,
+                        v_one_half + v_inner_half_contact_length,
+                        v_one_half - v_wall_thickness,
                     ],
                     [
-                        v_one_half + v_inner_c_h,
-                        v_one_half - v_inner_c_h,
-                        v_one_half - v_h_void,
+                        v_one_half + v_inner_half_contact_length,
+                        v_one_half - v_inner_half_contact_length,
+                        v_one_half - v_wall_thickness,
                     ],
                     [
-                        v_one_half - v_inner_c_h,
-                        v_one_half - v_inner_c_h,
-                        v_one_half - v_h_void,
+                        v_one_half - v_inner_half_contact_length,
+                        v_one_half - v_inner_half_contact_length,
+                        v_one_half - v_wall_thickness,
                     ],
                 ]
             )
@@ -3736,24 +3735,24 @@ class Armadillo(TileBase):
             top = np.array(
                 [
                     [
-                        v_one_half + v_inner_c_h,
-                        v_one_half + v_inner_c_h,
-                        v_one_half + v_h_void,
+                        v_one_half + v_inner_half_contact_length,
+                        v_one_half + v_inner_half_contact_length,
+                        v_one_half + v_wall_thickness,
                     ],
                     [
-                        v_one_half - v_inner_c_h,
-                        v_one_half + v_inner_c_h,
-                        v_one_half + v_h_void,
+                        v_one_half - v_inner_half_contact_length,
+                        v_one_half + v_inner_half_contact_length,
+                        v_one_half + v_wall_thickness,
                     ],
                     [
-                        v_one_half + v_inner_c_h,
-                        v_one_half - v_inner_c_h,
-                        v_one_half + v_h_void,
+                        v_one_half + v_inner_half_contact_length,
+                        v_one_half - v_inner_half_contact_length,
+                        v_one_half + v_wall_thickness,
                     ],
                     [
-                        v_one_half - v_inner_c_h,
-                        v_one_half - v_inner_c_h,
-                        v_one_half + v_h_void,
+                        v_one_half - v_inner_half_contact_length,
+                        v_one_half - v_inner_half_contact_length,
+                        v_one_half + v_wall_thickness,
                     ],
                     [
                         v_one,
@@ -3801,24 +3800,24 @@ class Armadillo(TileBase):
                         v_zero,
                     ],
                     [
-                        v_inner_c_h + v_one_half,
-                        v_one_half + v_h_void,
-                        v_one_half - v_inner_c_h,
+                        v_inner_half_contact_length + v_one_half,
+                        v_one_half + v_wall_thickness,
+                        v_one_half - v_inner_half_contact_length,
                     ],
                     [
-                        -v_inner_c_h + v_one_half,
-                        v_one_half + v_h_void,
-                        v_one_half - v_inner_c_h,
+                        -v_inner_half_contact_length + v_one_half,
+                        v_one_half + v_wall_thickness,
+                        v_one_half - v_inner_half_contact_length,
                     ],
                     [
-                        v_one_half + v_inner_c_h,
-                        v_one_half + v_inner_c_h,
-                        v_one_half - v_h_void,
+                        v_one_half + v_inner_half_contact_length,
+                        v_one_half + v_inner_half_contact_length,
+                        v_one_half - v_wall_thickness,
                     ],
                     [
-                        v_one_half - v_inner_c_h,
-                        v_one_half + v_inner_c_h,
-                        v_one_half - v_h_void,
+                        v_one_half - v_inner_half_contact_length,
+                        v_one_half + v_inner_half_contact_length,
+                        v_one_half - v_wall_thickness,
                     ],
                 ]
             )
@@ -3836,14 +3835,14 @@ class Armadillo(TileBase):
                         v_one_half + v_half_contact_length,
                     ],
                     [
-                        v_inner_c_h + v_one_half,
-                        v_one_half + v_h_void,
-                        v_one_half + v_inner_c_h,
+                        v_inner_half_contact_length + v_one_half,
+                        v_one_half + v_wall_thickness,
+                        v_one_half + v_inner_half_contact_length,
                     ],
                     [
-                        -v_inner_c_h + v_one_half,
-                        v_one_half + v_h_void,
-                        v_one_half + v_inner_c_h,
+                        -v_inner_half_contact_length + v_one_half,
+                        v_one_half + v_wall_thickness,
+                        v_one_half + v_inner_half_contact_length,
                     ],
                     [
                         v_one,
@@ -3856,14 +3855,14 @@ class Armadillo(TileBase):
                         v_one,
                     ],
                     [
-                        v_one_half + v_inner_c_h,
-                        v_one_half + v_inner_c_h,
-                        v_one_half + v_h_void,
+                        v_one_half + v_inner_half_contact_length,
+                        v_one_half + v_inner_half_contact_length,
+                        v_one_half + v_wall_thickness,
                     ],
                     [
-                        v_one_half - v_inner_c_h,
-                        v_one_half + v_inner_c_h,
-                        v_one_half + v_h_void,
+                        v_one_half - v_inner_half_contact_length,
+                        v_one_half + v_inner_half_contact_length,
+                        v_one_half + v_wall_thickness,
                     ],
                 ]
             )
@@ -3891,24 +3890,24 @@ class Armadillo(TileBase):
                         v_one_half - v_half_contact_length,
                     ],
                     [
-                        v_one_half + v_inner_c_h,
-                        v_one_half - v_inner_c_h,
-                        v_one_half - v_h_void,
+                        v_one_half + v_inner_half_contact_length,
+                        v_one_half - v_inner_half_contact_length,
+                        v_one_half - v_wall_thickness,
                     ],
                     [
-                        v_one_half - v_inner_c_h,
-                        v_one_half - v_inner_c_h,
-                        v_one_half - v_h_void,
+                        v_one_half - v_inner_half_contact_length,
+                        v_one_half - v_inner_half_contact_length,
+                        v_one_half - v_wall_thickness,
                     ],
                     [
-                        v_inner_c_h + v_one_half,
-                        v_one_half - v_h_void,
-                        v_one_half - v_inner_c_h,
+                        v_inner_half_contact_length + v_one_half,
+                        v_one_half - v_wall_thickness,
+                        v_one_half - v_inner_half_contact_length,
                     ],
                     [
-                        -v_inner_c_h + v_one_half,
-                        v_one_half - v_h_void,
-                        v_one_half - v_inner_c_h,
+                        -v_inner_half_contact_length + v_one_half,
+                        v_one_half - v_wall_thickness,
+                        v_one_half - v_inner_half_contact_length,
                     ],
                 ]
             )
@@ -3926,14 +3925,14 @@ class Armadillo(TileBase):
                         v_one,
                     ],
                     [
-                        v_one_half + v_inner_c_h,
-                        v_one_half - v_inner_c_h,
-                        v_one_half + v_h_void,
+                        v_one_half + v_inner_half_contact_length,
+                        v_one_half - v_inner_half_contact_length,
+                        v_one_half + v_wall_thickness,
                     ],
                     [
-                        v_one_half - v_inner_c_h,
-                        v_one_half - v_inner_c_h,
-                        v_one_half + v_h_void,
+                        v_one_half - v_inner_half_contact_length,
+                        v_one_half - v_inner_half_contact_length,
+                        v_one_half + v_wall_thickness,
                     ],
                     [
                         v_half_contact_length + v_one_half,
@@ -3946,14 +3945,14 @@ class Armadillo(TileBase):
                         v_one_half + v_half_contact_length,
                     ],
                     [
-                        v_inner_c_h + v_one_half,
-                        v_one_half - v_h_void,
-                        v_one_half + v_inner_c_h,
+                        v_inner_half_contact_length + v_one_half,
+                        v_one_half - v_wall_thickness,
+                        v_one_half + v_inner_half_contact_length,
                     ],
                     [
-                        -v_inner_c_h + v_one_half,
-                        v_one_half - v_h_void,
-                        v_one_half + v_inner_c_h,
+                        -v_inner_half_contact_length + v_one_half,
+                        v_one_half - v_wall_thickness,
+                        v_one_half + v_inner_half_contact_length,
                     ],
                 ]
             )
@@ -3971,14 +3970,14 @@ class Armadillo(TileBase):
                         v_one,
                     ],
                     [
-                        v_one_half + v_inner_c_h,
-                        v_one_half + v_inner_c_h,
-                        v_one_half + v_h_void,
+                        v_one_half + v_inner_half_contact_length,
+                        v_one_half + v_inner_half_contact_length,
+                        v_one_half + v_wall_thickness,
                     ],
                     [
-                        v_one_half + v_inner_c_h,
-                        v_one_half - v_inner_c_h,
-                        v_one_half + v_h_void,
+                        v_one_half + v_inner_half_contact_length,
+                        v_one_half - v_inner_half_contact_length,
+                        v_one_half + v_wall_thickness,
                     ],
                     [
                         v_one,
@@ -3991,14 +3990,14 @@ class Armadillo(TileBase):
                         v_one_half + v_half_contact_length,
                     ],
                     [
-                        v_one_half + v_h_void,
-                        v_one_half + v_inner_c_h,
-                        v_one_half + v_inner_c_h,
+                        v_one_half + v_wall_thickness,
+                        v_one_half + v_inner_half_contact_length,
+                        v_one_half + v_inner_half_contact_length,
                     ],
                     [
-                        v_one_half + v_h_void,
-                        v_one_half - v_inner_c_h,
-                        v_one_half + v_inner_c_h,
+                        v_one_half + v_wall_thickness,
+                        v_one_half - v_inner_half_contact_length,
+                        v_one_half + v_inner_half_contact_length,
                     ],
                 ]
             )
@@ -4026,24 +4025,24 @@ class Armadillo(TileBase):
                         v_one_half + v_half_contact_length,
                     ],
                     [
-                        v_one_half - v_inner_c_h,
-                        v_one_half + v_inner_c_h,
-                        v_one_half + v_h_void,
+                        v_one_half - v_inner_half_contact_length,
+                        v_one_half + v_inner_half_contact_length,
+                        v_one_half + v_wall_thickness,
                     ],
                     [
-                        v_one_half - v_inner_c_h,
-                        v_one_half - v_inner_c_h,
-                        v_one_half + v_h_void,
+                        v_one_half - v_inner_half_contact_length,
+                        v_one_half - v_inner_half_contact_length,
+                        v_one_half + v_wall_thickness,
                     ],
                     [
-                        v_one_half - v_h_void,
-                        v_one_half + v_inner_c_h,
-                        v_one_half + v_inner_c_h,
+                        v_one_half - v_wall_thickness,
+                        v_one_half + v_inner_half_contact_length,
+                        v_one_half + v_inner_half_contact_length,
                     ],
                     [
-                        v_one_half - v_h_void,
-                        v_one_half - v_inner_c_h,
-                        v_one_half + v_inner_c_h,
+                        v_one_half - v_wall_thickness,
+                        v_one_half - v_inner_half_contact_length,
+                        v_one_half + v_inner_half_contact_length,
                     ],
                 ]
             )
@@ -4071,24 +4070,24 @@ class Armadillo(TileBase):
                         v_zero,
                     ],
                     [
-                        v_one_half - v_h_void,
-                        v_one_half + v_inner_c_h,
-                        v_one_half - v_inner_c_h,
+                        v_one_half - v_wall_thickness,
+                        v_one_half + v_inner_half_contact_length,
+                        v_one_half - v_inner_half_contact_length,
                     ],
                     [
-                        v_one_half - v_h_void,
-                        v_one_half - v_inner_c_h,
-                        v_one_half - v_inner_c_h,
+                        v_one_half - v_wall_thickness,
+                        v_one_half - v_inner_half_contact_length,
+                        v_one_half - v_inner_half_contact_length,
                     ],
                     [
-                        v_one_half - v_inner_c_h,
-                        v_one_half + v_inner_c_h,
-                        v_one_half - v_h_void,
+                        v_one_half - v_inner_half_contact_length,
+                        v_one_half + v_inner_half_contact_length,
+                        v_one_half - v_wall_thickness,
                     ],
                     [
-                        v_one_half - v_inner_c_h,
-                        v_one_half - v_inner_c_h,
-                        v_one_half - v_h_void,
+                        v_one_half - v_inner_half_contact_length,
+                        v_one_half - v_inner_half_contact_length,
+                        v_one_half - v_wall_thickness,
                     ],
                 ]
             )
@@ -4097,23 +4096,23 @@ class Armadillo(TileBase):
                 [
                     [
                         v_one,
-                        v_outer_c_h + v_one_half,
+                        v_half_contact_length + v_one_half,
                         v_one_half - v_half_contact_length,
                     ],
                     [
                         v_one,
-                        -v_outer_c_h + v_one_half,
+                        -v_half_contact_length + v_one_half,
                         v_one_half - v_half_contact_length,
                     ],
                     [
-                        v_h_void + v_one_half,
-                        v_inner_c_h + v_one_half,
-                        v_one_half - v_inner_c_h,
+                        v_wall_thickness + v_one_half,
+                        v_inner_half_contact_length + v_one_half,
+                        v_one_half - v_inner_half_contact_length,
                     ],
                     [
-                        v_h_void + v_one_half,
-                        -v_inner_c_h + v_one_half,
-                        v_one_half - v_inner_c_h,
+                        v_wall_thickness + v_one_half,
+                        -v_inner_half_contact_length + v_one_half,
+                        v_one_half - v_inner_half_contact_length,
                     ],
                     [
                         v_one_half + v_half_contact_length,
@@ -4126,14 +4125,14 @@ class Armadillo(TileBase):
                         v_zero,
                     ],
                     [
-                        v_one_half + v_inner_c_h,
-                        v_one_half + v_inner_c_h,
-                        v_one_half - v_h_void,
+                        v_one_half + v_inner_half_contact_length,
+                        v_one_half + v_inner_half_contact_length,
+                        v_one_half - v_wall_thickness,
                     ],
                     [
-                        v_one_half + v_inner_c_h,
-                        v_one_half - v_inner_c_h,
-                        v_one_half - v_h_void,
+                        v_one_half + v_inner_half_contact_length,
+                        v_one_half - v_inner_half_contact_length,
+                        v_one_half - v_wall_thickness,
                     ],
                 ]
             )
@@ -4144,43 +4143,43 @@ class Armadillo(TileBase):
             right = np.array(
                 [
                     [
-                        v_h_void + v_one_half,
-                        -v_inner_c_h + v_one_half,
-                        v_one_half + v_inner_c_h,
+                        v_wall_thickness + v_one_half,
+                        -v_inner_half_contact_length + v_one_half,
+                        v_one_half + v_inner_half_contact_length,
                     ],
                     [
                         v_one,
-                        -v_outer_c_h + v_one_half,
+                        -v_half_contact_length + v_one_half,
                         v_one_half + v_half_contact_length,
                     ],
                     [
-                        v_h_void + v_one_half,
-                        -v_inner_c_h + v_one_half,
-                        v_one_half - v_inner_c_h,
+                        v_wall_thickness + v_one_half,
+                        -v_inner_half_contact_length + v_one_half,
+                        v_one_half - v_inner_half_contact_length,
                     ],
                     [
                         v_one,
-                        -v_outer_c_h + v_one_half,
+                        -v_half_contact_length + v_one_half,
                         v_one_half - v_half_contact_length,
                     ],
                     [
-                        v_h_void + v_one_half,
-                        v_inner_c_h + v_one_half,
-                        v_one_half + v_inner_c_h,
+                        v_wall_thickness + v_one_half,
+                        v_inner_half_contact_length + v_one_half,
+                        v_one_half + v_inner_half_contact_length,
                     ],
                     [
                         v_one,
-                        v_outer_c_h + v_one_half,
+                        v_half_contact_length + v_one_half,
                         v_one_half + v_half_contact_length,
                     ],
                     [
-                        v_h_void + v_one_half,
-                        v_inner_c_h + v_one_half,
-                        v_one_half - v_inner_c_h,
+                        v_wall_thickness + v_one_half,
+                        v_inner_half_contact_length + v_one_half,
+                        v_one_half - v_inner_half_contact_length,
                     ],
                     [
                         v_one,
-                        v_outer_c_h + v_one_half,
+                        v_half_contact_length + v_one_half,
                         v_one_half - v_half_contact_length,
                     ],
                 ]
@@ -4189,42 +4188,42 @@ class Armadillo(TileBase):
             connection_front_right = np.array(
                 [
                     [
-                        v_h_void + v_one_half,
-                        v_inner_c_h + v_one_half,
-                        v_one_half + v_inner_c_h,
+                        v_wall_thickness + v_one_half,
+                        v_inner_half_contact_length + v_one_half,
+                        v_one_half + v_inner_half_contact_length,
                     ],
                     [
                         v_one,
-                        v_outer_c_h + v_one_half,
+                        v_half_contact_length + v_one_half,
                         v_one_half + v_half_contact_length,
                     ],
                     [
-                        v_h_void + v_one_half,
-                        v_inner_c_h + v_one_half,
-                        v_one_half - v_inner_c_h,
+                        v_wall_thickness + v_one_half,
+                        v_inner_half_contact_length + v_one_half,
+                        v_one_half - v_inner_half_contact_length,
                     ],
                     [
                         v_one,
-                        v_outer_c_h + v_one_half,
+                        v_half_contact_length + v_one_half,
                         v_one_half - v_half_contact_length,
                     ],
                     [
-                        v_inner_c_h + v_one_half,
-                        v_h_void + v_one_half,
-                        v_one_half + v_inner_c_h,
+                        v_inner_half_contact_length + v_one_half,
+                        v_wall_thickness + v_one_half,
+                        v_one_half + v_inner_half_contact_length,
                     ],
                     [
-                        v_outer_c_h + v_one_half,
+                        v_half_contact_length + v_one_half,
                         v_one,
                         v_one_half + v_half_contact_length,
                     ],
                     [
-                        v_inner_c_h + v_one_half,
-                        v_h_void + v_one_half,
-                        v_one_half - v_inner_c_h,
+                        v_inner_half_contact_length + v_one_half,
+                        v_wall_thickness + v_one_half,
+                        v_one_half - v_inner_half_contact_length,
                     ],
                     [
-                        v_outer_c_h + v_one_half,
+                        v_half_contact_length + v_one_half,
                         v_one,
                         v_one_half - v_half_contact_length,
                     ],
@@ -4234,42 +4233,42 @@ class Armadillo(TileBase):
             front = np.array(
                 [
                     [
-                        v_inner_c_h + v_one_half,
-                        v_h_void + v_one_half,
-                        v_one_half + v_inner_c_h,
+                        v_inner_half_contact_length + v_one_half,
+                        v_wall_thickness + v_one_half,
+                        v_one_half + v_inner_half_contact_length,
                     ],
                     [
-                        v_outer_c_h + v_one_half,
+                        v_half_contact_length + v_one_half,
                         v_one,
                         v_one_half + v_half_contact_length,
                     ],
                     [
-                        v_inner_c_h + v_one_half,
-                        v_h_void + v_one_half,
-                        v_one_half - v_inner_c_h,
+                        v_inner_half_contact_length + v_one_half,
+                        v_wall_thickness + v_one_half,
+                        v_one_half - v_inner_half_contact_length,
                     ],
                     [
-                        v_outer_c_h + v_one_half,
+                        v_half_contact_length + v_one_half,
                         v_one,
                         v_one_half - v_half_contact_length,
                     ],
                     [
-                        -v_inner_c_h + v_one_half,
-                        v_h_void + v_one_half,
-                        v_one_half + v_inner_c_h,
+                        -v_inner_half_contact_length + v_one_half,
+                        v_wall_thickness + v_one_half,
+                        v_one_half + v_inner_half_contact_length,
                     ],
                     [
-                        -v_outer_c_h + v_one_half,
+                        -v_half_contact_length + v_one_half,
                         v_one,
                         v_one_half + v_half_contact_length,
                     ],
                     [
-                        -v_inner_c_h + v_one_half,
-                        v_h_void + v_one_half,
-                        v_one_half - v_inner_c_h,
+                        -v_inner_half_contact_length + v_one_half,
+                        v_wall_thickness + v_one_half,
+                        v_one_half - v_inner_half_contact_length,
                     ],
                     [
-                        -v_outer_c_h + v_one_half,
+                        -v_half_contact_length + v_one_half,
                         v_one,
                         v_one_half - v_half_contact_length,
                     ],
@@ -4279,42 +4278,42 @@ class Armadillo(TileBase):
             connection_back_left = np.array(
                 [
                     [
-                        -v_h_void + v_one_half,
-                        -v_inner_c_h + v_one_half,
-                        v_one_half + v_inner_c_h,
+                        -v_wall_thickness + v_one_half,
+                        -v_inner_half_contact_length + v_one_half,
+                        v_one_half + v_inner_half_contact_length,
                     ],
                     [
                         v_zero,
-                        -v_outer_c_h + v_one_half,
+                        -v_half_contact_length + v_one_half,
                         v_one_half + v_half_contact_length,
                     ],
                     [
-                        -v_h_void + v_one_half,
-                        -v_inner_c_h + v_one_half,
-                        v_one_half - v_inner_c_h,
+                        -v_wall_thickness + v_one_half,
+                        -v_inner_half_contact_length + v_one_half,
+                        v_one_half - v_inner_half_contact_length,
                     ],
                     [
                         v_zero,
-                        -v_outer_c_h + v_one_half,
+                        -v_half_contact_length + v_one_half,
                         v_one_half - v_half_contact_length,
                     ],
                     [
-                        -v_inner_c_h + v_one_half,
-                        -v_h_void + v_one_half,
-                        v_one_half + v_inner_c_h,
+                        -v_inner_half_contact_length + v_one_half,
+                        -v_wall_thickness + v_one_half,
+                        v_one_half + v_inner_half_contact_length,
                     ],
                     [
-                        -v_outer_c_h + v_one_half,
+                        -v_half_contact_length + v_one_half,
                         v_zero,
                         v_one_half + v_half_contact_length,
                     ],
                     [
-                        -v_inner_c_h + v_one_half,
-                        -v_h_void + v_one_half,
-                        v_one_half - v_inner_c_h,
+                        -v_inner_half_contact_length + v_one_half,
+                        -v_wall_thickness + v_one_half,
+                        v_one_half - v_inner_half_contact_length,
                     ],
                     [
-                        -v_outer_c_h + v_one_half,
+                        -v_half_contact_length + v_one_half,
                         v_zero,
                         v_one_half - v_half_contact_length,
                     ],
@@ -4325,43 +4324,43 @@ class Armadillo(TileBase):
                 [
                     [
                         v_zero,
-                        -v_outer_c_h + v_one_half,
+                        -v_half_contact_length + v_one_half,
                         v_one_half + v_half_contact_length,
                     ],
                     [
-                        -v_h_void + v_one_half,
-                        -v_inner_c_h + v_one_half,
-                        v_one_half + v_inner_c_h,
+                        -v_wall_thickness + v_one_half,
+                        -v_inner_half_contact_length + v_one_half,
+                        v_one_half + v_inner_half_contact_length,
                     ],
                     [
                         v_zero,
-                        -v_outer_c_h + v_one_half,
+                        -v_half_contact_length + v_one_half,
                         v_one_half - v_half_contact_length,
                     ],
                     [
-                        -v_h_void + v_one_half,
-                        -v_inner_c_h + v_one_half,
-                        v_one_half - v_inner_c_h,
+                        -v_wall_thickness + v_one_half,
+                        -v_inner_half_contact_length + v_one_half,
+                        v_one_half - v_inner_half_contact_length,
                     ],
                     [
                         v_zero,
-                        v_outer_c_h + v_one_half,
+                        v_half_contact_length + v_one_half,
                         v_one_half + v_half_contact_length,
                     ],
                     [
-                        -v_h_void + v_one_half,
-                        v_inner_c_h + v_one_half,
-                        v_one_half + v_inner_c_h,
+                        -v_wall_thickness + v_one_half,
+                        v_inner_half_contact_length + v_one_half,
+                        v_one_half + v_inner_half_contact_length,
                     ],
                     [
                         v_zero,
-                        v_outer_c_h + v_one_half,
+                        v_half_contact_length + v_one_half,
                         v_one_half - v_half_contact_length,
                     ],
                     [
-                        -v_h_void + v_one_half,
-                        v_inner_c_h + v_one_half,
-                        v_one_half - v_inner_c_h,
+                        -v_wall_thickness + v_one_half,
+                        v_inner_half_contact_length + v_one_half,
+                        v_one_half - v_inner_half_contact_length,
                     ],
                 ]
             )
@@ -4370,43 +4369,43 @@ class Armadillo(TileBase):
                 [
                     [
                         v_zero,
-                        v_outer_c_h + v_one_half,
+                        v_half_contact_length + v_one_half,
                         v_one_half + v_half_contact_length,
                     ],
                     [
-                        -v_h_void + v_one_half,
-                        v_inner_c_h + v_one_half,
-                        v_one_half + v_inner_c_h,
+                        -v_wall_thickness + v_one_half,
+                        v_inner_half_contact_length + v_one_half,
+                        v_one_half + v_inner_half_contact_length,
                     ],
                     [
                         v_zero,
-                        v_outer_c_h + v_one_half,
+                        v_half_contact_length + v_one_half,
                         v_one_half - v_half_contact_length,
                     ],
                     [
-                        -v_h_void + v_one_half,
-                        v_inner_c_h + v_one_half,
-                        v_one_half - v_inner_c_h,
+                        -v_wall_thickness + v_one_half,
+                        v_inner_half_contact_length + v_one_half,
+                        v_one_half - v_inner_half_contact_length,
                     ],
                     [
-                        -v_outer_c_h + v_one_half,
+                        -v_half_contact_length + v_one_half,
                         v_one,
                         v_one_half + v_half_contact_length,
                     ],
                     [
-                        -v_inner_c_h + v_one_half,
-                        v_h_void + v_one_half,
-                        v_one_half + v_inner_c_h,
+                        -v_inner_half_contact_length + v_one_half,
+                        v_wall_thickness + v_one_half,
+                        v_one_half + v_inner_half_contact_length,
                     ],
                     [
-                        -v_outer_c_h + v_one_half,
+                        -v_half_contact_length + v_one_half,
                         v_one,
                         v_one_half - v_half_contact_length,
                     ],
                     [
-                        -v_inner_c_h + v_one_half,
-                        v_h_void + v_one_half,
-                        v_one_half - v_inner_c_h,
+                        -v_inner_half_contact_length + v_one_half,
+                        v_wall_thickness + v_one_half,
+                        v_one_half - v_inner_half_contact_length,
                     ],
                 ]
             )
@@ -4414,44 +4413,44 @@ class Armadillo(TileBase):
             back = np.array(
                 [
                     [
-                        v_outer_c_h + v_one_half,
+                        v_half_contact_length + v_one_half,
                         v_zero,
                         v_one_half + v_half_contact_length,
                     ],
                     [
-                        v_inner_c_h + v_one_half,
-                        -v_h_void + v_one_half,
-                        v_one_half + v_inner_c_h,
+                        v_inner_half_contact_length + v_one_half,
+                        -v_wall_thickness + v_one_half,
+                        v_one_half + v_inner_half_contact_length,
                     ],
                     [
-                        v_outer_c_h + v_one_half,
+                        v_half_contact_length + v_one_half,
                         v_zero,
                         v_one_half - v_half_contact_length,
                     ],
                     [
-                        v_inner_c_h + v_one_half,
-                        -v_h_void + v_one_half,
-                        v_one_half - v_inner_c_h,
+                        v_inner_half_contact_length + v_one_half,
+                        -v_wall_thickness + v_one_half,
+                        v_one_half - v_inner_half_contact_length,
                     ],
                     [
-                        -v_outer_c_h + v_one_half,
+                        -v_half_contact_length + v_one_half,
                         v_zero,
                         v_one_half + v_half_contact_length,
                     ],
                     [
-                        -v_inner_c_h + v_one_half,
-                        -v_h_void + v_one_half,
-                        v_one_half + v_inner_c_h,
+                        -v_inner_half_contact_length + v_one_half,
+                        -v_wall_thickness + v_one_half,
+                        v_one_half + v_inner_half_contact_length,
                     ],
                     [
-                        -v_outer_c_h + v_one_half,
+                        -v_half_contact_length + v_one_half,
                         v_zero,
                         v_one_half - v_half_contact_length,
                     ],
                     [
-                        -v_inner_c_h + v_one_half,
-                        -v_h_void + v_one_half,
-                        v_one_half - v_inner_c_h,
+                        -v_inner_half_contact_length + v_one_half,
+                        -v_wall_thickness + v_one_half,
+                        v_one_half - v_inner_half_contact_length,
                     ],
                 ]
             )
@@ -4459,43 +4458,43 @@ class Armadillo(TileBase):
             connection_back_right = np.array(
                 [
                     [
-                        v_inner_c_h + v_one_half,
-                        -v_h_void + v_one_half,
-                        v_one_half + v_inner_c_h,
+                        v_inner_half_contact_length + v_one_half,
+                        -v_wall_thickness + v_one_half,
+                        v_one_half + v_inner_half_contact_length,
                     ],
                     [
-                        v_outer_c_h + v_one_half,
+                        v_half_contact_length + v_one_half,
                         v_zero,
                         v_one_half + v_half_contact_length,
                     ],
                     [
-                        v_inner_c_h + v_one_half,
-                        -v_h_void + v_one_half,
-                        v_one_half - v_inner_c_h,
+                        v_inner_half_contact_length + v_one_half,
+                        -v_wall_thickness + v_one_half,
+                        v_one_half - v_inner_half_contact_length,
                     ],
                     [
-                        v_outer_c_h + v_one_half,
+                        v_half_contact_length + v_one_half,
                         v_zero,
                         v_one_half - v_half_contact_length,
                     ],
                     [
-                        v_h_void + v_one_half,
-                        -v_inner_c_h + v_one_half,
-                        v_one_half + v_inner_c_h,
+                        v_wall_thickness + v_one_half,
+                        -v_inner_half_contact_length + v_one_half,
+                        v_one_half + v_inner_half_contact_length,
                     ],
                     [
                         v_one,
-                        -v_outer_c_h + v_one_half,
+                        -v_half_contact_length + v_one_half,
                         v_one_half + v_half_contact_length,
                     ],
                     [
-                        v_h_void + v_one_half,
-                        -v_inner_c_h + v_one_half,
-                        v_one_half - v_inner_c_h,
+                        v_wall_thickness + v_one_half,
+                        -v_inner_half_contact_length + v_one_half,
+                        v_one_half - v_inner_half_contact_length,
                     ],
                     [
                         v_one,
-                        -v_outer_c_h + v_one_half,
+                        -v_half_contact_length + v_one_half,
                         v_one_half - v_half_contact_length,
                     ],
                 ]
@@ -4524,24 +4523,24 @@ class Armadillo(TileBase):
                         v_zero,
                     ],
                     [
-                        v_one_half + v_inner_c_h,
-                        v_one_half + v_inner_c_h,
-                        v_one_half - v_h_void,
+                        v_one_half + v_inner_half_contact_length,
+                        v_one_half + v_inner_half_contact_length,
+                        v_one_half - v_wall_thickness,
                     ],
                     [
-                        v_one_half - v_inner_c_h,
-                        v_one_half + v_inner_c_h,
-                        v_one_half - v_h_void,
+                        v_one_half - v_inner_half_contact_length,
+                        v_one_half + v_inner_half_contact_length,
+                        v_one_half - v_wall_thickness,
                     ],
                     [
-                        v_one_half + v_inner_c_h,
-                        v_one_half - v_inner_c_h,
-                        v_one_half - v_h_void,
+                        v_one_half + v_inner_half_contact_length,
+                        v_one_half - v_inner_half_contact_length,
+                        v_one_half - v_wall_thickness,
                     ],
                     [
-                        v_one_half - v_inner_c_h,
-                        v_one_half - v_inner_c_h,
-                        v_one_half - v_h_void,
+                        v_one_half - v_inner_half_contact_length,
+                        v_one_half - v_inner_half_contact_length,
+                        v_one_half - v_wall_thickness,
                     ],
                 ]
             )
@@ -4549,24 +4548,24 @@ class Armadillo(TileBase):
             top = np.array(
                 [
                     [
-                        v_one_half + v_inner_c_h,
-                        v_one_half + v_inner_c_h,
-                        v_one_half + v_h_void,
+                        v_one_half + v_inner_half_contact_length,
+                        v_one_half + v_inner_half_contact_length,
+                        v_one_half + v_wall_thickness,
                     ],
                     [
-                        v_one_half - v_inner_c_h,
-                        v_one_half + v_inner_c_h,
-                        v_one_half + v_h_void,
+                        v_one_half - v_inner_half_contact_length,
+                        v_one_half + v_inner_half_contact_length,
+                        v_one_half + v_wall_thickness,
                     ],
                     [
-                        v_one_half + v_inner_c_h,
-                        v_one_half - v_inner_c_h,
-                        v_one_half + v_h_void,
+                        v_one_half + v_inner_half_contact_length,
+                        v_one_half - v_inner_half_contact_length,
+                        v_one_half + v_wall_thickness,
                     ],
                     [
-                        v_one_half - v_inner_c_h,
-                        v_one_half - v_inner_c_h,
-                        v_one_half + v_h_void,
+                        v_one_half - v_inner_half_contact_length,
+                        v_one_half - v_inner_half_contact_length,
+                        v_one_half + v_wall_thickness,
                     ],
                     [
                         v_one_half + v_half_contact_length,
@@ -4614,24 +4613,24 @@ class Armadillo(TileBase):
                         v_zero,
                     ],
                     [
-                        v_inner_c_h + v_one_half,
-                        v_one_half + v_h_void,
-                        v_one_half - v_inner_c_h,
+                        v_inner_half_contact_length + v_one_half,
+                        v_one_half + v_wall_thickness,
+                        v_one_half - v_inner_half_contact_length,
                     ],
                     [
-                        -v_inner_c_h + v_one_half,
-                        v_one_half + v_h_void,
-                        v_one_half - v_inner_c_h,
+                        -v_inner_half_contact_length + v_one_half,
+                        v_one_half + v_wall_thickness,
+                        v_one_half - v_inner_half_contact_length,
                     ],
                     [
-                        v_one_half + v_inner_c_h,
-                        v_one_half + v_inner_c_h,
-                        v_one_half - v_h_void,
+                        v_one_half + v_inner_half_contact_length,
+                        v_one_half + v_inner_half_contact_length,
+                        v_one_half - v_wall_thickness,
                     ],
                     [
-                        v_one_half - v_inner_c_h,
-                        v_one_half + v_inner_c_h,
-                        v_one_half - v_h_void,
+                        v_one_half - v_inner_half_contact_length,
+                        v_one_half + v_inner_half_contact_length,
+                        v_one_half - v_wall_thickness,
                     ],
                 ]
             )
@@ -4649,14 +4648,14 @@ class Armadillo(TileBase):
                         v_one_half + v_half_contact_length,
                     ],
                     [
-                        v_inner_c_h + v_one_half,
-                        v_one_half + v_h_void,
-                        v_one_half + v_inner_c_h,
+                        v_inner_half_contact_length + v_one_half,
+                        v_one_half + v_wall_thickness,
+                        v_one_half + v_inner_half_contact_length,
                     ],
                     [
-                        -v_inner_c_h + v_one_half,
-                        v_one_half + v_h_void,
-                        v_one_half + v_inner_c_h,
+                        -v_inner_half_contact_length + v_one_half,
+                        v_one_half + v_wall_thickness,
+                        v_one_half + v_inner_half_contact_length,
                     ],
                     [
                         v_one_half + v_half_contact_length,
@@ -4669,14 +4668,14 @@ class Armadillo(TileBase):
                         v_one,
                     ],
                     [
-                        v_one_half + v_inner_c_h,
-                        v_one_half + v_inner_c_h,
-                        v_one_half + v_h_void,
+                        v_one_half + v_inner_half_contact_length,
+                        v_one_half + v_inner_half_contact_length,
+                        v_one_half + v_wall_thickness,
                     ],
                     [
-                        v_one_half - v_inner_c_h,
-                        v_one_half + v_inner_c_h,
-                        v_one_half + v_h_void,
+                        v_one_half - v_inner_half_contact_length,
+                        v_one_half + v_inner_half_contact_length,
+                        v_one_half + v_wall_thickness,
                     ],
                 ]
             )
@@ -4704,24 +4703,24 @@ class Armadillo(TileBase):
                         v_one_half - v_half_contact_length,
                     ],
                     [
-                        v_one_half + v_inner_c_h,
-                        v_one_half - v_inner_c_h,
-                        v_one_half - v_h_void,
+                        v_one_half + v_inner_half_contact_length,
+                        v_one_half - v_inner_half_contact_length,
+                        v_one_half - v_wall_thickness,
                     ],
                     [
-                        v_one_half - v_inner_c_h,
-                        v_one_half - v_inner_c_h,
-                        v_one_half - v_h_void,
+                        v_one_half - v_inner_half_contact_length,
+                        v_one_half - v_inner_half_contact_length,
+                        v_one_half - v_wall_thickness,
                     ],
                     [
-                        v_inner_c_h + v_one_half,
-                        v_one_half - v_h_void,
-                        v_one_half - v_inner_c_h,
+                        v_inner_half_contact_length + v_one_half,
+                        v_one_half - v_wall_thickness,
+                        v_one_half - v_inner_half_contact_length,
                     ],
                     [
-                        -v_inner_c_h + v_one_half,
-                        v_one_half - v_h_void,
-                        v_one_half - v_inner_c_h,
+                        -v_inner_half_contact_length + v_one_half,
+                        v_one_half - v_wall_thickness,
+                        v_one_half - v_inner_half_contact_length,
                     ],
                 ]
             )
@@ -4739,14 +4738,14 @@ class Armadillo(TileBase):
                         v_one,
                     ],
                     [
-                        v_one_half + v_inner_c_h,
-                        v_one_half - v_inner_c_h,
-                        v_one_half + v_h_void,
+                        v_one_half + v_inner_half_contact_length,
+                        v_one_half - v_inner_half_contact_length,
+                        v_one_half + v_wall_thickness,
                     ],
                     [
-                        v_one_half - v_inner_c_h,
-                        v_one_half - v_inner_c_h,
-                        v_one_half + v_h_void,
+                        v_one_half - v_inner_half_contact_length,
+                        v_one_half - v_inner_half_contact_length,
+                        v_one_half + v_wall_thickness,
                     ],
                     [
                         v_half_contact_length + v_one_half,
@@ -4759,14 +4758,14 @@ class Armadillo(TileBase):
                         v_one_half + v_half_contact_length,
                     ],
                     [
-                        v_inner_c_h + v_one_half,
-                        v_one_half - v_h_void,
-                        v_one_half + v_inner_c_h,
+                        v_inner_half_contact_length + v_one_half,
+                        v_one_half - v_wall_thickness,
+                        v_one_half + v_inner_half_contact_length,
                     ],
                     [
-                        -v_inner_c_h + v_one_half,
-                        v_one_half - v_h_void,
-                        v_one_half + v_inner_c_h,
+                        -v_inner_half_contact_length + v_one_half,
+                        v_one_half - v_wall_thickness,
+                        v_one_half + v_inner_half_contact_length,
                     ],
                 ]
             )
@@ -4784,14 +4783,14 @@ class Armadillo(TileBase):
                         v_one,
                     ],
                     [
-                        v_one_half + v_inner_c_h,
-                        v_one_half + v_inner_c_h,
-                        v_one_half + v_h_void,
+                        v_one_half + v_inner_half_contact_length,
+                        v_one_half + v_inner_half_contact_length,
+                        v_one_half + v_wall_thickness,
                     ],
                     [
-                        v_one_half + v_inner_c_h,
-                        v_one_half - v_inner_c_h,
-                        v_one_half + v_h_void,
+                        v_one_half + v_inner_half_contact_length,
+                        v_one_half - v_inner_half_contact_length,
+                        v_one_half + v_wall_thickness,
                     ],
                     [
                         v_one,
@@ -4804,14 +4803,14 @@ class Armadillo(TileBase):
                         v_one_half + v_half_contact_length,
                     ],
                     [
-                        v_one_half + v_h_void,
-                        v_one_half + v_inner_c_h,
-                        v_one_half + v_inner_c_h,
+                        v_one_half + v_wall_thickness,
+                        v_one_half + v_inner_half_contact_length,
+                        v_one_half + v_inner_half_contact_length,
                     ],
                     [
-                        v_one_half + v_h_void,
-                        v_one_half - v_inner_c_h,
-                        v_one_half + v_inner_c_h,
+                        v_one_half + v_wall_thickness,
+                        v_one_half - v_inner_half_contact_length,
+                        v_one_half + v_inner_half_contact_length,
                     ],
                 ]
             )
@@ -4839,24 +4838,24 @@ class Armadillo(TileBase):
                         v_one_half + v_half_contact_length,
                     ],
                     [
-                        v_one_half - v_inner_c_h,
-                        v_one_half + v_inner_c_h,
-                        v_one_half + v_h_void,
+                        v_one_half - v_inner_half_contact_length,
+                        v_one_half + v_inner_half_contact_length,
+                        v_one_half + v_wall_thickness,
                     ],
                     [
-                        v_one_half - v_inner_c_h,
-                        v_one_half - v_inner_c_h,
-                        v_one_half + v_h_void,
+                        v_one_half - v_inner_half_contact_length,
+                        v_one_half - v_inner_half_contact_length,
+                        v_one_half + v_wall_thickness,
                     ],
                     [
-                        v_one_half - v_h_void,
-                        v_one_half + v_inner_c_h,
-                        v_one_half + v_inner_c_h,
+                        v_one_half - v_wall_thickness,
+                        v_one_half + v_inner_half_contact_length,
+                        v_one_half + v_inner_half_contact_length,
                     ],
                     [
-                        v_one_half - v_h_void,
-                        v_one_half - v_inner_c_h,
-                        v_one_half + v_inner_c_h,
+                        v_one_half - v_wall_thickness,
+                        v_one_half - v_inner_half_contact_length,
+                        v_one_half + v_inner_half_contact_length,
                     ],
                 ]
             )
@@ -4884,24 +4883,24 @@ class Armadillo(TileBase):
                         v_zero,
                     ],
                     [
-                        v_one_half - v_h_void,
-                        v_one_half + v_inner_c_h,
-                        v_one_half - v_inner_c_h,
+                        v_one_half - v_wall_thickness,
+                        v_one_half + v_inner_half_contact_length,
+                        v_one_half - v_inner_half_contact_length,
                     ],
                     [
-                        v_one_half - v_h_void,
-                        v_one_half - v_inner_c_h,
-                        v_one_half - v_inner_c_h,
+                        v_one_half - v_wall_thickness,
+                        v_one_half - v_inner_half_contact_length,
+                        v_one_half - v_inner_half_contact_length,
                     ],
                     [
-                        v_one_half - v_inner_c_h,
-                        v_one_half + v_inner_c_h,
-                        v_one_half - v_h_void,
+                        v_one_half - v_inner_half_contact_length,
+                        v_one_half + v_inner_half_contact_length,
+                        v_one_half - v_wall_thickness,
                     ],
                     [
-                        v_one_half - v_inner_c_h,
-                        v_one_half - v_inner_c_h,
-                        v_one_half - v_h_void,
+                        v_one_half - v_inner_half_contact_length,
+                        v_one_half - v_inner_half_contact_length,
+                        v_one_half - v_wall_thickness,
                     ],
                 ]
             )
@@ -4910,43 +4909,43 @@ class Armadillo(TileBase):
                 [
                     [
                         v_one,
-                        v_outer_c_h + v_one_half,
+                        v_half_contact_length + v_one_half,
                         v_one_half - v_half_contact_length,
                     ],
                     [
                         v_one,
-                        -v_outer_c_h + v_one_half,
+                        -v_half_contact_length + v_one_half,
                         v_one_half - v_half_contact_length,
                     ],
                     [
-                        v_h_void + v_one_half,
-                        v_inner_c_h + v_one_half,
-                        v_one_half - v_inner_c_h,
+                        v_wall_thickness + v_one_half,
+                        v_inner_half_contact_length + v_one_half,
+                        v_one_half - v_inner_half_contact_length,
                     ],
                     [
-                        v_h_void + v_one_half,
-                        -v_inner_c_h + v_one_half,
-                        v_one_half - v_inner_c_h,
-                    ],
-                    [
-                        v_one,
-                        v_one,
-                        v_zero,
+                        v_wall_thickness + v_one_half,
+                        -v_inner_half_contact_length + v_one_half,
+                        v_one_half - v_inner_half_contact_length,
                     ],
                     [
                         v_one,
+                        v_one,
+                        v_zero,
+                    ],
+                    [
+                        v_one,
                         v_zero,
                         v_zero,
                     ],
                     [
-                        v_one_half + v_inner_c_h,
-                        v_one_half + v_inner_c_h,
-                        v_one_half - v_h_void,
+                        v_one_half + v_inner_half_contact_length,
+                        v_one_half + v_inner_half_contact_length,
+                        v_one_half - v_wall_thickness,
                     ],
                     [
-                        v_one_half + v_inner_c_h,
-                        v_one_half - v_inner_c_h,
-                        v_one_half - v_h_void,
+                        v_one_half + v_inner_half_contact_length,
+                        v_one_half - v_inner_half_contact_length,
+                        v_one_half - v_wall_thickness,
                     ],
                 ]
             )
@@ -5077,8 +5076,8 @@ class Armadillo(TileBase):
             )
 
         self.check_params(parameters)
-        v_h_void = parameters[0, 0]
-        if not ((v_h_void > 0.01) and (v_h_void < 0.5)):
+        v_wall_thickness = parameters[0, 0]
+        if not ((v_wall_thickness > 0.01) and (v_wall_thickness < 0.5)):
             raise ValueError(
                 "The thickness of the wall must be in (0.01 and 0.49)"
             )
@@ -5086,9 +5085,9 @@ class Armadillo(TileBase):
         v_zero = 0.0
         v_one_half = 0.5
         v_one = 1.0
-        v_outer_c_h = contact_length * 0.5
         v_half_contact_length = contact_length * 0.5
-        v_inner_c_h = contact_length * parameters[0, 0]
+        v_half_contact_length = contact_length * 0.5
+        v_inner_half_contact_length = contact_length * parameters[0, 0]
 
         spline_list = []
 
@@ -5096,43 +5095,43 @@ class Armadillo(TileBase):
         right = np.array(
             [
                 [
-                    v_h_void + v_one_half,
-                    -v_inner_c_h + v_one_half,
-                    v_one_half + v_inner_c_h,
+                    v_wall_thickness + v_one_half,
+                    -v_inner_half_contact_length + v_one_half,
+                    v_one_half + v_inner_half_contact_length,
                 ],
                 [
                     v_one,
-                    -v_outer_c_h + v_one_half,
+                    -v_half_contact_length + v_one_half,
                     v_one_half + v_half_contact_length,
                 ],
                 [
-                    v_h_void + v_one_half,
-                    -v_inner_c_h + v_one_half,
-                    v_one_half - v_inner_c_h,
+                    v_wall_thickness + v_one_half,
+                    -v_inner_half_contact_length + v_one_half,
+                    v_one_half - v_inner_half_contact_length,
                 ],
                 [
                     v_one,
-                    -v_outer_c_h + v_one_half,
+                    -v_half_contact_length + v_one_half,
                     v_one_half - v_half_contact_length,
                 ],
                 [
-                    v_h_void + v_one_half,
-                    v_inner_c_h + v_one_half,
-                    v_one_half + v_inner_c_h,
+                    v_wall_thickness + v_one_half,
+                    v_inner_half_contact_length + v_one_half,
+                    v_one_half + v_inner_half_contact_length,
                 ],
                 [
                     v_one,
-                    v_outer_c_h + v_one_half,
+                    v_half_contact_length + v_one_half,
                     v_one_half + v_half_contact_length,
                 ],
                 [
-                    v_h_void + v_one_half,
-                    v_inner_c_h + v_one_half,
-                    v_one_half - v_inner_c_h,
+                    v_wall_thickness + v_one_half,
+                    v_inner_half_contact_length + v_one_half,
+                    v_one_half - v_inner_half_contact_length,
                 ],
                 [
                     v_one,
-                    v_outer_c_h + v_one_half,
+                    v_half_contact_length + v_one_half,
                     v_one_half - v_half_contact_length,
                 ],
             ]
@@ -5141,42 +5140,42 @@ class Armadillo(TileBase):
         connection_front_right = np.array(
             [
                 [
-                    v_h_void + v_one_half,
-                    v_inner_c_h + v_one_half,
-                    v_one_half + v_inner_c_h,
+                    v_wall_thickness + v_one_half,
+                    v_inner_half_contact_length + v_one_half,
+                    v_one_half + v_inner_half_contact_length,
                 ],
                 [
                     v_one,
-                    v_outer_c_h + v_one_half,
+                    v_half_contact_length + v_one_half,
                     v_one_half + v_half_contact_length,
                 ],
                 [
-                    v_h_void + v_one_half,
-                    v_inner_c_h + v_one_half,
-                    v_one_half - v_inner_c_h,
+                    v_wall_thickness + v_one_half,
+                    v_inner_half_contact_length + v_one_half,
+                    v_one_half - v_inner_half_contact_length,
                 ],
                 [
                     v_one,
-                    v_outer_c_h + v_one_half,
+                    v_half_contact_length + v_one_half,
                     v_one_half - v_half_contact_length,
                 ],
                 [
-                    v_inner_c_h + v_one_half,
-                    v_h_void + v_one_half,
-                    v_one_half + v_inner_c_h,
+                    v_inner_half_contact_length + v_one_half,
+                    v_wall_thickness + v_one_half,
+                    v_one_half + v_inner_half_contact_length,
                 ],
                 [
-                    v_outer_c_h + v_one_half,
+                    v_half_contact_length + v_one_half,
                     v_one,
                     v_one_half + v_half_contact_length,
                 ],
                 [
-                    v_inner_c_h + v_one_half,
-                    v_h_void + v_one_half,
-                    v_one_half - v_inner_c_h,
+                    v_inner_half_contact_length + v_one_half,
+                    v_wall_thickness + v_one_half,
+                    v_one_half - v_inner_half_contact_length,
                 ],
                 [
-                    v_outer_c_h + v_one_half,
+                    v_half_contact_length + v_one_half,
                     v_one,
                     v_one_half - v_half_contact_length,
                 ],
@@ -5186,42 +5185,42 @@ class Armadillo(TileBase):
         front = np.array(
             [
                 [
-                    v_inner_c_h + v_one_half,
-                    v_h_void + v_one_half,
-                    v_one_half + v_inner_c_h,
+                    v_inner_half_contact_length + v_one_half,
+                    v_wall_thickness + v_one_half,
+                    v_one_half + v_inner_half_contact_length,
                 ],
                 [
-                    v_outer_c_h + v_one_half,
+                    v_half_contact_length + v_one_half,
                     v_one,
                     v_one_half + v_half_contact_length,
                 ],
                 [
-                    v_inner_c_h + v_one_half,
-                    v_h_void + v_one_half,
-                    v_one_half - v_inner_c_h,
+                    v_inner_half_contact_length + v_one_half,
+                    v_wall_thickness + v_one_half,
+                    v_one_half - v_inner_half_contact_length,
                 ],
                 [
-                    v_outer_c_h + v_one_half,
+                    v_half_contact_length + v_one_half,
                     v_one,
                     v_one_half - v_half_contact_length,
                 ],
                 [
-                    -v_inner_c_h + v_one_half,
-                    v_h_void + v_one_half,
-                    v_one_half + v_inner_c_h,
+                    -v_inner_half_contact_length + v_one_half,
+                    v_wall_thickness + v_one_half,
+                    v_one_half + v_inner_half_contact_length,
                 ],
                 [
-                    -v_outer_c_h + v_one_half,
+                    -v_half_contact_length + v_one_half,
                     v_one,
                     v_one_half + v_half_contact_length,
                 ],
                 [
-                    -v_inner_c_h + v_one_half,
-                    v_h_void + v_one_half,
-                    v_one_half - v_inner_c_h,
+                    -v_inner_half_contact_length + v_one_half,
+                    v_wall_thickness + v_one_half,
+                    v_one_half - v_inner_half_contact_length,
                 ],
                 [
-                    -v_outer_c_h + v_one_half,
+                    -v_half_contact_length + v_one_half,
                     v_one,
                     v_one_half - v_half_contact_length,
                 ],
@@ -5231,42 +5230,42 @@ class Armadillo(TileBase):
         connection_back_left = np.array(
             [
                 [
-                    -v_h_void + v_one_half,
-                    -v_inner_c_h + v_one_half,
-                    v_one_half + v_inner_c_h,
+                    -v_wall_thickness + v_one_half,
+                    -v_inner_half_contact_length + v_one_half,
+                    v_one_half + v_inner_half_contact_length,
                 ],
                 [
                     v_zero,
-                    -v_outer_c_h + v_one_half,
+                    -v_half_contact_length + v_one_half,
                     v_one_half + v_half_contact_length,
                 ],
                 [
-                    -v_h_void + v_one_half,
-                    -v_inner_c_h + v_one_half,
-                    v_one_half - v_inner_c_h,
+                    -v_wall_thickness + v_one_half,
+                    -v_inner_half_contact_length + v_one_half,
+                    v_one_half - v_inner_half_contact_length,
                 ],
                 [
                     v_zero,
-                    -v_outer_c_h + v_one_half,
+                    -v_half_contact_length + v_one_half,
                     v_one_half - v_half_contact_length,
                 ],
                 [
-                    -v_inner_c_h + v_one_half,
-                    -v_h_void + v_one_half,
-                    v_one_half + v_inner_c_h,
+                    -v_inner_half_contact_length + v_one_half,
+                    -v_wall_thickness + v_one_half,
+                    v_one_half + v_inner_half_contact_length,
                 ],
                 [
-                    -v_outer_c_h + v_one_half,
+                    -v_half_contact_length + v_one_half,
                     v_zero,
                     v_one_half + v_half_contact_length,
                 ],
                 [
-                    -v_inner_c_h + v_one_half,
-                    -v_h_void + v_one_half,
-                    v_one_half - v_inner_c_h,
+                    -v_inner_half_contact_length + v_one_half,
+                    -v_wall_thickness + v_one_half,
+                    v_one_half - v_inner_half_contact_length,
                 ],
                 [
-                    -v_outer_c_h + v_one_half,
+                    -v_half_contact_length + v_one_half,
                     v_zero,
                     v_one_half - v_half_contact_length,
                 ],
@@ -5277,43 +5276,43 @@ class Armadillo(TileBase):
             [
                 [
                     v_zero,
-                    -v_outer_c_h + v_one_half,
+                    -v_half_contact_length + v_one_half,
                     v_one_half + v_half_contact_length,
                 ],
                 [
-                    -v_h_void + v_one_half,
-                    -v_inner_c_h + v_one_half,
-                    v_one_half + v_inner_c_h,
+                    -v_wall_thickness + v_one_half,
+                    -v_inner_half_contact_length + v_one_half,
+                    v_one_half + v_inner_half_contact_length,
                 ],
                 [
                     v_zero,
-                    -v_outer_c_h + v_one_half,
+                    -v_half_contact_length + v_one_half,
                     v_one_half - v_half_contact_length,
                 ],
                 [
-                    -v_h_void + v_one_half,
-                    -v_inner_c_h + v_one_half,
-                    v_one_half - v_inner_c_h,
+                    -v_wall_thickness + v_one_half,
+                    -v_inner_half_contact_length + v_one_half,
+                    v_one_half - v_inner_half_contact_length,
                 ],
                 [
                     v_zero,
-                    v_outer_c_h + v_one_half,
+                    v_half_contact_length + v_one_half,
                     v_one_half + v_half_contact_length,
                 ],
                 [
-                    -v_h_void + v_one_half,
-                    v_inner_c_h + v_one_half,
-                    v_one_half + v_inner_c_h,
+                    -v_wall_thickness + v_one_half,
+                    v_inner_half_contact_length + v_one_half,
+                    v_one_half + v_inner_half_contact_length,
                 ],
                 [
                     v_zero,
-                    v_outer_c_h + v_one_half,
+                    v_half_contact_length + v_one_half,
                     v_one_half - v_half_contact_length,
                 ],
                 [
-                    -v_h_void + v_one_half,
-                    v_inner_c_h + v_one_half,
-                    v_one_half - v_inner_c_h,
+                    -v_wall_thickness + v_one_half,
+                    v_inner_half_contact_length + v_one_half,
+                    v_one_half - v_inner_half_contact_length,
                 ],
             ]
         )
@@ -5322,43 +5321,43 @@ class Armadillo(TileBase):
             [
                 [
                     v_zero,
-                    v_outer_c_h + v_one_half,
+                    v_half_contact_length + v_one_half,
                     v_one_half + v_half_contact_length,
                 ],
                 [
-                    -v_h_void + v_one_half,
-                    v_inner_c_h + v_one_half,
-                    v_one_half + v_inner_c_h,
+                    -v_wall_thickness + v_one_half,
+                    v_inner_half_contact_length + v_one_half,
+                    v_one_half + v_inner_half_contact_length,
                 ],
                 [
                     v_zero,
-                    v_outer_c_h + v_one_half,
+                    v_half_contact_length + v_one_half,
                     v_one_half - v_half_contact_length,
                 ],
                 [
-                    -v_h_void + v_one_half,
-                    v_inner_c_h + v_one_half,
-                    v_one_half - v_inner_c_h,
+                    -v_wall_thickness + v_one_half,
+                    v_inner_half_contact_length + v_one_half,
+                    v_one_half - v_inner_half_contact_length,
                 ],
                 [
-                    -v_outer_c_h + v_one_half,
+                    -v_half_contact_length + v_one_half,
                     v_one,
                     v_one_half + v_half_contact_length,
                 ],
                 [
-                    -v_inner_c_h + v_one_half,
-                    v_h_void + v_one_half,
-                    v_one_half + v_inner_c_h,
+                    -v_inner_half_contact_length + v_one_half,
+                    v_wall_thickness + v_one_half,
+                    v_one_half + v_inner_half_contact_length,
                 ],
                 [
-                    -v_outer_c_h + v_one_half,
+                    -v_half_contact_length + v_one_half,
                     v_one,
                     v_one_half - v_half_contact_length,
                 ],
                 [
-                    -v_inner_c_h + v_one_half,
-                    v_h_void + v_one_half,
-                    v_one_half - v_inner_c_h,
+                    -v_inner_half_contact_length + v_one_half,
+                    v_wall_thickness + v_one_half,
+                    v_one_half - v_inner_half_contact_length,
                 ],
             ]
         )
@@ -5366,44 +5365,44 @@ class Armadillo(TileBase):
         back = np.array(
             [
                 [
-                    v_outer_c_h + v_one_half,
+                    v_half_contact_length + v_one_half,
                     v_zero,
                     v_one_half + v_half_contact_length,
                 ],
                 [
-                    v_inner_c_h + v_one_half,
-                    -v_h_void + v_one_half,
-                    v_one_half + v_inner_c_h,
+                    v_inner_half_contact_length + v_one_half,
+                    -v_wall_thickness + v_one_half,
+                    v_one_half + v_inner_half_contact_length,
                 ],
                 [
-                    v_outer_c_h + v_one_half,
+                    v_half_contact_length + v_one_half,
                     v_zero,
                     v_one_half - v_half_contact_length,
                 ],
                 [
-                    v_inner_c_h + v_one_half,
-                    -v_h_void + v_one_half,
-                    v_one_half - v_inner_c_h,
+                    v_inner_half_contact_length + v_one_half,
+                    -v_wall_thickness + v_one_half,
+                    v_one_half - v_inner_half_contact_length,
                 ],
                 [
-                    -v_outer_c_h + v_one_half,
+                    -v_half_contact_length + v_one_half,
                     v_zero,
                     v_one_half + v_half_contact_length,
                 ],
                 [
-                    -v_inner_c_h + v_one_half,
-                    -v_h_void + v_one_half,
-                    v_one_half + v_inner_c_h,
+                    -v_inner_half_contact_length + v_one_half,
+                    -v_wall_thickness + v_one_half,
+                    v_one_half + v_inner_half_contact_length,
                 ],
                 [
-                    -v_outer_c_h + v_one_half,
+                    -v_half_contact_length + v_one_half,
                     v_zero,
                     v_one_half - v_half_contact_length,
                 ],
                 [
-                    -v_inner_c_h + v_one_half,
-                    -v_h_void + v_one_half,
-                    v_one_half - v_inner_c_h,
+                    -v_inner_half_contact_length + v_one_half,
+                    -v_wall_thickness + v_one_half,
+                    v_one_half - v_inner_half_contact_length,
                 ],
             ]
         )
@@ -5411,43 +5410,43 @@ class Armadillo(TileBase):
         connection_back_right = np.array(
             [
                 [
-                    v_inner_c_h + v_one_half,
-                    -v_h_void + v_one_half,
-                    v_one_half + v_inner_c_h,
+                    v_inner_half_contact_length + v_one_half,
+                    -v_wall_thickness + v_one_half,
+                    v_one_half + v_inner_half_contact_length,
                 ],
                 [
-                    v_outer_c_h + v_one_half,
+                    v_half_contact_length + v_one_half,
                     v_zero,
                     v_one_half + v_half_contact_length,
                 ],
                 [
-                    v_inner_c_h + v_one_half,
-                    -v_h_void + v_one_half,
-                    v_one_half - v_inner_c_h,
+                    v_inner_half_contact_length + v_one_half,
+                    -v_wall_thickness + v_one_half,
+                    v_one_half - v_inner_half_contact_length,
                 ],
                 [
-                    v_outer_c_h + v_one_half,
+                    v_half_contact_length + v_one_half,
                     v_zero,
                     v_one_half - v_half_contact_length,
                 ],
                 [
-                    v_h_void + v_one_half,
-                    -v_inner_c_h + v_one_half,
-                    v_one_half + v_inner_c_h,
+                    v_wall_thickness + v_one_half,
+                    -v_inner_half_contact_length + v_one_half,
+                    v_one_half + v_inner_half_contact_length,
                 ],
                 [
                     v_one,
-                    -v_outer_c_h + v_one_half,
+                    -v_half_contact_length + v_one_half,
                     v_one_half + v_half_contact_length,
                 ],
                 [
-                    v_h_void + v_one_half,
-                    -v_inner_c_h + v_one_half,
-                    v_one_half - v_inner_c_h,
+                    v_wall_thickness + v_one_half,
+                    -v_inner_half_contact_length + v_one_half,
+                    v_one_half - v_inner_half_contact_length,
                 ],
                 [
                     v_one,
-                    -v_outer_c_h + v_one_half,
+                    -v_half_contact_length + v_one_half,
                     v_one_half - v_half_contact_length,
                 ],
             ]
@@ -5476,24 +5475,24 @@ class Armadillo(TileBase):
                     v_zero,
                 ],
                 [
-                    v_one_half + v_inner_c_h,
-                    v_one_half + v_inner_c_h,
-                    v_one_half - v_h_void,
+                    v_one_half + v_inner_half_contact_length,
+                    v_one_half + v_inner_half_contact_length,
+                    v_one_half - v_wall_thickness,
                 ],
                 [
-                    v_one_half - v_inner_c_h,
-                    v_one_half + v_inner_c_h,
-                    v_one_half - v_h_void,
+                    v_one_half - v_inner_half_contact_length,
+                    v_one_half + v_inner_half_contact_length,
+                    v_one_half - v_wall_thickness,
                 ],
                 [
-                    v_one_half + v_inner_c_h,
-                    v_one_half - v_inner_c_h,
-                    v_one_half - v_h_void,
+                    v_one_half + v_inner_half_contact_length,
+                    v_one_half - v_inner_half_contact_length,
+                    v_one_half - v_wall_thickness,
                 ],
                 [
-                    v_one_half - v_inner_c_h,
-                    v_one_half - v_inner_c_h,
-                    v_one_half - v_h_void,
+                    v_one_half - v_inner_half_contact_length,
+                    v_one_half - v_inner_half_contact_length,
+                    v_one_half - v_wall_thickness,
                 ],
             ]
         )
@@ -5501,24 +5500,24 @@ class Armadillo(TileBase):
         top = np.array(
             [
                 [
-                    v_one_half + v_inner_c_h,
-                    v_one_half + v_inner_c_h,
-                    v_one_half + v_h_void,
+                    v_one_half + v_inner_half_contact_length,
+                    v_one_half + v_inner_half_contact_length,
+                    v_one_half + v_wall_thickness,
                 ],
                 [
-                    v_one_half - v_inner_c_h,
-                    v_one_half + v_inner_c_h,
-                    v_one_half + v_h_void,
+                    v_one_half - v_inner_half_contact_length,
+                    v_one_half + v_inner_half_contact_length,
+                    v_one_half + v_wall_thickness,
                 ],
                 [
-                    v_one_half + v_inner_c_h,
-                    v_one_half - v_inner_c_h,
-                    v_one_half + v_h_void,
+                    v_one_half + v_inner_half_contact_length,
+                    v_one_half - v_inner_half_contact_length,
+                    v_one_half + v_wall_thickness,
                 ],
                 [
-                    v_one_half - v_inner_c_h,
-                    v_one_half - v_inner_c_h,
-                    v_one_half + v_h_void,
+                    v_one_half - v_inner_half_contact_length,
+                    v_one_half - v_inner_half_contact_length,
+                    v_one_half + v_wall_thickness,
                 ],
                 [
                     v_one_half + v_half_contact_length,
@@ -5566,24 +5565,24 @@ class Armadillo(TileBase):
                     v_zero,
                 ],
                 [
-                    v_inner_c_h + v_one_half,
-                    v_one_half + v_h_void,
-                    v_one_half - v_inner_c_h,
+                    v_inner_half_contact_length + v_one_half,
+                    v_one_half + v_wall_thickness,
+                    v_one_half - v_inner_half_contact_length,
                 ],
                 [
-                    -v_inner_c_h + v_one_half,
-                    v_one_half + v_h_void,
-                    v_one_half - v_inner_c_h,
+                    -v_inner_half_contact_length + v_one_half,
+                    v_one_half + v_wall_thickness,
+                    v_one_half - v_inner_half_contact_length,
                 ],
                 [
-                    v_one_half + v_inner_c_h,
-                    v_one_half + v_inner_c_h,
-                    v_one_half - v_h_void,
+                    v_one_half + v_inner_half_contact_length,
+                    v_one_half + v_inner_half_contact_length,
+                    v_one_half - v_wall_thickness,
                 ],
                 [
-                    v_one_half - v_inner_c_h,
-                    v_one_half + v_inner_c_h,
-                    v_one_half - v_h_void,
+                    v_one_half - v_inner_half_contact_length,
+                    v_one_half + v_inner_half_contact_length,
+                    v_one_half - v_wall_thickness,
                 ],
             ]
         )
@@ -5601,14 +5600,14 @@ class Armadillo(TileBase):
                     v_one_half + v_half_contact_length,
                 ],
                 [
-                    v_inner_c_h + v_one_half,
-                    v_one_half + v_h_void,
-                    v_one_half + v_inner_c_h,
+                    v_inner_half_contact_length + v_one_half,
+                    v_one_half + v_wall_thickness,
+                    v_one_half + v_inner_half_contact_length,
                 ],
                 [
-                    -v_inner_c_h + v_one_half,
-                    v_one_half + v_h_void,
-                    v_one_half + v_inner_c_h,
+                    -v_inner_half_contact_length + v_one_half,
+                    v_one_half + v_wall_thickness,
+                    v_one_half + v_inner_half_contact_length,
                 ],
                 [
                     v_one_half + v_half_contact_length,
@@ -5621,14 +5620,14 @@ class Armadillo(TileBase):
                     v_one,
                 ],
                 [
-                    v_one_half + v_inner_c_h,
-                    v_one_half + v_inner_c_h,
-                    v_one_half + v_h_void,
+                    v_one_half + v_inner_half_contact_length,
+                    v_one_half + v_inner_half_contact_length,
+                    v_one_half + v_wall_thickness,
                 ],
                 [
-                    v_one_half - v_inner_c_h,
-                    v_one_half + v_inner_c_h,
-                    v_one_half + v_h_void,
+                    v_one_half - v_inner_half_contact_length,
+                    v_one_half + v_inner_half_contact_length,
+                    v_one_half + v_wall_thickness,
                 ],
             ]
         )
@@ -5656,24 +5655,24 @@ class Armadillo(TileBase):
                     v_one_half - v_half_contact_length,
                 ],
                 [
-                    v_one_half + v_inner_c_h,
-                    v_one_half - v_inner_c_h,
-                    v_one_half - v_h_void,
+                    v_one_half + v_inner_half_contact_length,
+                    v_one_half - v_inner_half_contact_length,
+                    v_one_half - v_wall_thickness,
                 ],
                 [
-                    v_one_half - v_inner_c_h,
-                    v_one_half - v_inner_c_h,
-                    v_one_half - v_h_void,
+                    v_one_half - v_inner_half_contact_length,
+                    v_one_half - v_inner_half_contact_length,
+                    v_one_half - v_wall_thickness,
                 ],
                 [
-                    v_inner_c_h + v_one_half,
-                    v_one_half - v_h_void,
-                    v_one_half - v_inner_c_h,
+                    v_inner_half_contact_length + v_one_half,
+                    v_one_half - v_wall_thickness,
+                    v_one_half - v_inner_half_contact_length,
                 ],
                 [
-                    -v_inner_c_h + v_one_half,
-                    v_one_half - v_h_void,
-                    v_one_half - v_inner_c_h,
+                    -v_inner_half_contact_length + v_one_half,
+                    v_one_half - v_wall_thickness,
+                    v_one_half - v_inner_half_contact_length,
                 ],
             ]
         )
@@ -5691,14 +5690,14 @@ class Armadillo(TileBase):
                     v_one,
                 ],
                 [
-                    v_one_half + v_inner_c_h,
-                    v_one_half - v_inner_c_h,
-                    v_one_half + v_h_void,
+                    v_one_half + v_inner_half_contact_length,
+                    v_one_half - v_inner_half_contact_length,
+                    v_one_half + v_wall_thickness,
                 ],
                 [
-                    v_one_half - v_inner_c_h,
-                    v_one_half - v_inner_c_h,
-                    v_one_half + v_h_void,
+                    v_one_half - v_inner_half_contact_length,
+                    v_one_half - v_inner_half_contact_length,
+                    v_one_half + v_wall_thickness,
                 ],
                 [
                     v_half_contact_length + v_one_half,
@@ -5711,14 +5710,14 @@ class Armadillo(TileBase):
                     v_one_half + v_half_contact_length,
                 ],
                 [
-                    v_inner_c_h + v_one_half,
-                    v_one_half - v_h_void,
-                    v_one_half + v_inner_c_h,
+                    v_inner_half_contact_length + v_one_half,
+                    v_one_half - v_wall_thickness,
+                    v_one_half + v_inner_half_contact_length,
                 ],
                 [
-                    -v_inner_c_h + v_one_half,
-                    v_one_half - v_h_void,
-                    v_one_half + v_inner_c_h,
+                    -v_inner_half_contact_length + v_one_half,
+                    v_one_half - v_wall_thickness,
+                    v_one_half + v_inner_half_contact_length,
                 ],
             ]
         )
@@ -5736,14 +5735,14 @@ class Armadillo(TileBase):
                     v_one,
                 ],
                 [
-                    v_one_half + v_inner_c_h,
-                    v_one_half + v_inner_c_h,
-                    v_one_half + v_h_void,
+                    v_one_half + v_inner_half_contact_length,
+                    v_one_half + v_inner_half_contact_length,
+                    v_one_half + v_wall_thickness,
                 ],
                 [
-                    v_one_half + v_inner_c_h,
-                    v_one_half - v_inner_c_h,
-                    v_one_half + v_h_void,
+                    v_one_half + v_inner_half_contact_length,
+                    v_one_half - v_inner_half_contact_length,
+                    v_one_half + v_wall_thickness,
                 ],
                 [
                     v_one,
@@ -5756,14 +5755,14 @@ class Armadillo(TileBase):
                     v_one_half + v_half_contact_length,
                 ],
                 [
-                    v_one_half + v_h_void,
-                    v_one_half + v_inner_c_h,
-                    v_one_half + v_inner_c_h,
+                    v_one_half + v_wall_thickness,
+                    v_one_half + v_inner_half_contact_length,
+                    v_one_half + v_inner_half_contact_length,
                 ],
                 [
-                    v_one_half + v_h_void,
-                    v_one_half - v_inner_c_h,
-                    v_one_half + v_inner_c_h,
+                    v_one_half + v_wall_thickness,
+                    v_one_half - v_inner_half_contact_length,
+                    v_one_half + v_inner_half_contact_length,
                 ],
             ]
         )
@@ -5791,24 +5790,24 @@ class Armadillo(TileBase):
                     v_one_half + v_half_contact_length,
                 ],
                 [
-                    v_one_half - v_inner_c_h,
-                    v_one_half + v_inner_c_h,
-                    v_one_half + v_h_void,
+                    v_one_half - v_inner_half_contact_length,
+                    v_one_half + v_inner_half_contact_length,
+                    v_one_half + v_wall_thickness,
                 ],
                 [
-                    v_one_half - v_inner_c_h,
-                    v_one_half - v_inner_c_h,
-                    v_one_half + v_h_void,
+                    v_one_half - v_inner_half_contact_length,
+                    v_one_half - v_inner_half_contact_length,
+                    v_one_half + v_wall_thickness,
                 ],
                 [
-                    v_one_half - v_h_void,
-                    v_one_half + v_inner_c_h,
-                    v_one_half + v_inner_c_h,
+                    v_one_half - v_wall_thickness,
+                    v_one_half + v_inner_half_contact_length,
+                    v_one_half + v_inner_half_contact_length,
                 ],
                 [
-                    v_one_half - v_h_void,
-                    v_one_half - v_inner_c_h,
-                    v_one_half + v_inner_c_h,
+                    v_one_half - v_wall_thickness,
+                    v_one_half - v_inner_half_contact_length,
+                    v_one_half + v_inner_half_contact_length,
                 ],
             ]
         )
@@ -5836,24 +5835,24 @@ class Armadillo(TileBase):
                     v_zero,
                 ],
                 [
-                    v_one_half - v_h_void,
-                    v_one_half + v_inner_c_h,
-                    v_one_half - v_inner_c_h,
+                    v_one_half - v_wall_thickness,
+                    v_one_half + v_inner_half_contact_length,
+                    v_one_half - v_inner_half_contact_length,
                 ],
                 [
-                    v_one_half - v_h_void,
-                    v_one_half - v_inner_c_h,
-                    v_one_half - v_inner_c_h,
+                    v_one_half - v_wall_thickness,
+                    v_one_half - v_inner_half_contact_length,
+                    v_one_half - v_inner_half_contact_length,
                 ],
                 [
-                    v_one_half - v_inner_c_h,
-                    v_one_half + v_inner_c_h,
-                    v_one_half - v_h_void,
+                    v_one_half - v_inner_half_contact_length,
+                    v_one_half + v_inner_half_contact_length,
+                    v_one_half - v_wall_thickness,
                 ],
                 [
-                    v_one_half - v_inner_c_h,
-                    v_one_half - v_inner_c_h,
-                    v_one_half - v_h_void,
+                    v_one_half - v_inner_half_contact_length,
+                    v_one_half - v_inner_half_contact_length,
+                    v_one_half - v_wall_thickness,
                 ],
             ]
         )
@@ -5862,23 +5861,23 @@ class Armadillo(TileBase):
             [
                 [
                     v_one,
-                    v_outer_c_h + v_one_half,
+                    v_half_contact_length + v_one_half,
                     v_one_half - v_half_contact_length,
                 ],
                 [
                     v_one,
-                    -v_outer_c_h + v_one_half,
+                    -v_half_contact_length + v_one_half,
                     v_one_half - v_half_contact_length,
                 ],
                 [
-                    v_h_void + v_one_half,
-                    v_inner_c_h + v_one_half,
-                    v_one_half - v_inner_c_h,
+                    v_wall_thickness + v_one_half,
+                    v_inner_half_contact_length + v_one_half,
+                    v_one_half - v_inner_half_contact_length,
                 ],
                 [
-                    v_h_void + v_one_half,
-                    -v_inner_c_h + v_one_half,
-                    v_one_half - v_inner_c_h,
+                    v_wall_thickness + v_one_half,
+                    -v_inner_half_contact_length + v_one_half,
+                    v_one_half - v_inner_half_contact_length,
                 ],
                 [
                     v_one_half + v_half_contact_length,
@@ -5891,14 +5890,14 @@ class Armadillo(TileBase):
                     v_zero,
                 ],
                 [
-                    v_one_half + v_inner_c_h,
-                    v_one_half + v_inner_c_h,
-                    v_one_half - v_h_void,
+                    v_one_half + v_inner_half_contact_length,
+                    v_one_half + v_inner_half_contact_length,
+                    v_one_half - v_wall_thickness,
                 ],
                 [
-                    v_one_half + v_inner_c_h,
-                    v_one_half - v_inner_c_h,
-                    v_one_half - v_h_void,
+                    v_one_half + v_inner_half_contact_length,
+                    v_one_half - v_inner_half_contact_length,
+                    v_one_half - v_wall_thickness,
                 ],
             ]
         )
