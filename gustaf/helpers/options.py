@@ -73,7 +73,7 @@ vedo_common_options = (
     Option("vedo", "vmax", "Maximum value for cmap", (float, int)),
     Option(
         "vedo",
-        "cmapalpha",
+        "cmap_alpha",
         "Colormap Transparency in range [0, 1].",
         (float, int),
     ),
@@ -148,7 +148,7 @@ def make_valid_options(*options):
 class ShowOption:
     """
     Behaves similar to dict, but will only accept a set of options that's
-    applicable to the helpee class. Intented use is to create a
+    applicable to the helpee class. Intended use is to create a
     subclass that would define valid options for helpee.
     Options should be described by Option object.
     Helps all the way up to initializing backend showables up to their backend
@@ -388,7 +388,7 @@ class ShowOption:
 
     def copy_valid_options(self, copy_to, keys=None):
         """
-        Copies valid option to other showopts. Simply iterates and treis.
+        Copies valid option to other show_option. Simply iterates and tries.
 
         Parameters
         ----------
