@@ -68,7 +68,7 @@ generator.deformation_function = gus.Bezier(
 ).create.extruded(extrusion_vector=[0, 0, 1])
 generator.tiling = [3, 3, 2]
 generator.show(
-    knots=False, control_points=False, title="3D Lattice Microstructure"
+    knots=False, control_points=False, title="3D NutTile Microstructure"
 )
 
 
@@ -82,7 +82,7 @@ generator.deformation_function = gus.Bezier(
 generator.parametrization_function = parametrization_function
 generator.tiling = [5, 5]
 generator.show(
-    knots=False, control_points=False, title="2D Lattice Microstructure"
+    knots=False, control_points=False, title="2D NutTile Microstructure"
 )
 
 
