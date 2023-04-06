@@ -30,9 +30,10 @@ class NutTile3D(TileBase):
 
         Parameters
         ----------
-        parameters : np.array
-          only first entry is used, defines the thickness of the
-          wall
+        parameters : np.array(1, 1)
+          One evaluation point with one parameter is used. This parameter
+          specifies the distance from the center to the inner edge, where
+          the value must be between 0.01 and 0.49.
         parameter_sensitivities: np.ndarray
           Describes the parameter sensitivities with respect to some design
           variable. In case the design variables directly apply to the
@@ -222,8 +223,10 @@ def closing_tile(
 
     Parameters
     ----------
-    parameters: np.ndarray
-        thickness of the wall
+    parameters: np.ndarray(1, 1)
+      One evaluation point with one parameter is used. This parameter
+      specifies the distance from the center to the inner edge, where
+      the value must be between 0.01 and 0.49.
     parameter_sensitivities: np.ndarray
       Describes the parameter sensitivities with respect to some design
       variable. In case the design variables directly apply to the
