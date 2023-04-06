@@ -9,7 +9,7 @@ class InverseCrossTile3D(TileBase):
     that can be used to describe the domain within a microstructure."""
 
     def __init__(self):
-        """Simple inverse CrossTIle to tile with linear-quadratic branches and
+        """Simple inverse CrossTile to tile with linear-quadratic branches and
         a trilinear center spline."""
         self._dim = 3
         self._evaluation_points = np.array(

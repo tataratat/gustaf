@@ -6,7 +6,7 @@ from gustaf.spline.microstructure.tiles.tilebase import TileBase
 
 class CrossTile2D(TileBase):
     def __init__(self):
-        """Simple CrossTIle with linear-quadratic branches and a trilinear
+        """Simple CrossTile with linear-quadratic branches and a trilinear
         center spline."""
         self._dim = 2
         self._evaluation_points = np.array(
