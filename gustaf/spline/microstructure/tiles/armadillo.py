@@ -6,7 +6,6 @@ from gustaf.spline.microstructure.tiles.tilebase import TileBase
 
 class Armadillo(TileBase):
     def __init__(self):
-        """Simple tile - looks like a nut"""
         self._dim = 3
         self._evaluation_points = np.array(
             [
@@ -28,7 +27,10 @@ class Armadillo(TileBase):
         Parameters
         ----------
         parameters: np.ndarray
-            thickness of the wall
+            An evaluation point with one parameter is used. This parameter
+            describes the thickness of the wall. The parameters must be a
+            two-dimensional np.array, where the value must be between 0.01
+            and 0.49
         parameter_sensitivities: np.ndarray
           Describes the parameter sensitivities with respect to some design
           variable. In case the design variables directly apply to the
@@ -5046,10 +5048,12 @@ class Armadillo(TileBase):
 
         Parameters
         ----------
-        parameters : tuple(np.array)
-          only first entry is used, defines the thickness of the
-          wall
-        parameter_sensitivities: list(tuple(np.ndarray))
+        parameters : np.array
+            One evaluation point with one parameter is used. This parameter
+            describes the thickness of the wall. The parameters must be a
+            two-dimensional np.array, where the value must be between 0.01
+            and 0.49
+        parameter_sensitivities: np.ndarray
           Describes the parameter sensitivities with respect to some design
           variable. In case the design variables directly apply to the
           parameter itself, they evaluate as delta_ij
