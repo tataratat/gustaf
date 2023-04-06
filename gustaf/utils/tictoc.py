@@ -87,7 +87,7 @@ class Tic(GustafBase):
            times for each lap from the timer start (cumulative time).
         """
         start = self._laps[0]
-        cummulative = [f"{lap-start:.10f}" for lap in self._laps[1:]]
+        cumulative = [f"{lap-start:.10f}" for lap in self._laps[1:]]
 
         if log or print_:
             message = [f"\n+++ {self._title} - time logs +++\n"]
@@ -100,19 +100,19 @@ class Tic(GustafBase):
                 for l0, l1 in zip(self._laps[:-1], self._laps[1:])
             ]
             diff_width = int(max([len(d) for d in diff]))
-            cumm_width = int(max([len(c) for c in cummulative]))
+            cumulative_width = int(max([len(c) for c in cumulative]))
 
             message.append(
                 f"{'names'.ljust(name_width)} | "
                 f"{'diff'.rjust(diff_width)} | "
-                f"{'cummulative'.rjust(cumm_width)}\n"
+                f"{'cumulative'.rjust(cumulative_width)}\n"
             )
 
-            for n, d, c in zip(self._names, diff, cummulative):
+            for n, d, c in zip(self._names, diff, cumulative):
                 this_line = (
                     f"{n.ljust(name_width)} | "
                     f"{d.rjust(diff_width)} | "
-                    f"{c.rjust(cumm_width)}\n"
+                    f"{c.rjust(cumulative_width)}\n"
                 )
                 message.append(this_line)
 
@@ -121,4 +121,4 @@ class Tic(GustafBase):
             if print_:
                 print(*message)
 
-        return self._names.copy(), cummulative
+        return self._names.copy(), cumulative

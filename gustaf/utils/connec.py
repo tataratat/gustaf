@@ -236,7 +236,7 @@ def range_to_edges(range_, closed=False, continuous=True):
             raise ValueError("Ranges should result in even number of indices.")
         return indices.reshape(-1, 2)
 
-    # continous edges
+    # continuous edges
     indices = np.repeat(indices, 2)
     if closed:
         indices = np.append(indices, indices[0])[1:]
@@ -399,7 +399,7 @@ def subdivide_edges(edges):
 
     Returns
     --------
-    subd_edges: (n * 2, 2) np.ndarray
+    subdivided_edges: (n * 2, 2) np.ndarray
     """
     if edges.ndim != 2 or edges.shape[1] != 2:
         raise ValueError("Invalid edges shape!")
@@ -445,10 +445,10 @@ def subdivide_tri(
     Returns
     --------
     new_vertices: (n, d) np.ndarray
-    subd_faces: (m, 3) np.ndarray
+    subdivided_faces: (m, 3) np.ndarray
     mesh_dict: dict
       iff `return_dict=True`,
-      returns dict(vertices=new_vertices, faces=subd_faces).
+      returns dict(vertices=new_vertices, faces=subdivided_faces).
     """
     # This will only pass if the mesh is triangle mesh.
     if mesh.faces.shape[1] != 3:
@@ -458,36 +458,36 @@ def subdivide_tri(
     edge_mid_v = mesh.vertices[mesh.unique_edges().values].mean(axis=1)
     new_vertices = np.vstack((mesh.vertices, edge_mid_v))
 
-    subd_faces = np.empty(
+    subdivided_faces = np.empty(
         (mesh.faces.shape[0] * 4, mesh.faces.shape[1]),
         dtype=np.int32,
     )
 
-    mask = np.ones(subd_faces.shape[0], dtype=bool)
+    mask = np.ones(subdivided_faces.shape[0], dtype=bool)
     mask[3::4] = False
 
     # 0th column minus (every 4th row, starting from 3rd row)
-    subd_faces[mask, 0] = mesh.faces.flatten()  # copies
+    subdivided_faces[mask, 0] = mesh.faces.flatten()  # copies
 
     # Form ids for new vertices
     new_vertices_ids = mesh.unique_edges().inverse + int(mesh.faces.max() + 1)
     # 1st & 2nd columns
-    subd_faces[mask, 1] = new_vertices_ids
-    subd_faces[mask, 2] = new_vertices_ids.reshape(-1, 3)[
+    subdivided_faces[mask, 1] = new_vertices_ids
+    subdivided_faces[mask, 2] = new_vertices_ids.reshape(-1, 3)[
         :, [2, 0, 1]
     ].flatten()
 
     # Every 4th row, starting from 3rd row
-    subd_faces[~mask, :] = new_vertices_ids.reshape(-1, 3)
+    subdivided_faces[~mask, :] = new_vertices_ids.reshape(-1, 3)
 
     if return_dict:
         return dict(
             vertices=new_vertices,
-            faces=subd_faces,
+            faces=subdivided_faces,
         )
 
     else:
-        return new_vertices, subd_faces
+        return new_vertices, subdivided_faces
 
 
 def subdivide_quad(
@@ -504,10 +504,10 @@ def subdivide_quad(
     Returns
     --------
     new_vertices: (n, d) np.ndarray
-    subd_faces: (m, 4) np.ndarray
+    subdivided_faces: (m, 4) np.ndarray
     mesh_dict: dict
       iff `return_dict=True`,
-      returns dict(vertices=new_vertices, faces=subd_faces).
+      returns dict(vertices=new_vertices, faces=subdivided_faces).
     """
     # This will only pass if the mesh is quad mesh.
     if mesh.faces.shape[1] != 4:
@@ -524,30 +524,30 @@ def subdivide_quad(
         )
     )
 
-    subd_faces = np.empty(
+    subdivided_faces = np.empty(
         (mesh.faces.shape[0] * 4, mesh.faces.shape[1]),
         dtype=np.int32,
     )
 
-    subd_faces[:, 0] = mesh.faces.flatten()
-    subd_faces[:, 1] = mesh.unique_edges().inverse + len(mesh.vertices)
-    subd_faces[:, 2] = np.repeat(
+    subdivided_faces[:, 0] = mesh.faces.flatten()
+    subdivided_faces[:, 1] = mesh.unique_edges().inverse + len(mesh.vertices)
+    subdivided_faces[:, 2] = np.repeat(
         np.arange(len(face_centers)) + (len(mesh.vertices) + len(edge_mid_v)),
         4,
         # dtype=np.int32,
     )
-    subd_faces[:, 3] = (
-        subd_faces[:, 1].reshape(-1, 4)[:, [3, 0, 1, 2]].flatten()
+    subdivided_faces[:, 3] = (
+        subdivided_faces[:, 1].reshape(-1, 4)[:, [3, 0, 1, 2]].flatten()
     )
 
     if return_dict:
         return dict(
             vertices=new_vertices,
-            faces=subd_faces,
+            faces=subdivided_faces,
         )
 
     else:
-        return new_vertices, subd_faces
+        return new_vertices, subdivided_faces
 
 
 def sorted_unique(connectivity, sorted_=False):
