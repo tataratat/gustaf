@@ -39,7 +39,7 @@ def box(
         quad_mesh = box(bounds=bounds, resolutions=resolutions)
 
         # turn into triangles
-        face_mesh = tosimplex(quad_mesh, backslash)
+        face_mesh = to_simplex(quad_mesh, backslash)
 
     else:
         vertex_mesh = create.vertices.raster(bounds, resolutions)
@@ -49,10 +49,10 @@ def box(
     return face_mesh
 
 
-def tosimplex(quad, backslash=False):
+def to_simplex(quad, backslash=False):
     """Given quad faces, diagonalize them to turn them into triangles.
 
-    If quad is counterclockwiese (CCW), triangle will also be CCW and
+    If quad is counterclockwise (CCW), triangle will also be CCW and
     vice versa. Will return a tri-mesh, if input is triangular.
     Default diagonalization looks like this:
 
@@ -93,7 +93,7 @@ def tosimplex(quad, backslash=False):
 
     if not isinstance(quad, Faces):
         raise ValueError(
-            "Input to tosimplex needs to be of type Faces, but it's "
+            "Input to to_simplex needs to be of type Faces, but it's "
             + type(quad)
         )
 

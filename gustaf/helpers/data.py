@@ -550,18 +550,18 @@ class VertexData(DataHolder):
         # interpret scalar as norm
         # save the norm once it is called.
         if "__norm" not in key:
-            normkey = key + "__norm"
+            norm_key = key + "__norm"
         else:
-            normkey = key
+            norm_key = key
             key = key.replace("__norm", "")
 
-        if normkey in self.keys():
-            saved = self[normkey]  # performs len check
+        if norm_key in self.keys():
+            saved = self[norm_key]  # performs len check
             # return if original is not modified
             if not self[key]._modified:  # check if original data is modified
                 return saved
             else:
-                self._saved.pop(normkey)
+                self._saved.pop(norm_key)
 
         # we are here because we have to compute norm. let's save norm
         value = self[key]
@@ -571,7 +571,7 @@ class VertexData(DataHolder):
             value_norm = np.linalg.norm(value, axis=1).reshape(-1, 1)
 
         # save norm
-        self[normkey] = value_norm
+        self[norm_key] = value_norm
         # considered not modified
         self[key]._modified = False
 
