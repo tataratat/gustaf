@@ -148,7 +148,7 @@ def close_rows(arr, tolerance=None):
     if tolerance is None:
         tolerance = settings.TOLERANCE
 
-    # Build kdtree
+    # Build kd tree
     kdt = KDTree(arr)
 
     # Ball point query, taking tolerance as radius
@@ -340,11 +340,13 @@ def rotate(arr, rotation, rotation_axis=None, degree=True):
         return np.matmul(arr, rotation_matrix(rotation, degree))
 
     else:
-        rarr = arr - rotation_axis
-        rarr = np.matmul(rarr, rotation_matrix(rotation, degree))
-        rarr += rotation_axis
+        shifted_array = arr - rotation_axis
+        shifted_array = np.matmul(
+            shifted_array, rotation_matrix(rotation, degree)
+        )
+        shifted_array += rotation_axis
 
-        return rarr
+        return shifted_array
 
 
 def rotation_matrix_around_axis(axis=None, rotation=None, degree=True):
