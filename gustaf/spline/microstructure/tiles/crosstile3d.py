@@ -33,8 +33,11 @@ class CrossTile3D(TileBase):
 
         Parameters
         ----------
-        parameters : tuple(np.ndarray)
-          radii of fitting cylinder at evaluation points
+        parameters : np.ndarray(6, 1)
+          Six evaluation points with one parameter is used. This parameter
+          describes the radius of the cylinder at the evaluation point.
+          The parameters must be a two-dimensional np.array, where the
+          value must be between 0.01 and 0.49
         closure : str
           parametric dimension that needs to be closed.
           Must be {"z_min", "z_max"}
@@ -364,9 +367,11 @@ class CrossTile3D(TileBase):
 
         Parameters
         ----------
-        parameters : np.array
-          only first entry is used, defines the internal radii of the
-          branches
+        parameters : np.array(6, 1)
+          Six evaluation points with one parameter is used. This parameter
+          describes the radius of the cylinder at the evaluation point.
+          The parameters must be a two-dimensional np.array, where the
+          value must be between 0.01 and 0.49
         center_expansion : float
           thickness of center is expanded by a factor
 
