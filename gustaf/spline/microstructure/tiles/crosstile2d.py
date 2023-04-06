@@ -32,8 +32,11 @@ class CrossTile2D(TileBase):
 
         Parameters
         ----------
-        parameters : np.ndarray
-          radii of fitting cylinder at evaluation points
+        parameters : np.ndarray(4, 1)
+          Four evaluation poinst with one parameter is used. This parameter
+          describes the radius of the cylinder at the evaluation point.
+          The parameters must be a two-dimensional np.array, where the
+          value must be between 0.01 and 0.49
         parameter_sensitivities: np.ndarray
           Describes the parameter sensitivities with respect to some design
           variable. In case the design variables directly apply to the
@@ -386,9 +389,11 @@ class CrossTile2D(TileBase):
 
         Parameters
         ----------
-        parameters : np.array
-          only first entry is used, defines the internal radii of the
-          branches
+        parameters : np.array(4, 1)
+          Four evaluation point with one parameter is used. This parameter
+          describes the radius of the cylinder at the evaluation point.
+          The parameters must be a two-dimensional np.array, where the
+          value must be between 0.01 and 0.49
         parameter_sensitivities: list(np.ndarray)
           Describes the parameter sensitivities with respect to some design
           variable. In case the design variables directly apply to the
