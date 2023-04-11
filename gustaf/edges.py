@@ -250,14 +250,14 @@ class Edges(Vertices):
         return getattr(self, elem_name)
 
     @elements.setter
-    def elements(self, elems):
+    def elements(self, elements):
         """Calls corresponding connectivity setter. A short cut in FEM friendly
         term. Vertices -> vertices Edges -> edges Faces -> faces Volumes ->
         volumes.
 
         Parameters
         -----------
-        elems: (n, d) np.ndarray
+        elements: (n, d) np.ndarray
 
         Returns
         --------
@@ -265,8 +265,8 @@ class Edges(Vertices):
         """
         # naming rule in gustaf
         elem_name = type(self).__qualname__.lower()
-        self._logd(f"seting {elem_name}'s connectivity.")
-        return setattr(self, elem_name, elems)
+        self._logd(f"Setting {elem_name}'s connectivity.")
+        return setattr(self, elem_name, elements)
 
     @property
     def const_elements(self):
@@ -398,7 +398,7 @@ class Edges(Vertices):
         for v0, v1, lins in zip(v0s, v1s, linspaces):
             new_vs.append(np.linspace(v0, v1, lins))
 
-        # we need all choped vertices.
+        # we need all chopped vertices.
         # there might be duplicating vertices. you can use merge_vertices
         new_vs = np.vstack(new_vs)
         # all mid points are explicitly defined, but they aren't required
@@ -448,14 +448,14 @@ class Edges(Vertices):
             for key, value in self.vertex_data.items():
                 s_elements.vertex_data[key] = value[elements_flat]
 
-            # probably wanna take visulation options too
+            # probably wanna take visualization options too
             s_elements._show_options._options = deepcopy(
                 self.show_options._options
             )
 
         return s_elements
 
-    def tovertices(self):
+    def to_vertices(self):
         """Returns Vertices obj.
 
         Parameters

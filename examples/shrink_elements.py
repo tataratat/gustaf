@@ -10,10 +10,10 @@ if __name__ == "__main__":
     v = gus.Volumes(vertices.vertices, connec)
 
     # v shrink - f shrink - e shrink
-    e = v.shrink().tofaces().shrink().toedges().shrink()
+    e = v.shrink().to_faces().shrink().to_edges().shrink()
     e.show_options["as_arrows"] = True
 
-    direct_toedges = v.toedges(unique=False).shrink()
+    direct_toedges = v.to_edges(unique=False).shrink()
     direct_toedges.show_options["as_arrows"] = True
 
     # not the most efficient way, but it is possible.
@@ -21,19 +21,19 @@ if __name__ == "__main__":
         ["v, Volumes", v],
         ["v.shrink()", v.shrink()],
         [
-            "v.shrink().tofaces().shrink()",
-            v.shrink().tofaces().shrink(),
+            "v.shrink().to_faces().shrink()",
+            v.shrink().to_faces().shrink(),
         ],
         [
-            "v.shrink().tofaces().shrink().toedges().shrink()",
-            v.shrink().tofaces().shrink().toedges().shrink(),
+            "v.shrink().to_faces().shrink().to_edges().shrink()",
+            v.shrink().to_faces().shrink().to_edges().shrink(),
         ],
         [
             "as arrows - useful for orientation check!",
             e,
         ],
         [
-            "v.toedges(unique=False).shrink()\nas arrows",
+            "v.to_edges(unique=False).shrink()\nas arrows",
             direct_toedges,
         ],
     )
