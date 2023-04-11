@@ -297,7 +297,7 @@ def _vedo_showable(obj, as_dict=False, **kwargs):
         cmap_keys = ("vmin", "vmax")
         cmap_kwargs = obj.show_options[cmap_keys]
         # set adefault cmap if needed
-        cmap_kwargs["cname"] = obj.show_options.get("cmap", "plasma")
+        cmap_kwargs["input_cmap"] = obj.show_options.get("cmap", "plasma")
         cmap_kwargs["alpha"] = obj.show_options.get("cmap_alpha", 1)
         # add data_name
         cmap_kwargs["input_array"] = data_name
