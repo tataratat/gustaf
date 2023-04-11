@@ -49,8 +49,10 @@ autodoc_mock_imports = [
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#options-for-html-output
 # html_theme = "piccolo_theme"
 html_theme = "furo"
-# html_logo = '_static/logo.png'
-# html_favicon = '_static/thumb.png'
+html_theme_options = {
+    "light_logo": "gus_light_mode.png",
+    "dark_logo": "gus_dark_mode.png",
+}
 
 html_static_path = ["_static"]
 
