@@ -244,7 +244,7 @@ def _vedo_showable(spline):
         # pure control mesh
         c_mesh = spline.extract.control_mesh()  # either edges or faces
         if spline.para_dim != 1:
-            c_mesh = c_mesh.toedges(unique=True)
+            c_mesh = c_mesh.to_edges(unique=True)
 
         c_mesh.show_options["c"] = "red"
         c_mesh.show_options["lw"] = 4

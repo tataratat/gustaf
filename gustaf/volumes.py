@@ -46,20 +46,20 @@ class VolumesShowOption(helpers.options.ShowOption):
 
             to_vtktype = {"tet": frau_tetra, "hexa": herr_hexa}
             grid_type = to_vtktype[self._helpee.whatami]
-            ugrid = show.vedo.UGrid(
+            u_grid = show.vedo.UGrid(
                 [
                     self._helpee.const_vertices,
                     self._helpee.const_volumes,
                     [grid_type] * len(self._helpee.const_volumes),
                 ]
             )
-            return ugrid.c("hotpink")
+            return u_grid.c("hotpink")
 
         # to show data, let's use Faces. This will plot all the elements
         # as well as invisible ones. This will at least try to avoid
         # duplicating faces.  If you wanna see inside faces, try
-        # as_shrinked_faces = volumes.tofaces(unique=False).shrink(.8)
-        faces = self._helpee.tofaces(unique=True)
+        # as_shrunk_faces = volumes.to_faces(unique=False).shrink(.8)
+        faces = self._helpee.to_faces(unique=True)
         self.copy_valid_options(faces.show_options)
 
         return faces.show_options._initialize_vedo_showable()
@@ -240,7 +240,7 @@ class Volumes(Faces):
         Returns
         --------
         unique_info: Unique2DIntegers
-          valid attribut4es are {values, ids, inverse, counts}
+          valid attributes are {values, ids, inverse, counts}
         """
         unique_info = utils.connec.sorted_unique(
             self.sorted_volumes(),
@@ -257,7 +257,7 @@ class Volumes(Faces):
         """Alias to update_elements."""
         self.update_elements(*args, **kwargs)
 
-    def tofaces(self, unique=True):
+    def to_faces(self, unique=True):
         """Returns Faces obj.
 
         Parameters

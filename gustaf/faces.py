@@ -195,7 +195,7 @@ class Faces(Edges):
 
     @faces.setter
     def faces(self, fs):
-        """Faces setter. Similar to veritces, this will be a tracked array.
+        """Faces setter. Similar to vertices, this will be a tracked array.
 
         Parameters
         -----------
@@ -220,7 +220,7 @@ class Faces(Edges):
                 strict=True,
             )
 
-        # same, but non-writeable view of tracekd array
+        # same, but non-writeable view of tracked array
         self._const_faces = self._faces.view()
         self._const_faces.flags.writeable = False
 
@@ -298,7 +298,7 @@ class Faces(Edges):
         """Alias to update_elements."""
         self.update_elements(*args, **kwargs)
 
-    def toedges(self, unique=True):
+    def to_edges(self, unique=True):
         """Returns Edges obj.
 
         Parameters

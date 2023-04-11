@@ -62,8 +62,8 @@ tet.show()
 
 # elements can transform to their subelement types
 # set unique=True, if you don't want duplicating internal subelements
-as_faces = tet.tofaces(unique=False)
-as_edges = tet.toedges(unique=False)
+as_faces = tet.to_faces(unique=False)
+as_edges = tet.to_edges(unique=False)
 
 # as geometry classes inherit from its subelement class, we can
 # extract subelement connectivity directly.
