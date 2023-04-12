@@ -104,7 +104,7 @@ class CrossTile2D(TileBase):
                 v_one_half = 0.5
                 v_one = 1.0
                 v_zero = 0.0
-                parameters = parameters
+                parameters = parameters[:, 0]
             else:
                 # Set constant values to zero for derivatives
                 fill_height = 0.0
@@ -446,7 +446,7 @@ class CrossTile2D(TileBase):
         for i_derivative in range(n_derivatives + 1):
             # Constant auxiliary values
             if i_derivative == 0:
-                [x_min_r, x_max_r, y_min_r, y_max_r] = parameters
+                [x_min_r, x_max_r, y_min_r, y_max_r] = parameters[:, 0]
                 v_one_half = 0.5
                 # center radius
                 center_r = (
