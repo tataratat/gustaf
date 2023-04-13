@@ -313,8 +313,9 @@ def _vedo_showable(obj, as_dict=False, **kwargs):
         # add data_name
         cmap_kwargs["input_array"] = dataname
 
-        # set cmap
-        vedo_obj.cmap(**cmap_kwargs)
+        # set cmap, input_cmap is removed from kwargs due to a vedo version
+        # function parameter name change. This makes it backward compatible.
+        vedo_obj.cmap(cmap_kwargs.pop("input_cmap"), **cmap_kwargs)
 
         # at last, scalarbar
         # deprecated function name, keeep it for now for backward compat
