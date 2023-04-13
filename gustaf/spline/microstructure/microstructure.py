@@ -8,7 +8,7 @@ from gustaf.spline import base
 
 
 class Microstructure(GustafBase):
-    """Helper class to facilitate the construction of microstructures."""
+    """Helper class to facilitatae the construction of microstructures."""
 
     def __init__(
         self,
@@ -17,7 +17,7 @@ class Microstructure(GustafBase):
         microtile=None,
         parametrization_function=None,
     ):
-        """Helper class to facilitate the construction of microstructures.
+        """Helper class to facilitatae the construction of microstructures.
 
         Parameters
         ----------
@@ -178,7 +178,7 @@ class Microstructure(GustafBase):
         Returns
         -------
         parametrization_function : Callable
-          Function that describes the local tile parameters
+          Function that descibes the local tile parameters
         """
         if hasattr(self, "_parametrization_function"):
             return self._parametrization_function
@@ -201,7 +201,7 @@ class Microstructure(GustafBase):
           If not None, Microtile must provide a function `closing_tile`
           Represents coordinate to be a closed surface {"x", "y", "z"}
         knot_span_wise : bool
-          Insertion per knot_span vs. total number per para_dim
+          Insertion per knotspan vs. total number per paradim
         **kwargs
           will be passed to `create_tile` function
 
@@ -232,31 +232,31 @@ class Microstructure(GustafBase):
             is_closed = True
             if closing_face_dim >= self._deformation_function.para_dim:
                 raise ValueError(
-                    "Closing face must be smaller than the deformation "
-                    "function's parametric dimension."
+                    "closing face must be smaller than the deformation "
+                    "function's parametric dimension"
                 )
             if self._parametrization_function is None:
                 raise ValueError(
-                    "Face closure is currently only implemented for "
-                    "parametrized microstructures."
+                    "Faceclosure is currently only implemented for "
+                    "parametrized microstructures"
                 )
 
         # Prepare the deformation function
-        # Transform into a non-uniform spline type and create a copy to work on
+        # Transform into a non-uniform splinetype and make sure to work on copy
         if hasattr(self._deformation_function, "bspline"):
             deformation_function_copy = self._deformation_function.bspline
         else:
             deformation_function_copy = self._deformation_function.nurbs
         # Create Spline that will be used to iterate over parametric space
-        u_kvs = deformation_function_copy.unique_knots
+        ukvs = deformation_function_copy.unique_knots
         if knot_span_wise:
             for i_pd in range(deformation_function_copy.para_dim):
                 if self.tiling[i_pd] == 1:
                     continue
                 inv_t = 1 / self.tiling[i_pd]
                 new_knots = [
-                    j * inv_t * (u_kvs[i_pd][i] - u_kvs[i_pd][i - 1])
-                    for i in range(1, len(u_kvs[i_pd]))
+                    j * inv_t * (ukvs[i_pd][i] - ukvs[i_pd][i - 1])
+                    for i in range(1, len(ukvs[i_pd]))
                     for j in range(1, self.tiling[i_pd])
                 ]
                 # insert knots in both the deformation function
@@ -267,13 +267,13 @@ class Microstructure(GustafBase):
                 " to evenly distribute tiles within the parametric domain"
             )
             for i_pd in range(deformation_function_copy.para_dim):
-                n_current_spans = len(u_kvs[i_pd]) - 1
+                n_current_spans = len(ukvs[i_pd]) - 1
                 if self.tiling[i_pd] == n_current_spans:
                     continue
                 elif self.tiling[i_pd] < n_current_spans:
                     self._logw(
                         f"The requested tiling can not be provided, as "
-                        f"there are too many knot spans in the deformation"
+                        f"there are too many knotspans in the deformation"
                         f" function. The tiling in parametric dimension "
                         f"{i_pd} will be set to {n_current_spans}"
                     )
@@ -281,7 +281,7 @@ class Microstructure(GustafBase):
                 else:
                     # Determine new knots
                     n_k_span = np.zeros(n_current_spans, dtype=int)
-                    span_measure = np.diff(u_kvs[i_pd])
+                    span_measure = np.diff(ukvs[i_pd])
                     for _ in range(self.tiling[i_pd] - n_current_spans):
                         add_knot = np.argmax(span_measure)
                         n_k_span[add_knot] += 1
@@ -293,7 +293,7 @@ class Microstructure(GustafBase):
                     for i, nks in enumerate(n_k_span):
                         new_knots.extend(
                             np.linspace(
-                                u_kvs[i_pd][i], u_kvs[i_pd][i + 1], nks + 2
+                                ukvs[i_pd][i], ukvs[i_pd][i + 1], nks + 2
                             )[1:-1]
                         )
                     deformation_function_copy.insert_knots(i_pd, new_knots)
@@ -305,7 +305,7 @@ class Microstructure(GustafBase):
         # microstructures
         is_parametrized = self.parametrization_function is not None
         if is_parametrized:
-            para_space_dimensions = [[u[0], u[-1]] for u in u_kvs]
+            para_space_dimensions = [[u[0], u[-1]] for u in ukvs]
             def_fun_para_space = base.Bezier(
                 degrees=[1] * deformation_function_copy.para_dim,
                 control_points=np.array(
@@ -436,7 +436,7 @@ class Microstructure(GustafBase):
         ----------
         updated_properties : bool
           Sets the updated_properties variable to value, which indicates,
-          whether the microstructure needs to be rebuilt
+          wheither the microstructure needs to be rebuilt
 
         Returns
         -------
