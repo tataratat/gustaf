@@ -79,6 +79,7 @@ def show_vedo(
     size = kwargs.get("size", "auto")
     cam = kwargs.get("cam", None)
     title = kwargs.get("title", "gustaf")
+    background = kwargs.get("background", "white")
     return_show_list = kwargs.get("return_showable_list", False)
 
     def clear_vedo_plotter(plotter, num_renderers, skip_cl=skip_clear):
@@ -106,7 +107,12 @@ def show_vedo(
     # get plotter
     if plt is None:
         plt = vedo.Plotter(
-            N=N, sharecam=False, offscreen=offs, size=size, title=title
+            N=N,
+            sharecam=False,
+            offscreen=offs,
+            size=size,
+            title=title,
+            bg=background,
         )
 
     else:
@@ -123,7 +129,12 @@ def show_vedo(
                 plt.close()  # Hope that this truly releases..
             # assign a new one
             plt = vedo.Plotter(
-                N=N, sharecam=False, offscreen=offs, size=size, title=title
+                N=N,
+                sharecam=False,
+                offscreen=offs,
+                size=size,
+                title=title,
+                bg=background,
             )
 
     # loop and plot
