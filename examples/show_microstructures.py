@@ -247,3 +247,15 @@ generator.show(
     resolutions=2,
     title="3D Armadilo Microstructure",
 )
+
+
+# Cube 3D without closing face
+generator = gus.spline.microstructure.microstructure.Microstructure()
+generator.microtile = gus.spline.microstructure.tiles.Cube3D()
+generator.deformation_function = gus.Bezier(
+    degrees=[1, 1], control_points=[[0, 0], [1, 0], [0, 1], [1, 1]]
+).create.extruded(extrusion_vector=[0, 0, 1])
+generator.tiling = [3, 3, 2]
+generator.show(
+    knots=False, control_points=False, title="3D Cube Microstructure"
+)

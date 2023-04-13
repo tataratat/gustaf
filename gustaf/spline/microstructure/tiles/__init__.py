@@ -13,6 +13,7 @@ from gustaf.spline.microstructure.tiles import (
 from gustaf.spline.microstructure.tiles.armadillo import Armadillo
 from gustaf.spline.microstructure.tiles.crosstile2d import CrossTile2D
 from gustaf.spline.microstructure.tiles.crosstile3d import CrossTile3D
+from gustaf.spline.microstructure.tiles.cube3d import Cube3D
 from gustaf.spline.microstructure.tiles.double_lattice_tile import (
     DoubleLatticeTile,
 )
@@ -28,6 +29,7 @@ __all__ = [
     "tilebase",
     "NutTile2D",
     "NutTile3D",
+    "Cube3D",
     "Armadillo",
     "crosstile3d",
     "snappytile",
