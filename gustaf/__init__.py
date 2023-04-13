@@ -4,6 +4,7 @@ from gustaf import (
     edges,
     faces,
     helpers,
+    interactive,
     io,
     settings,
     show,
@@ -65,4 +66,5 @@ __all__ = [
     "Bezier",
     "RationalBezier",
     "FFD",
+    "interactive",
 ]

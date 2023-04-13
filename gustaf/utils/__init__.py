@@ -1,4 +1,4 @@
-from gustaf.utils import arr, connec, log, tictoc
+from gustaf.utils import arr, connec, log, tictoc, comm
 from gustaf.utils.tictoc import Tic
 
 # Alias
@@ -10,5 +10,6 @@ __all__ = [
     "connectivity",
     "log",
     "tictoc",
+    "comm",
     "Tic",
 ]
