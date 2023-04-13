@@ -340,13 +340,13 @@ def rotate(arr, rotation, rotation_axis=None, degree=True):
         return np.matmul(arr, rotation_matrix(rotation, degree))
 
     else:
-        shifted_array = arr - rotation_axis
-        shifted_array = np.matmul(
-            shifted_array, rotation_matrix(rotation, degree)
+        rotated_array = arr - rotation_axis
+        rotated_array = np.matmul(
+            rotated_array, rotation_matrix(rotation, degree)
         )
-        shifted_array += rotation_axis
+        rotated_array += rotation_axis
 
-        return shifted_array
+        return rotated_array
 
 
 def rotation_matrix_around_axis(axis=None, rotation=None, degree=True):
