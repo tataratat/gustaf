@@ -250,14 +250,14 @@ class Edges(Vertices):
         return getattr(self, elem_name)
 
     @elements.setter
-    def elements(self, elems):
+    def elements(self, elements):
         """Calls corresponding connectivity setter. A short cut in FEM friendly
         term. Vertices -> vertices Edges -> edges Faces -> faces Volumes ->
         volumes.
 
         Parameters
         -----------
-        elems: (n, d) np.ndarray
+        elements: (n, d) np.ndarray
 
         Returns
         --------
@@ -265,8 +265,8 @@ class Edges(Vertices):
         """
         # naming rule in gustaf
         elem_name = type(self).__qualname__.lower()
-        self._logd(f"seting {elem_name}'s connectivity.")
-        return setattr(self, elem_name, elems)
+        self._logd(f"Setting {elem_name}'s connectivity.")
+        return setattr(self, elem_name, elements)
 
     @property
     def const_elements(self):
@@ -398,7 +398,7 @@ class Edges(Vertices):
         for v0, v1, lins in zip(v0s, v1s, linspaces):
             new_vs.append(np.linspace(v0, v1, lins))
 
-        # we need all choped vertices.
+        # we need all chopped vertices.
         # there might be duplicating vertices. you can use merge_vertices
         new_vs = np.vstack(new_vs)
         # all mid points are explicitly defined, but they aren't required
@@ -413,15 +413,15 @@ class Edges(Vertices):
 
         return Edges(vertices=new_vs, edges=new_es)
 
-    def shrink(self, ratio=0.8, map_vertexdata=True):
+    def shrink(self, ratio=0.8, map_vertex_data=True):
         """Returns shrunk elements.
 
         Parameters
         -----------
         ratio: float
           Default is 0.8
-        map_vertexdata: bool
-          Default is True. Maps all vertexdata.
+        map_vertex_data: bool
+          Default is True. Maps all vertex_data.
 
         Returns
         --------
@@ -443,19 +443,19 @@ class Edges(Vertices):
 
         s_elements = type(self)(vertices=vs, elements=es)
 
-        if map_vertexdata:
+        if map_vertex_data:
             elements_flat = elements.ravel()
-            for key, value in self.vertexdata.items():
-                s_elements.vertexdata[key] = value[elements_flat]
+            for key, value in self.vertex_data.items():
+                s_elements.vertex_data[key] = value[elements_flat]
 
-            # probably wanna take visulation options too
+            # probably wanna take visualization options too
             s_elements._show_options._options = deepcopy(
                 self.show_options._options
             )
 
         return s_elements
 
-    def tovertices(self):
+    def to_vertices(self):
         """Returns Vertices obj.
 
         Parameters

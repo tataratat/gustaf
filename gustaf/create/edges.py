@@ -12,7 +12,7 @@ def from_data(gus_obj, data, scale=None, data_norm=None):
     """
     Creates edges from gustaf object with vertices.
     Data can be either multi-dim array-like data or a str describing a name
-    of vertexdata that belongs to given gustaf object.
+    of vertex_data that belongs to given gustaf object.
     len(gus_obj.vertices) number of edges will be created, where origin and
     end of each edge is created using the following scheme:
     [[vertices[0], vertices[0] + (array_data[0] * scale)], ...].
@@ -26,7 +26,7 @@ def from_data(gus_obj, data, scale=None, data_norm=None):
     gus_obj: Vertices
       gus.Vertices or its derived classes
     data: str or (n_vertices, d) array-like
-     If str, will be considered as dataname and search for saved vertexdata.
+     If str, will be considered as data_name and search for saved vertex_data.
     scale: float
       Absolute value.
     data_norm: float or array-like
@@ -46,7 +46,7 @@ def from_data(gus_obj, data, scale=None, data_norm=None):
     origin = gus_obj.const_vertices
     if isinstance(data, str):
         # will raise if data doesn't exist
-        increment = gus_obj.vertexdata[data]
+        increment = gus_obj.vertex_data[data]
     elif isinstance(data, (tuple, list, np.ndarray)):
         increment = np.asanyarray(data)
         if len(increment) != len(origin):
@@ -83,7 +83,7 @@ def from_data(gus_obj, data, scale=None, data_norm=None):
     # apply default scale
     if scale is None:
         if isinstance(data, str):
-            norm = gus_obj.vertexdata.as_scalar(data, None, True)
+            norm = gus_obj.vertex_data.as_scalar(data, None, True)
         else:
             # compute
             if data_norm is None:

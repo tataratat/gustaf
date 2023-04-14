@@ -12,8 +12,8 @@ def raster(
     bounds,
     resolutions,
 ):
-    """Simple wraper of np.mgrid to extract raster points of desired bounds and
-    resolutions.
+    """Simple wrapper of np.mgrid to extract raster points of desired bounds
+    and resolutions.
 
     Parameters
     -----------

@@ -24,13 +24,13 @@ def load(fname):
     --------
     mesh: Faces or Volumes
     """
-    npzfile = np.load(fname, allow_pickle=True)
-    nodes = npzfile["nodes"]
-    _ = npzfile["cnodes"]
-    coords = npzfile["coords"]
-    _ = npzfile["tags"].item()
-    btags = npzfile["btags"].item()
-    _ = npzfile["ptags"].item()
+    npz_file = np.load(fname, allow_pickle=True)
+    nodes = npz_file["nodes"]
+    _ = npz_file["cnodes"]
+    coords = npz_file["coords"]
+    _ = npz_file["tags"].item()
+    btags = npz_file["btags"].item()
+    _ = npz_file["ptags"].item()
 
     if nodes.shape[0] == 0:
         raise TypeError("Can not find nodes. Check nutils mesh description.")
@@ -133,7 +133,7 @@ def to_nutils_simplex(mesh):
     bound_id = np.unique(bcs_in)
     bound_id = bound_id[bound_id > 0]
 
-    # Reorder the mrng according to nutils permutation: swap collumns
+    # Reorder the mrng according to nutils permutation: swap columns
     bcs_in[:, :] = bcs_in[:, permutation]
 
     # Let's reorder the bcs file with the sort_array
