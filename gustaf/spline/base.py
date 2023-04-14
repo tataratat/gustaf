@@ -2,7 +2,9 @@
 
 Base for splines. Contains show and inherited classes from `spline`.
 """
+import colorsys
 from copy import deepcopy
+from typing import List
 
 import numpy as np
 import splinepy
@@ -10,14 +12,21 @@ import splinepy
 from gustaf import show as showmodule
 from gustaf import utils
 from gustaf._base import GustafBase
-from gustaf.helpers.data import SplineData
+from gustaf.helpers.data import SplineData, SplineDataAdaptor
 from gustaf.spline import visualize
 from gustaf.spline.create import Creator
 from gustaf.spline.extract import Extractor
 from gustaf.spline.proximity import Proximity
+from gustaf.utils.arr import enforce_len
 
+def show(
+    spline,
+    parametric_space=False,
+    return_discrete=False,
+    return_showable=False,
+    **kwargs
 
-def show(spline, **kwargs):
+):
     """Shows splines with various options.
 
     They are excessively listed, so that it can be adjustable.
@@ -25,24 +34,14 @@ def show(spline, **kwargs):
     Parameters
     -----------
     spline: BSpline or NURBS
-    resolutions: int or (spline.para_dim,) array-like
-    control_points: bool
-    knots: bool
-    fitting_queries: bool
+    parametric_space: bool
+      Only relevant for `vedo` backend. Defaults to False.
     return_discrete: bool
       Return dict of gustaf discrete objects, for example,
-      {Vertices, Edges, Faces}, instead of opening a window
-    return_showable: bool
-      Return dict of showable objects.
-    parametric_space: bool
-      Only relevant for `vedo` backend.
-    c: str
-      Default is None. Black for curves, else green.
-    alpha: float
-    lighting: str
-    control_point_ids: bool
-    color_spline: str
-    cmap: str
+      {Vertices, Edges, Faces}, instead of opening a window. Defaults to False.
+    return_showable: bool  
+      If True, returns a dict of gustaf objects that are showable. Defaults to
+      False.
 
     Returns
     --------
@@ -78,18 +77,17 @@ def show(spline, **kwargs):
     # Prepare things to show dict.
     things_to_show = visualize.make_showable(spline)
 
-    para_space = kwargs.pop("parametric_space", False)
-    if para_space:
+    if parametric_space:
         p_spline = spline.create.parametric_view()
         things_to_show["parametric_spline"] = p_spline
 
-    if kwargs.get("return_discrete", False):
+    if return_discrete:
         return things_to_show
 
-    if kwargs.get("return_showable", False):
+    if return_showable:
         return {key: value.showable() for key, value in things_to_show.items()}
 
-    if para_space:
+    if parametric_space:
         things_to_show.pop("parametric_spline")
 
         return showmodule.show_vedo(
@@ -547,6 +545,119 @@ class NURBS(GustafSpline, splinepy.NURBS):
         """
         return self.copy()
 
+
+class Multipatch(GustafBase, splinepy.Multipatch):
+    __show_option__ = visualize.MultipatchShowOption
+
+    def __init__(
+        self,
+        splines=None,
+        interfaces=None,
+        as_boundary=False,
+    ):
+        """
+        Multipatch
+        Parameters
+        ----------
+        splines : list-like
+          List of splines to store as multipatch
+        interfaces : array-like
+          Defines the connectivity in between patches
+        as_boundary : bool
+          Multipatch is a boundary object of a higher dimensional geometry. If
+          set to true, additional checks are performed on the interfaces,
+          requiring strict inter connectivity between all patches
+        Returns
+        -------
+        None
+        """
+        splinepy.Multipatch.__init__(
+            self,
+            splines=splines,
+            interfaces=interfaces,
+        )
+        GustafBase.__init__(self)
+        self._show_options = self.__show_option__(self)
+
+    @property
+    def show_options(self):
+        """
+        Show option manager for multipatch systems.
+        Parameters
+        ----------
+        None
+        Returns
+        -------
+        show_options: MultipatchShowOption
+        """
+        return self._show_options
+
+    def show(self):
+        """Show the multipatch system."""
+        # Retrieve show options out of valid options
+        spline_list: List[GustafSpline] = self.splines.copy()
+        # define custom colors for each boundary patch
+        if self.show_options.get("boundary_ids", False):
+            bsp = self.boundary_patches().splines
+            bsp_id = np.abs(self.interfaces[self.interfaces < 0])
+            n_unique = len(np.unique(bsp_id)) # number of unique boundaries
+            # create n_unique random colors
+            colors = [
+                tuple(np.array(colorsys.hsv_to_rgb(i / n_unique, 1, 1)) * 255)
+                for i in range(n_unique)
+            ]
+            np.random.shuffle(colors)
+            for id, patch in zip(bsp_id, bsp):
+                # assign color to each corresponding patch
+                patch.show_options["c"] = colors[bsp_id[id] - 1]
+            spline_list.extend(bsp)
+        # field data adaptation for multipatch
+        field_data = self.show_options.get("field_function", False)
+        v_min, v_max = np.inf, -np.inf
+        if field_data:
+            if type(field_data) is callable:
+                for spline in self.splines:
+                    res = enforce_len(
+                        spline.show_options.get("resolutions", 100),
+                        spline.para_dim,
+                    )
+                    spline.spline_data["field_data"] = SplineDataAdaptor(
+                        spline, function=field_data
+                    )
+                    a = spline.spline_data.as_scalar("field_data", res)
+                    v_min = min(v_min, np.min(a))
+                    v_max = max(v_max, np.max(a))
+            elif type(field_data) is str and field_data == "me":
+                for spline in self.splines:
+                    res = enforce_len(
+                        spline.show_options.get("resolutions", 100),
+                        spline.para_dim,
+                    )
+                    spline.spline_data["field_data"] = spline
+                    spline.show_options["data_name"] = "field_data"
+                    a = spline.spline_data.as_scalar("field_data", res)
+                    v_min = min(v_min, np.min(a))
+                    v_max = max(v_max, np.max(a))
+            else:
+                self._logw("The field function is not valid.")
+        self.show_options["vmin"] = float(v_min)
+        self.show_options["vmax"] = float(v_max)
+
+        # Check if return showable is requested and ensure it is set to false
+        # when enquiring show module
+
+        # first copy the show options of the multipatch to all splines
+        if self.show_options.get("overwrite_spline_options", False):
+            for spline in spline_list:
+                # print(self.show_options["control_points"],spline.show_options["control_points"])
+                self.show_options.copy_valid_options(spline.show_options)
+                # print(self.show_options["control_points"],spline.show_options["control_points"])
+
+        return showmodule(spline_list)
+
+    def showable(self, **kwargs):
+        kwargs["return_showable"] = False
+        return self.show(self, **kwargs)
 
 def from_mfem(nurbs_dict):
     """Construct a gustaf NURBS. Reorganizes control points and weights.

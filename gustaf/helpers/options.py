@@ -4,6 +4,8 @@ Classes to help organize options.
 """
 from copy import deepcopy
 
+import numpy as np
+
 from gustaf import settings
 
 
@@ -65,8 +67,8 @@ vedo_common_options = (
         "vedo",
         "lighting",
         "Lighting options {'default', 'metallic', 'plastic', 'shiny', "
-        "'glossy', 'ambient', 'off'}",
-        (str,),
+        "'glossy', 'ambient', 'off', None}",
+        (str, type(None),),
     ),
     Option("vedo", "cmap", "Colormap for vertex_data plots.", (str,)),
     Option("vedo", "vmin", "Minimum value for cmap", (float, int)),
@@ -74,7 +76,7 @@ vedo_common_options = (
     Option(
         "vedo",
         "cmap_alpha",
-        "Colormap Transparency in range [0, 1].",
+        "Transparency of the color or cmap of the object in range [0, 1].",
         (float, int),
     ),
     Option(
@@ -205,6 +207,21 @@ class ShowOption:
         ]
         return "\n".join(header + valid_and_current)
 
+    def _is_in_allowed_types(self, key, value) -> bool:
+        """
+        Checks if value is in allowed types.
+        Parameters
+        ----------
+        key: str
+        value: object
+        Returns
+        -------
+        is_in: bool
+        """
+        return isinstance(
+            value, self._valid_options[self._backend][key].allowed_types
+        )
+
     def __setitem__(self, key, value):
         """
         Sets option after checking its validity.
@@ -220,9 +237,7 @@ class ShowOption:
         """
         if key in self._valid_options[self._backend].keys():
             # valid type check
-            if not isinstance(
-                value, self._valid_options[self._backend][key].allowed_types
-            ):
+            if not self._is_in_allowed_types(key, value):
                 raise TypeError(
                     f"{type(value)} is invalid value type for '{key}'. "
                     f"Details for '{key}':\n"
@@ -411,7 +426,30 @@ class ShowOption:
 
         for key, value in items:
             if key in valid_keys:
-                copy_to[key] = deepcopy(value)  # is deepcopy necessary?
+                copy_to[key] = value
+
+    def overwrite_from_dict(self, copy_from, keys=None):
+        """
+        Copies valid option from dictionary.
+        Parameters
+        ----------
+        copy_from: dict
+        keys: tuple or list
+          Can specify keys
+        Returns
+        -------
+        None
+        """
+        valid_keys = self.valid_keys()
+
+        if keys is not None:
+            items = copy_from[keys].items()
+        else:
+            items = copy_from.items()
+
+        for key, value in items:
+            if key in valid_keys:
+                self[key] = deepcopy(value)
 
     def _initialize_showable(self):
         """

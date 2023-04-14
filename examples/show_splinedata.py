@@ -73,7 +73,7 @@ if __name__ == "__main__":
     b.spline_data["me"] = b
     b.show_options["data_name"] = "me"
     b.show_options["arrow_data"] = "me"
-    b.show_options["arrow_data_on"] = np.random.random((100, 2))  # para_coords
+    b.show_options["arrow_data_coordinates"] = np.random.random((100, 2))  # para_coords
     gus.show(
         ["3. Show coordinates norm and as arrows on 100 random points.", b]
     )
@@ -83,7 +83,7 @@ if __name__ == "__main__":
     b.spline_data["me"] = b
     b.show_options["data_name"] = "me"
     b.show_options["arrow_data"] = "me"
-    b.show_options["arrow_data_on"] = np.random.random((100, 2))  # para_coords
+    b.show_options["arrow_data_coordinates"] = np.random.random((100, 2))  # para_coords
     b.show_options["scalarbar"] = True
     gus.show(
         ["4. Show 3. and 3. in parametric space view with scalarbar.", b],
@@ -104,7 +104,7 @@ if __name__ == "__main__":
         elif on is not None:
             return data.derivative(on, [0, 1])
 
-    # use adaptor to defie a data
+    # use adaptor to define a data
     plot_func_data = gus.spline.SplineDataAdaptor(b, function=plot_func)
     # the rest is the same
     b = bspline2p3d()
@@ -112,7 +112,7 @@ if __name__ == "__main__":
     b.show_options["arrow_data"] = "der01"
     gus.show(
         [
-            "5. Show partial derivative of seconda parametric dimension.\n"
+            "5. Show partial derivative of second parametric dimension.\n"
             "This uses a callback function and SplineDataAdaptor.\n"
             "Also achievable with derivative spline.",
             b,
@@ -124,7 +124,7 @@ if __name__ == "__main__":
     b = bspline2p3d()
     b.spline_data["der01"] = plot_func_data
     b.show_options["arrow_data"] = "der01"
-    b.show_options["arrow_data_on"] = np.random.random((100, 2))  # para_coords
+    b.show_options["arrow_data_coordinates"] = np.random.random((100, 2))  # para_coords
     b.show_options["arrow_data_color"] = "gold"
     gus.show(
         [
@@ -184,7 +184,7 @@ if __name__ == "__main__":
     b.show_options["arrow_data"] = "deformed"
     # arrows are always automatically scaled. for this one, let's not
     b.show_options["arrow_data_scale"] = 1
-    b.show_options["arrow_data_on"] = locations
+    b.show_options["arrow_data_coordinates"] = locations
     # let's see in parametric space
     p_view = b.create.parametric_view()  # shallow copies data and options
     p_view.show_options.pop("arrow_data_scale")  # we want automatic scaling
@@ -194,13 +194,13 @@ if __name__ == "__main__":
     gus.show(
         [
             "7. Original spline, deformed spline\n"
-            "and pointwise correspondence on selected locations.",
+            "and point wise correspondence on selected locations.",
             b,
             deformed,
         ],
         [
             "Parametric view of displacements.\n"
-            "Arrows are directly transfered with automatic rescaling.\n"
+            "Arrows are directly transferred with automatic rescaling.\n"
             "(no inverse mapping)",
             p_view,
         ],
@@ -215,14 +215,14 @@ if __name__ == "__main__":
         ],
         [
             "Parametric view of displacements.\n"
-            "Arrows are directly transfered with automatic rescaling.\n"
+            "Arrows are directly transferred with automatic rescaling.\n"
             "(no inverse mapping)",
             p_view,
         ],
     )
 
     # 8. fixed location data that uses callback
-    # predefind some locations
+    # predefined some locations
     bottom = gus.spline.create.arc(radius=0.5, angle=-180)  # zero centered
     bottom.cps += [0.5, 0.55]
     circle1 = gus.spline.create.circle(radius=0.1)
