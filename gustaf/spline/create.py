@@ -261,7 +261,7 @@ def from_bounds(parametric_bounds, physical_bounds):
     physical_bounds = np.asanyarray(physical_bounds).reshape(2, -1)
     parametric_bounds = np.asanyarray(parametric_bounds).reshape(2, -1)
 
-    # get correctly sized bezbox
+    # get correctly sized bez box
     phys_size = physical_bounds[1] - physical_bounds[0]
 
     # minimal bspline
@@ -271,8 +271,8 @@ def from_bounds(parametric_bounds, physical_bounds):
     # update parametric bounds
     for i, kv in enumerate(bspline_box.kvs):
         # apply scale and offset
-        newkv = (kv * parametric_bounds[1][i]) + parametric_bounds[0][i]
-        bspline_box.kvs[i] = newkv
+        new_kv = (kv * parametric_bounds[1][i]) + parametric_bounds[0][i]
+        bspline_box.kvs[i] = new_kv
 
     return bspline_box
 
@@ -282,7 +282,7 @@ def parametric_view(spline, axes=True):
     `naive_spline()`. Degrees are always 1 and knot multiplicity is not
     preserved. Returns BSpline, as BSpline and NURBS should look the same as
     parametric view.
-    Will take shallow copy of underlying data of splinedata and show_options
+    Will take shallow copy of underlying data of spline_data and show_options
     from original spline.
 
     Parameters
@@ -306,7 +306,7 @@ def parametric_view(spline, axes=True):
             para_spline.insert_knots(i, kv[1:-1])
 
     # take shallow copy
-    para_spline._splinedata._saved = spline.splinedata._saved.copy()
+    para_spline._spline_data._saved = spline.spline_data._saved.copy()
     para_spline._show_options._options[
         para_spline._show_options._backend
     ] = spline.show_options._options[spline._show_options._backend].copy()
@@ -315,13 +315,13 @@ def parametric_view(spline, axes=True):
         # configure axes
         bs = p_bounds
         bs_diff_001 = (bs[1] - bs[0]) * 0.001
-        lowerb = bs[0] - bs_diff_001
-        upperb = bs[1] + bs_diff_001
+        lower_b = bs[0] - bs_diff_001
+        upper_b = bs[1] + bs_diff_001
         axes_config = dict(
             xtitle="u",
             ytitle="v",
-            xrange=[lowerb[0], upperb[0]],
-            yrange=[lowerb[1], upperb[1]],
+            xrange=[lower_b[0], upper_b[0]],
+            yrange=[lower_b[1], upper_b[1]],
             tip_size=0,
             xminor_ticks=3,
             yminor_ticks=3,
@@ -330,7 +330,7 @@ def parametric_view(spline, axes=True):
         )
         if spline.para_dim == 3:
             axes_config.update(ztitle="w")
-            axes_config.update(zrange=[lowerb[2], upperb[2]])
+            axes_config.update(zrange=[lower_b[2], upper_b[2]])
             axes_config.update(zminor_ticks=3)
             axes_config.update(zxgrid=False)
 
@@ -420,16 +420,16 @@ def arc(
         point_spline = point_spline.nurbs
 
     # Revolve - set degree to False, since all the angles are converted to rad
-    arc_attribs = point_spline.create.revolved(
+    arc_attrib = point_spline.create.revolved(
         angle=angle, n_knot_spans=n_knot_spans, degree=False
     ).todict()
-    # Remove the first parametric dimenions, which is only a point and
+    # Remove the first parametric dimensions, which is only a point and
     # only used for the revolution
-    arc_attribs["degrees"] = list(arc_attribs["degrees"])[1:]
+    arc_attrib["degrees"] = list(arc_attrib["degrees"])[1:]
     if point_spline.has_knot_vectors:
-        arc_attribs["knot_vectors"] = list(arc_attribs["knot_vectors"])[1:]
+        arc_attrib["knot_vectors"] = list(arc_attrib["knot_vectors"])[1:]
 
-    return type(point_spline)(**arc_attribs)
+    return type(point_spline)(**arc_attrib)
 
 
 def circle(radius=1.0, n_knot_spans=3):
@@ -451,7 +451,7 @@ def circle(radius=1.0, n_knot_spans=3):
 
 
 def box(*lengths):
-    """ND box (hyperrectangle).
+    """ND box (hyper rectangle).
 
     Parameters
     ----------
@@ -459,18 +459,18 @@ def box(*lengths):
 
     Returns
     -------
-    ndbox: Bezier
+    nd_box: Bezier
     """
     from gustaf import Bezier
 
     # may dim check here?
     # starting point
-    ndbox = Bezier(degrees=[1], control_points=[[0], [lengths[0]]])
+    nd_box = Bezier(degrees=[1], control_points=[[0], [lengths[0]]])
     # use extrude
     for i, l in enumerate(lengths[1:]):
-        ndbox = ndbox.create.extruded([0] * int(i + 1) + [l])
+        nd_box = nd_box.create.extruded([0] * int(i + 1) + [l])
 
-    return ndbox
+    return nd_box
 
 
 def plate(radius=1.0):
@@ -577,7 +577,7 @@ def torus(
     section_inner_radius : float, optional
       Inner radius in case of hollow torus, by default 0.
     torus_angle : float, optional
-      Rotational anlge of the torus, by default None, giving a complete
+      Rotational angle of the torus, by default None, giving a complete
       revolution
     section_angle : float, optional
       Rotational angle, by default None, yielding a complete revolution
@@ -703,7 +703,7 @@ def cone(
     Returns
     -------
     cone: NURBS
-      Volumetric or surface NURBS descibing a cone
+      Volumetric or surface NURBS describing a cone
     """
 
     if volumetric:
@@ -733,7 +733,7 @@ def pyramid(width, length, height):
     ----------
     width : float
       Dimension of base in x-axis
-    lenght : float
+    length : float
       Dimension of base in y-axis
     height : float
       Height in z-direction
@@ -758,8 +758,8 @@ class Creator:
 
     Examples
     ---------
-    >>> myspline = <your-spline>
-    >>> spline_faces = myspline.create.extrude(vector=[3,1,3])
+    >>> my_spline = <your-spline>
+    >>> spline_faces = my_spline.create.extrude(vector=[3,1,3])
     """
 
     def __init__(self, spl):

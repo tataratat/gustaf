@@ -18,8 +18,9 @@ from gustaf.spline.proximity import Proximity
 
 
 def show(spline, **kwargs):
-    """Shows splines with various options. They are excessively listed, so that
-    it can be adjustable.
+    """Shows splines with various options.
+
+    They are excessively listed, so that it can be adjustable.
 
     Parameters
     -----------
@@ -104,7 +105,7 @@ class GustafSpline(GustafBase):
     __show_option__ = visualize.SplineShowOption
 
     def __init__(self):
-        """Contructor as abstractmethod.
+        """Constructor as abstractmethod.
 
         This needs to be inherited first to make sure duplicating
         functions properly override splinepy.Spline
@@ -113,7 +114,7 @@ class GustafSpline(GustafBase):
         self._proximity = Proximity(self)
         self._creator = Creator(self)
         self._show_options = self.__show_option__(self)
-        self._splinedata = SplineData(self)
+        self._spline_data = SplineData(self)
 
     @property
     def show_options(self):
@@ -131,7 +132,7 @@ class GustafSpline(GustafBase):
         return self._show_options
 
     @property
-    def splinedata(self):
+    def spline_data(self):
         """
         Spline data helper for splines.
 
@@ -141,19 +142,19 @@ class GustafSpline(GustafBase):
 
         Returns
         -------
-        splinedata: SplineData
+        spline_data: SplineData
         """
-        return self._splinedata
+        return self._spline_data
 
     @property
     def extract(self):
-        """Returns spline extracter. Can directly perform extractions available
+        """Returns spline extractor. Can directly perform extractions available
         at `gustaf/spline/extract.py`. For more info, take a look at
-        `gustaf/spline/extract.py`: Extracter.
+        `gustaf/spline/extract.py`: Extractor.
 
         Examples
         ---------
-        >>> splinefaces = spline.extract.faces()
+        >>> spline_faces = spline.extract.faces()
 
         Parameters
         -----------
@@ -161,7 +162,7 @@ class GustafSpline(GustafBase):
 
         Returns
         --------
-        spline_extracter: Extracter
+        spline_extractor: Extractor
         """
         return self._extractor
 

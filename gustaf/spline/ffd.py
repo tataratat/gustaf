@@ -442,9 +442,9 @@ class FFD(GustafBase):
         # let's show faces at most, since volumes can take awhile
         if o_mesh.kind == "volume":
             # only outer faces. overwrite
-            o_mesh = o_mesh.tofaces(unique=False)
+            o_mesh = o_mesh.to_faces(unique=False)
             o_mesh.update_faces(o_mesh.single_faces())
-            d_mesh = d_mesh.tofaces(unique=False)
+            d_mesh = d_mesh.to_faces(unique=False)
             d_mesh.update_faces(d_mesh.single_faces())
 
         # update meshes
@@ -461,7 +461,7 @@ class FFD(GustafBase):
             return things_to_show
 
         if return_showable:
-            # let's turn everthing into showable and return
+            # let's turn everything into showable and return
             for k, v in things_to_show.items():
                 if isinstance(v, GustafBase):
                     things_to_show[k] = v.showable()

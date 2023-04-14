@@ -50,7 +50,7 @@ class BasicCallsTest(unittest.TestCase):
         es.referenced_vertices()
         es.dashed()
         es.shrink()
-        es.tovertices()
+        es.to_vertices()
         es.single_edges()
         es.remove_unreferenced_vertices()
 
@@ -73,7 +73,7 @@ class BasicCallsTest(unittest.TestCase):
             fs.centers()
             fs.referenced_vertices()
             fs.shrink()
-            fs.tovertices()
+            fs.to_vertices()
             fs.remove_unreferenced_vertices()
 
             # fs.update_faces()
@@ -87,7 +87,7 @@ class BasicCallsTest(unittest.TestCase):
             vs.const_volumes
             vs.sorted_volumes()
             vs.unique_volumes()
-            vs.tofaces()
+            vs.to_faces()
 
             vs.sorted_edges()
             vs.unique_edges()
@@ -95,7 +95,7 @@ class BasicCallsTest(unittest.TestCase):
             vs.centers()
             vs.referenced_vertices()
             vs.shrink()
-            vs.tovertices()
+            vs.to_vertices()
             vs.remove_unreferenced_vertices()
 
             vs.sorted_faces()

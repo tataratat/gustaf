@@ -62,8 +62,8 @@ class SplineShowOption(options.ShowOption):
         ),
         options.Option(
             "vedo",
-            "arrowdata_on",
-            "Specify parametric coordinates to place arrowdata.",
+            "arrow_data_on",
+            "Specify parametric coordinates to place arrow_data.",
             (list, tuple, np.ndarray),
         ),
     )
@@ -94,7 +94,7 @@ def make_showable(spline):
 
 def _vedo_showable(spline):
     """
-    Goes through common precedures for preparing showable splines.
+    Goes through common procedures for preparing showable splines.
 
     Parameters
     ----------
@@ -128,41 +128,41 @@ def _vedo_showable(spline):
     res = enforce_len(
         spline.show_options.get("resolutions", 100), spline.para_dim
     )
-    dataname = spline.show_options.get("dataname", None)
-    sampled_splinedata = spline.splinedata.as_scalar(
-        dataname, res, default=None
+    data_name = spline.show_options.get("data_name", None)
+    sampled_spline_data = spline.spline_data.as_scalar(
+        data_name, res, default=None
     )
-    if dataname is not None and sampled_splinedata is not None:
+    if data_name is not None and sampled_spline_data is not None:
         # transfer data
-        sampled_spline.vertexdata[dataname] = sampled_splinedata
+        sampled_spline.vertex_data[data_name] = sampled_spline_data
 
         # transfer options - maybe vectorized query?
-        keys = ("vmin", "vmax", "scalarbar", "cmap", "cmapalpha")
+        keys = ("vmin", "vmax", "scalarbar", "cmap", "cmap_alpha")
         spline.show_options.copy_valid_options(
             sampled_spline.show_options, keys
         )
 
         # mark that we want to see this data
-        sampled_spline.show_options["dataname"] = dataname
+        sampled_spline.show_options["data_name"] = data_name
 
-    elif dataname is not None and sampled_splinedata is None:
-        log.debug(f"No splinedata named ({dataname}) for {spline}. Skipping")
+    elif data_name is not None and sampled_spline_data is None:
+        log.debug(f"No spline_data named ({data_name}) for {spline}. Skipping")
 
     # with arrow representable, vector data
-    adata_name = spline.show_options.get("arrowdata", None)
-    adapted_adata = spline.splinedata.get(adata_name, None)
+    adata_name = spline.show_options.get("arrow_data", None)
+    adapted_adata = spline.spline_data.get(adata_name, None)
     if adata_name is not None and adapted_adata is not None:
         # if location is specified, this will be a separate Vertices obj with
-        # configured arrowdata
+        # configured arrow_data
         has_locations = adapted_adata.has_locations
-        adata_on = "arrowdata_on" in spline.show_options.keys()
+        adata_on = "arrow_data_on" in spline.show_options.keys()
         create_vertices = has_locations or adata_on
 
         # this case causes conflict of interest. raise
         if has_locations and adata_on:
             raise ValueError(
-                f"arrowdata-({adata_name}) has fixed location, "
-                "but and `arrowdata_on` is set.",
+                f"arrow_data-({adata_name}) has fixed location, "
+                "but and `arrow_data_on` is set.",
             )
 
         if create_vertices:
@@ -171,14 +171,14 @@ def _vedo_showable(spline):
                 queries = adapted_adata.locations
                 on = None
             else:
-                queries = spline.show_options["arrowdata_on"]
+                queries = spline.show_options["arrow_data_on"]
                 on = queries
 
             # bound /  dim check
             bounds = spline.parametric_bounds
             if queries.shape[1] != len(bounds[0]):
                 raise ValueError(
-                    "Dimension mismatch: arrowdata locations-"
+                    "Dimension mismatch: arrow_data locations-"
                     f"{queries.shape[1]} / para_dim-{spline.para_dim}."
                 )
             # tolerance padding. may still cause issues in splinepy.
@@ -192,27 +192,27 @@ def _vedo_showable(spline):
                 )
 
             # get arrow
-            adata = spline.splinedata.as_arrow(adata_name, on=on)
+            adata = spline.spline_data.as_arrow(adata_name, on=on)
 
             # create vertices that can be shown as arrows
             loc_vertices = Vertices(spline.evaluate(queries), copy=False)
-            loc_vertices.vertexdata[adata_name] = adata
+            loc_vertices.vertex_data[adata_name] = adata
 
             # transfer options
-            keys = ("arrowdata_scale", "arrowdata_color", "arrowdata")
+            keys = ("arrow_data_scale", "arrow_data_color", "arrow_data")
             spline.show_options.copy_valid_options(
                 loc_vertices.show_options, keys
             )
 
             # add to primitives
-            gus_primitives["arrowdata"] = loc_vertices
+            gus_primitives["arrow_data"] = loc_vertices
 
         else:  # sample arrows and append to sampled spline.
-            sampled_spline.vertexdata[adata_name] = spline.splinedata.as_arrow(
-                adata_name, resolutions=res
-            )
+            sampled_spline.vertex_data[
+                adata_name
+            ] = spline.spline_data.as_arrow(adata_name, resolutions=res)
             # transfer options
-            keys = ("arrowdata_scale", "arrowdata_color", "arrowdata")
+            keys = ("arrow_data_scale", "arrow_data_color", "arrow_data")
             spline.show_options.copy_valid_options(
                 sampled_spline.show_options, keys
             )
@@ -242,17 +242,17 @@ def _vedo_showable(spline):
 
     if spline.show_options.get("control_mesh", show_cps):
         # pure control mesh
-        cmesh = spline.extract.control_mesh()  # either edges or faces
+        c_mesh = spline.extract.control_mesh()  # either edges or faces
         if spline.para_dim != 1:
-            cmesh = cmesh.toedges(unique=True)
+            c_mesh = c_mesh.to_edges(unique=True)
 
-        cmesh.show_options["c"] = "red"
-        cmesh.show_options["lw"] = 4
-        cmesh.show_options["alpha"] = spline.show_options.get(
+        c_mesh.show_options["c"] = "red"
+        c_mesh.show_options["lw"] = 4
+        c_mesh.show_options["alpha"] = spline.show_options.get(
             "control_points_alpha", 0.8
         )
         # add
-        gus_primitives["control_mesh"] = cmesh
+        gus_primitives["control_mesh"] = c_mesh
 
     # fitting queries
     if hasattr(spline, "_fitting_queries") and spline.show_options.get(
@@ -267,8 +267,7 @@ def _vedo_showable(spline):
 
 
 def _vedo_showable_para_dim_1(spline):
-    """
-    Assumes showability check has been already performed
+    """Assumes showability check has been already performed.
 
     Parameters
     ----------

@@ -54,9 +54,9 @@ vedo_common_options = (
     Option("vedo", "alpha", "Transparency in range [0, 1].", (float, int)),
     Option(
         "vedo",
-        "dataname",
-        "Name of vertexdata to show. "
-        "Object must have vertexdata with the same name.",
+        "data_name",
+        "Name of vertex_data to show. "
+        "Object must have vertex_data with the same name.",
         (str,),
     ),
     Option("vedo", "vertex_ids", "Show ids of vertices", (bool,)),
@@ -68,12 +68,12 @@ vedo_common_options = (
         "'glossy', 'ambient', 'off'}",
         (str,),
     ),
-    Option("vedo", "cmap", "Colormap for vertexdata plots.", (str,)),
+    Option("vedo", "cmap", "Colormap for vertex_data plots.", (str,)),
     Option("vedo", "vmin", "Minimum value for cmap", (float, int)),
     Option("vedo", "vmax", "Maximum value for cmap", (float, int)),
     Option(
         "vedo",
-        "cmapalpha",
+        "cmap_alpha",
         "Colormap Transparency in range [0, 1].",
         (float, int),
     ),
@@ -89,21 +89,21 @@ vedo_common_options = (
     ),
     Option(
         "vedo",
-        "arrowdata",
-        "Name of vertexdata to plot as arrow. Corresponding data should be "
+        "arrow_data",
+        "Name of vertex_data to plot as arrow. Corresponding data should be "
         "at least 2D. If you want more control over arrows, consider creating "
         "edges using gus.create.edges.from_data().",
         (str,),
     ),
     Option(
         "vedo",
-        "arrowdata_scale",
+        "arrow_data_scale",
         "Scaling factor for arrow data.",
         (float, int),
     ),
     Option(
         "vedo",
-        "arrowdata_color",
+        "arrow_data_color",
         "Color for arrow data. Can be either cmap name or color. For "
         "cmap, colors are based on the size of the arrows.",
         (str, tuple, list, int),
@@ -148,7 +148,7 @@ def make_valid_options(*options):
 class ShowOption:
     """
     Behaves similar to dict, but will only accept a set of options that's
-    applicable to the helpee class. Intented use is to create a
+    applicable to the helpee class. Intended use is to create a
     subclass that would define valid options for helpee.
     Options should be described by Option object.
     Helps all the way up to initializing backend showables up to their backend
@@ -388,7 +388,7 @@ class ShowOption:
 
     def copy_valid_options(self, copy_to, keys=None):
         """
-        Copies valid option to other showopts. Simply iterates and treis.
+        Copies valid option to other show_option. Simply iterates and tries.
 
         Parameters
         ----------

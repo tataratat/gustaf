@@ -62,8 +62,8 @@ tet.show()
 
 # elements can transform to their subelement types
 # set unique=True, if you don't want duplicating internal subelements
-as_faces = tet.tofaces(unique=False)
-as_edges = tet.toedges(unique=False)
+as_faces = tet.to_faces(unique=False)
+as_edges = tet.to_edges(unique=False)
 
 # as geometry classes inherit from its subelement class, we can
 # extract subelement connectivity directly.
@@ -91,10 +91,10 @@ assert np.allclose(
 )
 
 # let's visualize some scalar data and vector data defined on vertices
-tet.vertexdata["arange"] = np.arange(len(tet.vertices))  # scalar
-tet.show_options["dataname"] = "arange"
-tet.vertexdata["random"] = np.random.random((len(tet.vertices), 3))  # vector
-tet.show_options["arrowdata"] = "random"
+tet.vertex_data["arange"] = np.arange(len(tet.vertices))  # scalar
+tet.show_options["data_name"] = "arange"
+tet.vertex_data["random"] = np.random.random((len(tet.vertices), 3))  # vector
+tet.show_options["arrow_data"] = "random"
 tet.show()
 
 
@@ -148,11 +148,11 @@ extruded = nurbs.create.extruded(extrusion_vector=[0, 0, 1])
 revolved = nurbs.create.revolved(axis=[1, 0, 0], angle=70)
 parametric_view = nurbs.create.parametric_view()
 
-# just like vertexdata, you can define splinedata
+# just like vertex_data, you can define spline_data
 # for more options, checkout `gus.spline.SplineDataAdaptor`
 # following will plot the norm of nurbs' physical coordinates
-nurbs.splinedata["coords"] = nurbs
-nurbs.show_options["dataname"] = "coords"
+nurbs.spline_data["coords"] = nurbs
+nurbs.show_options["data_name"] = "coords"
 
 # show them all together. each arg is plotted on a separate subplot
 # translate tet a bit to avoid overlapping

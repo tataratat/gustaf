@@ -81,10 +81,10 @@ def load(
         bcs_in = np.fromfile(mrng, dtype=">i").astype(np.int32)  # flattened
         uniq_bcs_in = np.unique(bcs_in)
         uniq_bcs_in = uniq_bcs_in[uniq_bcs_in > 0]  # keep only natural nums
-        subelemids = np.arange(bcs_in.size)
+        sub_elem_ids = np.arange(bcs_in.size)
 
         for ubci in uniq_bcs_in:
-            bcs.update({str(ubci): subelemids[bcs_in == ubci]})
+            bcs.update({str(ubci): sub_elem_ids[bcs_in == ubci]})
 
     except BaseException:
         log.debug(f"mrng file, `{mrng}`, does not exist. Skipping.")
@@ -121,7 +121,7 @@ def export(
     mesh: Faces or Volumes
     fname: str
     space_time : bool
-      Export Mesh as Space-Time Slab for discontinous space-time
+      Export Mesh as Space-Time Slab for discontinuous space-time
 
     Returns
     --------
@@ -229,7 +229,7 @@ def make_mrng(mesh):
       The mrng-array.
     """
 
-    # determine number of subelements
+    # determine number of sub elements
     whatami = mesh.whatami
     nbelem = 3
 

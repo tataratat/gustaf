@@ -91,10 +91,10 @@ class Vertices(GustafBase):
         "_computed",
         "_show_options",
         "_setter_copies",
-        "_vertexdata",
+        "_vertex_data",
     )
 
-    # define freuqently used types as dunder variable
+    # define frequently used types as dunder variable
     __show_option__ = VerticesShowOption
 
     def __init__(
@@ -119,7 +119,7 @@ class Vertices(GustafBase):
         self.vertices = vertices
 
         # init helpers
-        self._vertexdata = helpers.data.VertexData(self)
+        self._vertex_data = helpers.data.VertexData(self)
         self._computed = helpers.data.ComputedMeshData(self)
         self._show_options = self.__show_option__(self)
 
@@ -168,10 +168,10 @@ class Vertices(GustafBase):
         self._const_vertices = self._vertices.view()
         self._const_vertices.flags.writeable = False
 
-        # at each setting, validate vertexdata
+        # at each setting, validate vertex_data
         # --> by len mismatch, will clear data
-        if hasattr(self, "vertexdata"):
-            self.vertexdata._validate_len(raise_=False)
+        if hasattr(self, "vertex_data"):
+            self.vertex_data._validate_len(raise_=False)
 
     @property
     def const_vertices(self):
@@ -190,9 +190,9 @@ class Vertices(GustafBase):
         return self._const_vertices
 
     @property
-    def vertexdata(self):
+    def vertex_data(self):
         """
-        Returns vertexdata manager. Behaves similar to dict() and can be used
+        Returns vertex_data manager. Behaves similar to dict() and can be used
         to store values/data associated with each vertex.
 
         Parameters
@@ -201,10 +201,10 @@ class Vertices(GustafBase):
 
         Returns
         -------
-        vertexdata: VertexData
+        vertex_data: VertexData
         """
-        self._logd("returning vertexdata")
-        return self._vertexdata
+        self._logd("returning vertex_data")
+        return self._vertex_data
 
     @property
     def setter_copies(self):
@@ -345,7 +345,7 @@ class Vertices(GustafBase):
 
         Returns
         --------
-        bounds_digonal: (d,) np.ndarray
+        bounds_diagonal: (d,) np.ndarray
           same as `bounds[1] - bounds[0]`
         """
         self._logd("computing bounds_diagonal")
@@ -411,23 +411,23 @@ class Vertices(GustafBase):
             )
             # remove all the elements that's not part of inverse
             if check_neg:
-                emask = (elements > -1).all(axis=1)
-                elements = elements[emask]
+                elem_mask = (elements > -1).all(axis=1)
+                elements = elements[elem_mask]
 
         # apply mask
         vertices = vertices[mask]
 
-        def update_vertexdata(obj, m, vertex_data=None):
+        def update_vertex_data(obj, m, vertex_data=None):
             """apply mask to vertex data if there's any."""
-            newdata = helpers.data.VertexData(obj)
+            new_data = helpers.data.VertexData(obj)
             if vertex_data is None:
-                vertex_data = obj.vertexdata
+                vertex_data = obj.vertex_data
 
             for key, values in vertex_data.items():
                 # should work, since this is called after updating vertices
-                newdata[key] = values[m]
+                new_data[key] = values[m]
 
-            obj._vertexdata = newdata
+            obj._vertex_data = new_data
 
             return obj
 
@@ -436,7 +436,7 @@ class Vertices(GustafBase):
         if elements is not None:
             self.elements = elements
 
-        update_vertexdata(self, mask)
+        update_vertex_data(self, mask)
 
         return self
 
@@ -530,7 +530,7 @@ class Vertices(GustafBase):
 
         Returns
         --------
-        selfcopy: type(self)
+        self_copy: type(self)
         """
         # all attributes are deepcopy-able
         return copy.deepcopy(self)
@@ -566,8 +566,8 @@ class Vertices(GustafBase):
             instances = instances[0]
 
         vertices = []
-        haselem = cls.kind != "vertex"
-        if haselem:
+        has_elem = cls.kind != "vertex"
+        if has_elem:
             elements = []
 
         # check if everything is "concatable".
@@ -583,7 +583,7 @@ class Vertices(GustafBase):
 
             vertices.append(tmp_ins.vertices.copy())
 
-            if haselem:
+            if has_elem:
                 if len(elements) == 0:
                     elements.append(tmp_ins.elements.copy())
                     e_offset = elements[-1].max() + 1
@@ -596,7 +596,7 @@ class Vertices(GustafBase):
                     )
                     e_offset = elements[-1].max() + 1
 
-        if haselem:
+        if has_elem:
             return cls(
                 vertices=np.vstack(vertices),
                 elements=np.vstack(elements),
