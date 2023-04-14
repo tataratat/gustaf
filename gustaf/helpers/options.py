@@ -68,7 +68,10 @@ vedo_common_options = (
         "lighting",
         "Lighting options {'default', 'metallic', 'plastic', 'shiny', "
         "'glossy', 'ambient', 'off', None}",
-        (str, type(None),),
+        (
+            str,
+            type(None),
+        ),
     ),
     Option("vedo", "cmap", "Colormap for vertex_data plots.", (str,)),
     Option("vedo", "vmin", "Minimum value for cmap", (float, int)),

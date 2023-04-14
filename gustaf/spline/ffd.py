@@ -396,7 +396,8 @@ class FFD(GustafBase):
         title: str = "gustaf - ffd",
         return_showable: bool = False,
         return_discrete: bool = False,
-         **kwargs) -> Any:
+        **kwargs,
+    ) -> Any:
         """Visualize. Shows the deformed mesh and the current spline. Currently
         visualization is limited to vedo.
 

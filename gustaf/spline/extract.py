@@ -75,7 +75,7 @@ def edges(
             for i in range(spline.para_dim):
                 mask = np.ones(spline.para_dim, dtype=bool)
                 mask[i] = False
-  
+
                 # gather knots along current knot
                 extract_knot_queries = list(
                     itertools.product(*unique_knots[mask])
@@ -94,7 +94,7 @@ def edges(
             dtype="float64",  # hardcoded for splinelibpy
             order="C",  # hardcoded for splinelibpy
         )
-  
+
         # get ~extract_dim
         not_ed = np.arange(spline.para_dim).tolist()
         not_ed.pop(extract_dim)

@@ -19,13 +19,13 @@ from gustaf.spline.extract import Extractor
 from gustaf.spline.proximity import Proximity
 from gustaf.utils.arr import enforce_len
 
+
 def show(
     spline,
     parametric_space=False,
     return_discrete=False,
     return_showable=False,
-    **kwargs
-
+    **kwargs,
 ):
     """Shows splines with various options.
 
@@ -39,7 +39,7 @@ def show(
     return_discrete: bool
       Return dict of gustaf discrete objects, for example,
       {Vertices, Edges, Faces}, instead of opening a window. Defaults to False.
-    return_showable: bool  
+    return_showable: bool
       If True, returns a dict of gustaf objects that are showable. Defaults to
       False.
 
@@ -600,7 +600,7 @@ class Multipatch(GustafBase, splinepy.Multipatch):
         if self.show_options.get("boundary_ids", False):
             bsp = self.boundary_patches().splines
             bsp_id = np.abs(self.interfaces[self.interfaces < 0])
-            n_unique = len(np.unique(bsp_id)) # number of unique boundaries
+            n_unique = len(np.unique(bsp_id))  # number of unique boundaries
             # create n_unique random colors
             colors = [
                 tuple(np.array(colorsys.hsv_to_rgb(i / n_unique, 1, 1)) * 255)
@@ -658,6 +658,7 @@ class Multipatch(GustafBase, splinepy.Multipatch):
     def showable(self, **kwargs):
         kwargs["return_showable"] = False
         return self.show(self, **kwargs)
+
 
 def from_mfem(nurbs_dict):
     """Construct a gustaf NURBS. Reorganizes control points and weights.

@@ -73,7 +73,9 @@ if __name__ == "__main__":
     b.spline_data["me"] = b
     b.show_options["data_name"] = "me"
     b.show_options["arrow_data"] = "me"
-    b.show_options["arrow_data_coordinates"] = np.random.random((100, 2))  # para_coords
+    b.show_options["arrow_data_coordinates"] = np.random.random(
+        (100, 2)
+    )  # para_coords
     gus.show(
         ["3. Show coordinates norm and as arrows on 100 random points.", b]
     )
@@ -83,7 +85,9 @@ if __name__ == "__main__":
     b.spline_data["me"] = b
     b.show_options["data_name"] = "me"
     b.show_options["arrow_data"] = "me"
-    b.show_options["arrow_data_coordinates"] = np.random.random((100, 2))  # para_coords
+    b.show_options["arrow_data_coordinates"] = np.random.random(
+        (100, 2)
+    )  # para_coords
     b.show_options["scalarbar"] = True
     gus.show(
         ["4. Show 3. and 3. in parametric space view with scalarbar.", b],
@@ -124,7 +128,9 @@ if __name__ == "__main__":
     b = bspline2p3d()
     b.spline_data["der01"] = plot_func_data
     b.show_options["arrow_data"] = "der01"
-    b.show_options["arrow_data_coordinates"] = np.random.random((100, 2))  # para_coords
+    b.show_options["arrow_data_coordinates"] = np.random.random(
+        (100, 2)
+    )  # para_coords
     b.show_options["arrow_data_color"] = "gold"
     gus.show(
         [

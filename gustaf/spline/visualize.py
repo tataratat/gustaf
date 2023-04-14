@@ -10,7 +10,6 @@ from gustaf.helpers import options
 from gustaf.utils import log
 from gustaf.utils.arr import enforce_len
 
-
 spline_show_options = [
     options.Option(
         "vedo",
@@ -60,6 +59,7 @@ spline_show_options = [
         (list, tuple, np.ndarray),
     ),
 ]
+
 
 class SplineShowOption(options.ShowOption):
     """
@@ -164,7 +164,7 @@ class MultipatchShowOption(options.ShowOption):
         self._options = dict()
         self._backend = settings.VISUALIZATION_BACKEND
         self._options[self._backend] = dict()
-    
+
 
 def make_showable(spline):
     return eval(f"_{spline.show_options._backend}_showable(spline)")
@@ -188,7 +188,7 @@ def _vedo_showable(spline):
 
     # apply spline color
     sampled_spline = gus_primitives["spline"]
-    
+
     default_color = "green" if spline.para_dim > 1 else "black"
     sampled_spline.show_options["c"] = sampled_spline.show_options.get(
         "c", default_color

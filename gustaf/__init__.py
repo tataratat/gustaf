@@ -24,7 +24,7 @@ try:
         Bezier,
         BSpline,
         Multipatch,
-        RationalBezier
+        RationalBezier,
     )
     from gustaf.spline.ffd import FFD
 
