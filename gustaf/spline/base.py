@@ -557,6 +557,7 @@ class Multipatch(GustafBase, splinepy.Multipatch):
     ):
         """
         Multipatch
+
         Parameters
         ----------
         splines : list-like
@@ -567,6 +568,7 @@ class Multipatch(GustafBase, splinepy.Multipatch):
           Multipatch is a boundary object of a higher dimensional geometry. If
           set to true, additional checks are performed on the interfaces,
           requiring strict inter connectivity between all patches
+
         Returns
         -------
         None
