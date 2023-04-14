@@ -1,1 +1,5 @@
-from gustaf.interactive import control_points, iganet_bspline
+from gustaf.interactive import iganet_bspline
+
+__all__ = [
+    "iganet_bspline",
+]

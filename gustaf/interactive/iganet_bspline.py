@@ -1,57 +1,126 @@
 import uuid
 
 import gustaf as gus
-import numpy as np
-import vedo
+
+from gustaf.show import vedo
+try:
+    VedoPlotter = vedo.Plotter
+
+except BaseException:
+    # vedo is already ModuleImportRaiser
+    VedoPlotter = vedo
 
 
 def new_uuid():
+    """
+    Returns a new uuid in str.
+
+    Parameters
+    ----------
+    None
+
+    Returns
+    -------
+    uuid_str: str
+    """
     return str(uuid.uuid4())
 
+
 def req_template():
+    """
+    Creates minimal request template.
+
+    Parameters
+    ----------
+    None
+
+    Returns
+    -------
+    basic_template: dict
+      basic dict template with configured "id"(uuid)
+    """
     return {"id": new_uuid()}
 
+
 def sendable_str(dict_):
+    """Given dict, prepares a str that's readable from iganet server.
+
+    Parameters
+    ----------
+    dict_: dict
+      json request. No further conversion is required as long as all the values
+      are python native type
+
+    Returns
+    -------
+    sendable_str: str
+      string encoded in bytes.
+    """
     return str(dict_).replace("'", '"').encode()
 
+
 def iganet_to_gus(data_dict):
+    """
+    Creates spline based on iganet's response dict.
+    Note that you have to eval(raw_string_response)!
+
+    Parameters
+    ----------
+    data_dict: dict
+
+    Returns
+    -------
+    gustaf_bspline: gus.BSpline
+    """
     dict_spline = data_dict["data"]
+
+    # prepare dict for gus.BSpline init
     for_gus = {}
+
+    # degrees
     for_gus["degrees"] = dict_spline["degrees"]
+
+    # coeffs (control_points) are raw major, so let's reorganize that
     coeffs = dict_spline["coeffs"]
-    for_gus["control_points"] = [
-        [x, y] for x, y in zip(coeffs[0], coeffs[1])
-    ]
+    for_gus["control_points"] = [[x, y] for x, y in zip(coeffs[0], coeffs[1])]
+
+    # knot_vectors
     for_gus["knot_vectors"] = dict_spline["knots"]
+
     return gus.BSpline(**for_gus)
 
-class IganetBSpline(vedo.Plotter):
+
+class IganetBSpline(VedoPlotter):
     """
     Self contained interactive plotter for 2P2D splines.
     Can move control points on the right plot and the left plot will
     show the displacement field in parametric space view.
     """
 
-    def __init__(self, url):
+    def __init__(self, uri):
         """
         Creates spline and initialize all callbacks
 
         Parameters
         ----------
-        spl: spline
-        **kwargs: kwargs
-          No effect for now.
+        uri: str
 
         Returns
         -------
         None
         """
+        # plotter intialization constants
         N = 2
         interactive = False
         sharecam = False
 
+        # set title for window
+        self.title = "Hello IgaNets, Hello Matthias"
+
         super().__init__(
-            N=N, interactive=interactive, sharecam=sharecam,
+            N=N,
+            interactive=interactive,
+            sharecam=sharecam,
         )
 
         # plotter mode
@@ -67,15 +136,14 @@ class IganetBSpline(vedo.Plotter):
             states=["sync & evaluate"],
             c=["w", "w"],
             bc=["dg", "dv"],  # colors of states
-            font="courier",   # arial, courier, times
+            font="courier",  # arial, courier, times
             size=25,
             bold=True,
             italic=False,
         )
 
-
         # connect
-        self.host = gus.utils.comm.WebSocketClient(url)
+        self.server = gus.utils.comm.WebSocketClient(uri)
 
         # basic setup
         session_req = {
@@ -83,53 +151,65 @@ class IganetBSpline(vedo.Plotter):
             "id": new_uuid(),
         }
         self.session_id = eval(
-            self.host.send_recv(sendable_str(session_req))
+            self.server.send_recv(sendable_str(session_req))
         )["data"]["id"]
         # once the communication is truely online, we should assert UUID match
 
-        # create spline at host
+        # create spline at server
+        # let's ask for BSplineSurface of degree 2
         spline_create_req = req_template()
-        spline_create_req["request"] = f"create/{self.session_id}/BSplineSurface"
-        spline_create_req["data"] = {"degree" : 2}
-        self.spline_id = int(eval(
-            self.host.send_recv(sendable_str(spline_create_req))
-        )["data"]["id"])
+        spline_create_req[
+            "request"
+        ] = f"create/{self.session_id}/BSplineSurface"
+        spline_create_req["data"] = {"degree": 2}
+        # from this request, all we need is created spline's id.
+        self.spline_id = int(
+            eval(self.server.send_recv(sendable_str(spline_create_req)))[
+                "data"
+            ]["id"]
+        )
 
         # create same spline local
-        host_spline_req = req_template()
-        host_spline_req["request"] = f"get/{self.session_id}/{self.spline_id}"
-        self.host_spline_raw = eval(
-            self.host.send_recv(sendable_str(host_spline_req))
+        server_spline_req = req_template()
+        server_spline_req[
+            "request"
+        ] = f"get/{self.session_id}/{self.spline_id}"
+        self.server_spline_raw = eval(
+            self.server.send_recv(sendable_str(server_spline_req))
         )
-        self.spline = iganet_to_gus(self.host_spline_raw)
+        self.spline = iganet_to_gus(self.server_spline_raw)
 
     def _iganet_eval_button(self):
+        """
+        Button callback - asks for evaluation
+        """
         # clear
-        if hasattr(self, "eval_v"): 
+        if hasattr(self, "eval_v"):
             self.at(1).remove(self.eval_v)
 
         # sync
         cp_update_req = req_template()
-        cp_update_req["request"] = f"put/{self.session_id}/{self.spline_id}/coeffs"
+        cp_update_req[
+            "request"
+        ] = f"put/{self.session_id}/{self.spline_id}/coeffs"
         cp_update_req["data"] = {
             "indices": [i for i in range(len(self.spline.cps))],
-            "coeffs": self.spline.cps.tolist()
+            "coeffs": self.spline.cps.tolist(),
         }
-        self.host.send_recv(sendable_str(cp_update_req))
+        self.server.send_recv(sendable_str(cp_update_req))
 
         # evaluate
         eval_req = req_template()
         eval_req["request"] = f"eval/{self.session_id}/{self.spline_id}"
-        eval_req["data"] = {"resolution" : [11,11]}
+        eval_req["data"] = {"resolution": [11, 11]}
 
-        evaluated_raw = eval(
-            self.host.send_recv(sendable_str(eval_req))
-        )["data"]
-        #self.eval_v = vedo.Points(
+        evaluated_raw = eval(self.server.send_recv(sendable_str(eval_req)))[
+            "data"
+        ]
         self.eval_v = gus.Vertices(
             [[x, y] for x, y in zip(evaluated_raw[0], evaluated_raw[1])],
-            #r=10,
         )
+
         self.eval_v.show_options["r"] = 10
         self.eval_v.show_options["vertex_ids"] = True
         self.eval_v = self.eval_v.showable()
@@ -155,7 +235,7 @@ class IganetBSpline(vedo.Plotter):
             return None
         self.picked = evt.actor.id
 
-        if hasattr(self, "eval_v"): 
+        if hasattr(self, "eval_v"):
             self.at(1).remove(self.eval_v)
 
     def _left_release(self, evt):
@@ -174,7 +254,7 @@ class IganetBSpline(vedo.Plotter):
 
     def _right_click(self, evt):
         """
-        Restart. Currently some issue with demo
+        Restart.
 
         Parameters
         ----------
@@ -189,7 +269,7 @@ class IganetBSpline(vedo.Plotter):
         self.clear(at=1, deep=True, render=True)
 
         # reassign
-        self.spline = iganet_to_gus(self.host_spline_raw)
+        self.spline = iganet_to_gus(self.server_spline_raw)
         self.spline.show_options["control_points"] = False
         self.spline.show_options["control_mesh"] = True
         self.spline.show_options["lighting"] = "off"
@@ -231,30 +311,38 @@ class IganetBSpline(vedo.Plotter):
 
     def _setup_showable(self):
         """
+        Prepares vedo-show-ready objects, as well as control points that we can
+        pick.
         """
-        res = [50,50]
+        res = [50, 50]  # sample resolution
         self.spline.show_options["resolutions"] = res
         self.spline.show_options["control_points"] = False
         self.spline.show_options["control_mesh"] = True
         self.spline.show_options["lighting"] = "off"
 
+        # splines return showable as dict
         self.spline_showable = self.spline.showable()
 
+        # we don't want to pick any of spline
         for v in self.spline_showable.values():
             v.pickable(False)
 
-        # setup cps
+        # setup cps - those are pickable!
         for i, cp in enumerate(self.spline.cps):
             s = vedo.Sphere(cp, r=0.05, res=5)
             s.id = i
             self.spline_showable[f"cp{i}"] = s
 
-
     def start(self):
+        """
+        Start the interative mode.
+
+        Returns
+        -------
+        plot: IganetBSpline
+        """
         self._setup_showable()
-        self.title = "Hello IgaNets, Hello Matthias"
-        self.show(
-            "Server response:", at=1)
+        self.show("Server response:", at=1)
         self.show(
             *self.spline_showable.values(),
             at=0,
@@ -263,7 +351,7 @@ class IganetBSpline(vedo.Plotter):
             mode=self.mode,
         )
 
-        # disconnect
-        del self.host
+        # close once interactive session is over.
+        self.server.websocket.close()
 
         return self
