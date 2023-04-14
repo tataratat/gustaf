@@ -1,4 +1,4 @@
-from gustaf.utils import arr, connec, log, tictoc, comm
+from gustaf.utils import arr, comm, connec, log, tictoc
 from gustaf.utils.tictoc import Tic
 
 # Alias
