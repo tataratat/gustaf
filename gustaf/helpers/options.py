@@ -4,8 +4,6 @@ Classes to help organize options.
 """
 from copy import deepcopy
 
-import numpy as np
-
 from gustaf import settings
 
 
