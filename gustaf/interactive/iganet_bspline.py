@@ -1,14 +1,15 @@
 import uuid
 
 import gustaf as gus
-
 from gustaf.show import vedo
+
 try:
     VedoPlotter = vedo.Plotter
 
 except BaseException:
-    # vedo is already ModuleImportRaiser
-    VedoPlotter = vedo
+    # ModuleImportRaiser can't be parent class.
+    class VedoPlotter:
+        pass
 
 
 def new_uuid():
@@ -109,6 +110,9 @@ class IganetBSpline(VedoPlotter):
         -------
         None
         """
+        # temporary solution to replace ModuleImportRaiser
+        vedo.Plotter  # call vedo.Plotter to see if vedo is properly imported
+
         # plotter intialization constants
         N = 2
         interactive = False
