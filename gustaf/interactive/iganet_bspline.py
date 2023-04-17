@@ -121,17 +121,14 @@ class IganetBSpline(VedoPlotter):
         sharecam = False
 
         # set title for window
-        self.title = "Hello IgaNets, Hello Matthias"
+        self.window_title = "Hello IgaNets, Hello Matthias"
 
         super().__init__(
             N=N,
             interactive=interactive,
             sharecam=sharecam,
+            title=self.window_title,
         )
-
-        # plotter mode
-        self.mode = "TrackballActor"
-        #self.mode = "TrackballCamera"
 
         # add callbacks
         self.add_callback("Interaction", self._update)
@@ -187,6 +184,21 @@ class IganetBSpline(VedoPlotter):
         self.spline = iganet_to_gus(self.server_spline_raw)
         print(f"created {self.spline.whatami}")
 
+        # plotter mode
+        if self.spline.dim == 2:
+            # self.default_mode = vtk.vtkInteractorStyleTrackballActor()
+            self.default_mode = "TrackballActor"
+        elif self.spline.dim == 3:
+            # self.default_mode = vtk.vtkInteractorStyleTrackballCamera()
+            self.default_mode = "TrackballCamera"
+        else:
+            raise ValueError(
+                "Interactive mode supports splines of 2 and 3 dim."
+            )
+
+        # initialize picked
+        self.picked = -1
+
     def _iganet_eval_button(self):
         """
         Button callback - asks for evaluation
@@ -241,6 +253,7 @@ class IganetBSpline(VedoPlotter):
         # only cps should be pickable and they have ids assigned
         if not hasattr(evt.actor, "id"):
             return None
+
         self.picked = evt.actor.id
 
         if hasattr(self, "eval_v"):
@@ -303,7 +316,7 @@ class IganetBSpline(VedoPlotter):
             return None
 
         # get new control point location
-        self.p = self.compute_world_coordinate(evt.picked2d)[:self.spline.dim]
+        self.p = self.compute_world_coordinate(evt.picked2d)[: self.spline.dim]
 
         # remove
         self.at(0).remove(*self.spline_showable.values())
@@ -354,9 +367,8 @@ class IganetBSpline(VedoPlotter):
         self.show(
             *self.spline_showable.values(),
             at=0,
-            title=self.title,
             interactive=True,
-            mode=self.mode,
+            mode=self.default_mode,
         )
 
         # close once interactive session is over.
