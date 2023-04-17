@@ -22,6 +22,7 @@ setup(
         "gustaf.spline",
         "gustaf.create",
         "gustaf.helpers",
+        "gustaf.interactive",
         "gustaf.spline.microstructure",
         "gustaf.spline.microstructure.tiles",
     ],
