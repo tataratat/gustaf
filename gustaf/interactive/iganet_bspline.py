@@ -1,7 +1,9 @@
 import uuid
 
-import gustaf as gus
+from gustaf import utils
 from gustaf.show import vedo
+from gustaf.spline import BSpline
+from gustaf.vertices import Vertices
 
 try:
     VedoPlotter = vedo.Plotter
@@ -88,7 +90,7 @@ def iganet_to_gus(data_dict):
     # knot_vectors
     for_gus["knot_vectors"] = dict_spline["knots"]
 
-    return gus.BSpline(**for_gus)
+    return BSpline(**for_gus)
 
 
 class IganetBSpline(VedoPlotter):
@@ -147,7 +149,7 @@ class IganetBSpline(VedoPlotter):
         )
 
         # connect
-        self.server = gus.utils.comm.WebSocketClient(uri)
+        self.server = utils.comm.WebSocketClient(uri)
 
         # basic setup
         session_req = {
@@ -210,7 +212,7 @@ class IganetBSpline(VedoPlotter):
         evaluated_raw = eval(self.server.send_recv(sendable_str(eval_req)))[
             "data"
         ]
-        self.eval_v = gus.Vertices(
+        self.eval_v = Vertices(
             [[x, y] for x, y in zip(evaluated_raw[0], evaluated_raw[1])],
         )
 

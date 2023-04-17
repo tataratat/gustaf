@@ -4,7 +4,6 @@ from gustaf import (
     edges,
     faces,
     helpers,
-    interactive,
     io,
     settings,
     show,
@@ -40,6 +39,8 @@ except ImportError as err:
     RationalBezier = spline
     FFD = spline
 
+# imported at last to avoid circular import
+from gustaf import interactive  # noqa E402
 
 __version__ = _version.version
 
