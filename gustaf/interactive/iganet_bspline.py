@@ -1,8 +1,8 @@
 import uuid
 
 from gustaf import utils
+from gustaf import BSpline
 from gustaf.show import vedo
-from gustaf.spline import BSpline
 from gustaf.vertices import Vertices
 
 try:
