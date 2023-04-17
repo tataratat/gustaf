@@ -85,7 +85,7 @@ def iganet_to_gus(data_dict):
 
     # coeffs (control_points) are raw major, so let's reorganize that
     coeffs = dict_spline["coeffs"]
-    for_gus["control_points"] = [[x, y] for x, y in zip(coeffs[0], coeffs[1])]
+    for_gus["control_points"] = [[*x] for x in zip(*coeffs)]
 
     # knot_vectors
     for_gus["knot_vectors"] = dict_spline["knots"]
@@ -131,6 +131,7 @@ class IganetBSpline(VedoPlotter):
 
         # plotter mode
         self.mode = "TrackballActor"
+        #self.mode = "TrackballCamera"
 
         # add callbacks
         self.add_callback("Interaction", self._update)
@@ -184,6 +185,7 @@ class IganetBSpline(VedoPlotter):
             self.server.send_recv(sendable_str(server_spline_req))
         )
         self.spline = iganet_to_gus(self.server_spline_raw)
+        print(f"created {self.spline.whatami}")
 
     def _iganet_eval_button(self):
         """
@@ -213,7 +215,7 @@ class IganetBSpline(VedoPlotter):
             "data"
         ]
         self.eval_v = Vertices(
-            [[x, y] for x, y in zip(evaluated_raw[0], evaluated_raw[1])],
+            [[*x] for x in zip(*evaluated_raw)],
         )
 
         self.eval_v.show_options["r"] = 10
@@ -301,7 +303,7 @@ class IganetBSpline(VedoPlotter):
             return None
 
         # get new control point location
-        self.p = self.compute_world_coordinate(evt.picked2d)[:2]
+        self.p = self.compute_world_coordinate(evt.picked2d)[:self.spline.dim]
 
         # remove
         self.at(0).remove(*self.spline_showable.values())
