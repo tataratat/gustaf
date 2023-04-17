@@ -1,6 +1,8 @@
 """Create gus"""
 import gustaf as gus
 
+WITH_PUPILS = False
+
 if __name__ == "__main__":
     l_eye = gus.spline.create.disk(0.15)
     l_eye.cps += [0.6, 0.2]
@@ -68,8 +70,12 @@ if __name__ == "__main__":
     )
     lowerlip.show_options["c"] = "orange7"
 
+    item_to_show = [l_eye, r_eye, upperlip, innermouth, lowerlip]
+    if WITH_PUPILS:
+        item_to_show += [l_pupil, r_pupil]
+
     plt = gus.show(
-        [l_eye, r_eye, l_pupil, r_pupil, upperlip, innermouth, lowerlip],
+        item_to_show,
         control_points=False,
         knots=False,
         lighting="off",
@@ -83,7 +89,7 @@ if __name__ == "__main__":
     r_pupil.show_options["c"] = "white"
 
     plt = gus.show(
-        [l_eye, r_eye, l_pupil, r_pupil, upperlip, innermouth, lowerlip],
+        item_to_show,
         control_points=False,
         knots=False,
         lighting="off",
