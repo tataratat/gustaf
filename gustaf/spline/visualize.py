@@ -190,7 +190,7 @@ def _vedo_showable(spline):
     sampled_spline = gus_primitives["spline"]
 
     default_color = "green" if spline.para_dim > 1 else "black"
-    sampled_spline.show_options["c"] = sampled_spline.show_options.get(
+    sampled_spline.show_options["c"] = spline.show_options.get(
         "c", default_color
     )
     sampled_spline.show_options["alpha"] = spline.show_options.get("alpha", 1)
@@ -409,7 +409,7 @@ def _vedo_showable_para_dim_2(spline):
         knot_lines.show_options["c"] = "grey"
         knot_lines.show_options["lw"] = 2
         gus_primitives["knots"] = knot_lines
-    if spline.show_options.get("contours", True):
+    if spline.show_options.get("contours", False):
         knot_lines = spline.extract.edges(res)
         knot_lines.show_options["c"] = "black"
         knot_lines.show_options["lw"] = 3
