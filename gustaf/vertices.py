@@ -578,8 +578,11 @@ class Vertices(GustafBase):
                     f"`{cls.__name__}`."
                 )
 
+            tmp_ins = ins.copy()
+
             # make sure each element index starts from 0 & end at len(vertices)
-            tmp_ins = ins.copy().remove_unreferenced_vertices()
+            if has_elem:
+                tmp_ins.remove_unreferenced_vertices()
 
             vertices.append(tmp_ins.vertices)
 
@@ -589,10 +592,7 @@ class Vertices(GustafBase):
                     e_offset = elements[-1].max() + 1
 
                 else:
-                    elements.append(
-                        tmp_ins.elements
-                        + e_offset
-                    )
+                    elements.append(tmp_ins.elements + e_offset)
                     e_offset = elements[-1].max() + 1
 
         if has_elem:
