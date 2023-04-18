@@ -2,8 +2,6 @@
 
 Base for splines. Contains show and inherited classes from `spline`.
 """
-from copy import deepcopy
-
 import numpy as np
 import splinepy
 
@@ -217,13 +215,6 @@ class GustafSpline(GustafBase):
         """Equivalent to
         `gustaf.spline.base.show(return_showable=True,**kwargs)`"""
         return show(self, return_showable=True, **kwargs)
-
-    def copy(self):
-        """tmp copy from splinepy until #89 merges"""
-        new = type(self)()
-        new.new_core(**self._data["properties"], properties_round_trip=False)
-        new._data = deepcopy(self._data)
-        return new
 
 
 class Bezier(GustafSpline, splinepy.Bezier):
