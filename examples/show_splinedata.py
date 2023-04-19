@@ -52,12 +52,12 @@ if __name__ == "__main__":
     b.show_options["data_name"] = "me"
     gus.show(["1. Show norm of coordinates.", b])
 
-    # 1.1 default scalarbar
+    # 1.1 default scalar_bar
     b = bspline2p3d()
     b.spline_data["me"] = b
     b.show_options["data_name"] = "me"
-    b.show_options["scalarbar"] = True
-    gus.show(["1.1. Show 1. plus scalarbar", b])
+    b.show_options["scalar_bar"] = True
+    gus.show(["1.1. Show 1. plus scalar_bar", b])
 
     # 2. see coordinate's norm and as arrow
     b = bspline2p3d()
@@ -84,9 +84,9 @@ if __name__ == "__main__":
     b.show_options["data_name"] = "me"
     b.show_options["arrow_data"] = "me"
     b.show_options["arrow_data_on"] = np.random.random((100, 2))  # para_coords
-    b.show_options["scalarbar"] = True
+    b.show_options["scalar_bar"] = True
     gus.show(
-        ["4. Show 3. and 3. in parametric space view with scalarbar.", b],
+        ["4. Show 3. and 3. in parametric space view with scalar_bar.", b],
         b.create.parametric_view(),
     )
     # b.show(parametric_space=True)  # does the same

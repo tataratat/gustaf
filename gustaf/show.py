@@ -306,9 +306,9 @@ def _vedo_showable(obj, as_dict=False, **kwargs):
         # arg name changed in 2023.4.4
         vedo_obj.cmap(cmap_kwargs.pop("input_cmap"), **cmap_kwargs)
 
-        # at last, scalarbar
+        # at last, scalar_bar
         # deprecated function name, keep it for now for backward compat
-        sb_kwargs = obj.show_options.get("scalarbar", None)
+        sb_kwargs = obj.show_options.get("scalar_bar", None)
         if sb_kwargs is not None and sb_kwargs is not False:
             sb_kwargs = dict() if isinstance(sb_kwargs, bool) else sb_kwargs
             vedo_obj.addScalarBar(**sb_kwargs)

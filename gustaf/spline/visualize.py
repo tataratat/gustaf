@@ -137,7 +137,7 @@ def _vedo_showable(spline):
         sampled_spline.vertex_data[data_name] = sampled_spline_data
 
         # transfer options - maybe vectorized query?
-        keys = ("vmin", "vmax", "scalarbar", "cmap", "cmap_alpha")
+        keys = ("vmin", "vmax", "scalar_bar", "cmap", "cmap_alpha")
         spline.show_options.copy_valid_options(
             sampled_spline.show_options, keys
         )
