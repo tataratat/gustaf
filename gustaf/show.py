@@ -302,7 +302,9 @@ def _vedo_showable(obj, as_dict=False, **kwargs):
         cmap_kwargs["input_array"] = data_name
 
         # set cmap
-        vedo_obj.cmap(**cmap_kwargs)
+        # pass input_cmap as positional arg to support 2023.4.3.
+        # arg name changed in 2023.4.4
+        vedo_obj.cmap(cmap_kwargs.pop("input_cmap"), **cmap_kwargs)
 
         # at last, scalarbar
         # deprecated function name, keep it for now for backward compat
