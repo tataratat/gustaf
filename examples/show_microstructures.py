@@ -40,7 +40,7 @@ _, showables_inverse = generator.show(
     control_points=False,
     knots=True,
     return_showable_list=True,
-    resolutions=5,
+    resolutions=3,
 )
 
 
@@ -58,6 +58,8 @@ generator.show(
     knots=False,
     control_points=False,
     title="2D Snappy Microstructure",
+    resolutions=7,
+    lighting='off',
 )
 
 # NutTile3D
@@ -68,7 +70,8 @@ generator.deformation_function = gus.Bezier(
 ).create.extruded(extrusion_vector=[0, 0, 1])
 generator.tiling = [3, 3, 2]
 generator.show(
-    knots=False, control_points=False, title="3D NutTile Microstructure"
+    knots=False, control_points=False, title="3D NutTile Microstructure",
+    resolutions=3
 )
 
 
@@ -82,7 +85,8 @@ generator.deformation_function = gus.Bezier(
 generator.parametrization_function = parametrization_function
 generator.tiling = [5, 5]
 generator.show(
-    knots=False, control_points=False, title="2D NutTile Microstructure"
+    knots=False, control_points=False, title="2D NutTile Microstructure",
+    lighting='off',
 )
 
 
@@ -109,7 +113,8 @@ generator.microtile = [
 ]
 generator.tiling = [8, 8]
 generator.show(
-    knots=False, control_points=False, title="2D Lattice Microstructure"
+    knots=False, control_points=False, title="2D Lattice Microstructure",
+    lighting='off',
 )
 
 
@@ -127,6 +132,7 @@ generator.show(
     knots=True,
     control_points=False,
     title="2D Crosstile Parametrized Microstructure",
+    lighting='off',
 )
 
 # 3D Lattice Microstructure
@@ -206,12 +212,12 @@ generator.microtile = [
     ),
 ]
 generator.tiling = [5, 1]
-generator.show(
-    knot_span_wise=False,
-    control_points=False,
-    resolutions=20,
-    title="2D Lattice with global tiling",
-)
+# generator.show(
+#     knot_span_wise=False,
+#     control_points=False,
+#     resolutions=20,
+#     title="2D Lattice with global tiling",
+# )
 
 
 # Composition with parameter abstraction

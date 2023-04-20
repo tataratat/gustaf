@@ -94,7 +94,7 @@ class InverseCrossTile3D(TileBase):
 
         spline_list = []
         if closure == "z_min":
-            branch_thickness = parameters[5, 0]
+            branch_thickness = parameters.flatten()[5]
             branch_neighbor_x_min_ctps = np.array(
                 [
                     [-0.5, -r_center, filling_height],
@@ -462,7 +462,7 @@ class InverseCrossTile3D(TileBase):
             return spline_list
 
         elif closure == "z_max":
-            branch_thickness = parameters[4]
+            branch_thickness = parameters.flatten()[4]
             branch_neighbor_x_min_ctps = np.array(
                 [
                     [-0.5, -aux_column_width, 0.0],
@@ -922,7 +922,7 @@ class InverseCrossTile3D(TileBase):
                 * 0.2
             )
 
-        [x_min_r, x_max_r, y_min_r, y_max_r, z_min_r, z_max_r] = parameters
+        [x_min_r, x_max_r, y_min_r, y_max_r, z_min_r, z_max_r] = parameters.flatten()
 
         for radius in [x_min_r, x_max_r, y_min_r, y_max_r, z_min_r, z_max_r]:
             if not isinstance(radius.item(), float):
