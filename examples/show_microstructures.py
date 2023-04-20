@@ -212,12 +212,12 @@ generator.microtile = [
     ),
 ]
 generator.tiling = [5, 1]
-# generator.show(
-#     knot_span_wise=False,
-#     control_points=False,
-#     resolutions=20,
-#     title="2D Lattice with global tiling",
-# )
+generator.show(
+    knot_span_wise=False,
+    control_points=False,
+    resolutions=20,
+    title="2D Lattice with global tiling",
+)
 
 
 # Composition with parameter abstraction
@@ -263,5 +263,6 @@ generator.deformation_function = gus.Bezier(
 ).create.extruded(extrusion_vector=[0, 0, 1])
 generator.tiling = [3, 3, 2]
 generator.show(
-    knots=False, control_points=False, title="3D Cube Microstructure"
+    knots=False, control_points=False, title="3D Cube Microstructure",
+    resolutions=2,
 )
