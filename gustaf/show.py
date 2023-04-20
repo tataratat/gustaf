@@ -2,8 +2,13 @@
 
 Everything related to show/visualization.
 """
-import sys
+import multiprocessing
+from multiprocessing import Pool
 
+from pathos.multiprocessing import ProcessingPool as pool
+import pickle
+
+import sys
 import numpy as np
 
 from gustaf import settings, utils
@@ -141,7 +146,6 @@ def show_vedo(
                 "`list`. Putting it naively into a list.",
             )
             showlist = [arg]
-
         # quickcheck if the list is gustaf or non-gustaf
         # if gustaf, make it vedo-showable.
         # if there's spline, we need to pop the element and
@@ -152,20 +156,13 @@ def show_vedo(
         for sl in showlist:
             if not isinstance(sl, list):
                 sl = [sl]
-            for k, item in enumerate(sl):
-                if isinstance(item, GustafBase):
-                    tmp_showable = item.showable(backend="vedo", **kwargs)
-                    # splines return dict
-                    # - maybe it is time to do some typing..
-                    if isinstance(tmp_showable, dict):
-                        # add to extend later
-                        list_of_showables.extend(list(tmp_showable.values()))
+            if len(sl) > 1:
+                p = Pool(processes=10)
+                list_of_showables = p.map(_generateShowableList, [[d, kwargs] for d in sl])
+            else:
+                list_of_showables = _generateShowableList([sl, kwargs])
 
-                    else:
-                        # replace gustafobj with vedo_obj.
-                        list_of_showables.append(tmp_showable)
-                else:
-                    list_of_showables.extend(sl)
+
         # set interactive to true at last element
         if int(i + 1) == len(args):
             plt.show(
@@ -199,6 +196,26 @@ def show_vedo(
     else:
         return plt
 
+
+def _generateShowableList(data):
+    item = data[0]
+    kwargs = data[1]
+    list_of_showables = []
+    if isinstance(item, GustafBase):
+        tmp_showable = item.showable(backend="vedo", **kwargs)
+        # splines return dict
+        # - maybe it is time to do some typing..
+        if isinstance(tmp_showable, dict):
+            # add to extend later
+            list_of_showables.extend(list(tmp_showable.values()))
+
+        else:
+            # replace gustafobj with vedo_obj.
+            list_of_showables.append(tmp_showable)
+    else:
+        return list_of_showables.extend(item)
+
+    return list_of_showables
 
 def _vedo_showable(obj, as_dict=False, **kwargs):
     """Generates a vedo obj based on `kind` attribute from given obj, as well
