@@ -60,7 +60,7 @@ class FacesShowOption(helpers.options.ShowOption):
             val = self.get(option, False)
             if val:
                 getattr(faces, option)(val)
-        
+
         return faces
 
 
