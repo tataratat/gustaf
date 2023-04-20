@@ -51,17 +51,16 @@ class FacesShowOption(helpers.options.ShowOption):
         -------
         faces: vedo.Mesh
         """
-        init_options = ("lw", "lc")
+
         faces = show.vedo.Mesh(
             [self._helpee.const_vertices, self._helpee.const_faces],
-            **self[init_options],
         )
 
-        # forward texture if there's any
-        texture = self.get("texture", False)
-        if texture:
-            faces.texture(texture)
-
+        for option in ["lw", "lc", "texture"]:
+            val = self.get(option, False)
+            if val:
+                getattr(faces, option)(val)
+        
         return faces
 
 
