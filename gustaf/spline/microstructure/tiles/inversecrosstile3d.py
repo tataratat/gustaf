@@ -922,7 +922,14 @@ class InverseCrossTile3D(TileBase):
                 * 0.2
             )
 
-        [x_min_r, x_max_r, y_min_r, y_max_r, z_min_r, z_max_r] = parameters.flatten()
+        [
+            x_min_r,
+            x_max_r,
+            y_min_r,
+            y_max_r,
+            z_min_r,
+            z_max_r,
+        ] = parameters.flatten()
 
         for radius in [x_min_r, x_max_r, y_min_r, y_max_r, z_min_r, z_max_r]:
             if not isinstance(radius.item(), float):
