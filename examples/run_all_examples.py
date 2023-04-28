@@ -8,7 +8,7 @@ if __name__ == "__main__":
     files_not_completed = []
 
     for file in glob.glob("*.py"):
-        if file == "call_all_examples.py":
+        if file == "run_all_examples.py":
             continue
         print(f"Calling {file}")
         proc_return = subprocess.run([sys.executable, file])
