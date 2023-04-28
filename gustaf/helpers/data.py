@@ -461,7 +461,7 @@ class VertexData(DataHolder):
             if raise_ and not valid:
                 raise ValueError(
                     f"Expected ({helpee_len}) length data, "
-                    f"Given (len(value))"
+                    f"Given ({len(value)})"
                 )
 
             return valid
