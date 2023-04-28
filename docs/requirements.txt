@@ -1,4 +1,4 @@
-furo
 myst_parser
+pydata_sphinx_theme
 sphinx
 sphinx-mdinclude

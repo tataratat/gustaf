@@ -24,8 +24,9 @@ source_suffix = {
 extensions = [
     "sphinx.ext.autodoc",
     "sphinx.ext.autosummary",
-    "sphinx.ext.viewcode",
+    "sphinx.ext.mathjax",
     "sphinx.ext.napoleon",
+    "sphinx.ext.viewcode",
     "sphinx.ext.inheritance_diagram",
     "sphinx_mdinclude",
 ]
@@ -48,11 +49,29 @@ autodoc_mock_imports = [
 # -- Options for HTML output -------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#options-for-html-output
 # html_theme = "piccolo_theme"
-html_theme = "furo"
-# html_logo = '_static/logo.png'
-# html_favicon = '_static/thumb.png'
+html_theme = "pydata_sphinx_theme"
+html_theme_options = {
+    "logo": {
+        "image_light": "_static/gus_light_mode.png",
+        "image_dark": "_static/gus_dark_mode.png",
+    },
+    "icon_links": [
+        {
+            "name": "GitHub",
+            "url": "https://github.com/tataratat/gustaf",
+            "icon": "fa-brands fa-square-github",
+        },
+        {
+            "name": "PyPI",
+            "url": "https://pypi.org/project/gustaf/",
+            "icon": "fa-solid fa-box",
+        },
+    ],
+}
+html_favicon = "_static/favicon.ico"
 
 html_static_path = ["_static"]
+html_css_files = ["style.css"]
 
 
 def skip(app, what, name, obj, would_skip, options):
