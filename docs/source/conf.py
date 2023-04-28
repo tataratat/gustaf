@@ -54,7 +54,19 @@ html_theme_options = {
     "logo": {
         "image_light": "_static/gus_light_mode.png",
         "image_dark": "_static/gus_dark_mode.png",
-    }
+    },
+    "icon_links": [
+        {
+            "name": "GitHub",
+            "url": "https://github.com/tataratat/gustaf",
+            "icon": "fa-brands fa-square-github",
+        },
+        {
+            "name": "PyPI",
+            "url": "https://pypi.org/project/gustaf/",
+            "icon": "fa-solid fa-box",
+        },
+    ],
 }
 html_favicon = "_static/favicon.ico"
 
