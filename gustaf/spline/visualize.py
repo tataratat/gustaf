@@ -126,7 +126,7 @@ class MultipatchShowOption(options.ShowOption):
             "vedo",
             "common_cmap",
             "Color map for all patches has the same range, exclusive with "
-            "patch_borders.",
+            "patch_borders. Defaults to True.",
             (bool,),
         ),
         options.Option(

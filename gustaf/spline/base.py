@@ -615,35 +615,39 @@ class Multipatch(GustafBase, splinepy.Multipatch):
             spline_list.extend(bsp)
         # field data adaptation for multipatch
         field_data = self.show_options.get("field_function", False)
+        common_cmap = self.show_options.get("common_cmap", True)
+        scalar_bar = (
+            self.show_options.pop("scalarbar", False) if common_cmap else False
+        )
         v_min, v_max = np.inf, -np.inf
+        scalar_bar_attached = False
         if field_data:
-            if type(field_data) is callable:
-                for spline in self.splines:
-                    res = enforce_len(
-                        spline.show_options.get("resolutions", 100),
-                        spline.para_dim,
-                    )
+            for spline in self.splines:
+                # define resolution for the field data
+                res = enforce_len(
+                    spline.show_options.get("resolutions", 100),
+                    spline.para_dim,
+                )
+                if type(field_data) is callable:
                     spline.spline_data["field_data"] = SplineDataAdaptor(
                         spline, function=field_data
                     )
-                    a = spline.spline_data.as_scalar("field_data", res)
-                    v_min = min(v_min, np.min(a))
-                    v_max = max(v_max, np.max(a))
-            elif type(field_data) is str and field_data == "me":
-                for spline in self.splines:
-                    res = enforce_len(
-                        spline.show_options.get("resolutions", 100),
-                        spline.para_dim,
-                    )
+                elif type(field_data) is str and field_data == "me":
                     spline.spline_data["field_data"] = spline
                     spline.show_options["data_name"] = "field_data"
-                    a = spline.spline_data.as_scalar("field_data", res)
-                    v_min = min(v_min, np.min(a))
-                    v_max = max(v_max, np.max(a))
-            else:
-                self._logw("The field function is not valid.")
-        self.show_options["vmin"] = float(v_min)
-        self.show_options["vmax"] = float(v_max)
+                else:
+                    self._logw("The field function is not valid.")
+                    continue
+                a = spline.spline_data.as_scalar("field_data", res)
+                v_min = min(v_min, np.min(a))
+                v_max = max(v_max, np.max(a))
+                if common_cmap and scalar_bar and not scalar_bar_attached:
+                    spline.show_options["scalarbar"] = True
+                    scalar_bar_attached = True
+        # enforce common color map range for all splines
+        if common_cmap:
+            self.show_options["vmin"] = float(v_min)
+            self.show_options["vmax"] = float(v_max)
 
         # Check if return showable is requested and ensure it is set to false
         # when enquiring show module

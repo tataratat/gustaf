@@ -400,7 +400,7 @@ class ShowOption:
         -------
         value: object
         """
-        self._options[self._backend].pop(*args, **kwargs)
+        return self._options[self._backend].pop(*args, **kwargs)
 
     def copy_valid_options(self, copy_to, keys=None):
         """

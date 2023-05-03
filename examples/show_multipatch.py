@@ -37,7 +37,7 @@ random.shuffle(spline_list)
 multipatch = gus.Multipatch(splines=spline_list)
 multipatch.boundaries_from_continuity()
 multipatch.show_options["boundary_ids"] = True
-multipatch.show_options["knots"] = False
+multipatch.show_options["knots"] = True
 multipatch.show_options["control_points"] = False
 multipatch.show_options["resolutions"] = 4
 multipatch.show_options["overwrite_spline_options"] = True
@@ -135,6 +135,16 @@ multipatch.show_options["control_points"] = False
 multipatch.show_options["overwrite_spline_options"] = True
 multipatch.show_options["field_function"] = "me"
 multipatch.show_options["scalarbar"] = True
+multipatch.show_options["common_cmap"] = False
+multipatch.show()
+
+# Now with a common colormap
+
+# Showing first the common color map overwrites/initiates multiple options for
+# the multipatch and the contained splines so that it will not be able to show
+# distinct color maps for each spline out of the box afterwards. You would have
+# to reset the options manually or create a new multipatch object.
+multipatch.show_options["common_cmap"] = True
 multipatch.show()
 
 
