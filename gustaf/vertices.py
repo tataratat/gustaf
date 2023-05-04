@@ -417,11 +417,9 @@ class Vertices(GustafBase):
         # apply mask
         vertices = vertices[mask]
 
-        def update_vertex_data(obj, m, vertex_data=None):
+        def update_vertex_data(obj, m, vertex_data):
             """apply mask to vertex data if there's any."""
             new_data = helpers.data.VertexData(obj)
-            if vertex_data is None:
-                vertex_data = obj.vertex_data
 
             for key, values in vertex_data.items():
                 # should work, since this is called after updating vertices
@@ -431,12 +429,16 @@ class Vertices(GustafBase):
 
             return obj
 
-        # update
+        # make shallow copy of saved vertex data
+        v_data = self.vertex_data._saved.copy()
+
+        # update - if number of vertices changes, this will remove all the
+        #   length mis-matching data.
         self.vertices = vertices
         if elements is not None:
             self.elements = elements
 
-        update_vertex_data(self, mask)
+        update_vertex_data(self, mask, v_data)
 
         return self
 

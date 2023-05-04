@@ -467,6 +467,7 @@ class VertexData(DataHolder):
             return valid
 
         # here, check all saved values.
+        to_pop = []
         for key, value in self._saved.items():
             if len(value) != helpee_len:
                 valid = False
@@ -480,11 +481,15 @@ class VertexData(DataHolder):
                 else:
                     self._logd(
                         f"`{key}`-data len ({len(value)}) doesn't match "
-                        f"expect len ({helpee_len}). Deleting `{key}`."
+                        f"expected len ({helpee_len}). Deleting `{key}`."
                     )
                 # pop invalid data
-                self._saved.pop(key)
-                self._saved.pop(key + "__norm", None)
+                to_pop.append(key)
+                to_pop.append(key + "__norm")
+
+        # pop if needed
+        for tp in to_pop:
+            self._saved.pop(tp, None)
 
         return valid
 
@@ -712,7 +717,9 @@ class SplineDataAdaptor(GustafBase):
                 return self.function(self.data, resolutions=resolutions)
             elif self.is_spline and self.data.para_dim > 2:
                 # TODO: replace this with generalized query helpers.
-                return self.data.extract.faces(resolutions).vertices
+                return self.data.extract.faces(
+                    resolutions, watertight=False
+                ).vertices
             else:
                 return self.data.sample(resolutions)
 

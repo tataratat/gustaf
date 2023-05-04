@@ -218,7 +218,8 @@ def _vedo_showable(spline):
             )
 
     # double check on same obj ref
-    gus_primitives["spline"] = sampled_spline
+    # merge vertices here, so that we return a watertight mesh
+    gus_primitives["spline"] = sampled_spline.merge_vertices()
 
     # control_points & control_points_alpha
     show_cps = spline.show_options.get("control_points", True)
@@ -320,7 +321,7 @@ def _vedo_showable_para_dim_2(spline):
     res = enforce_len(
         spline.show_options.get("resolutions", 100), spline.para_dim
     )
-    sp = spline.extract.faces(res)
+    sp = spline.extract.faces(res, watertight=False)  # always watertight
     gus_primitives["spline"] = sp
 
     # knots
@@ -337,4 +338,6 @@ def _vedo_showable_para_dim_3(spline):
     """
     Currently same as _vedo_showable_para_dim_2
     """
+    # we keep the watertight to False, since we may wanna plot some data with
+    # same values. (issue #120)
     return _vedo_showable_para_dim_2(spline)
