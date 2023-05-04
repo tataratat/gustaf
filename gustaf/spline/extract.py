@@ -113,6 +113,7 @@ def edges(
 def faces(
     spline,
     resolutions,
+    watertight=True,
 ):
     """Extract faces from spline. Valid iff para_dim is one of the followings:
     {2, 3}. In case of {3}, it will return only surfaces. If internal faces are
@@ -123,6 +124,9 @@ def faces(
     -----------
     spline: BSpline or NURBS
     resolutions: int or list
+    watertight: bool
+      Default is True. Only related to para_dim = 3 splines. If False,
+      overlapping vertices at boundary edges won't be merged.
 
     Returns
     --------
@@ -240,7 +244,9 @@ def faces(
 
         # make faces and merge vertices before returning
         f = Faces(vertices=np.vstack(vertices), faces=np.vstack(faces))
-        f.merge_vertices()
+
+        if watertight:
+            f.merge_vertices()
 
         return f
 
