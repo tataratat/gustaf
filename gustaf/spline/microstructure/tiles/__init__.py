@@ -4,10 +4,16 @@ Interface for tools and generators creating simple microstructures.
 """
 
 from gustaf.spline.microstructure.tiles import (
+    armadillo,
     crosstile2d,
     crosstile3d,
+    cube3d,
     double_lattice_tile,
+    ellipsvoid,
     inversecrosstile3d,
+    nuttile2d,
+    nuttile3d,
+    snappytile,
     tilebase,
 )
 from gustaf.spline.microstructure.tiles.armadillo import Armadillo
@@ -17,6 +23,7 @@ from gustaf.spline.microstructure.tiles.cube3d import Cube3D
 from gustaf.spline.microstructure.tiles.double_lattice_tile import (
     DoubleLatticeTile,
 )
+from gustaf.spline.microstructure.tiles.ellipsvoid import Ellipsvoid
 from gustaf.spline.microstructure.tiles.inversecrosstile3d import (
     InverseCrossTile3D,
 )
@@ -26,20 +33,26 @@ from gustaf.spline.microstructure.tiles.snappytile import SnappyTile
 from gustaf.spline.microstructure.tiles.tilebase import TileBase
 
 __all__ = [
+    "armadillo",
+    "crosstile2d",
+    "crosstile3d",
+    "cube3d",
+    "double_lattice_tile",
+    "ellipsvoid",
+    "inversecrosstile3d",
+    "nuttile2d",
+    "nuttile3d",
+    "snappytile",
     "tilebase",
+    "Armadillo",
+    "CrossTile2D",
+    "CrossTile3D",
+    "Cube3D",
+    "DoubleLatticeTile",
+    "Ellipsvoid",
+    "InverseCrossTile3D",
     "NutTile2D",
     "NutTile3D",
-    "Cube3D",
-    "Armadillo",
-    "crosstile3d",
-    "snappytile",
-    "crosstile2d",
-    "inversecrosstile3d",
-    "double_lattice_tile",
-    "TileBase",
-    "CrossTile3D",
-    "CrossTile2D",
     "SnappyTile",
-    "InverseCrossTile3D",
-    "DoubleLatticeTile",
+    "TileBase",
 ]

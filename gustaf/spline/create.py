@@ -636,6 +636,29 @@ def torus(
     )
 
 
+def surface_circle(outer_radius):
+    from gustaf.spline import RationalBezier
+
+    aux_0_w = 2**-0.5
+    aux_0 = outer_radius * aux_0_w
+
+    return RationalBezier(
+        degrees=[2, 2],
+        control_points=[
+            [-aux_0, -aux_0],
+            [0, -2 * aux_0],
+            [aux_0, -aux_0],
+            [-2 * aux_0, 0],
+            [0, 0],
+            [2 * aux_0, 0],
+            [-aux_0, aux_0],
+            [0, 2 * aux_0],
+            [aux_0, aux_0],
+        ],
+        weights=[1, aux_0_w, 1, aux_0_w, 1, aux_0_w, 1, aux_0_w, 1],
+    )
+
+
 def sphere(
     outer_radius,
     inner_radius=None,
