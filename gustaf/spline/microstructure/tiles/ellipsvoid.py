@@ -93,12 +93,14 @@ class Ellipsvoid(TileBase):
         Parameters
         ----------
         parameters : np.array
-          only first entry is used, defines the internal radii of the
-          branches
-        seperator_distance : float
-          position of the control points for higher order elements
-        center_expansion : float
-          thickness of center is expanded by a factor
+          Defines 4 values necessary for tile definition
+          1. expansion in ellipsoidal void in x-axis
+          2. expansion of ellipsoidal void in y- and z-axis
+          3. rotation around x-axis
+          4. rotation around y- and z-axis
+        parameter_sensitivities: np.array
+          Sensitivities of all 4 values with respect to some number of external
+          design variables
 
         Returns
         -------
