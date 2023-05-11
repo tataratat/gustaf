@@ -3,8 +3,6 @@ from vedo import Mesh, colors
 
 import gustaf as gus
 
-gus.show(gus.spline.microstructure.tiles.Cube3D().create_tile(), resolutions=3)
-
 # First Test
 generator = gus.spline.microstructure.Microstructure()
 generator.deformation_function = gus.Bezier(
@@ -27,9 +25,9 @@ generator.microtile = [
     ),
 ]
 generator.tiling = [8, 8]
-# generator.show(
-#     knots=False, control_points=False, title="2D Lattice Microstructure"
-# )
+generator.show(
+    knots=False, control_points=False, title="2D Lattice Microstructure"
+)
 
 # Second test
 
@@ -74,10 +72,31 @@ para_s = gus.BSpline(
     ],
 )
 
+# Plot all available microtiles
+micro_tiles = []
+test = map(
+    gus.spline.microstructure.tiles.__dict__.get,
+    gus.spline.microstructure.tiles.__all__,
+)
+for i in test:
+    if hasattr(i, "create_tile"):
+        micro_tiles.append(
+            [
+                i.__qualname__,
+                i().create_tile(),
+            ]
+        )
+
+gus.show(
+    *micro_tiles,
+    resolutions=7,
+    control_points=False,
+    knots=True,
+    lighting="off"
+)
 
 # Ellipsoid
 a = gus.spline.microstructure.tiles.Ellipsvoid().create_tile()
-# gus.show(a)
 for ii in range(4):
     a, b = gus.spline.microstructure.tiles.Ellipsvoid().create_tile(
         parameters=np.array([[0.5, 0.3, np.deg2rad(20), np.deg2rad(10)]]),
@@ -108,7 +127,42 @@ for ii in range(4):
         distance=3.33943,
         clipping_range=(1.37, 5.0),
     )
-    # gus.show(surfaces + a, cam=camera, alpha=0.2)
+    gus.show(surfaces + a, cam=camera, alpha=0.2)
+
+
+# Cubevoid
+a = gus.spline.microstructure.tiles.Cubevoid().create_tile()
+for ii in range(4):
+    a, b = gus.spline.microstructure.tiles.Cubevoid().create_tile(
+        parameters=np.array([[0.5, 0.3, np.deg2rad(20), np.deg2rad(10)]]),
+        parameter_sensitivities=np.eye(N=1, M=4, k=ii).reshape(1, 4, 1),
+    )
+    surfaces = []
+    s_2_extract = [5, 4, 3, 2, 1, 0]
+    for i, (aa, bb) in enumerate(zip(a, b[0])):
+        aa.spline_data["field"] = bb
+        aa.show_options["arrow_data"] = "field"
+        aa.show_options[
+            "arrow_data_on"
+        ] = gus.spline.splinepy.utils.data.cartesian_product(
+            [np.linspace(0, 1, 4) for _ in range(3)]
+        )
+        aa.show_options["alpha"] = 0
+        aa.show_options["resolutions"] = 2
+        aa.show_options["control_point_ids"] = False
+        surface = aa.extract_boundaries(s_2_extract[i])[0]
+        surface.show_options["control_points"] = False
+        surface.show_options["c"] = "grey"
+        surface.show_options["resolutions"] = 20
+        surfaces.append(surface)
+    camera = dict(
+        position=(1.9, 1.3, 3),
+        focal_point=(0.5, 0.5, 0.5),
+        viewup=(-0.1, 0.95, -0.3),
+        distance=3.33943,
+        clipping_range=(1.37, 5.0),
+    )
+    gus.show(surfaces + a, cam=camera)
 
 
 def foo(x):
@@ -124,13 +178,13 @@ generator.deformation_function = gus.Bezier(
     degrees=[1, 1], control_points=[[0, 0], [1, 0], [0, 1], [1, 1]]
 ).create.extruded(extrusion_vector=[0, 0, 1])
 generator.tiling = [3, 3, 2]
-# generator.show(
-#     knots=True,
-#     control_points=False,
-#     title="3D Cube Microstructure",
-#     resolutions=3,
-#     alpha=0.05,
-# )
+generator.show(
+    knots=True,
+    control_points=False,
+    title="3D Cube Microstructure",
+    resolutions=3,
+    alpha=0.05,
+)
 
 
 # Test new microstructure
@@ -189,7 +243,6 @@ generator.show(
 
 
 # Second test
-
 generator = gus.spline.microstructure.Microstructure()
 generator.deformation_function = gus.Bezier(
     degrees=[1, 1], control_points=[[0, 0], [1, 0], [0, 1], [1, 1]]
@@ -288,10 +341,9 @@ generator.show(
     title="2D Lattice with global tiling",
 )
 
+
 # Sixth test
 # A Parametrized microstructure and its respective inverse structure
-
-
 def foo(x):
     """
     Parametrization Function (determines thickness)

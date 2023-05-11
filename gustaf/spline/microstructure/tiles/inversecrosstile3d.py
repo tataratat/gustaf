@@ -870,7 +870,7 @@ class InverseCrossTile3D(TileBase):
     def create_tile(
         self,
         parameters=None,
-        seperator_distance=None,
+        seperator_distance=0.5,
         center_expansion=1.0,
         **kwargs,
     ):

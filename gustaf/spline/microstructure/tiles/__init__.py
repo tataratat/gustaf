@@ -8,6 +8,7 @@ from gustaf.spline.microstructure.tiles import (
     crosstile2d,
     crosstile3d,
     cube3d,
+    cubevoid,
     double_lattice_tile,
     ellipsvoid,
     inversecrosstile3d,
@@ -20,6 +21,7 @@ from gustaf.spline.microstructure.tiles.armadillo import Armadillo
 from gustaf.spline.microstructure.tiles.crosstile2d import CrossTile2D
 from gustaf.spline.microstructure.tiles.crosstile3d import CrossTile3D
 from gustaf.spline.microstructure.tiles.cube3d import Cube3D
+from gustaf.spline.microstructure.tiles.cubevoid import Cubevoid
 from gustaf.spline.microstructure.tiles.double_lattice_tile import (
     DoubleLatticeTile,
 )
@@ -37,6 +39,7 @@ __all__ = [
     "crosstile2d",
     "crosstile3d",
     "cube3d",
+    "cubevoid",
     "double_lattice_tile",
     "ellipsvoid",
     "inversecrosstile3d",
@@ -48,6 +51,7 @@ __all__ = [
     "CrossTile2D",
     "CrossTile3D",
     "Cube3D",
+    "Cubevoid",
     "DoubleLatticeTile",
     "Ellipsvoid",
     "InverseCrossTile3D",

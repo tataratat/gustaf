@@ -4,11 +4,11 @@ from gustaf.spline import base
 from gustaf.spline.microstructure.tiles.tilebase import TileBase
 
 
-class Ellipsvoid(TileBase):
-    """Void in form of an ellipse set into a unit cell.
-
-    Parametrization acts on the elipsoid's orientation as well as on its
-    expansion (radii in x and y/z direction).
+class Cubevoid(TileBase):
+    """Void in form of an cuboid set into a unit cell. 
+    
+    Parametrization acts on the cuboid's orientation as well as on its 
+    expansion (radii in x and y/z direction). 
 
     Used in ADAMM test case for Hutchinson.
 
@@ -25,42 +25,16 @@ class Ellipsvoid(TileBase):
         self._n_info_per_eval_point = 4
 
         # Aux values
-        c0 = 0.5 / 3**0.5
-        aux_1 = 3**0.5 / 2 * 0.5
-        aux_0 = aux_1 * 2
-        self._sphere_ctps = np.array(
-            [
-                [-c0, -c0, -c0],
-                [0, -aux_1, -aux_1],
-                [c0, -c0, -c0],
-                [-aux_1, 0, -aux_1],
-                [0, 0, -aux_0],
-                [aux_1, 0, -aux_1],
-                [-c0, c0, -c0],
-                [0, aux_1, -aux_1],
-                [c0, c0, -c0],
-                # Second layer
-                [-aux_1, -aux_1, 0],
-                [0, -aux_0, 0],
-                [aux_1, -aux_1, 0],
-                [-aux_0, 0, 0],
-                [0, 0, 0],
-                [aux_0, 0, 0],
-                [-aux_1, aux_1, 0],
-                [0, aux_0, 0],
-                [aux_1, aux_1, 0],
-                # Third layer
-                [-c0, -c0, c0],
-                [0, -aux_1, aux_1],
-                [c0, -c0, c0],
-                [-aux_1, 0, aux_1],
-                [0, 0, aux_0],
-                [aux_1, 0, aux_1],
-                [-c0, c0, c0],
-                [0, aux_1, aux_1],
-                [c0, c0, c0],
-            ]
-        )
+        self._sphere_ctps = np.array([
+            [-.5,-.5,-0.5],
+            [.5,-.5,-0.5],
+            [-.5,0.5,-0.5],
+            [.5,0.5,-0.5],
+            [-.5,-.5,0.5],
+            [.5,-.5,0.5],
+            [-.5,0.5,0.5],
+            [.5,0.5,0.5],
+        ])
 
     def _rotation_matrix_x(self, angle):
         cc, ss = np.cos(angle), np.sin(angle)
@@ -84,14 +58,14 @@ class Ellipsvoid(TileBase):
         parameter_sensitivities=None,
         **kwargs,
     ):
-        """Create a full cuboid with an ellipsoid void in the center, that has
+        """Create a full cuboid with a cuboidal void in the center, that has
         a rotation applied in the form
 
         T = RotY * RotX * Tz
 
         Parameters are stored as a 4 dimensional field. The entries represent:
-        p_0 -> radius along x-axis
-        p_1 -> radius along y/z axis
+        p_0 -> expansion along x-axis
+        p_1 -> expansion along y/z axis
         p_2 -> rotation around x-axis
         p_3 -> rotation around y-axis
 
@@ -99,8 +73,8 @@ class Ellipsvoid(TileBase):
         ----------
         parameters : np.array
           Defines 4 values necessary for tile definition
-          1. expansion in ellipsoidal void in x-axis
-          2. expansion of ellipsoidal void in y- and z-axis
+          1. expansion in cuboid void in x-axis
+          2. expansion of cuboid void in y- and z-axis
           3. rotation around x-axis
           4. rotation around y- and z-axis
         parameter_sensitivities: np.array
@@ -174,50 +148,30 @@ class Ellipsvoid(TileBase):
             # Start the assembly
             spline_list.append(
                 base.Bezier(
-                    degrees=[2, 2, 1],
+                    degrees=[1,1, 1],
                     control_points=[
                         [v_zero, v_zero, v_zero],
-                        [v_one_half, v_zero, v_zero],
                         [v_one, v_zero, v_zero],
-                        [v_zero, v_one_half, v_zero],
-                        [v_one_half, v_one_half, v_zero],
-                        [v_one, v_one_half, v_zero],
                         [v_zero, v_one, v_zero],
-                        [v_one_half, v_one, v_zero],
                         [v_one, v_one, v_zero],
                         ctps[0, :],
                         ctps[1, :],
                         ctps[2, :],
                         ctps[3, :],
-                        ctps[4, :],
-                        ctps[5, :],
-                        ctps[6, :],
-                        ctps[7, :],
-                        ctps[8, :],
                     ],
                 )
             )
             spline_list.append(
                 base.Bezier(
-                    degrees=[2, 2, 1],
+                    degrees=[1,1, 1],
                     control_points=[
-                        ctps[18, :],
-                        ctps[19, :],
-                        ctps[20, :],
-                        ctps[21, :],
-                        ctps[22, :],
-                        ctps[23, :],
-                        ctps[24, :],
-                        ctps[25, :],
-                        ctps[26, :],
+                        ctps[4, :],
+                        ctps[5, :],
+                        ctps[6, :],
+                        ctps[7, :],
                         [v_zero, v_zero, v_one],
-                        [v_one_half, v_zero, v_one],
                         [v_one, v_zero, v_one],
-                        [v_zero, v_one_half, v_one],
-                        [v_one_half, v_one_half, v_one],
-                        [v_one, v_one_half, v_one],
                         [v_zero, v_one, v_one],
-                        [v_one_half, v_one, v_one],
                         [v_one, v_one, v_one],
                     ],
                 )
@@ -225,50 +179,30 @@ class Ellipsvoid(TileBase):
             # Y-Axis
             spline_list.append(
                 base.Bezier(
-                    degrees=[2, 1, 2],
+                    degrees=[1,1, 1],
                     control_points=[
                         [v_zero, v_zero, v_zero],
-                        [v_one_half, v_zero, v_zero],
                         [v_one, v_zero, v_zero],
                         ctps[0, :],
                         ctps[1, :],
-                        ctps[2, :],
-                        [v_zero, v_zero, v_one_half],
-                        [v_one_half, v_zero, v_one_half],
-                        [v_one, v_zero, v_one_half],
-                        ctps[9, :],
-                        ctps[10, :],
-                        ctps[11, :],
                         [v_zero, v_zero, v_one],
-                        [v_one_half, v_zero, v_one],
                         [v_one, v_zero, v_one],
-                        ctps[18, :],
-                        ctps[19, :],
-                        ctps[20, :],
+                        ctps[4, :],
+                        ctps[5, :],
                     ],
                 )
             )
             spline_list.append(
                 base.Bezier(
-                    degrees=[2, 1, 2],
+                    degrees=[1,1, 1],
                     control_points=[
+                        ctps[2, :],
+                        ctps[3, :],
+                        [v_zero, v_one, v_zero],
+                        [v_one, v_one, v_zero],
                         ctps[6, :],
                         ctps[7, :],
-                        ctps[8, :],
-                        [v_zero, v_one, v_zero],
-                        [v_one_half, v_one, v_zero],
-                        [v_one, v_one, v_zero],
-                        ctps[15, :],
-                        ctps[16, :],
-                        ctps[17, :],
-                        [v_zero, v_one, v_one_half],
-                        [v_one_half, v_one, v_one_half],
-                        [v_one, v_one, v_one_half],
-                        ctps[24, :],
-                        ctps[25, :],
-                        ctps[26, :],
                         [v_zero, v_one, v_one],
-                        [v_one_half, v_one, v_one],
                         [v_one, v_one, v_one],
                     ],
                 )
@@ -276,50 +210,30 @@ class Ellipsvoid(TileBase):
             # Z-Axis
             spline_list.append(
                 base.Bezier(
-                    degrees=[1, 2, 2],
+                    degrees=[1,1, 1],
                     control_points=[
                         [v_zero, v_zero, v_zero],
                         ctps[0, :],
-                        [v_zero, v_one_half, v_zero],
-                        ctps[3, :],
                         [v_zero, v_one, v_zero],
-                        ctps[6, :],
-                        [v_zero, v_zero, v_one_half],
-                        ctps[9, :],
-                        [v_zero, v_one_half, v_one_half],
-                        ctps[12, :],
-                        [v_zero, v_one, v_one_half],
-                        ctps[15, :],
+                        ctps[2, :],
                         [v_zero, v_zero, v_one],
-                        ctps[18, :],
-                        [v_zero, v_one_half, v_one],
-                        ctps[21, :],
+                        ctps[4, :],
                         [v_zero, v_one, v_one],
-                        ctps[24, :],
+                        ctps[6, :],
                     ],
                 )
             )
             spline_list.append(
                 base.Bezier(
-                    degrees=[1, 2, 2],
+                    degrees=[1,1, 1],
                     control_points=[
-                        ctps[2, :],
+                        ctps[1, :],
                         [v_one, v_zero, v_zero],
-                        ctps[5, :],
-                        [v_one, v_one_half, v_zero],
-                        ctps[8, :],
+                        ctps[3, :],
                         [v_one, v_one, v_zero],
-                        ctps[11, :],
-                        [v_one, v_zero, v_one_half],
-                        ctps[14, :],
-                        [v_one, v_one_half, v_one_half],
-                        ctps[17, :],
-                        [v_one, v_one, v_one_half],
-                        ctps[20, :],
+                        ctps[5, :],            
                         [v_one, v_zero, v_one],
-                        ctps[23, :],
-                        [v_one, v_one_half, v_one],
-                        ctps[26, :],
+                        ctps[7, :],
                         [v_one, v_one, v_one],
                     ],
                 )
