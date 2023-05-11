@@ -5,10 +5,10 @@ from gustaf.spline.microstructure.tiles.tilebase import TileBase
 
 
 class Cubevoid(TileBase):
-    """Void in form of an cuboid set into a unit cell. 
-    
-    Parametrization acts on the cuboid's orientation as well as on its 
-    expansion (radii in x and y/z direction). 
+    """Void in form of an cuboid set into a unit cell.
+
+    Parametrization acts on the cuboid's orientation as well as on its
+    expansion (radii in x and y/z direction).
 
     Used in ADAMM test case for Hutchinson.
 
@@ -25,16 +25,18 @@ class Cubevoid(TileBase):
         self._n_info_per_eval_point = 4
 
         # Aux values
-        self._sphere_ctps = np.array([
-            [-.5,-.5,-0.5],
-            [.5,-.5,-0.5],
-            [-.5,0.5,-0.5],
-            [.5,0.5,-0.5],
-            [-.5,-.5,0.5],
-            [.5,-.5,0.5],
-            [-.5,0.5,0.5],
-            [.5,0.5,0.5],
-        ])
+        self._sphere_ctps = np.array(
+            [
+                [-0.5, -0.5, -0.5],
+                [0.5, -0.5, -0.5],
+                [-0.5, 0.5, -0.5],
+                [0.5, 0.5, -0.5],
+                [-0.5, -0.5, 0.5],
+                [0.5, -0.5, 0.5],
+                [-0.5, 0.5, 0.5],
+                [0.5, 0.5, 0.5],
+            ]
+        )
 
     def _rotation_matrix_x(self, angle):
         cc, ss = np.cos(angle), np.sin(angle)
@@ -148,7 +150,7 @@ class Cubevoid(TileBase):
             # Start the assembly
             spline_list.append(
                 base.Bezier(
-                    degrees=[1,1, 1],
+                    degrees=[1, 1, 1],
                     control_points=[
                         [v_zero, v_zero, v_zero],
                         [v_one, v_zero, v_zero],
@@ -163,7 +165,7 @@ class Cubevoid(TileBase):
             )
             spline_list.append(
                 base.Bezier(
-                    degrees=[1,1, 1],
+                    degrees=[1, 1, 1],
                     control_points=[
                         ctps[4, :],
                         ctps[5, :],
@@ -179,7 +181,7 @@ class Cubevoid(TileBase):
             # Y-Axis
             spline_list.append(
                 base.Bezier(
-                    degrees=[1,1, 1],
+                    degrees=[1, 1, 1],
                     control_points=[
                         [v_zero, v_zero, v_zero],
                         [v_one, v_zero, v_zero],
@@ -194,7 +196,7 @@ class Cubevoid(TileBase):
             )
             spline_list.append(
                 base.Bezier(
-                    degrees=[1,1, 1],
+                    degrees=[1, 1, 1],
                     control_points=[
                         ctps[2, :],
                         ctps[3, :],
@@ -210,7 +212,7 @@ class Cubevoid(TileBase):
             # Z-Axis
             spline_list.append(
                 base.Bezier(
-                    degrees=[1,1, 1],
+                    degrees=[1, 1, 1],
                     control_points=[
                         [v_zero, v_zero, v_zero],
                         ctps[0, :],
@@ -225,13 +227,13 @@ class Cubevoid(TileBase):
             )
             spline_list.append(
                 base.Bezier(
-                    degrees=[1,1, 1],
+                    degrees=[1, 1, 1],
                     control_points=[
                         ctps[1, :],
                         [v_one, v_zero, v_zero],
                         ctps[3, :],
                         [v_one, v_one, v_zero],
-                        ctps[5, :],            
+                        ctps[5, :],
                         [v_one, v_zero, v_one],
                         ctps[7, :],
                         [v_one, v_one, v_one],
