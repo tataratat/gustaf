@@ -4,6 +4,7 @@ import numpy as np
 
 from gustaf import BSpline, utils
 from gustaf.show import vedo
+from gustaf.vertices import Vertices
 
 try:
     VedoPlotter = vedo.Plotter
@@ -100,7 +101,9 @@ class IganetBSpline(VedoPlotter):
     show the displacement field in parametric space view.
     """
 
-    def __init__(self, uri, degree=None, ncoeffs=None):
+    def __init__(
+        self, uri, degree=None, ncoeffs=None, control_point_ids=False
+    ):
         """
         Creates spline and initialize all callbacks
 
@@ -119,6 +122,11 @@ class IganetBSpline(VedoPlotter):
         N = 2
         interactive = False
         sharecam = False
+
+        self.control_point_ids = control_point_ids
+        if self.control_point_ids:
+            N += 1
+            self.cp_ids = None
 
         # process degree and ncoeffs options
         if degree is None:
@@ -369,6 +377,9 @@ class IganetBSpline(VedoPlotter):
         # remove
         self.at(0).remove(*self.spline_showable.values())
 
+        if self.control_point_ids:
+            self.at(2).remove(self.cp_ids)
+
         # update cp
         # self.spline.control_points[self.picked] = self.p
         self.spline.coordinate_references[self.picked] = self.p
@@ -378,6 +389,9 @@ class IganetBSpline(VedoPlotter):
 
         # add set showables
         self.at(0).add(*self.spline_showable.values())
+
+        if self.control_point_ids:
+            self.at(2).add(self.cp_ids)
 
     def _setup_showable(self):
         """
@@ -403,6 +417,11 @@ class IganetBSpline(VedoPlotter):
             s.id = i
             self.spline_showable[f"cp{i}"] = s
 
+        if self.control_point_ids:
+            self.cp_ids = Vertices(self.spline.cps)
+            self.cp_ids.show_options["vertex_ids"] = True
+            self.cp_ids = self.cp_ids.showable()
+
     def start(self):
         """
         Start the interative mode.
@@ -413,6 +432,10 @@ class IganetBSpline(VedoPlotter):
         """
         self._setup_showable()
         self.show("Server response:", at=1)
+
+        if self.control_point_ids:
+            self.show("Control point ids:", self.cp_ids, at=2)
+
         self.show(
             *self.spline_showable.values(),
             at=0,
