@@ -1,9 +1,9 @@
 import uuid
 
-from gustaf import utils
-from gustaf import BSpline
+import numpy as np
+
+from gustaf import BSpline, utils
 from gustaf.show import vedo
-from gustaf.vertices import Vertices
 
 try:
     VedoPlotter = vedo.Plotter
@@ -100,7 +100,7 @@ class IganetBSpline(VedoPlotter):
     show the displacement field in parametric space view.
     """
 
-    def __init__(self, uri):
+    def __init__(self, uri, degree=None, ncoeffs=None):
         """
         Creates spline and initialize all callbacks
 
@@ -120,8 +120,20 @@ class IganetBSpline(VedoPlotter):
         interactive = False
         sharecam = False
 
+        # process degree and ncoeffs options
+        if degree is None:
+            print("`degree` not specified, applying default (3)")
+            degree = 3
+
+        if ncoeffs is None:
+            print("`ncoeffs` not specified, applying default (degree + 1)")
+            ncoeffs = [degree + 1] * 2  # hard codeded for surface
+
         # set title for window
         self.window_title = "Hello IgaNets, Hello Matthias"
+
+        # define sampling resolutions
+        self.sample_resolutions = 50
 
         super().__init__(
             N=N,
@@ -165,7 +177,7 @@ class IganetBSpline(VedoPlotter):
         spline_create_req[
             "request"
         ] = f"create/{self.session_id}/BSplineSurface"
-        spline_create_req["data"] = {"degree": 2}
+        spline_create_req["data"] = {"degree": degree, "ncoeffs": ncoeffs}
         # from this request, all we need is created spline's id.
         self.spline_id = int(
             eval(self.server.send_recv(sendable_str(spline_create_req)))[
@@ -184,12 +196,10 @@ class IganetBSpline(VedoPlotter):
         self.spline = iganet_to_gus(self.server_spline_raw)
         print(f"created {self.spline.whatami}")
 
-        # plotter mode
-        if self.spline.dim == 2:
-            # self.default_mode = vtk.vtkInteractorStyleTrackballActor()
+        # plotter mode - based on para_dim for now.
+        if self.spline.para_dim == 2:
             self.default_mode = "TrackballActor"
-        elif self.spline.dim == 3:
-            # self.default_mode = vtk.vtkInteractorStyleTrackballCamera()
+        elif self.spline.para_dim == 3:
             self.default_mode = "TrackballCamera"
         else:
             raise ValueError(
@@ -221,18 +231,55 @@ class IganetBSpline(VedoPlotter):
         # evaluate
         eval_req = req_template()
         eval_req["request"] = f"eval/{self.session_id}/{self.spline_id}"
-        eval_req["data"] = {"resolution": [11, 11]}
+        eval_req["data"] = {
+            "resolution": [self.sample_resolutions] * self.spline.para_dim
+        }
 
         evaluated_raw = eval(self.server.send_recv(sendable_str(eval_req)))[
             "data"
         ]
-        self.eval_v = Vertices(
-            [[*x] for x in zip(*evaluated_raw)],
+        evaluated_np = np.asarray(evaluated_raw)
+
+        # evaluated values will be plotted on input geometry
+        ndim = evaluated_np.ndim
+
+        # get appropriate discrete geometry extraction
+        if self.spline.para_dim == 2:
+            extract = self.spline.extract.faces
+        elif self.spline.para_dim == 3:
+            extract = self.spline.extract.volumes
+        else:
+            raise ValueError(
+                f"Invalid spline para_dim - {self.spline_para_dim}"
+            )
+
+        # get appropriate data type
+        if ndim == 1:  # scalar plot
+            option_name = "data_name"
+        elif ndim == 2 or ndim == 3:  # vector (arrow) plot
+            option_name = "arrow_data"
+        else:
+            raise ValueError("only support 1-3 dim fields visualization.")
+
+        # extract and setup gustaf obj
+        self.eval_v = extract(self.sample_resolutions)
+        self.eval_v.vertex_data["field"] = evaluated_np
+        self.eval_v.show_options[option_name] = "field"
+        self.eval_v.show_options["axes"] = True
+
+        # turn them into backend object
+        self.eval_v = self.eval_v.showable()
+        # let's add element line
+        self.eval_v += (
+            self.spline.extract.edges(
+                [self.sample_resolutions] * self.spline.para_dim,
+                all_knots=True,
+            )
+            .showable()
+            .c("black")
         )
 
-        self.eval_v.show_options["r"] = 10
-        self.eval_v.show_options["vertex_ids"] = True
-        self.eval_v = self.eval_v.showable()
+        # show
         self.at(1).show(self.eval_v)
 
     def _left_click(self, evt):
@@ -294,6 +341,7 @@ class IganetBSpline(VedoPlotter):
         self.spline.show_options["control_points"] = False
         self.spline.show_options["control_mesh"] = True
         self.spline.show_options["lighting"] = "off"
+        self.spline.show_options["alpha"] = 0.8
 
         # restart
         self.start()
@@ -322,7 +370,8 @@ class IganetBSpline(VedoPlotter):
         self.at(0).remove(*self.spline_showable.values())
 
         # update cp
-        self.spline.control_points[self.picked] = self.p
+        # self.spline.control_points[self.picked] = self.p
+        self.spline.coordinate_references[self.picked] = self.p
 
         # setup showable based on updated cp
         self._setup_showable()
@@ -335,7 +384,7 @@ class IganetBSpline(VedoPlotter):
         Prepares vedo-show-ready objects, as well as control points that we can
         pick.
         """
-        res = [50, 50]  # sample resolution
+        res = self.sample_resolutions  # sample resolution
         self.spline.show_options["resolutions"] = res
         self.spline.show_options["control_points"] = False
         self.spline.show_options["control_mesh"] = True
