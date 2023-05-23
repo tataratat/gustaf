@@ -23,6 +23,7 @@ help:
 # "make mode" option.  $(O) is meant as a shortcut for $(SPHINXOPTS).
 %: Makefile
 	$(PYTHON) $(SOURCEDIR)/extra_docs.py
+	$(PYTHON) $(SOURCEDIR)/handle_markdown.py
 	$(SPHINXAPIDOC) -f -t $(TEMPLATEDIR) -o $(SOURCEDIR) $(MODULEDIR)
 	$(SPHINXBUILD) -M $@ "$(SOURCEDIR)" "$(BUILDDIR)" $(SPHINXOPTS) $(O)
 

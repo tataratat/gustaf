@@ -15,7 +15,9 @@ jobs:
           python-version: 3.9
 
       - name: install gustaf
-        run:  python3 setup.py develop
+        run:  |
+          pip install splinepy
+          python3 setup.py develop
 
       - name: Install dependencies
         run:  pip install -r ./docs/requirements.txt
@@ -24,6 +26,7 @@ jobs:
         run: |
           sphinx-apidoc -f -t docs/source/_templates -o docs/source gustaf
           python3 docs/source/extra_docs.py
+          python3 docs/source/handle_markdown.py
 
       - name: Sphinx build
         run: |
