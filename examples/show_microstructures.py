@@ -25,9 +25,9 @@ generator.microtile = [
     ),
 ]
 generator.tiling = [8, 8]
-generator.show(
-    knots=False, control_points=False, title="2D Lattice Microstructure"
-)
+# generator.show(
+#     knots=False, control_points=False, title="2D Lattice Microstructure"
+# )
 
 # Second test
 
@@ -74,16 +74,16 @@ para_s = gus.BSpline(
 
 # Plot all available microtiles
 micro_tiles = []
-test = map(
+module_list = map(
     gus.spline.microstructure.tiles.__dict__.get,
     gus.spline.microstructure.tiles.__all__,
 )
-for i in test:
-    if hasattr(i, "create_tile"):
+for mt in module_list:
+    if hasattr(mt, "create_tile"):
         micro_tiles.append(
             [
-                i.__qualname__,
-                i().create_tile(),
+                mt.__qualname__,
+                mt().create_tile(),
             ]
         )
 
