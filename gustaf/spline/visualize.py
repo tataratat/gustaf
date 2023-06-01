@@ -44,6 +44,24 @@ class SplineShowOption(options.ShowOption):
         ),
         options.Option(
             "vedo",
+            "control_points_c",
+            "Color of control_points in {rgb, RGB, str of (hex, name), int}",
+            (str, tuple, list, int),
+        ),
+        options.Option(
+            "vedo",
+            "control_mesh_c",
+            "Color of control_mesh in {rgb, RGB, str of (hex, name), int}",
+            (str, tuple, list, int),
+        ),
+        options.Option(
+            "vedo",
+            "control_mesh_lw",
+            "Transparency of control points in range [0, 1].",
+            (int),
+        ),
+        options.Option(
+            "vedo",
             "control_points_alpha",
             "Transparency of control points in range [0, 1].",
             (float, int),
@@ -226,10 +244,12 @@ def _vedo_showable(spline):
     if show_cps:
         # control points (vertices)
         cps = spline.extract.control_points()
-        cps.show_options["c"] = "red"
+        cps.show_options["c"] = spline.show_options.get(
+            "control_points_c", "red"
+        )
         cps.show_options["r"] = 10
         cps.show_options["alpha"] = spline.show_options.get(
-            "control_points_alpha", 0.8
+            "control_points_alpha", 1.0
         )
         # add
         gus_primitives["control_points"] = cps
@@ -247,8 +267,12 @@ def _vedo_showable(spline):
         if spline.para_dim != 1:
             c_mesh = c_mesh.to_edges(unique=True)
 
-        c_mesh.show_options["c"] = "red"
-        c_mesh.show_options["lw"] = 4
+        c_mesh.show_options["c"] = spline.show_options.get(
+            "control_mesh_c", "red"
+        )
+        c_mesh.show_options["lw"] = spline.show_options.get(
+            "control_mesh_lw", 4
+        )
         c_mesh.show_options["alpha"] = spline.show_options.get(
             "control_points_alpha", 0.8
         )
