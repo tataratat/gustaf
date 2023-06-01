@@ -274,7 +274,7 @@ def _vedo_showable(spline):
             "control_mesh_lw", 4
         )
         c_mesh.show_options["alpha"] = spline.show_options.get(
-            "control_points_alpha", 1.0
+            "control_points_alpha", 0.8
         )
         # add
         gus_primitives["control_mesh"] = c_mesh
