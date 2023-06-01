@@ -12,7 +12,7 @@ animation1 = False
 animation2 = False
 animation3 = True
 animation4 = False
-animation5 = False
+animation5 = True
 ctps_on = True
 
 ## ANIMATION 1 ##
@@ -729,7 +729,7 @@ if animation5:
     )
 
     parametrization_spline = gus.Bezier(
-        degrees=[2, 1], control_points=np.ones((6, 1)) * 0.25
+        degrees=[2, 2], control_points=np.ones((9, 1)) * 0.25
     )
 
     para_geometric_base = gus.Bezier(
@@ -755,7 +755,7 @@ if animation5:
     duration = 2
     n_frames = fps * duration
 
-    para_offset = np.random.rand(6, 1)
+    para_offset = np.random.rand(9, 1)
     para_offset -= np.min(para_offset)
     para_offset /= np.max(para_offset)
     para_offset = (para_offset - 0.5) * 0.4 / n_frames
