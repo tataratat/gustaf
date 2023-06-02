@@ -456,9 +456,9 @@ class CrossTile2D(TileBase):
                 ).item()
                 hd_center = 0.5 * (0.5 + center_r)
             else:
-                [x_min_r, x_max_r, y_min_r, y_max_r] = parameter_sensitivities[
-                    i_derivative - 1
-                ][0].tolist()
+                [x_min_r, x_max_r, y_min_r, y_max_r] = (
+                    parameter_sensitivities[:, :, i_derivative - 1]
+                ).flatten()
                 v_one_half = 0.0
                 # center radius
                 center_r = (
