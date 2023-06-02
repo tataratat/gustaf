@@ -6,13 +6,14 @@ import gustaf as gus
 
 # Settings
 vedo.settings.screenshot_transparent_background = 1
-export_resolution = [1440, 1080]
+export_resolution = [1440, 1088]
 fps = 15
 animation1 = False
 animation2 = False
-animation3 = True
+animation3 = False
 animation4 = False
-animation5 = True
+animation5 = False
+animation6 = True
 ctps_on = True
 
 ## ANIMATION 1 ##
@@ -23,19 +24,11 @@ if animation1:
     sample_resolution = 3
     write_ms = imageio.get_writer(
         "animation1_ms.mp4",
-        codec="mjpeg",
-        mode="I",
         fps=fps,
-        quality=10,
-        pixelformat="yuvj444p",
     )
     write_df = imageio.get_writer(
         "animation1_df.mp4",
-        codec="mjpeg",
-        mode="I",
         fps=fps,
-        quality=10,
-        pixelformat="yuvj444p",
     )
     deformation_function = gus.Bezier(
         degrees=[2, 1],
@@ -158,7 +151,7 @@ if animation1:
         resolution=3,
         size=export_resolution,
     )
-    plt.screenshot(filename="microtile.png")
+    plt.screenshot(filename="animation1_microtile.png")
 
 if animation2:
     print("Starting to export animation 2")
@@ -166,19 +159,11 @@ if animation2:
     sample_resolution = 5
     write_ms = imageio.get_writer(
         "animation2_ms.mp4",
-        codec="mjpeg",
-        mode="I",
         fps=fps,
-        quality=10,
-        pixelformat="yuvj444p",
     )
     write_df = imageio.get_writer(
         "animation2_df.mp4",
-        codec="mjpeg",
-        mode="I",
         fps=fps,
-        quality=10,
-        pixelformat="yuvj444p",
     )
     deformation_function = gus.Bezier(
         degrees=[2, 1],
@@ -308,19 +293,11 @@ if animation3:
     sample_resolution = 10
     writer_ffd = imageio.get_writer(
         "animation3_ffd.mp4",
-        codec="mjpeg",
-        mode="I",
         fps=fps,
-        quality=10,
-        pixelformat="yuvj444p",
     )
     writer_composition = imageio.get_writer(
         "animation3_composition.mp4",
-        codec="mjpeg",
-        mode="I",
         fps=fps,
-        quality=10,
-        pixelformat="yuvj444p",
     )
     # Create MacroSpline
     macrospline = gus.Bezier(
@@ -567,6 +544,8 @@ if animation3:
     )
     plt.screenshot(filename="animation3_ffd_w_cps.png")
     print("Animation Complete")
+    writer_composition.close()
+    writer_ffd.close()
 
 if animation4:
     print("Starting to export animation 4")
@@ -574,19 +553,11 @@ if animation4:
     sample_resolution = 3
     write_ms = imageio.get_writer(
         "animation4_ms.mp4",
-        codec="mjpeg",
-        mode="I",
         fps=fps,
-        quality=10,
-        pixelformat="yuvj444p",
     )
     write_df = imageio.get_writer(
         "animation4_tile.mp4",
-        codec="mjpeg",
-        mode="I",
         fps=fps,
-        quality=10,
-        pixelformat="yuvj444p",
     )
 
     deformation_function = gus.Bezier(
@@ -701,19 +672,11 @@ if animation5:
     sample_resolution = 3
     write_ms = imageio.get_writer(
         "animation5_ms.mp4",
-        codec="mjpeg",
-        mode="I",
         fps=fps,
-        quality=10,
-        pixelformat="yuvj444p",
     )
     write_df = imageio.get_writer(
         "animation5_para.mp4",
-        codec="mjpeg",
-        mode="I",
         fps=fps,
-        quality=10,
-        pixelformat="yuvj444p",
     )
 
     deformation_function = gus.Bezier(
@@ -755,14 +718,15 @@ if animation5:
     duration = 2
     n_frames = fps * duration
 
-    para_offset = np.random.rand(9, 1)
-    para_offset -= np.min(para_offset)
-    para_offset /= np.max(para_offset)
-    para_offset = (para_offset - 0.5) * 0.4 / n_frames
+    para_offset = (
+        np.array([-1, -1, 1, 1, -1, -1, -1, 0, 1]).reshape((9, 1))
+        * 0.2
+        / n_frames
+    )
 
     for i in range(n_frames):
         parametrization_spline.cps += para_offset
-        list = generator.create()
+        list = generator.create(center_expansion=1.2)
         plt = gus.show(
             list,
             knots=True,
@@ -788,7 +752,7 @@ if animation5:
     print("Section complete : 1")
     for i in range(n_frames):
         parametrization_spline.cps -= para_offset
-        list = generator.create()
+        list = generator.create(center_expansion=1.2)
         plt = gus.show(
             list,
             knots=True,
@@ -822,9 +786,10 @@ if animation5:
         resolution=sample_resolution,
         size=export_resolution,
     )
-    plt.screenshot(filename="deformation_function.png")
+    plt.screenshot(filename="animation5_deformation_function.png")
+
     plt = gus.show(
-        generator.microtile.create_tile(),
+        generator.microtile.create_tile(center_expansion=1.2),
         knots=True,
         control_points=False,
         c="lightgray",
@@ -833,6 +798,166 @@ if animation5:
         resolution=sample_resolution,
         size=export_resolution,
     )
-    plt.screenshot(filename="animation5_deformation_function.png")
+    plt.screenshot(filename="animation5_microtile.png")
     write_df.close()
     write_ms.close()
+
+if animation6:
+    sample_resolution = 5
+
+    # Derivatives of microspline
+    # Outer spline
+    macro = gus.Bezier(
+        degrees=[2, 2],
+        control_points=[
+            [0.0, 0.0],
+            [0.5, 0.2],
+            [1.0, 0.0],
+            [0.0, 0.6],
+            [0.5, 0.6],
+            [1.0, 0.6],
+            [-0.3, 1.0],
+            [0.5, 1.25],
+            [1.3, 1.0],
+        ],
+    )
+
+    # Set plot options
+    macro.show_options["alpha"] = 0.
+    macro.show_options["c"] = "gray"
+    macro.show_options["control_points"] = False
+
+    def parametrization_function(x):
+        return np.ones((x.shape[0], 1)) * 0.15
+
+    def parametrization_sensitivity_function(x):
+        return np.ones((x.shape[0], 1, 1)) * 1
+
+    generator = gus.spline.microstructure.Microstructure(
+        deformation_function=macro,
+        tiling=[1, 1],
+        microtile=gus.spline.microstructure.tiles.CrossTile2D(),
+        parametrization_function=parametrization_function,
+    )
+    generator.parameter_sensitivity_function = (
+        parametrization_sensitivity_function
+    )
+    single_tile, single_tile_deriv = generator.microtile.create_tile(
+        center_expansion=1.2,
+        parameters=np.ones((4,1)) * 0.15,
+        parameter_sensitivities=np.ones((4,1,1))
+    )
+
+    plt = gus.show(single_tile,
+        knots=True,
+        control_points=False,
+        c="lightgray",
+        lighting="off",
+        offscreen=True,
+        resolution=sample_resolution,
+        size=export_resolution,)
+    plt.screenshot(filename="animation6_single_tile_only.png")
+
+    for t, td in zip(single_tile, single_tile_deriv[0]):
+        t.spline_data["deriv"] = td
+        t.show_options["control_points"] = False
+        t.show_options["control_mesh"] = False
+        t.show_options["arrow_data"] = "deriv"
+        t.show_options["arrow_data_scale"] = 0.08
+        t.show_options[
+            "arrow_data_on"
+        ] = gus.spline.splinepy.utils.data.cartesian_product(
+            [np.linspace(0, 1, 6) for _ in range(2)]
+        )
+    plt = gus.show(single_tile,
+        knots=True,
+        control_points=False,
+        c="lightgray",
+        lighting="off",
+        offscreen=True,
+        resolution=sample_resolution,
+        size=export_resolution,)
+    
+    plt.screenshot(filename="animation6_single_tile_derivatives.png")
+
+    # Composed
+    tiles, tile_derivs = generator.create(center_expansion=1.2)
+    for t, td in zip(tiles, tile_derivs[0]):
+        t.spline_data["deriv"] = td
+        t.show_options["control_points"] = False
+        t.show_options["control_mesh"] = False
+        t.show_options["arrow_data"] = "deriv"
+        t.show_options["arrow_data_scale"] = 0.08
+        t.show_options[
+            "arrow_data_on"
+        ] = gus.spline.splinepy.utils.data.cartesian_product(
+            [np.linspace(0, 1, 6) for _ in range(2)]
+        )
+
+    plt = gus.show(tiles,
+        c="lightgray",
+        lighting="off",
+        offscreen=True,
+        resolution=sample_resolution,
+        size=export_resolution,)
+    plt.screenshot(filename="animation6_single_tile_derivatives_composed.png")
+
+    plt = gus.show([macro,tiles],
+        c="lightgray",
+        lighting="off",
+        offscreen=True,
+        resolution=sample_resolution,
+        size=export_resolution,)
+    plt.screenshot(filename="animation6_single_tile_derivatives_composed_macro.png")
+
+    # For derivative of outer function
+    macro_der = gus.Bezier(
+        degrees=[2, 2],
+        control_points=[
+            [0.0, 0.0],
+            [0.0, 0.0],
+            [1.0, -1.0],
+            [0.0, 0.0],
+            [0.0, 0.0],
+            [0.0, 0.0],
+            [0.0, 0.0],
+            [0.0, 0.0],
+            [0.0, 0.0],
+        ],
+    )
+    generator = gus.spline.microstructure.Microstructure(
+        deformation_function=macro_der,
+        tiling=[1, 1],
+        microtile=gus.spline.microstructure.tiles.CrossTile2D(),
+        parametrization_function=parametrization_function,
+    )
+
+    tiles_der = generator.create(center_expansion=1.2)
+    for t, td in zip(tiles, tiles_der):
+        t.spline_data["deriv"] = td
+        t.show_options["arrow_data_scale"] = 0.15
+    
+    plt = gus.show(tiles,
+        c="lightgray",
+        lighting="off",
+        offscreen=True,
+        resolution=sample_resolution,
+        size=export_resolution,)
+    plt.screenshot(filename="animation6_single_tile_macroder_composed.png")
+    plt = gus.show([macro,tiles],
+        c="lightgray",
+        lighting="off",
+        offscreen=True,
+        resolution=sample_resolution,
+        size=export_resolution,)
+    plt.screenshot(filename="animation6_single_tile_macroder_composed_in_macro.png")
+
+    # Macros
+    macro.show_options["alpha"] = 1.0
+    plt = gus.show(macro,
+        c="lightgray",
+        lighting="off",
+        offscreen=True,
+        resolution=sample_resolution,
+        size=export_resolution,)
+    plt.screenshot(filename="animation6_macro.png")
