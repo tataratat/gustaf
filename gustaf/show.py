@@ -7,7 +7,6 @@ import sys
 import numpy as np
 
 from gustaf import settings, utils
-from gustaf._base import GustafBase
 
 # @linux it raises error if vedo is imported inside the function.
 try:
@@ -164,7 +163,7 @@ def show_vedo(
             if not isinstance(sl, list):
                 sl = [sl]
             for k, item in enumerate(sl):
-                if isinstance(item, GustafBase):
+                if hasattr(item, "showable"):
                     tmp_showable = item.showable(backend="vedo", **kwargs)
                     # splines return dict
                     # - maybe it is time to do some typing..
