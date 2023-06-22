@@ -1,11 +1,9 @@
 import pathlib
-from typing import Union
 
-from gustaf._typing import MESH_TYPES
 from gustaf.io import meshio, mfem, mixd
 
 
-def load(fname: Union[str, pathlib.Path]) -> MESH_TYPES:
+def load(fname):
     """Load function for all supported file formats.
 
     This function tries to guess the correct io module for the given file.
