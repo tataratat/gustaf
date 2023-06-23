@@ -23,7 +23,9 @@ setup(
         "gustaf.helpers",
     ],
     install_requires=["numpy"],
-    extras_require={"all": ["vedo>=2023.4.3", "scipy", "meshio"]},
+    extras_require={
+        "all": ["vedo>=2023.4.3", "scipy", "meshio", "napf>=0.0.5"]
+    },
     classifiers=[
         "Development Status :: 2 - Pre-Alpha",
         "License :: OSI Approved :: MIT License",
