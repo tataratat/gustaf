@@ -362,14 +362,15 @@ class ComputedData(DataHolder):
                 """Check if the key should be computed,"""
                 # extract some related info
                 self = args[0]  # the helpee itself
-                recompute = kwargs.get("recompute", False)
-                return_saved = kwargs.get("return_saved", False)
 
-                # if return_saved, try to escape as soon as possible
-                if return_saved:
-                    saved = self._computed._saved.get(func.__name__, None)
-                    if saved is not None and not recompute:
-                        return saved
+                # explicitly settable kwargs.
+                # unless recompute flag is set False,
+                # it will always recompute and save them
+                # if you call the same function without kwargs
+                # the last one with kwargs will be returned
+                recompute = False
+                if kwargs:
+                    recompute = kwargs.get("recompute", True)
 
                 # computed arrays are called _computed.
                 # loop over dependees and check if they are modified
