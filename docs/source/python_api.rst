@@ -1,5 +1,5 @@
 .. autosummary::
-   :toctree: _autosummary
+   :toctree: generated
    :template:
    :recursive:
 

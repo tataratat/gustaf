@@ -3,7 +3,7 @@
 
 # You can set these variables from the command line, and also
 # from the environment for the first two.
-SPHINXOPTS    ?=
+SPHINXOPTS    ?= -j auto
 SPHINXBUILD   ?= sphinx-build
 SPHINXAPIDOC  ?= sphinx-apidoc
 MODULEDIR     ?= ../gustaf
@@ -24,7 +24,6 @@ help:
 %: Makefile
 	$(PYTHON) $(SOURCEDIR)/extra_docs.py
 	$(PYTHON) $(SOURCEDIR)/handle_markdown.py
-	$(SPHINXAPIDOC) -f -t $(TEMPLATEDIR) -o $(SOURCEDIR) $(MODULEDIR)
 	$(SPHINXBUILD) -M $@ "$(SOURCEDIR)" "$(BUILDDIR)" $(SPHINXOPTS) $(O)
 
 clean:
@@ -33,3 +32,4 @@ clean:
 	rm $(SOURCEDIR)/gustaf.*.rst
 	rm $(SOURCEDIR)/gustaf.rst
 	rm $(SOURCEDIR)/modules.rst
+	rm -r $(SOURCEDIR)/_generated
