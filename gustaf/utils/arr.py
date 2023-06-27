@@ -157,6 +157,19 @@ def close_rows(
     if nthreads is None:
         nthreads = settings.NTHREADS
 
+    if not return_intersection:
+        try:
+            import funi
+
+            return (
+                *funi.unique_rows(
+                    arr, tolerance, True, True, True, True, True
+                ),
+                [],
+            )
+        except ImportError:
+            pass
+
     try:
         from napf import KDT
 

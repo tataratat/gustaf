@@ -24,7 +24,7 @@ setup(
     ],
     install_requires=["numpy"],
     extras_require={
-        "all": ["vedo>=2023.4.3", "scipy", "meshio", "napf>=0.0.5"]
+        "all": ["vedo>=2023.4.3", "scipy", "meshio", "napf>=0.0.5", "funi"]
     },
     classifiers=[
         "Development Status :: 2 - Pre-Alpha",
