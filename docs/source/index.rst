@@ -20,7 +20,7 @@ Library
 .. toctree::
    :maxdepth: 1
 
-   API references <modules>
+   API references <references>
 
    Feature details & options <details>
 

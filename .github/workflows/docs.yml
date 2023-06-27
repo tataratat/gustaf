@@ -24,7 +24,6 @@ jobs:
 
       - name: Sphinx config and extra docs
         run: |
-          sphinx-apidoc -f -t docs/source/_templates -o docs/source gustaf
           python3 docs/source/extra_docs.py
           python3 docs/source/handle_markdown.py
 
