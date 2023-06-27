@@ -1,25 +1,20 @@
-![gustaf](https://github.com/tataratat/gustaf/raw/main/docs/source/gustaf-logo.png)
+![gustaf](docs/source/gustaf-logo.png)
 
-__gustaf__ is a python library to process and visualize numerical-analysis-geometries; especially for Finite Element Methods (FEM) and Isogemetric Analysis (IGA).
-gustaf currently supports linear elements:
+__gustaf__ is a Python library to process and visualize numerical-analysis-geometries;
+gustaf currently supports the following elements:
+- points,
+- lines,
 - triangle,
 - quadrilateral,
 - tetrahedron, and
-- hexahedron,
+- hexahedron.
 
-as well as both single and multi-patch splines (with `splinepy` extension):
-- Bezier,
-- Rational Bezier,
-- BSpline, and
-- NURBS.
-
-
-## Installation
+# Installation
 `gustaf` only has `numpy` for its strict dependency. The minimal version can be installed using `pip`.
 ```
 pip install gustaf
 ```
-To install all the [optional dependencies](https://github.com/tataratat/gustaf#dependencies) at the same time, you can use:
+To install all the [optional dependencies](#optional-dependencies) at the same time, you can use:
 ```
 pip install gustaf[all]
 ```
@@ -28,15 +23,24 @@ For the latest develop version of gustaf:
 pip install git+https://github.com/tataratat/gustaf.git@main
 ```
 
-## Quick Start
+# Quick Start
 This example shows how to visualize and extract properties of tetrahedrons and NURBS using gustaf.
 For visualization, gustaf uses [vedo](https://vedo.embl.es) as main backend.
+
+To begin we need to import the needed libraries:
+
 ```python
 import gustaf as gus
 import numpy as np
-
-
-# create tet mesh using Volumes
+```
+## Create a tetrahedron
+Now we create our first volume. It will be just a basic cube. Even here we can
+already choose between using a tetrahedron and a hexahedron-based
+mesh. The `Volume` class will use tetrahedrons if the volumes keyword is made
+up of a list of 4 elements (defining the corners of the tetrahedron), if 8
+elements are in each list hexahedrons are used ([defining the corners of the hexahedron in the correct order](https://tataratat.github.io/gustaf/gustaf.utils.html#gustaf.utils.connec.make_hexa_volumes)).
+```python
+# create tetrahedron mesh using Volumes
 # it requires vertices and connectivity info, volumes
 tet = gus.Volumes(
     vertices=[
@@ -58,119 +62,74 @@ tet = gus.Volumes(
         [7, 0, 3, 1],
     ],
 )
+
+# set line color and width
+tet.show_options["lc"] = "black"
+tet.show_options["lw"] = 4
+
 tet.show()
-
-# elements can transform to their subelement types
-# set unique=True, if you don't want duplicating internal subelements
-as_faces = tet.to_faces(unique=False)
-as_edges = tet.to_edges(unique=False)
-
-# as geometry classes inherit from its subelement class, we can
-# extract subelement connectivity directly.
-# Volumes' subelements are faces and subsubelements are edges
-face_connectivity = tet.faces()
-edge_connectivity = tet.edges()
-
-# this holds
-assert np.allclose(face_connectivity, as_faces.faces)
-assert np.allclose(edge_connectivity, as_edges.edges)
-
-# the uniqueness of subelement connectivity is useful for finding
-# boundary elements, especially ones that appear only once.
-# first, general information about connectivity uniqueness
-unique_face_infos = tet.unique_faces()  # returns namedtuple
-print(unique_face_infos.values)
-print(unique_face_infos.ids)
-print(unique_face_infos.inverse)
-print(unique_face_infos.counts)
-
-# there's a shortcut - single_volumes(), single_faces(), single_edges()
-assert np.allclose(
-    tet.single_faces(),
-    unique_face_infos.ids[unique_face_infos.counts == 1]
+```
+![Tetrahedron based volume](docs/source/_static/tet.png)
+```python
+hexa = gus.Volumes(
+    vertices=[
+        [0.0, 0.0, 0.0], #0
+        [1.0, 0.0, 0.0], #1
+        [0.0, 1.0, 0.0],
+        [1.0, 1.0, 0.0], #3
+        [0.0, 0.0, 1.0],
+        [1.0, 0.0, 1.0],
+        [0.0, 1.0, 1.0], #6
+        [1.0, 1.0, 1.0],
+    ],
+    volumes=[
+        [0, 1, 3, 2, 4, 5, 7, 6],
+    ],
 )
 
+hexa.show_options["lc"] = "black"
+hexa.show_options["lw"] = 4
+
+hexa.show()
+```
+![Hexahedron based volume](docs/source/_static/quad.png)
+## Basic visualization
+
+As just shown, it is really easy to show the objects by just calling the
+`show()` function on the object. But that is just the beginning of the
+possibilities in vedo. You can plot multiple objects next to each other:
+```python
+# show multiple items in one plot
+# each list will be put into a separate subplot.
+gus.show(
+    ["Tetrahedron", tet],
+    ["Hexahedron", hexa]
+)
+```
+![Compare hexahedron and tetrahedron-based volumes](docs/source/_static/tet_quad.png)
+
+Now let's add a color map to the object for the norm of the
+coordinate, and let us also add at each vertex an arrow with random direction
+and length.
+```python
 # let's visualize some scalar data and vector data defined on vertices
 tet.vertex_data["arange"] = np.arange(len(tet.vertices))  # scalar
 tet.show_options["data_name"] = "arange"
 tet.vertex_data["random"] = np.random.random((len(tet.vertices), 3))  # vector
 tet.show_options["arrow_data"] = "random"
 tet.show()
-
-
-# create a 2D NURBS disc and visualize
-# all the spline types inherits from splinepy's splines and equipped with
-# additional functionalities
-nurbs = gus.NURBS(
-    degrees=[1, 2],
-    knot_vectors=[
-        [0, 0, 1, 1],
-        [0, 0, 0, 1, 1, 2, 2, 2],
-    ],
-    control_points=[
-        [ 1.        ,  0.        ],
-        [ 0.5       ,  0.        ],
-        [ 1.        ,  0.59493748],
-        [ 0.5       ,  0.29746874],
-        [ 0.47715876,  0.87881711],
-        [ 0.23857938,  0.43940856],
-        [-0.04568248,  1.16269674],
-        [-0.02284124,  0.58134837],
-        [-0.54463904,  0.83867057],
-        [-0.27231952,  0.41933528],
-    ],
-    weights=[
-        [1.        ],
-        [1.        ],
-        [0.85940641],
-        [0.85940641],
-        [1.        ],
-        [1.        ],
-        [0.85940641],
-        [0.85940641],
-        [1.        ],
-        [1.        ]
-    ]
-)
-nurbs.show()
-
-# extract / sample using Extractor helper class
-# they are all "show()"-able
-nurbs_as_faces = nurbs.extract.faces(resolutions=[100, 50])
-bezier_patches = nurbs.extract.beziers()  # returns list
-boundaries = nurbs.extract.boundaries()  # list of boundary splines
-subspline = nurbs.extract.spline(
-    {0: [.4, .8], 1: .7}  # define range dimension-wise
-)
-
-# create derived spline using Creator helper class
-extruded = nurbs.create.extruded(extrusion_vector=[0, 0, 1])
-revolved = nurbs.create.revolved(axis=[1, 0, 0], angle=70)
-parametric_view = nurbs.create.parametric_view()
-
-# just like vertex_data, you can define spline_data
-# for more options, checkout `gus.spline.SplineDataAdaptor`
-# following will plot the norm of nurbs' physical coordinates
-nurbs.spline_data["coords"] = nurbs
-nurbs.show_options["data_name"] = "coords"
-
-# show them all together. each arg is plotted on a separate subplot
-# translate tet a bit to avoid overlapping
-tet.vertices += [2, 0, 0]
-gus.show(
-    ["NURBS and translated tet together", nurbs, tet],
-    ["Extruded NURBS", extruded],
-    ["Revolved NURBS", revolved],
-    ["NURBS parametric view", parametric_view],
-)
 ```
-Check out [documentations](https://tataratat.github.io/gustaf/) and [examples](https://github.com/tataratat/gustaf/tree/main/examples) for more!
+![Add additional data to the object](docs/source/_static/tet_vertex_data.png)
+
+Are you interested in splines?
+Please checkout [splinepy](https://tataratat.github.io/splinepy/)!
 
 
-### Dependencies
-- [numpy](https://numpy.org)
-- [splinepy](https://github.com/tataratat/splinepy)
-- [vedo](https://vedo.embl.es)
-- [scipy](https://scipy.org)
-- [meshio](https://github.com/nschloe/meshio)
-- [pytest](https://pytest.org)
+# Optional Dependencies
+| Package | Description |
+| ------- | ----------- |
+| [numpy](https://numpy.org) | Fast array data operations. |
+| [vedo](https://vedo.embl.es) | Default renderer / visualization core of gustaf. |
+| [scipy](https://scipy.org) | Create k-d trees and simple rotation matrices.|
+| [napf](https://github.com/tataratat/napf) | Fast k-d tree build / query based on nanoflann. Supersedes scipy if it is importable. |
+| [meshio](https://github.com/nschloe/meshio) | Supports loading/exporting numerous mesh formats. |

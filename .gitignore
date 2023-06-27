@@ -8,6 +8,8 @@
 docs/build/
 docs/source/*rst
 !docs/source/index.rst
+!docs/source/references.rst
+!docs/source/python_api.rst
 !docs/source/show_options.rst
 !docs/source/details.rst
 !docs/source/CONTRIBUTING.rst

@@ -1,7 +1,7 @@
 .. toctree::
    :maxdepth: 2
 
-.. mdinclude:: ../../README.md
+.. mdinclude:: ../md/README.md
 
 Sources
 ============
@@ -20,7 +20,7 @@ Library
 .. toctree::
    :maxdepth: 1
 
-   API references <modules>
+   API references <references>
 
    Feature details & options <details>
 

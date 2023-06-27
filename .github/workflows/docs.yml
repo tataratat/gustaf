@@ -15,19 +15,20 @@ jobs:
           python-version: 3.9
 
       - name: install gustaf
-        run:  python3 setup.py develop
+        run:  |
+          python3 setup.py develop
 
       - name: Install dependencies
         run:  pip install -r ./docs/requirements.txt
 
       - name: Sphinx config and extra docs
         run: |
-          sphinx-apidoc -f -t docs/source/_templates -o docs/source gustaf
           python3 docs/source/extra_docs.py
+          python3 docs/source/handle_markdown.py
 
       - name: Sphinx build
         run: |
-          sphinx-build -W -b html docs/source docs/build
+          sphinx-build -W -b html docs/source docs/build -j auto
 
       - name: Deploy
         uses: peaceiris/actions-gh-pages@v3

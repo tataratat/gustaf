@@ -53,6 +53,12 @@ class VolumesShowOption(helpers.options.ShowOption):
                     [grid_type] * len(self._helpee.const_volumes),
                 ]
             )
+
+            for option in ["lw", "lc"]:
+                val = self.get(option, False)
+                if val:
+                    getattr(u_grid, option)(val)
+
             return u_grid.c("hotpink")
 
         # to show data, let's use Faces. This will plot all the elements
