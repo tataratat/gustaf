@@ -60,10 +60,15 @@ if __name__ == "__main__":
             content = f.read()
         # get all links from the markdown file
         links = get_markdown_link(content)
+        print(links)
         # generate a set of all local links
         local_link_set = set()
         for item in links:
             if item[1].startswith(tuple(["http", "#"])):
+                content = content.replace(
+                    f"[{item[0]}]({item[1]})",
+                    f"<a href='{item[1]}'>{item[0]}</a>",
+                )
                 continue
             local_link_set.add(item[1])
         # replace all local links with the correct relative links

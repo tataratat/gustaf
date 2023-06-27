@@ -1,6 +1,6 @@
 ![gustaf](docs/source/gustaf-logo.png)
 
-__gustaf__ is a python library to process and visualize numerical-analysis-geometries;
+__gustaf__ is a Python library to process and visualize numerical-analysis-geometries;
 gustaf currently supports the following elements:
 - points,
 - lines,
@@ -14,7 +14,7 @@ gustaf currently supports the following elements:
 ```
 pip install gustaf
 ```
-To install all the [optional dependencies](https://github.com/tataratat/gustaf#dependencies) at the same time, you can use:
+To install all the [optional dependencies](#optional-dependencies) at the same time, you can use:
 ```
 pip install gustaf[all]
 ```
@@ -37,7 +37,7 @@ import numpy as np
 Now we create our first volume. It will be just a basic cube. Even here we can
 already choose between using a tetrahedron and a hexahedron-based
 mesh. The `Volume` class will use tetrahedrons if the volumes keyword is made
-up of list of 4 elements (defining the corners of the tetrahedron), if 8
+up of a list of 4 elements (defining the corners of the tetrahedron), if 8
 elements are in each list hexahedrons are used ([defining the corners of the hexahedron in the correct order](https://tataratat.github.io/gustaf/gustaf.utils.html#gustaf.utils.connec.make_hexa_volumes)).
 ```python
 # create tetrahedron mesh using Volumes
@@ -97,7 +97,7 @@ hexa.show()
 
 As just shown, it is really easy to show the objects by just calling the
 `show()` function on the object. But that is just the beginning of the
-possibilities in vedo. You can plot multiple object next to each other:
+possibilities in vedo. You can plot multiple objects next to each other:
 ```python
 # show multiple items in one plot
 # each list will be put into a separate subplot.
@@ -106,10 +106,10 @@ gus.show(
     ["Hexahedron", hexa]
 )
 ```
-![Compare hexahedron and tetrahedron based volumes](docs/source/_static/tet_quad.png)
+![Compare hexahedron and tetrahedron-based volumes](docs/source/_static/tet_quad.png)
 
-Now lets add a color map to the object for the norm of the
-coordinate, and let us also add at each vertex an arrow with rand om direction
+Now let's add a color map to the object for the norm of the
+coordinate, and let us also add at each vertex an arrow with random direction
 and length.
 ```python
 # let's visualize some scalar data and vector data defined on vertices
@@ -130,6 +130,6 @@ Please checkout [splinepy](https://tataratat.github.io/splinepy/)!
 | ------- | ----------- |
 | [numpy](https://numpy.org) | Fast array data operations. |
 | [vedo](https://vedo.embl.es) | Default renderer / visualization core of gustaf. |
-| [scipy](https://scipy.org) | Create k-d trees and simlpe rotation matrices.|
+| [scipy](https://scipy.org) | Create k-d trees and simple rotation matrices.|
 | [napf](https://github.com/tataratat/napf) | Fast k-d tree build / query based on nanoflann. Supersedes scipy if it is importable. |
 | [meshio](https://github.com/nschloe/meshio) | Supports loading/exporting numerous mesh formats. |
