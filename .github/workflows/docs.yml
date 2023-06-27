@@ -16,7 +16,6 @@ jobs:
 
       - name: install gustaf
         run:  |
-          pip install splinepy
           python3 setup.py develop
 
       - name: Install dependencies
