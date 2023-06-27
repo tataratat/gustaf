@@ -19,14 +19,13 @@ setup(
         "gustaf",
         "gustaf.utils",
         "gustaf.io",
-        "gustaf.spline",
         "gustaf.create",
         "gustaf.helpers",
-        "gustaf.spline.microstructure",
-        "gustaf.spline.microstructure.tiles",
     ],
     install_requires=["numpy"],
-    extras_require={"all": ["vedo>=2023.4.3", "scipy", "meshio", "splinepy"]},
+    extras_require={
+        "all": ["vedo>=2023.4.3", "scipy", "meshio", "napf>=0.0.5", "funi"]
+    },
     classifiers=[
         "Development Status :: 2 - Pre-Alpha",
         "License :: OSI Approved :: MIT License",

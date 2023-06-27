@@ -310,7 +310,7 @@ class Vertices(GustafBase):
             tolerance = settings.TOLERANCE
 
         values, ids, inverse, intersection = utils.arr.close_rows(
-            self.const_vertices, tolerance=tolerance
+            self.const_vertices, tolerance=tolerance, **kwargs
         )
 
         return helpers.data.Unique2DFloats(
@@ -472,7 +472,7 @@ class Vertices(GustafBase):
 
         return self.update_vertices(mask)
 
-    def merge_vertices(self, tolerance=None):
+    def merge_vertices(self, tolerance=None, **kwargs):
         """Based on unique vertices, merge vertices if it is mergeable.
 
         Parameters
@@ -484,7 +484,7 @@ class Vertices(GustafBase):
         --------
         merged_self: type(self)
         """
-        unique_vs = self.unique_vertices()
+        unique_vs = self.unique_vertices(tolerance, **kwargs)
 
         self._logd("number of vertices")
         self._logd(f"  before merge: {len(self.vertices)}")

@@ -85,11 +85,12 @@ def test_unique_vertices(grid, request):
     # check if vertices are correctly set
     assert len(grid.vertices) == int((n_original_vertices + n_ran) * 2)
 
-    unique_vs = grid.unique_vertices()
+    unique_vs = grid.unique_vertices(return_intersection=True)
 
     n_expected_unique = int(n_original_vertices + n_ran)
 
     # value check
+
     assert np.allclose(grid.vertices[:n_expected_unique], unique_vs.values)
 
     # ids check
@@ -104,7 +105,8 @@ def test_unique_vertices(grid, request):
     intersection_ref = [
         [i, i + n_expected_unique] for i in range(n_expected_unique)
     ] * 2
-    assert intersection_list == intersection_ref
+    # although these are integers, this is still very nice one-line assert
+    assert np.allclose(intersection_list, intersection_ref)
 
 
 @pytest.mark.parametrize("grid", all_grids)

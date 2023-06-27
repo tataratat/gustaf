@@ -4,11 +4,9 @@ Export can only happen after it is possible to save and define boundaries in
 gustaf.
 """
 import pathlib
-from typing import Union
 
 import numpy as np
 
-from gustaf._typing import MESH_TYPES
 from gustaf.faces import Faces
 from gustaf.helpers.raise_if import ModuleImportRaiser
 from gustaf.volumes import Volumes
@@ -20,7 +18,7 @@ except ModuleNotFoundError as err:
     # from meshio import Mesh as MeshioMesh
 
 
-def load(fname: Union[str, pathlib.Path]) -> MESH_TYPES:
+def load(fname):
     """Load mesh in meshio format. Loads vertices and their connectivity.
     Currently cannot process boundary.
 
@@ -74,7 +72,7 @@ def load(fname: Union[str, pathlib.Path]) -> MESH_TYPES:
     return mesh
 
 
-def export(mesh: MESH_TYPES, fname: Union[str, pathlib.Path]):
+def export(mesh, fname):
     """Currently not implemented function.
 
     Parameters

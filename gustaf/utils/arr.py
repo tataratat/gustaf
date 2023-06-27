@@ -124,7 +124,9 @@ def unique_rows(
     return unique_stuff
 
 
-def close_rows(arr, tolerance=None):
+def close_rows(
+    arr, tolerance=None, return_intersection=False, nthreads=None, **kwargs
+):
     """Similar to unique_rows, but if data type is floats, use this one.
     Performs radius search using KDTree. Currently uses
     `scipy.spatial.cKDTree`.
@@ -133,7 +135,13 @@ def close_rows(arr, tolerance=None):
     -----------
     arr: (n, d) array-like
     tolerance: (float)
-        Defaults to None.
+      Defaults to None.
+    return_intersection: bool
+      Default is False. Returns intersection. For vertices with singular
+      points, this will take a lot of memory space.
+    nthreads: int
+      number of concurrent query. In case of napf, concurrent build as well.
+      Default is taken from settings.NTHREADS
 
     Returns
     --------
@@ -143,36 +151,65 @@ def close_rows(arr, tolerance=None):
     overlapping: list(list)
         id of neighbors within the tolerance.
     """
-    from scipy.spatial import cKDTree as KDTree
-
     if tolerance is None:
         tolerance = settings.TOLERANCE
 
-    # Build kd tree
-    kdt = KDTree(arr)
+    if nthreads is None:
+        nthreads = settings.NTHREADS
 
-    # Ball point query, taking tolerance as radius
-    neighbors = kdt.query_ball_point(
-        arr,
-        tolerance,
-        # workers=workers,
-        # return_sorted=True # new in 1.6, but default is True, so pass.
-    )
+    if not return_intersection:
+        try:
+            import funi
 
-    # inverse based on original vertices.
-    o_inverse = np.array(
-        [n[0] for n in neighbors],
-        dtype=settings.INT_DTYPE,
-    )
+            return (
+                *funi.unique_rows(
+                    arr, tolerance, True, True, True, True, True
+                ),
+                [],
+            )
+        except ImportError:
+            pass
 
-    # unique of o_inverse, and inverse based on that
-    (_, uniq_id, inv) = np.unique(
-        o_inverse,
-        return_index=True,
-        return_inverse=True,
-    )
+    try:
+        from napf import KDT
 
-    return (arr[uniq_id], uniq_id, inv, neighbors)
+        kdt = KDT(arr, nthread=nthreads)
+
+        # call the function that's prepared for this moment
+        return kdt.unique_data_and_inverse(
+            tolerance, True, return_intersection, nthread=nthreads
+        )
+
+    except ImportError:
+        from scipy.spatial import cKDTree as KDTree
+
+        # Build kd tree
+        kdt = KDTree(arr)
+
+        # Ball point query, taking tolerance as radius
+        neighbors = kdt.query_ball_point(
+            arr,
+            tolerance,
+            return_sorted=True,
+        )
+
+        # inverse based on original vertices.
+        o_inverse = np.array(
+            [n[0] for n in neighbors],
+            dtype=settings.INT_DTYPE,
+        )
+
+        # unique of o_inverse, and inverse based on that
+        (_, uniq_id, inv) = np.unique(
+            o_inverse,
+            return_index=True,
+            return_inverse=True,
+        )
+
+        if not return_intersection:
+            neighbors = []
+
+        return arr[uniq_id], uniq_id, inv, neighbors
 
 
 def bounds(arr):
