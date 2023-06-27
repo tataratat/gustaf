@@ -132,4 +132,5 @@ Please checkout [splinepy](https://tataratat.github.io/splinepy/)!
 | [vedo](https://vedo.embl.es) | Default renderer / visualization core of gustaf. |
 | [scipy](https://scipy.org) | Create k-d trees and simple rotation matrices.|
 | [napf](https://github.com/tataratat/napf) | Fast k-d tree build / query based on nanoflann. Supersedes scipy if it is importable. |
+| [funi](https://github.com/tataratat/funi) | A different method to find unique float array rows. But faster than k-d trees! |
 | [meshio](https://github.com/nschloe/meshio) | Supports loading/exporting numerous mesh formats. |
