@@ -14,7 +14,7 @@ gustaf currently supports the following elements:
 ```
 pip install gustaf
 ```
-To install all the [optional dependencies](#optional-dependencies) at the same time, you can use:
+To install all the [optional dependencies](https://github.com/tataratat/gustaf#dependencies) at the same time, you can use:
 ```
 pip install gustaf[all]
 ```
