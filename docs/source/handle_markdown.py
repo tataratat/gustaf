@@ -67,6 +67,16 @@ def process_file(
 
     Args:
         file (str): Path to the markdown file.
+        relative_links (bool, optional):
+            Generate relative links. Defaults to False.
+        return_content (bool, optional):
+            Return the content instead of saving it to a file.
+            Defaults to False.
+
+    Returns:
+        str:
+            Content of the markdown file.
+            Only returned if return_content is True.
     """
     # read in the content of the markdown file
     with open(file) as f:
