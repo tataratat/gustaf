@@ -289,7 +289,7 @@ def make_quad_faces(resolutions):
     if any(nnpd < 1):
         raise ValueError(f"The number of nodes per dimension is wrong: {nnpd}")
 
-    total_nodes = np.product(nnpd)
+    total_nodes = np.prod(nnpd)
     total_faces = (nnpd[0] - 1) * (nnpd[1] - 1)
     try:
         node_indices = np.arange(total_nodes).reshape(nnpd[1], nnpd[0])
@@ -337,8 +337,8 @@ def make_hexa_volumes(resolutions):
     if any(nnpd < 1):
         raise ValueError(f"The number of nodes per dimension is wrong: {nnpd}")
 
-    total_nodes = np.product(nnpd)
-    total_volumes = np.product(nnpd - 1)
+    total_nodes = np.prod(nnpd)
+    total_volumes = np.prod(nnpd - 1)
     node_indices = np.arange(total_nodes, dtype=np.int32).reshape(nnpd[::-1])
 
     volumes = np.ones((total_volumes, 8), dtype=np.int32) * int(-1)
