@@ -33,6 +33,21 @@ def get_markdown_links(line: str) -> str:
 
 
 def get_github_path_from(link):
+    """Substitute the path to the github repository.
+
+    This will expand the link to the github repository. This is used to create
+    pages that are independent of the documentation. Like for the long
+    description on PyPI. Normally we try to use relative links in the files
+    to guarantee that the documentation is also available offline. But for
+    the long description on PyPI we need to use absolute links to an online
+    repository like the github raw files.
+
+    Args:
+        link (str): Relative path to the file.
+
+    Returns:
+        str: Https path to the file on github.
+    """
     return os.path.abspath(link).replace(
         repo_root, "https://raw.githubusercontent.com/tataratat/gustaf/main"
     )
@@ -61,7 +76,7 @@ markdown_files = [
 
 
 def process_file(
-    file: str, relative_links: bool = False, return_content: bool = False
+    file: str, relative_links: bool = True, return_content: bool = False
 ):
     """Process a markdown file.
 
