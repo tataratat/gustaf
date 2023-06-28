@@ -16,7 +16,7 @@ import re
 
 # Path to this file.
 file_path = os.path.abspath(os.path.dirname(__file__))
-repo_root = str(pathlib.Path(__file__).resolve()).split("gustaf")[0] + "gustaf"
+repo_root = str(pathlib.Path(__file__).resolve()).split("docs")[0]
 
 
 def get_markdown_links(line: str) -> str:
@@ -49,7 +49,7 @@ def get_github_path_from(link):
         str: Https path to the file on github.
     """
     return os.path.abspath(link).replace(
-        repo_root, "https://raw.githubusercontent.com/tataratat/gustaf/main"
+        repo_root, "https://raw.githubusercontent.com/tataratat/gustaf/main/"
     )
 
 
