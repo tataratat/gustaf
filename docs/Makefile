@@ -29,7 +29,4 @@ help:
 clean:
 	rm -r $(BUILDDIR)
 	rm -r md
-	rm $(SOURCEDIR)/gustaf.*.rst
-	rm $(SOURCEDIR)/gustaf.rst
-	rm $(SOURCEDIR)/modules.rst
 	rm -r $(SOURCEDIR)/_generated

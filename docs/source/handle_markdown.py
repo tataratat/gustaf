@@ -11,23 +11,46 @@ from the root of the project.
 Author: Clemens Fricke
 """
 import os
+import pathlib
 import re
 
 # Path to this file.
 file_path = os.path.abspath(os.path.dirname(__file__))
+repo_root = str(pathlib.Path(__file__).resolve()).split("docs")[0]
 
 
-def get_markdown_link(line: str) -> str:
-    """Get the markdown link from a line.
+def get_markdown_links(line: str) -> str:
+    """Get the markdown links from a string.
 
     Args:
-        line (str): Line of text.
+        line (str): Text.
 
     Returns:
-        str: Markdown link.
+        str: Markdown links.
     """
     possible = re.findall(r"\[(.*?)\]\((.*?)\)", line)
     return possible if possible else ""
+
+
+def get_github_path_from(link):
+    """Substitute the path to the github repository.
+
+    This will expand the link to the github repository. This is used to create
+    pages that are independent of the documentation. Like for the long
+    description on PyPI. Normally we try to use relative links in the files
+    to guarantee that the documentation is also available offline. But for
+    the long description on PyPI we need to use absolute links to an online
+    repository like the github raw files.
+
+    Args:
+        link (str): Relative path to the file.
+
+    Returns:
+        str: Https path to the file on github.
+    """
+    return os.path.abspath(link).replace(
+        repo_root, "https://raw.githubusercontent.com/tataratat/gustaf/main/"
+    )
 
 
 def get_abs_path_from(path: str, sub_folder: str = "") -> str:
@@ -51,32 +74,56 @@ markdown_files = [
     get_abs_path_from("CONTRIBUTING.md"),
 ]
 
-a = None
+
+def process_file(
+    file: str, relative_links: bool = True, return_content: bool = False
+):
+    """Process a markdown file.
+
+    Args:
+        file (str): Path to the markdown file.
+        relative_links (bool, optional):
+            Generate relative links. Defaults to False.
+        return_content (bool, optional):
+            Return the content instead of saving it to a file.
+            Defaults to False.
+
+    Returns:
+        str:
+            Content of the markdown file.
+            Only returned if return_content is True.
+    """
+    # read in the content of the markdown file
+    with open(file) as f:
+        content = f.read()
+    # get all links from the markdown file
+    links = get_markdown_links(content)
+
+    for item in links:
+        if item[1].startswith(
+            tuple(["http", "#"])
+        ):  # skip http links and anchors
+            content = content.replace(
+                f"[{item[0]}]({item[1]})",
+                f"<a href='{item[1]}'>{item[0]}</a>",
+            )
+            continue
+        elif not relative_links:  # generate links to github repo
+            new_path = get_github_path_from(get_abs_path_from(item[1]))
+        else:  # generate relative links
+            new_path = os.path.relpath(get_abs_path_from(item[1]), file_path)
+        content = content.replace(item[1], new_path)
+
+    if return_content:
+        return content
+
+    with open(
+        os.path.join(folder_to_save_to, os.path.basename(file)), "w"
+    ) as f:
+        f.write(content)
+
+
 if __name__ == "__main__":
     # Process all markdown files
     for file in markdown_files:
-        # read in the content of the markdown file
-        with open(file) as f:
-            content = f.read()
-        # get all links from the markdown file
-        links = get_markdown_link(content)
-        print(links)
-        # generate a set of all local links
-        local_link_set = set()
-        for item in links:
-            if item[1].startswith(tuple(["http", "#"])):
-                content = content.replace(
-                    f"[{item[0]}]({item[1]})",
-                    f"<a href='{item[1]}'>{item[0]}</a>",
-                )
-                continue
-            local_link_set.add(item[1])
-        # replace all local links with the correct relative links
-        for item in local_link_set:
-            rel_path = os.path.relpath(get_abs_path_from(item), file_path)
-            content = content.replace(item, rel_path)
-        # save the processed markdown file into the new md folder
-        with open(
-            os.path.join(folder_to_save_to, os.path.basename(file)), "w"
-        ) as f:
-            f.write(content)
+        process_file(file)

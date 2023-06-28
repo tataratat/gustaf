@@ -1,10 +1,11 @@
 from setuptools import setup
 
+from docs.source.handle_markdown import process_file
+
 with open("gustaf/_version.py") as f:
     version = eval(f.read().strip().split("=")[-1])
 
-with open("README.md") as f:
-    readme = f.read()
+readme = process_file("README.md", relative_links=False, return_content=True)
 
 setup(
     name="gustaf",
