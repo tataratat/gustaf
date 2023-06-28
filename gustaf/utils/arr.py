@@ -7,6 +7,27 @@ Useful functions for array / point operations. Named `arr`, since
 import numpy as np
 
 from gustaf import settings
+from gustaf.helpers.raise_if import ModuleImportRaiser
+
+has_funi = has_napf = has_scipy = False
+try:
+    import funi
+
+    has_funi = True
+except ImportError:
+    funi = ModuleImportRaiser("funi")
+try:
+    import napf
+
+    has_napf = True
+except ImportError:
+    napf = ModuleImportRaiser("napf")
+try:
+    import scipy
+
+    has_scipy = True
+except ImportError:
+    scipy = ModuleImportRaiser("scipy")
 
 
 def make_c_contiguous(array, dtype=None):
@@ -157,34 +178,24 @@ def close_rows(
     if nthreads is None:
         nthreads = settings.NTHREADS
 
-    if not return_intersection:
-        try:
-            import funi
-
-            return (
-                *funi.unique_rows(
-                    arr, tolerance, True, True, True, True, True
-                ),
-                [],
-            )
-        except ImportError:
-            pass
-
-    try:
-        from napf import KDT
-
-        kdt = KDT(arr, nthread=nthreads)
+    if has_funi and not return_intersection:
+        return (
+            *funi.unique_rows(arr, tolerance, True, True, True, True, True),
+            [],
+        )
+    if has_napf:
+        kdt = napf.KDT(arr, nthread=nthreads)
 
         # call the function that's prepared for this moment
         return kdt.unique_data_and_inverse(
             tolerance, True, return_intersection, nthread=nthreads
         )
 
-    except ImportError:
-        from scipy.spatial import cKDTree as KDTree
+    if has_scipy:
+        from scipy.spatial import cKDTree as scipy_KDTree
 
         # Build kd tree
-        kdt = KDTree(arr)
+        kdt = scipy_KDTree(arr)
 
         # Ball point query, taking tolerance as radius
         neighbors = kdt.query_ball_point(
@@ -210,6 +221,11 @@ def close_rows(
             neighbors = []
 
         return arr[uniq_id], uniq_id, inv, neighbors
+
+    raise ImportError(
+        "gus.utils.arr.close_rows() requires either funi, napf, or "
+        "scipy package."
+    )
 
 
 def bounds(arr):
