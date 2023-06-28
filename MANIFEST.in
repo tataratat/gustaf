@@ -1,0 +1,3 @@
+include docs/source/handle_markdown.py
+include README.md
+include LICENSE.txt
