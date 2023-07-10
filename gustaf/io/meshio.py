@@ -72,20 +72,30 @@ def load(fname):
     return mesh
 
 
-def export(mesh, fname):
+def export(mesh, fname, submeshes=None):
     """Export mesh elements and vertex data into meshio and use its write
-    function.
+    function. The definition of submeshes with identical vertex coordinates
+    is possible. In that case vertex numbering and data from the main mesh
+    are used.
 
     Parameters
     ------------
     mesh: Edges, Faces or Volumes
-      Mesh to be exported.
+      Input mesh
     fname: Union[str, pathlib.Path]
       File to save the mesh in.
+    submeshes: Iterable
+      Submeshes where the vertices are identical to the main mesh. The element
+      type can be identical to mesh.elements or lower-dimensional (e.g.
+      boundary elements).
 
     Raises
     -------
-    NotImplementedError: For mesh types that are not implemented.
+    NotImplementedError:
+       For mesh types that are not implemented.
+    ValueError:
+       Raises a value error, if the vertices indexed in a subset are not
+       present in the main mesh.
     """
 
     # Mapping between meshio cell types and gustaf cell types
@@ -96,17 +106,31 @@ def export(mesh, fname):
         "tet": "tetra",
         "hexa": "hexahedron",
     }
-    whatami = mesh.whatami
 
-    if whatami not in meshio_dict.keys():
-        raise NotImplementedError(
-            f"Sorry, we can't export {whatami}-shape with meshio."
-        )
-    else:
-        cell_type = meshio_dict[whatami]
+    cells = []
+    # Merge main mesh and submeshes in one list
+    meshes = [mesh]
+    if submeshes is not None:
+        meshes.extend(submeshes)
 
-    mesh = meshio.Mesh(
+    # Iterate the meshes and extract the element information in meshio format
+    for m in meshes:
+        whatami = m.whatami
+        if whatami not in meshio_dict.keys():
+            raise NotImplementedError(
+                f"Sorry, we can't export {whatami}-shape with meshio."
+            )
+        else:
+            if np.any(m.elements.flatten() > len(m.vertices)):
+                raise ValueError(
+                    "Sorry, invalid vertices were referenced in a submesh."
+                )
+            else:
+                cells.append((meshio_dict[whatami], m.elements))
+
+    # Export data to meshio and write file
+    meshio.Mesh(
         points=mesh.vertices,
-        cells=[(cell_type, mesh.elements)],
+        cells=cells,
         point_data=mesh.vertex_data,
     ).write(fname)
