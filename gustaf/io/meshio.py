@@ -73,17 +73,40 @@ def load(fname):
 
 
 def export(mesh, fname):
-    """Currently not implemented function.
+    """Export mesh elements and vertex data into meshio and use its write
+    function.
 
     Parameters
     ------------
-    mesh: MESH_TYPES
+    mesh: Edges, Faces or Volumes
       Mesh to be exported.
     fname: Union[str, pathlib.Path]
       File to save the mesh in.
 
     Raises
     -------
-    NotImplementedError: This method is currently not implemented.
+    NotImplementedError: For mesh types that are not implemented.
     """
-    raise NotImplementedError
+
+    # Mapping between meshio cell types and gustaf cell types
+    meshio_dict = {
+        "edges": "line",
+        "tri": "triangle",
+        "quad": "quad",
+        "tet": "tetra",
+        "hexa": "hexahedron",
+    }
+    whatami = mesh.whatami
+
+    if whatami not in meshio_dict.keys():
+        raise NotImplementedError(
+            f"Sorry, we can't export {whatami}-shape with meshio."
+        )
+    else:
+        cell_type = meshio_dict[whatami]
+
+    mesh = meshio.Mesh(
+        points=mesh.vertices,
+        cells=[(cell_type, mesh.elements)],
+        point_data=mesh.vertex_data,
+    ).write(fname)
