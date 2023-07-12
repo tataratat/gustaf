@@ -122,3 +122,76 @@ def to_simplex(quad, backslash=False):
         )
 
     return tri
+
+
+def to_quad(tri):
+    """
+        In case current mesh is triangle surface mesh, it splits triangle faces
+        into three quad faces by inserting another vertices in the middle of
+        each triangle face. Warning: mesh quality could be bad!
+
+        ``(new) Quad Face``
+        .. code-block::
+
+            Ref: (node_ind), face_ind
+
+                     (2)
+                     / \
+                    / 2 \
+                (5)/\\   /\\(4)
+                  /  \\ /  \
+                 / 0  |(6) \
+                /_____|___1_\
+              (0)   (3)    (1)
+
+            face_ind | node_ind
+            ---------|----------
+            0        | 0 3 6 5
+            1        | 1 4 6 3
+            2        | 2 5 6 4
+
+        Parameters
+        -----------
+        None
+
+        Returns
+        --------
+        quad_mesh: Mesh
+          Only if current mesh is triangle surface mesh. Otherwise, None.
+        """
+    if tri.elements is None:
+        return None
+
+    if not tri.whatami.startswith("tri"):
+        return None
+
+    # Form new vertices: 1. mid edge vertices; 2. center vertices.
+    edge_mids = tri.to_edges(unique=True).centers()
+
+    # New vertices - current vertices & mid edge vertices & center vertices
+    vertices = np.vstack(
+        (
+            tri.const_vertices,
+            edge_mids,
+            tri.centers(),
+        )
+    )
+    em_offset = len(tri.vertices)  # edge mid offset
+    fc_offset = len(tri.vertices) + len(edge_mids)  # faces center offset
+
+    # New faces - current faces * 3, as each triangle face should produce
+    #  3 quad faces
+    faces = np.empty((tri.faces.shape[0] * 3, 4), dtype=settings.INT_DTYPE)
+
+    # Assign face ind
+    # First col.
+    faces[:, 0] = tri.faces.ravel()
+    # Second col.
+    edge_mid_column = tri.unique_edges().inverse + em_offset
+    faces[:, 1] = edge_mid_column
+    # Third col.
+    faces[:, 2] = np.repeat(np.arange(len(tri.faces)) + fc_offset, 3)
+    # Fourth col.
+    faces[:, 3] = edge_mid_column.reshape(-1, 3)[:, [2, 0, 1]].ravel()
+
+    return Faces(vertices=vertices, faces=faces)
