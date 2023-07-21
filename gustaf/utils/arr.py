@@ -180,9 +180,10 @@ def close_rows(
 
     if has_funi and not return_intersection:
         return (
-            *funi.unique_rows(arr, tolerance, True, True, True, True, True),
+            *funi.unique_rows(arr, tolerance, True, "l"),
             [],
         )
+
     if has_napf:
         kdt = napf.KDT(arr, nthread=nthreads)
 
