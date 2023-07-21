@@ -353,7 +353,7 @@ def rotation_matrix(rotation, degree=True):
     """
     from scipy.spatial.transform import Rotation as R
 
-    rotation = np.asarray(rotation).flatten()
+    rotation = np.asarray(rotation).ravel()
 
     if degree:
         rotation = np.radians(rotation)

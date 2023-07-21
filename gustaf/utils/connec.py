@@ -54,7 +54,7 @@ def tet_to_tri(volumes):
         np.ones(((volumes.shape[0] * fpe), 3), dtype=np.int32) * -1
     )  # -1 for safety check
 
-    faces[:, 0] = volumes.flatten()
+    faces[:, 0] = volumes.ravel()
     faces[::fpe, [1, 2]] = volumes[:, [2, 1]]
     faces[1::fpe, [1, 2]] = volumes[:, [3, 0]]
     faces[2::fpe, [1, 2]] = volumes[:, [3, 1]]
@@ -187,7 +187,7 @@ def faces_to_edges(faces):
 
     num_edges = int(num_faces * vertices_per_face)
     edges = np.ones((num_edges, 2), dtype=np.int32) * -1  # -1 for safety
-    edges[:, 0] = faces.flatten()
+    edges[:, 0] = faces.ravel()
 
     for i in range(vertices_per_face):
         # v_ind : corresponding vertex index for i value
@@ -298,10 +298,10 @@ def make_quad_faces(resolutions):
 
     faces = np.ones((total_faces, 4)) * -1
 
-    faces[:, 0] = node_indices[: (nnpd[1] - 1), : (nnpd[0] - 1)].flatten()
-    faces[:, 1] = node_indices[: (nnpd[1] - 1), 1 : nnpd[0]].flatten()
-    faces[:, 2] = node_indices[1 : nnpd[1], 1 : nnpd[0]].flatten()
-    faces[:, 3] = node_indices[1 : nnpd[1], : (nnpd[0] - 1)].flatten()
+    faces[:, 0] = node_indices[: (nnpd[1] - 1), : (nnpd[0] - 1)].ravel()
+    faces[:, 1] = node_indices[: (nnpd[1] - 1), 1 : nnpd[0]].ravel()
+    faces[:, 2] = node_indices[1 : nnpd[1], 1 : nnpd[0]].ravel()
+    faces[:, 3] = node_indices[1 : nnpd[1], : (nnpd[0] - 1)].ravel()
 
     if faces.all() == -1:
         raise ValueError("Something went wrong during `make_quad_faces`.")
@@ -345,28 +345,26 @@ def make_hexa_volumes(resolutions):
 
     volumes[:, 0] = node_indices[
         : (nnpd[2] - 1), : (nnpd[1] - 1), : (nnpd[0] - 1)
-    ].flatten()
+    ].ravel()
     volumes[:, 1] = node_indices[
         : (nnpd[2] - 1), : (nnpd[1] - 1), 1 : nnpd[0]
-    ].flatten()
+    ].ravel()
     volumes[:, 2] = node_indices[
         : (nnpd[2] - 1), 1 : nnpd[1], 1 : nnpd[0]
-    ].flatten()
+    ].ravel()
     volumes[:, 3] = node_indices[
         : (nnpd[2] - 1), 1 : nnpd[1], : (nnpd[0] - 1)
-    ].flatten()
+    ].ravel()
     volumes[:, 4] = node_indices[
         1 : nnpd[2], : (nnpd[1] - 1), : (nnpd[0] - 1)
-    ].flatten()
+    ].ravel()
     volumes[:, 5] = node_indices[
         1 : nnpd[2], : (nnpd[1] - 1), 1 : nnpd[0]
-    ].flatten()
-    volumes[:, 6] = node_indices[
-        1 : nnpd[2], 1 : nnpd[1], 1 : nnpd[0]
-    ].flatten()
+    ].ravel()
+    volumes[:, 6] = node_indices[1 : nnpd[2], 1 : nnpd[1], 1 : nnpd[0]].ravel()
     volumes[:, 7] = node_indices[
         1 : nnpd[2], 1 : nnpd[1], : (nnpd[0] - 1)
-    ].flatten()
+    ].ravel()
 
     if (volumes == -1).any():
         raise ValueError("Something went wrong during `make_hexa_volumes`.")
@@ -467,7 +465,7 @@ def subdivide_tri(
     mask[3::4] = False
 
     # 0th column minus (every 4th row, starting from 3rd row)
-    subdivided_faces[mask, 0] = mesh.faces.flatten()  # copies
+    subdivided_faces[mask, 0] = mesh.faces.ravel()
 
     # Form ids for new vertices
     new_vertices_ids = mesh.unique_edges().inverse + int(mesh.faces.max() + 1)
@@ -475,7 +473,7 @@ def subdivide_tri(
     subdivided_faces[mask, 1] = new_vertices_ids
     subdivided_faces[mask, 2] = new_vertices_ids.reshape(-1, 3)[
         :, [2, 0, 1]
-    ].flatten()
+    ].ravel()
 
     # Every 4th row, starting from 3rd row
     subdivided_faces[~mask, :] = new_vertices_ids.reshape(-1, 3)
@@ -529,7 +527,7 @@ def subdivide_quad(
         dtype=np.int32,
     )
 
-    subdivided_faces[:, 0] = mesh.faces.flatten()
+    subdivided_faces[:, 0] = mesh.faces.ravel()
     subdivided_faces[:, 1] = mesh.unique_edges().inverse + len(mesh.vertices)
     subdivided_faces[:, 2] = np.repeat(
         np.arange(len(face_centers)) + (len(mesh.vertices) + len(edge_mid_v)),
@@ -537,7 +535,7 @@ def subdivide_quad(
         # dtype=np.int32,
     )
     subdivided_faces[:, 3] = (
-        subdivided_faces[:, 1].reshape(-1, 4)[:, [3, 0, 1, 2]].flatten()
+        subdivided_faces[:, 1].reshape(-1, 4)[:, [3, 0, 1, 2]].ravel()
     )
 
     if return_dict:
