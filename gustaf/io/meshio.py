@@ -121,7 +121,7 @@ def export(mesh, fname, submeshes=None):
                 f"Sorry, we can't export {whatami}-shape with meshio."
             )
         else:
-            if np.any(m.elements.flatten() > len(m.vertices)):
+            if np.any(m.elements > len(m.vertices) - 1):
                 raise ValueError(
                     "Sorry, invalid vertices were referenced in a submesh."
                 )
