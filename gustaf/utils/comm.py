@@ -18,7 +18,15 @@ from gustaf._base import GustafBase
 class WebSocketClient(GustafBase):
     """
     Minimal websocket client using `websockets`'s thread
-    based implementation.
+    based implementation. Can be used to send and receive data from a websocket
+    server.
+
+    Examples
+    --------
+    >>> websocket = gus.utils.comm.WebSocketClient("ws://localhost:1111")
+    >>> send_message = "Field data of mesh number 5, please."
+    >>> websocket.send_recv(send_message)
+    [1, 1, 2, 3, 5]
     """
 
     def __init__(self, uri, close_timeout=60):
