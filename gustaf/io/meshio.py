@@ -87,7 +87,6 @@ def load(fname, set_boundary=False, return_only_one_mesh=True):
                 f"Sorry, {elem_type} elements currently are not supported."
             )
 
-    set_boundary = True
     if set_boundary is True:
         # mesh.BC is only defined for volumes and faces
         for i in range(len(meshes)):
