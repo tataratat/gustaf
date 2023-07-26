@@ -19,6 +19,29 @@ except ModuleNotFoundError as err:
     # from meshio import Mesh as MeshioMesh
 
 
+def parse_gmsh_physical_groups(meshio_mesh, field_key, field_cell):
+    """[summary]
+
+    Parameters
+    ----------
+    meshio_mesh : meshio._mesh.Mesh
+    field_key : str
+       Key of field data
+    field_cell : array-like
+       Tuple of field data, commonly [field_id, element_dimension]
+
+    Returns
+    -------
+    array-like
+        IDs of vertices in physical group
+    """
+    # Find nodes in physical groups in gmsh msh2 and msh4 format
+    return np.argwhere(
+        meshio_mesh.cell_data["gmsh:physical"][field_cell[1] - 1]
+        == field_cell[0]
+    )
+
+
 def load(fname, set_boundary=False, return_only_one_mesh=True):
     """Load mesh in meshio format. Loads vertices and their connectivity.
 
@@ -92,11 +115,29 @@ def load(fname, set_boundary=False, return_only_one_mesh=True):
         for i in range(len(meshes)):
             # Indicator for boundary
             if meshes[i][1] in [3, 2]:
+                # Process field data
                 for field_key, field_cell in meshio_mesh.field_data.items():
                     if field_cell[1] == meshes[i][1] - 1:
-                        meshes[i][0].BC[field_key] = np.unique(
-                            meshio_mesh.cells[field_cell[0]].data
-                        )
+                        try:
+                            meshes[i][0].BC[field_key] = np.unique(
+                                meshio_mesh.cells[field_cell[0]].data
+                            )
+                        except IndexError:
+                            try:
+                                # The mesh might be in gmsh msh2 / msh4 format,
+                                # try to read this old fromat
+                                meshes[i][0].BC[field_key] = np.unique(
+                                    parse_gmsh_physical_groups(
+                                        meshio_mesh, field_key, field_cell
+                                    )
+                                )
+                            except KeyError or IndexError:
+                                raise (
+                                    """
+                                    The meshio field data could not be
+                                    processed, try deactivating 'set_boundary'.
+                                    """
+                                )
 
                 for j in range(i, len(meshes)):
                     # Considers only (d-1)-dimensional subspaces
