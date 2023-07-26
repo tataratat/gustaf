@@ -93,6 +93,12 @@ def load(fname, set_boundary=False, return_only_one_mesh=True):
         for i in range(len(meshes)):
             # Indicator for boundary
             if meshes[i][1] in [3, 2]:
+                for field_key, field_cell in meshio_mesh.field_data.items():
+                    if field_cell[1] == meshes[i][1] - 1:
+                        meshes[i][0].BC[field_key] = np.unique(
+                            meshio_mesh.cells[field_cell[0]].data
+                        )
+
                 for j in range(i, len(meshes)):
                     # Considers only (d-1)-dimensional subspaces
                     if meshes[j][1] == meshes[i][1] - 1:
