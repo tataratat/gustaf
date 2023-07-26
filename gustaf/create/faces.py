@@ -108,8 +108,11 @@ def to_simplex(quad, backslash=False):
 
         split = split_backslash if backslash else split_slash
 
-        tri_faces[:tf_half] = quad_faces[:, split[0]]
-        tri_faces[tf_half:] = quad_faces[:, split[1]]
+        # If backslash assign every other with backslash else only forward
+        tri_faces[0:tf_half:2] = quad_faces[0::2, split_slash[0]]
+        tri_faces[1:tf_half:2] = quad_faces[1::2, split[0]]
+        tri_faces[tf_half::2] = quad_faces[0::2, split_slash[1]]
+        tri_faces[tf_half+1::2] = quad_faces[1::2, split[1]]
 
         tri = Faces(
             vertices=quad.vertices.copy(),
