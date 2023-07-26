@@ -3,7 +3,7 @@ import pathlib
 from gustaf.io import meshio, mfem, mixd
 
 
-def load(fname):
+def load(fname, **kwargs):
     """Load function for all supported file formats.
 
     This function tries to guess the correct io module for the given file.
@@ -27,7 +27,7 @@ def load(fname):
     fname = pathlib.Path(fname).resolve()
 
     if fname.suffix in extensions_to_load_functions:
-        return extensions_to_load_functions[fname.suffix](fname)
+        return extensions_to_load_functions[fname.suffix](fname, **kwargs)
 
     else:
         raise ValueError(
