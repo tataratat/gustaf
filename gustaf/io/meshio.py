@@ -118,7 +118,7 @@ def export(mesh, fname, submeshes=None, **kwargs):
         whatami = m.whatami
         if whatami not in meshio_dict.keys():
             raise NotImplementedError(
-                f"Sorry, we can't export {whatami}-shape with meshio."
+                f"{whatami}-type meshes not supported (yet)."
             )
         else:
             if np.any(m.elements > len(m.vertices) - 1):
