@@ -123,7 +123,7 @@ def export(mesh, fname, submeshes=None, **kwargs):
         else:
             if np.any(m.elements > len(m.vertices) - 1):
                 raise ValueError(
-                    "Sorry, invalid vertices were referenced in a submesh."
+                    "Invalid vertex IDs in submesh connectivity."
                 )
             else:
                 cells.append((meshio_dict[whatami], m.elements))
