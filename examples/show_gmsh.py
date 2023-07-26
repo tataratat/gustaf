@@ -7,11 +7,12 @@ import pathlib
 
 import load_sample_file
 
-from gustaf import io
+from gustaf import Vertices, io, show
 
 if __name__ == "__main__":
     mesh_file_tri = pathlib.Path("faces/tri/2DChannelTria.msh")
     mesh_file_quad = pathlib.Path("faces/quad/2DChannelQuad.msh")
+    mesh_file_tetra = pathlib.Path("faces/tetra/3DBrickTetra.msh")
 
     base_samples_path = pathlib.Path("samples")
     if not base_samples_path.exists():
@@ -33,3 +34,30 @@ if __name__ == "__main__":
     loaded_mesh_default = io.load(base_samples_path / mesh_file_tri)
 
     loaded_mesh_default.show()
+
+    loaded_meshes = io.load(
+        base_samples_path / mesh_file_tri,
+        return_only_one_mesh=False,
+        set_boundary=True,
+    )
+    boundary_node_indices = loaded_meshes[0].BC["edges-nodes"]
+    boundary_vertices = Vertices(
+        loaded_meshes[0].vertices[boundary_node_indices]
+    )
+
+    show.show_vedo(
+        ["faces", loaded_meshes[0]],
+        ["boundaries: edges", loaded_meshes[1]],
+        ["vertices", boundary_vertices],
+    )
+
+    rect_meshes = io.load(
+        base_samples_path / mesh_file_tetra, return_only_one_mesh=False
+    )
+
+    show.show_vedo(
+        *[
+            [name, mesh]
+            for name, mesh in zip(["volume", "face", "line"], rect_meshes)
+        ]
+    )
