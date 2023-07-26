@@ -133,4 +133,4 @@ def export(mesh, fname, submeshes=None, **kwargs):
         points=mesh.vertices,
         cells=cells,
         point_data=mesh.vertex_data,
-    ).write(fname)
+    ).write(fname, **kwargs)
