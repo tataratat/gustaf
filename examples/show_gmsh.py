@@ -12,7 +12,7 @@ from gustaf import Vertices, io, show
 if __name__ == "__main__":
     mesh_file_tri = pathlib.Path("faces/tri/2DChannelTria.msh")
     mesh_file_quad = pathlib.Path("faces/quad/2DChannelQuad.msh")
-    mesh_file_tetra = pathlib.Path("faces/tetra/3DBrickTetra.msh")
+    mesh_file_tetra = pathlib.Path("volumes/tetra/3DBrickTetra.msh")
 
     base_samples_path = pathlib.Path("samples")
     if not base_samples_path.exists():
@@ -52,7 +52,9 @@ if __name__ == "__main__":
     )
 
     rect_meshes = io.load(
-        base_samples_path / mesh_file_tetra, return_only_one_mesh=False
+        base_samples_path / mesh_file_tetra,
+        return_only_one_mesh=False,
+        set_boundary=True,
     )
 
     show.show_vedo(
@@ -60,4 +62,16 @@ if __name__ == "__main__":
             [name, mesh]
             for name, mesh in zip(["volume", "face", "line"], rect_meshes)
         ]
+    )
+
+    volume_nodes = Vertices(
+        rect_meshes[0].vertices[rect_meshes[0].BC["tri-nodes"]]
+    )
+    faces_nodes = Vertices(
+        rect_meshes[0].vertices[rect_meshes[1].BC["edges-nodes"]]
+    )
+
+    show.show_vedo(
+        ["volumes: boundary-nodes", rect_meshes[0], volume_nodes],
+        ["faces: boundary-nodes", rect_meshes[1], faces_nodes],
     )
