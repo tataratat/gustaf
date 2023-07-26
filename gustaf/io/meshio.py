@@ -76,7 +76,7 @@ def export(mesh, fname, submeshes=None, **kwargs):
     """Export mesh elements and vertex data into meshio and use its write
     function. The definition of submeshes with identical vertex coordinates
     is possible. In that case vertex numbering and data from the main mesh
-    are used.
+    are used. For more export options, refer to meshio's documentation [link]()
 
     Parameters
     ------------
