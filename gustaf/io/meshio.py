@@ -111,18 +111,105 @@ def load(fname, set_boundary=False, return_only_one_mesh=True):
     return return_value
 
 
-def export(mesh, fname):
-    """Currently not implemented function.
+def export(mesh, fname, submeshes=None, **kwargs):
+    """Export mesh elements and vertex data into meshio and use its write
+    function. The definition of submeshes with identical vertex coordinates
+    is possible. In that case vertex numbering and data from the main mesh
+    are used. For more export options, refer to meshio's documentation
+    https://github.com/nschloe/meshio .
+
+    .. code-block:: python
+
+        import gustaf
+        # define coordinates
+        v = np.array(
+            [
+                [0.0, 0.0, 0.0],
+                [1.0, 0.0, 0.0],
+                [0.0, 1.0, 0.0],
+                [1.0, 1.0, 0.0],
+                [0.0, 0.0, 1.0],
+                [1.0, 0.0, 1.0],
+                [0.0, 1.0, 1.0],
+                [1.0, 1.0, 1.0],
+            ]
+        )
+        # define triangle connectivity
+        tf = np.array(
+            [
+                [1, 0, 2],
+                [0, 1, 5],
+                [3, 2, 6],
+                [2, 0, 4],
+                [4, 5, 7],
+                [2, 3, 1],
+                [7, 5, 1],
+                [6, 7, 3],
+                [4, 6, 2],
+                [7, 6, 4],
+            ]
+        )
+        # init tri faces
+        mesh = gus.Faces(
+            vertices=v,
+            faces=tf,
+        )
+        gustaf.io.meshio.export(mesh, 'tri-mesh.stl')
 
     Parameters
     ------------
-    mesh: MESH_TYPES
-      Mesh to be exported.
+    mesh: Edges, Faces or Volumes
+      Input mesh
     fname: Union[str, pathlib.Path]
       File to save the mesh in.
+    submeshes: Iterable
+      Submeshes where the vertices are identical to the main mesh. The element
+      type can be identical to mesh.elements or lower-dimensional (e.g.
+      boundary elements).
+    **kwargs : Any
+      Any additional argument will be passed to the respective meshio `write`
+      function. See meshio docs for more information
 
     Raises
     -------
-    NotImplementedError: This method is currently not implemented.
+    NotImplementedError:
+       For mesh types that are not implemented.
+    ValueError:
+       Raises a value error, if the vertices indexed in a subset are not
+       present in the main mesh.
     """
-    raise NotImplementedError
+
+    # Mapping between meshio cell types and gustaf cell types
+    meshio_dict = {
+        "edges": "line",
+        "tri": "triangle",
+        "quad": "quad",
+        "tet": "tetra",
+        "hexa": "hexahedron",
+    }
+
+    cells = []
+    # Merge main mesh and submeshes in one list
+    meshes = [mesh]
+    if submeshes is not None:
+        meshes.extend(submeshes)
+
+    # Iterate the meshes and extract the element information in meshio format
+    for m in meshes:
+        whatami = m.whatami
+        if whatami not in meshio_dict.keys():
+            raise NotImplementedError(
+                f"{whatami}-type meshes not supported (yet)."
+            )
+        else:
+            if np.any(m.elements > len(m.vertices) - 1):
+                raise ValueError("Invalid vertex IDs in submesh connectivity.")
+            else:
+                cells.append((meshio_dict[whatami], m.elements))
+
+    # Export data to meshio and write file
+    meshio.Mesh(
+        points=mesh.vertices,
+        cells=cells,
+        point_data=mesh.vertex_data,
+    ).write(fname, **kwargs)
