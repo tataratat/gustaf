@@ -77,7 +77,7 @@ def export(mesh, fname, submeshes=None, **kwargs):
     function. The definition of submeshes with identical vertex coordinates
     is possible. In that case vertex numbering and data from the main mesh
     are used. For more export options, refer to meshio's documentation
-    [https://github.com/nschloe/meshio](meshio)
+    https://github.com/nschloe/meshio .
 
     .. code-block:: python
 
