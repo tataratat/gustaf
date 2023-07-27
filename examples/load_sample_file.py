@@ -23,7 +23,7 @@ def load_sample_file(filename: str, force_reload: bool = False) -> bool:
         return True
     pathlib.Path.mkdir(local_file.parent, parents=True, exist_ok=True)
 
-    url = base_url + filename
+    url = base_url + str(filename)
     response = requests.get(url)
     if response.status_code == 200:
         with open(local_file, "wb") as f:

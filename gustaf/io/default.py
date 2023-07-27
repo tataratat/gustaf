@@ -1,6 +1,6 @@
 import pathlib
 
-from gustaf.io import meshio, mfem, mixd
+from gustaf.io import hmascii, meshio, mfem, mixd
 
 
 def load(fname):
@@ -22,6 +22,7 @@ def load(fname):
         ".mixd": mixd.load,
         ".mfem": mfem.load,
         ".msh": meshio.load,
+        ".hmascii": hmascii.load,
     }
 
     fname = pathlib.Path(fname).resolve()

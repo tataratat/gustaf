@@ -15,18 +15,18 @@ An initial surface component can be created in HyperMesh using:
 tools -> faces
 """
 
-import numpy as np
 import pathlib
 
+import numpy as np
+
+from gustaf import utils
+from gustaf.edges import Edges
 from gustaf.faces import Faces
 from gustaf.volumes import Volumes
-from gustaf.edges import Edges
-from gustaf import utils
 
 
 class HMLine:
-    """Parse a line from an HMASCII file.
-    """
+    """Parse a line from an HMASCII file."""
 
     __slots__ = ["name", "values"]
 
@@ -40,25 +40,24 @@ class HMLine:
         --------
         None
         """
-        self.name = ''
-        self.values = ''
+        self.name = ""
+        self.values = ""
 
-        if line[0] == '*':
-            parts = line[1:].split('(')
+        if line[0] == "*":
+            parts = line[1:].split("(")
             self.name = parts[0]
             if len(parts) > 1:
                 self.values = [
-                        value.strip('"') for value in parts[1][:-2].split(',')
+                    value.strip('"') for value in parts[1][:-2].split(",")
                 ]
 
 
 class HMElementType:
-    """Store HyperMesh element type information.
-    """
+    """Store HyperMesh element type information."""
 
     __slots__ = ["number_of_nodes", "subelement", "mesh_type"]
 
-    def __init__(self, number_of_nodes, mesh_type, subelement=''):
+    def __init__(self, number_of_nodes, mesh_type, subelement=""):
         """
         Parameters
         -----------
@@ -76,18 +75,18 @@ class HMElementType:
 
 
 class HMComponent:
-    """Create a component from an HMASCII line.
-    """
+    """Create a component from an HMASCII line."""
+
     __slots__ = ["name", "elements"]
 
     element_types = {
-            'tetra4': HMElementType(4, Volumes, 'tria3'),
-            'hexa8': HMElementType(8, Volumes, 'quad4'),
-            'tria3': HMElementType(3, Faces, 'plotel'),
-            'quad4': HMElementType(4, Faces, 'plotel'),
-            'plotel': HMElementType(2, Edges),
+        "tetra4": HMElementType(4, Volumes, "tria3"),
+        "hexa8": HMElementType(8, Volumes, "quad4"),
+        "tria3": HMElementType(3, Faces, "plotel"),
+        "quad4": HMElementType(4, Faces, "plotel"),
+        "plotel": HMElementType(2, Edges),
     }
-    element_type_preference = ('hexa8', 'tetra4', 'quad4', 'tria3')
+    element_type_preference = ("hexa8", "tetra4", "quad4", "tria3")
 
     def __init__(self, line):
         """
@@ -117,11 +116,12 @@ class HMComponent:
         if element_type not in self.elements:
             self.elements[element_type] = list()
         self.elements[element_type].append(
-                [
-                        int(node) for node in
-                        line.values[2:2 + self.element_types[element_type].
-                                    number_of_nodes]
+            [
+                int(node)
+                for node in line.values[
+                    2 : 2 + self.element_types[element_type].number_of_nodes
                 ]
+            ]
         )
 
 
@@ -159,16 +159,17 @@ class HMModel:
 
         current_component = None
 
-        with open(filename, 'r') as hm_file:
+        with open(filename) as hm_file:
             for line_string in hm_file:
                 line = HMLine(line_string)
 
                 # read node
                 if line.name == "node":
-                    self.node_ids[int(line.values[0])] =\
-                        len(self.node_coordinates)
+                    self.node_ids[int(line.values[0])] = len(
+                        self.node_coordinates
+                    )
                     self.node_coordinates.append(
-                            [float(coord) for coord in line.values[1:4]]
+                        [float(coord) for coord in line.values[1:4]]
                     )
 
                 # read component
@@ -180,13 +181,12 @@ class HMModel:
                 elif line.name in HMComponent.element_types:
                     if not current_component:
                         raise RuntimeError(
-                                'Encountered element before first '
-                                'component.'
+                            "Encountered element before first " "component."
                         )
                     current_component.add_element(line)
 
 
-def load(fname, element_type=''):
+def load(fname, element_type=""):
     """hmascii load.
 
     Parameters
@@ -211,18 +211,18 @@ def load(fname, element_type=''):
     if not element_type:
         # which element types occur in the mesh?
         element_types_in_model = [
-                element_type for component in hm_model.components
-                for element_type in component.elements
+            element_type
+            for component in hm_model.components
+            for element_type in component.elements
         ]
         preferred_element_types = [
-                element_type
-                for element_type in HMComponent.element_type_preference
-                if element_type in element_types_in_model
+            element_type
+            for element_type in HMComponent.element_type_preference
+            if element_type in element_types_in_model
         ]
         if len(preferred_element_types) < 1:
             raise RuntimeError(
-                    "Couldn't find any usable element types in "
-                    "model."
+                "Couldn't find any usable element types in " "model."
             )
 
         element_type = preferred_element_types[0]
@@ -232,8 +232,8 @@ def load(fname, element_type=''):
     subelement_type = HMComponent.element_types[element_type].subelement
 
     hm_volume_elements_nonunique = np.ndarray(
-            shape=(0, HMComponent.element_types[element_type].number_of_nodes),
-            dtype=int
+        shape=(0, HMComponent.element_types[element_type].number_of_nodes),
+        dtype=int,
     )
 
     bcs = dict()
@@ -242,13 +242,13 @@ def load(fname, element_type=''):
     for hm_component in hm_model.components:
         # can we use all elements?
         ignored_element_types = set(hm_component.elements).difference(
-                {element_type, subelement_type}
+            {element_type, subelement_type}
         )
         if len(ignored_element_types) > 0:
             utils.log.warning(
-                    f"Component '{hm_component.name}' contains "
-                    f"unkown element types {ignored_element_types}. "
-                    "They will be ignored."
+                f"Component '{hm_component.name}' contains "
+                f"unknown element types {ignored_element_types}. "
+                "They will be ignored."
             )
 
         # are there volume elements? append.
@@ -257,17 +257,17 @@ def load(fname, element_type=''):
 
             # append elements
             hm_volume_elements_nonunique = np.concatenate(
-                    (hm_volume_elements_nonunique, elements_in_component)
+                (hm_volume_elements_nonunique, elements_in_component)
             )
 
         # try get bounds
         if subelement_type in hm_component.elements and subelement_type in [
-                'tria3', 'quad4'
+            "tria3",
+            "quad4",
         ]:
-
             bcs[hm_component.name] = (
-                    np.arange(len(elements_in_component))
-                    + hm_volume_elements_nonunique.shape[0]
+                np.arange(len(elements_in_component))
+                + hm_volume_elements_nonunique.shape[0]
             )
         else:
             utils.log.info("Can`t find any bounds.")
@@ -275,14 +275,13 @@ def load(fname, element_type=''):
     # create unique element list
     hm_volume_elements_sorted = np.sort(hm_volume_elements_nonunique, axis=1)
     hm_volume_elements_unique_indices = np.unique(
-            hm_volume_elements_sorted, return_index=True, axis=0
+        hm_volume_elements_sorted, return_index=True, axis=0
     )[1]
 
     # sorting the unique indices isn't necessary, but it might maintain a more
     # contiguous element order
     volumes = np.squeeze(
-            hm_volume_elements_nonunique[
-                    hm_volume_elements_unique_indices.sort()]
+        hm_volume_elements_nonunique[hm_volume_elements_unique_indices.sort()]
     )
 
     # create minimal vertex array
@@ -297,7 +296,8 @@ def load(fname, element_type=''):
         node_perm = dict()
         for vertex_id, hm_node_id in enumerate(hm_node_indices):
             vertices[vertex_id, :] = hm_model.node_coordinates[
-                    hm_model.node_ids[hm_node_id]]
+                hm_model.node_ids[hm_node_id]
+            ]
             node_perm[hm_node_id] = vertex_id
 
     # finalize volumes array
