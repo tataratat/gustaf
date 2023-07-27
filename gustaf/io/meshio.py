@@ -43,7 +43,7 @@ def load(fname, set_boundary=False, return_only_one_mesh=True):
     return_only_one_mesh : bool, optional, default is True
         Return only the highest-dimensional mesh, ensures compartibility.
 
-    Returns,
+    Returns
     --------
     MESH_TYPES or list(MESH_TYPES)
     """
