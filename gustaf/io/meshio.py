@@ -127,7 +127,7 @@ def export(mesh, fname, submeshes=None, **kwargs):
       Submeshes where the vertices are identical to the main mesh. The element
       type can be identical to mesh.elements or lower-dimensional (e.g.
       boundary elements).
-    **kwargs : arbitrary
+    **kwargs : Any
       Any additional argument will be passed to the respective meshio `write`
       function. See meshio docs for more information
 
