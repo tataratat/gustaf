@@ -47,7 +47,7 @@ if __name__ == "__main__":
         tet, export_path / "export_meshio_subgroups.vtu", submeshes=[fac]
     )
     # The mesh still has to conform the needed format, e.g. stl will discard
-    # tetraeder
+    # tetrahedra
     gus.io.meshio.export(
         tet, export_path / "export_meshio_subgroups.stl", submeshes=[fac]
     )
