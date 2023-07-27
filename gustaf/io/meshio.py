@@ -81,41 +81,41 @@ def export(mesh, fname, submeshes=None, **kwargs):
 
     .. code-block:: python
 
-    import gustaf
-    # define coordinates
-    v = np.array(
-        [
-            [0.0, 0.0, 0.0],
-            [1.0, 0.0, 0.0],
-            [0.0, 1.0, 0.0],
-            [1.0, 1.0, 0.0],
-            [0.0, 0.0, 1.0],
-            [1.0, 0.0, 1.0],
-            [0.0, 1.0, 1.0],
-            [1.0, 1.0, 1.0],
-        ]
-    )
-    # define triangle connectivity
-    tf = np.array(
-        [
-            [1, 0, 2],
-            [0, 1, 5],
-            [3, 2, 6],
-            [2, 0, 4],
-            [4, 5, 7],
-            [2, 3, 1],
-            [7, 5, 1],
-            [6, 7, 3],
-            [4, 6, 2],
-            [7, 6, 4],
-        ]
-    )
-    # init tri faces
-    mesh = gus.Faces(
-        vertices=v,
-        faces=tf,
-    )
-    gustaf.io.meshio.export(mesh, 'tri-mesh.stl')
+        import gustaf
+        # define coordinates
+        v = np.array(
+            [
+                [0.0, 0.0, 0.0],
+                [1.0, 0.0, 0.0],
+                [0.0, 1.0, 0.0],
+                [1.0, 1.0, 0.0],
+                [0.0, 0.0, 1.0],
+                [1.0, 0.0, 1.0],
+                [0.0, 1.0, 1.0],
+                [1.0, 1.0, 1.0],
+            ]
+        )
+        # define triangle connectivity
+        tf = np.array(
+            [
+                [1, 0, 2],
+                [0, 1, 5],
+                [3, 2, 6],
+                [2, 0, 4],
+                [4, 5, 7],
+                [2, 3, 1],
+                [7, 5, 1],
+                [6, 7, 3],
+                [4, 6, 2],
+                [7, 6, 4],
+            ]
+        )
+        # init tri faces
+        mesh = gus.Faces(
+            vertices=v,
+            faces=tf,
+        )
+        gustaf.io.meshio.export(mesh, 'tri-mesh.stl')
 
     Parameters
     ------------
