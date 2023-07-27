@@ -52,6 +52,6 @@ if __name__ == "__main__":
         tet, export_path / "export_meshio_subgroups.stl", submeshes=[fac]
     )
 
-    # Export only tetraeder
+    # Export only tetrahedra
     gus.io.meshio.export(tet, export_path / "export_meshio.vtu")
     gus.io.meshio.export(tet.to_faces(), export_path / "export_meshio.stl")
