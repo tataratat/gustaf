@@ -15,7 +15,9 @@ if __name__ == "__main__":
     mesh_file_tetra = pathlib.Path("volumes/tetra/3DBrickTetra.msh")
 
     base_samples_path = pathlib.Path("samples")
-    if not base_samples_path.exists():
+    load_sample_file.load_sample_file(mesh_file_tri)
+    load_sample_file.load_sample_file(mesh_file_quad)
+    load_sample_file.load_sample_file(mesh_file_tetra) 
         load_sample_file.load_sample_file(str(mesh_file_tri))
         load_sample_file.load_sample_file(str(mesh_file_quad))
 
