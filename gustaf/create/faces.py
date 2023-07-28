@@ -49,7 +49,7 @@ def box(
     return face_mesh
 
 
-def to_simplex(quad, backslash=False):
+def to_simplex(quad, alternate=False):
     """Given quad faces, diagonalize them to turn them into triangles.
 
     If quad is counterclockwise (CCW), triangle will also be CCW and
@@ -76,14 +76,16 @@ def to_simplex(quad, backslash=False):
 
     resembling 'backslash'.
 
-    If you want to diagonalize the other way, set `backslash=True`.
+    If you want to alternate the `slash`-direction, set `alternate`-variable.
 
     Parameters
     ----------
     quad: Faces
-        Faces representation which is to be converted from a cubic mesh into a
-        simplex mesh.
-    backslash: bool
+      Faces representation which is to be converted from a cubic mesh into a
+      simplex mesh.
+    alternate: bool
+       Alternate between forward and back-slash to avoid "favored" meshing
+       direction (important in some analysis problem).
 
     Returns
     --------
@@ -106,10 +108,13 @@ def to_simplex(quad, backslash=False):
         tf_half = int(quad_faces.shape[0])
         tri_faces = np.full((tf_half * 2, 3), -1, dtype=settings.INT_DTYPE)
 
-        split = split_backslash if backslash else split_slash
+        split = split_backslash if alternate else split_slash
 
-        tri_faces[:tf_half] = quad_faces[:, split[0]]
-        tri_faces[tf_half:] = quad_faces[:, split[1]]
+        # If backslash assign every other with backslash else only forward
+        tri_faces[0:tf_half:2] = quad_faces[0::2, split_slash[0]]
+        tri_faces[1:tf_half:2] = quad_faces[1::2, split[0]]
+        tri_faces[tf_half::2] = quad_faces[0::2, split_slash[1]]
+        tri_faces[(tf_half + 1) :: 2] = quad_faces[1::2, split[1]]
 
         tri = Faces(
             vertices=quad.vertices.copy(),
