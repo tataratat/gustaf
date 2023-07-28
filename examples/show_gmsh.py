@@ -12,7 +12,7 @@ from gustaf import Vertices, io, show
 if __name__ == "__main__":
     mesh_file_tri = pathlib.Path("faces/tri/2DChannelTria.msh")
     mesh_file_quad = pathlib.Path("faces/quad/2DChannelQuad.msh")
-    mesh_file_tetra = pathlib.Path("volumes/tetra/3DBrickTetra.msh")
+    mesh_file_tetra = pathlib.Path("volumes/tet/3DBrickTetra.msh")
 
     base_samples_path = pathlib.Path("samples")
     load_sample_file.load_sample_file(str(mesh_file_tri))
