@@ -5,14 +5,7 @@ I - `load`.
 O - `export`.
 """
 
-from gustaf.io import ioutils, meshio, mfem, mixd, nutils
+from gustaf.io import ioutils, meshio, mfem, mixd, npz, nutils
 from gustaf.io.default import load
 
-__all__ = [
-    "ioutils",
-    "mfem",
-    "meshio",
-    "mixd",
-    "nutils",
-    "load",
-]
+__all__ = ["ioutils", "mfem", "meshio", "mixd", "nutils", "load", "npz"]
