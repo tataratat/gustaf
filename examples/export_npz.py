@@ -1,3 +1,5 @@
+from pathlib import Path
+
 import numpy as np
 
 import gustaf
@@ -54,6 +56,7 @@ if __name__ == "__main__":
     hexa.show_options["data_name"] = "arange"
 
     # Export hexa, edges and vertices
+    Path("export").mkdir(exist_ok=True)
     gustaf.io.npz.export(hexa, "export/hexa.npz")
     gustaf.io.npz.export(hexa.to_edges(), "export/hexa_edges.npz")
     gustaf.io.npz.export(hexa.to_vertices(), "export/hexa_vertices.npz")
