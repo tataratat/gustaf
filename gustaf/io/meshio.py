@@ -101,12 +101,7 @@ def load(fname, set_boundary=False, return_only_one_mesh=True):
                             f"{meshes[j][0].whatami}-nodes"
                         ] = np.unique(meshes[j][0].elements)
 
-    # Ensures backwards-compartibility
-    if return_only_one_mesh:
-        # Return highest-dimensional mesh
-        return_value = meshes[0][0]
-    else:
-        return_value = [mesh[0] for mesh in meshes]
+    return_value = [mesh[0] for mesh in meshes]
 
     return return_value
 
