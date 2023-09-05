@@ -19,7 +19,7 @@ except ModuleNotFoundError as err:
     # from meshio import Mesh as MeshioMesh
 
 
-def load(fname, set_boundary=False, return_only_one_mesh=True):
+def load(fname, set_boundary=True):
     """Load mesh in meshio format. Loads vertices and their connectivity.
 
     The function reads all gustaf-processable element types from meshio, which
