@@ -214,6 +214,12 @@ if __name__ == "__main__":
 
     f.vertex_data["arange"] = np.arange(len(f.vertices))
     f.show_options["data_name"] = "arange"
-    f.show_options["scalarbar3d"] = True
-
-    f.show()
+    f_2d = f.copy()
+    f.show_options["scalarbar3d"] = {
+        "title": "scalarbar title",
+        "nlabels": 2,
+    }
+    f_2d.show_options["scalarbar"] = {
+        "nlabels": 12,
+    }
+    gus.show.show([f, "3D scalarbar"], [f_2d, "2D scalarbar"])
