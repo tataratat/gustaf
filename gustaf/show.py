@@ -317,11 +317,17 @@ def _vedo_showable(obj, as_dict=False, **kwargs):
         vedo_obj.cmap(cmap_kwargs.pop("input_cmap"), **cmap_kwargs)
 
         # at last, scalarbar
-        # deprecated function name, keep it for now for backward compat
         sb_kwargs = obj.show_options.get("scalarbar", None)
         if sb_kwargs is not None and sb_kwargs is not False:
             sb_kwargs = dict() if isinstance(sb_kwargs, bool) else sb_kwargs
-            vedo_obj.addScalarBar(**sb_kwargs)
+            vedo_obj.add_scalarbar(**sb_kwargs)
+
+        sb3d_kwargs = obj.show_options.get("scalarbar3d", None)
+        if sb3d_kwargs is not None and sb3d_kwargs is not False:
+            sb3d_kwargs = (
+                dict() if isinstance(sb3d_kwargs, bool) else sb3d_kwargs
+            )
+            vedo_obj.add_scalarbar3d(**sb3d_kwargs)
 
     elif data_name is not None and vertex_data is None:
         utils.log.debug(
