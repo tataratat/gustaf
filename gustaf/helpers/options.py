@@ -89,6 +89,19 @@ vedo_common_options = (
     ),
     Option(
         "vedo",
+        "scalarbar3d",
+        "3D scalarbar describing cmap. At least an empty dict or "
+        "dict with following items are accepted: "
+        "{title: str, pos: tuple, size: list, title_font: str, "
+        "title_xoffset: float, title_yoffset: float, title_size: float, "
+        "title_rotation: float, nlabels: int, label_font:str, "
+        "label_size: float, label_offset: float, label_rotation: int, "
+        "label_format: str, draw_box: bool, above_text: str, below_text: str, "
+        "nan_text: str, categories: list}",
+        (bool, dict),
+    ),
+    Option(
+        "vedo",
         "arrow_data",
         "Name of vertex_data to plot as arrow. Corresponding data should be "
         "at least 2D. If you want more control over arrows, consider creating "
