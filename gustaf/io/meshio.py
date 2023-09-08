@@ -172,5 +172,5 @@ def export(mesh, fname, submeshes=None, **kwargs):
     meshio.Mesh(
         points=mesh.vertices,
         cells=cells,
-        point_data=mesh.vertex_data,
+        point_data=mesh.vertex_data._saved,
     ).write(fname, **kwargs)
