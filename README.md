@@ -16,7 +16,7 @@ pip install gustaf
 ```
 To install all the [optional dependencies](#optional-dependencies) at the same time, you can use:
 ```
-pip install gustaf[all]
+pip install "gustaf[all]"
 ```
 For the latest develop version of gustaf:
 ```
