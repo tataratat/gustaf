@@ -7,28 +7,34 @@ import pathlib
 
 import load_sample_file
 
+import gustaf
 from gustaf import io
 
 if __name__ == "__main__":
     mesh_file_tri = pathlib.Path("faces/tri/2DChannelTria.msh")
     mesh_file_quad = pathlib.Path("faces/quad/2DChannelQuad.msh")
+    mesh_file_tetra = pathlib.Path("volumes/tet/3DBrickTet.msh")
 
     base_samples_path = pathlib.Path(__file__).parent / "samples"
     load_sample_file.load_sample_file(str(mesh_file_tri))
     load_sample_file.load_sample_file(str(mesh_file_quad))
+    load_sample_file.load_sample_file(str(mesh_file_tetra))
 
     # load the .msh file directly with the correct io module (meshio)
     loaded_mesh_tri = io.meshio.load(base_samples_path / mesh_file_tri)
 
-    loaded_mesh_tri.show()
+    gustaf.show(loaded_mesh_tri)
 
     # load the .msh file directly with the correct io module (meshio)
     loaded_mesh_quad = io.meshio.load(base_samples_path / mesh_file_quad)
 
-    loaded_mesh_quad.show()
+    gustaf.show(loaded_mesh_quad)
 
     # load the .msh file with the default load function which needs to find out
     # it self which module is the correct one.
-    loaded_mesh_default = io.load(base_samples_path / mesh_file_tri)
+    loaded_mesh_default = io.load(base_samples_path / mesh_file_tetra)
 
-    loaded_mesh_default.show()
+    gustaf.show(
+        *[[msh.__class__.__name__, msh] for msh in loaded_mesh_default],
+        title="3D mesh with tetrahedrons",
+    )
