@@ -11,11 +11,17 @@ import numpy as np
 from gustaf.faces import Faces
 from gustaf.io.ioutils import abs_fname, check_and_makedirs
 from gustaf.utils import log
+from gustaf.utils.arr import close_rows
 from gustaf.volumes import Volumes
 
 
 def load(
-    simplex=True, volume=False, fname=None, mxyz=None, mien=None, mrng=None
+    simplex=True,
+    volume=False,
+    fname=None,
+    mxyz=None,
+    mien=None,
+    mrng=None,
 ):
     """mixd load. To avoid reading minf, all the crucial info can be given as
     params. Default input will try to import `mxyz`, `mien`, `mrng` from
@@ -112,6 +118,7 @@ def export(
     mesh,
     fname,
     space_time=False,
+    dual=False,
 ):
     """Export in mixd format. Supports triangle, quadrilateral, tetrahedron,
     and hexahedron semi-discrete and (flat) space-time mesh output.
@@ -156,6 +163,7 @@ def export(
             connec_file = os.path.join(fdir, "mien")
             bc_file = os.path.join(fdir, "mrng")
             info_file = os.path.join(fdir, "minf")
+            dual_file = os.path.join(fdir, "dual")
 
         else:
             fbase += "."
@@ -163,6 +171,7 @@ def export(
             connec_file = fbase + "mien"
             bc_file = fbase + "mrng"
             info_file = fbase + "minf"
+            dual_file = fbase + "dual"
 
     else:
         raise NotImplementedError("`mixd` format only supports xns.")
@@ -187,6 +196,27 @@ def export(
 
         for b in boundaries:
             bf.write(struct.pack(big_endian_int, b))
+
+    if dual:
+        with open(dual_file, "wb") as df:
+            boundaries = make_mrng(mesh)
+
+            _, _, _, intersec = close_rows(
+                mesh.to_edges(False).centers(), 1e-12, True
+            )
+            assert len(boundaries) == len(intersec)
+
+            duals = []
+            for i, neigh in enumerate(intersec):
+                assert len(neigh) < 3
+                if len(neigh) == 1:
+                    duals.append(boundaries[i])
+                    continue
+                ind = 1 if i == neigh[0] else 0
+                duals.append(-int(neigh[ind] + 1))  # fortran's 1 offset
+
+            for d in duals:
+                df.write(struct.pack(big_endian_int, d))
 
     # write info
     with open(info_file, "w") as infof:  # if and inf... just can't
