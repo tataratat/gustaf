@@ -7,15 +7,25 @@ import pathlib
 
 import numpy as np
 
+from gustaf.edges import Edges
 from gustaf.faces import Faces
 from gustaf.helpers.raise_if import ModuleImportRaiser
+from gustaf.utils import log
+from gustaf.vertices import Vertices
 from gustaf.volumes import Volumes
 
 try:
     import meshio
 except ModuleNotFoundError as err:
     meshio = ModuleImportRaiser("meshio", err)
-    # from meshio import Mesh as MeshioMesh
+
+_meshio2gus = {
+    "hexahedron": Volumes,
+    "tetra": Volumes,
+    "quad": Faces,
+    "triangle": Faces,
+    "line": Edges,
+}
 
 
 def load(fname):
@@ -36,8 +46,7 @@ def load(fname):
     --------
     MESH_TYPES
     """
-    mesh_type = Faces
-
+    # fname sanity check
     fname = pathlib.Path(fname)
     if not (fname.exists() and fname.is_file()):
         raise ValueError(
@@ -45,31 +54,28 @@ def load(fname):
             f"{fname.resolve()}"
         )
 
+    # load
     meshio_mesh: meshio.Mesh = meshio.read(fname)
+
+    # first get vertices
     vertices = meshio_mesh.points
 
-    # check for 2D mesh
-    # Try for triangle grid
-    cells = meshio_mesh.get_cells_type("triangle")
-    # If  no triangle elements, try for square
-    if len(cells) == 0:
-        cells = meshio_mesh.get_cells_type("quad")
-    if not len(cells) > 0:
-        # 3D mesh
-        mesh_type = Volumes
-        cells = meshio_mesh.get_cells_type("tetra")
-        if len(cells) == 0:
-            cells = meshio_mesh.get_cells_type("hexahedron")
+    # early exit if cells doesn't exist
+    if len(meshio_mesh.cells_dict) == 0:
+        return Vertices(vertices)
 
-    for i, cell in enumerate(cells):
-        if i == 0:
-            elements = cell.data
-        else:
-            elements = np.vstack((elements, cell.data))
+    meshes = []
+    for element_type, elements in meshio_mesh.cells_dict.items():
+        # skip unsupported
+        if element_type not in _meshio2gus:
+            log.warning(
+                f"`{element_type}`-elements are not supported in gustaf"
+            )
+            continue
 
-    mesh = mesh_type(vertices=vertices, elements=elements)
+        meshes.append(_meshio2gus[element_type](vertices, elements=elements))
 
-    return mesh
+    return meshes[0] if len(meshes) == 1 else meshes
 
 
 def export(mesh, fname, submeshes=None, **kwargs):
