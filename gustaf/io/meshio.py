@@ -25,6 +25,7 @@ _meshio2gus = {
     "quad": Faces,
     "triangle": Faces,
     "line": Edges,
+    "vertex": Vertices,
 }
 
 
@@ -44,7 +45,7 @@ def load(fname):
 
     Returns
     --------
-    MESH_TYPES
+    MESH_TYPES | List[MESH_TYPES]
     """
     # fname sanity check
     fname = pathlib.Path(fname)
@@ -72,8 +73,12 @@ def load(fname):
                 f"`{element_type}`-elements are not supported in gustaf"
             )
             continue
-
-        meshes.append(_meshio2gus[element_type](vertices, elements=elements))
+        if element_type.startswith("vertex"):
+            meshes.append(Vertices(vertices[elements.ravel()]))
+        else:
+            meshes.append(
+                _meshio2gus[element_type](vertices, elements=elements)
+            )
 
     return meshes[0] if len(meshes) == 1 else meshes
 
