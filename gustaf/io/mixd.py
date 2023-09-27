@@ -213,7 +213,7 @@ def export(
                     duals.append(boundaries[i])
                     continue
                 ind = 1 if i == neigh[0] else 0
-                duals.append(-int(neigh[ind] + 1))  # fortran's 1 offset
+                duals.append(-int((neigh[ind] // 3) + 1))  # fortran's 1 offset
 
             for d in duals:
                 df.write(struct.pack(big_endian_int, d))
