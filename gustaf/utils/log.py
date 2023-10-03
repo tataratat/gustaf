@@ -109,7 +109,7 @@ def prepended_log(message, log_func):
     ----------
     message: str
     log_func: function
-      one of the followings - {info, debug, warning}
+      one of the following - {info, debug, warning}
 
     Returns
     -------

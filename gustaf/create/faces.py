@@ -56,7 +56,7 @@ def to_simplex(quad, alternate=False):
     vice versa. Will return a tri-mesh, if input is triangular.
     Default diagonalization looks like this:
 
-    .. code-block::
+    .. code-block:: text
 
         (3) *---* (2)
             |  /|
@@ -66,7 +66,7 @@ def to_simplex(quad, alternate=False):
 
     resembling 'slash'.
 
-    .. code-block::
+    .. code-block:: text
 
         (3) *---* (2)
             |\\  |
@@ -136,7 +136,8 @@ def to_quad(tri):
         each triangle face. Warning: mesh quality could be bad!
 
         ``(new) Quad Face``
-        .. code-block::
+
+        .. code-block:: text
 
             Ref: (node_ind), face_ind
 

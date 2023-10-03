@@ -334,7 +334,7 @@ class ComputedData(DataHolder):
         """
 
         def inner(func):
-            # followings are done once while modules are loaded
+            # following are done once while modules are loaded
             # just subclass this class to make a special helper
             # for each helpee class.
             assert isinstance(var_names, list), "var_names should be a list"
@@ -373,7 +373,7 @@ class ComputedData(DataHolder):
                     recompute = kwargs.get("recompute", True)
 
                 # computed arrays are called _computed.
-                # loop over dependees and check if they are modified
+                # loop over dependencies and check if they are modified
                 for dependee_str in cls._depends[func.__name__]:
                     dependee = getattr(self, dependee_str)
                     # is modified?

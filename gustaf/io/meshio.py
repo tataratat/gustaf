@@ -93,6 +93,7 @@ def export(mesh, fname, submeshes=None, **kwargs):
     .. code-block:: python
 
         import gustaf
+
         # define coordinates
         v = np.array(
             [
@@ -126,7 +127,7 @@ def export(mesh, fname, submeshes=None, **kwargs):
             vertices=v,
             faces=tf,
         )
-        gustaf.io.meshio.export(mesh, 'tri-mesh.stl')
+        gustaf.io.meshio.export(mesh, "tri-mesh.stl")
 
     Parameters
     ------------

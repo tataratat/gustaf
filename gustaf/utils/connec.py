@@ -16,7 +16,7 @@ def tet_to_tri(volumes):
 
     ``Tetrahedron``
 
-    .. code-block::
+    .. code-block:: text
 
         Ref: (node_ind), face_ind
 
@@ -71,7 +71,7 @@ def hexa_to_quad(volumes):
 
     ``Hexahedron``
 
-    .. code-block::
+    .. code-block:: text
 
 
                 (6)    (7)
@@ -149,7 +149,7 @@ def volumes_to_faces(volumes):
 def faces_to_edges(faces):
     """Compute edges based on following edge scheme.
 
-    .. code-block::
+    .. code-block:: text
 
         Ref: (node_ind), edge_ind
 
@@ -270,7 +270,7 @@ def make_quad_faces(resolutions):
     """Given number of nodes per each dimension, returns connectivity
     information of a structured mesh. Counter clock wise connectivity.
 
-    .. code-block::
+    .. code-block:: text
 
         (3)*------*(2)
            |      |
@@ -314,7 +314,7 @@ def make_hexa_volumes(resolutions):
     information of structured hexahedron elements. Counter clock wise
     connectivity.
 
-    .. code-block::
+    .. code-block:: text
 
          (7)*-------*(6)
            /|      /|
@@ -377,7 +377,7 @@ def subdivide_edges(edges):
 
     ``Subdivided Edges``
 
-    .. code-block::
+    .. code-block:: text
 
         Edges (Lines)
 
@@ -413,7 +413,7 @@ def subdivide_tri(
 
     ``Subdivided Faces``
 
-    .. code-block::
+    .. code-block:: text
 
         Triangles
 

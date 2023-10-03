@@ -227,7 +227,7 @@ def _vedo_showable(obj, as_dict=False, **kwargs):
     --------
     vedo_obj: vedo obj
     """
-    # incase kwargs are defined, we will make a copy of the object and
+    # in case kwargs are defined, we will make a copy of the object and
     # try to overwrite all the applicable kwargs.
     if kwargs:
         # keep original ones and assign new show_options temporarily
