@@ -88,7 +88,7 @@ def show_vedo(
             return None
 
         for i in range(num_renderers):
-            plotter.clear(at=i)
+            plotter.clear(at=i, deep=True)
 
         return None
 
