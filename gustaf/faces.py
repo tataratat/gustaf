@@ -313,3 +313,21 @@ class Faces(Edges):
             self.vertices,
             edges=self.unique_edges().values if unique else self.edges(),
         )
+
+    def to_subelements(self, unique=True):
+        """Returns current elements represented as its boundary element class.
+        For faces, this is equivalent to `to_edges()`.
+        For volumes, `to_faces()`.
+
+        Parameters
+        ----------
+        unique: bool
+          Default is True. If True, only takes unique edges.
+
+        Returns
+        -------
+        subelements: boundary class
+        """
+        return eval(
+            f"self.to_{self.__boundary_class__.__qual_name__.lower()}()"
+        )
