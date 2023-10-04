@@ -30,5 +30,5 @@ def load_sample_file(filename: str, force_reload: bool = False) -> bool:
             f.write(response.content)
         return True
     else:
-        print(f"Cant load {url}, status code: {response.status_code}.")
+        print(f"Can't load {url}, status code: {response.status_code}.")
         return False

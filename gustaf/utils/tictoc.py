@@ -119,6 +119,6 @@ class Tic(GustafBase):
             if log:
                 self._logger(*message)
             if print_:
-                print(*message)
+                print(*message)  # noqa: T201
 
         return self._names.copy(), cumulative

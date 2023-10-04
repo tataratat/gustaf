@@ -1,0 +1,30 @@
+[tool.ruff]
+line-length = 79
+select = [
+  "E", "F", "W", # flake8
+  "B",           # flake8-bugbear
+  "ARG",         # flake8-unused-arguments
+  "C4",          # flake8-comprehensions
+  "PL",          # pylint
+  "SIM",         # flake8-simplify
+  "T20",         # flake8-print
+  "NPY",         # numpy specific rules
+  "I",           # isort specific rules
+  "UP",          # pyupdate specific rules
+  "C400","C401","C402","C403","C404","C405" # additional pyupgrade rules
+]
+fixable = ["ALL"]
+target-version = "py37"
+ignore = [
+    "PLR2004", # TODO!
+    "PLR0912", # Too many branches
+    "PLR0913", # Too many arguments to function call
+    "PLR0915", # Too many statements
+    "B904", # Within an `except` clause, raise exceptions with ...
+    # "PLR0911", # Too many return statements
+]
+
+[tool.ruff.per-file-ignores]
+"setup.py" = ["T201"]
+"examples/*.py" = ["T201"]
+"tests/*.py" = ["T201", "B018"]

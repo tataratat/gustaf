@@ -8,9 +8,7 @@ from gustaf import create, settings, utils
 from gustaf.faces import Faces
 
 
-def box(
-    bounds=[[0, 0], [1, 1]], resolutions=[2, 2], simplex=False, backslash=False
-):
+def box(bounds=None, resolutions=None, simplex=False, backslash=False):
     """Create structured quadrangle or triangle block mesh.
 
     Parameters
@@ -27,6 +25,10 @@ def box(
     face_mesh: Volumes
     """
 
+    if resolutions is None:
+        resolutions = [2, 2]
+    if bounds is None:
+        bounds = [[0, 0], [1, 1]]
     if np.array(bounds).shape != (2, 2):
         raise ValueError("Bounds must have a dimension of (2, 2).")
     if len(resolutions) != 2:
@@ -56,7 +58,7 @@ def to_simplex(quad, alternate=False):
     vice versa. Will return a tri-mesh, if input is triangular.
     Default diagonalization looks like this:
 
-    .. code-block::
+    .. code-block:: text
 
         (3) *---* (2)
             |  /|
@@ -66,7 +68,7 @@ def to_simplex(quad, alternate=False):
 
     resembling 'slash'.
 
-    .. code-block::
+    .. code-block:: text
 
         (3) *---* (2)
             |\\  |
@@ -136,7 +138,8 @@ def to_quad(tri):
         each triangle face. Warning: mesh quality could be bad!
 
         ``(new) Quad Face``
-        .. code-block::
+
+        .. code-block:: text
 
             Ref: (node_ind), face_ind
 

@@ -100,9 +100,7 @@ def process_file(
     links = get_markdown_links(content)
 
     for item in links:
-        if item[1].startswith(
-            tuple(["http", "#"])
-        ):  # skip http links and anchors
+        if item[1].startswith(("http", "#")):  # skip http links and anchors
             content = content.replace(
                 f"[{item[0]}]({item[1]})",
                 f"<a href='{item[1]}'>{item[0]}</a>",

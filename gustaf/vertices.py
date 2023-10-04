@@ -74,7 +74,7 @@ class VerticesShowOption(helpers.options.ShowOption):
             return vertices.labels(
                 content=labels,
                 on="points",
-                **self.get("label_options", dict()),
+                **self.get("label_options", {}),
             )
 
         else:
@@ -553,10 +553,7 @@ class Vertices(GustafBase):
 
         def is_concatable(inst):
             """Return true, if it is same as type(cls)"""
-            if isinstance(inst, cls):
-                return True
-            else:
-                return False
+            return bool(isinstance(inst, cls))
 
         # If only one instance is given and it is iterable, adjust
         # so that we will just iterate that.

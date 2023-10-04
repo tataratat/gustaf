@@ -84,12 +84,10 @@ def from_data(gus_obj, data, scale=None, data_norm=None):
     if scale is None:
         if isinstance(data, str):
             norm = gus_obj.vertex_data.as_scalar(data, None, True)
+        elif data_norm is None:
+            norm = np.linalg.norm(increment, axis=1)
         else:
-            # compute
-            if data_norm is None:
-                norm = np.linalg.norm(increment, axis=1)
-            else:
-                norm = np.asanyarray(data_norm)
+            norm = np.asanyarray(data_norm)
 
         max_data_norm = norm.max()
         aabb_diagonal_norm = gus_obj.bounds_diagonal_norm()

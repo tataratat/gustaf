@@ -77,7 +77,7 @@ def test_unique_vertices(grid, request):
     # copy original
     n_original_vertices = len(grid.vertices)
     original_vertices = grid.vertices.copy()
-    # assgin new vertices
+    # assign new vertices
     #  ==> stacks (original, random, original, random)
     grid.vertices = np.vstack(
         (grid.vertices, random_vertices, original_vertices, random_vertices)
@@ -100,7 +100,7 @@ def test_unique_vertices(grid, request):
     assert all(np.tile(np.arange(n_expected_unique), 2) == unique_vs.inverse)
 
     # intersection check - should include itself as well
-    # also, should be sorted, assuming scipy verion is > 1.6
+    # also, should be sorted, assuming scipy version is > 1.6
     intersection_list = [*unique_vs.intersection]
     intersection_ref = [
         [i, i + n_expected_unique] for i in range(n_expected_unique)
@@ -147,7 +147,7 @@ def test_update_vertices(grid, request):
     # int based mask - let's keep 3 vertices
     n_original_vs = len(grid.vertices)
     n_vertices_to_keep = 3
-    int_mask = np.random.choice(
+    int_mask = np.random.default_rng().choice(
         np.arange(n_original_vs),
         n_vertices_to_keep,
         replace=False,
@@ -198,7 +198,7 @@ def test_update_elements(grid, request):
 
     n_original_es = len(grid.elements)
     n_elements_to_keep = 3
-    int_mask = np.random.choice(
+    int_mask = np.random.default_rng().choice(
         np.arange(n_original_es),
         n_elements_to_keep,
         replace=False,

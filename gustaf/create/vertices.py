@@ -35,7 +35,7 @@ def raster(
     if len(resolutions) != len(bounds[0]) == len(bounds[1]):
         raise ValueError("Length of resolutions and bounds should match.")
 
-    slices = list()
+    slices = []
     for b0, b1, r in zip(bounds[0], bounds[1], resolutions):
         slices.append(slice(b0, b1, int(r) * 1j))
 

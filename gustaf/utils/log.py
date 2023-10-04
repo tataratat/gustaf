@@ -32,8 +32,8 @@ def configure(debug=False, logfile=None):
     # apply format using stream handler
     # let's use only one stream handler so that calling configure multiple
     # times won't duplicate printing.
-    new_handlers = list()
-    for i, h in enumerate(logger.handlers):
+    new_handlers = []
+    for _i, h in enumerate(logger.handlers):
         # we skip all the stream handler.
         if isinstance(h, logging.StreamHandler):
             continue
@@ -109,7 +109,7 @@ def prepended_log(message, log_func):
     ----------
     message: str
     log_func: function
-      one of the followings - {info, debug, warning}
+      one of the following - {info, debug, warning}
 
     Returns
     -------

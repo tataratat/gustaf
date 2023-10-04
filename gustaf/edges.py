@@ -365,7 +365,7 @@ class Edges(Vertices):
 
         ``dashed edges``
 
-        .. code-block::
+        .. code-block:: text
 
              o--------o    o--------o    o--------o
              |<------>|             |<-->|

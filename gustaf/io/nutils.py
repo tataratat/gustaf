@@ -43,14 +43,11 @@ def load(fname):
     simplex = True
     connec = nodes
 
-    if vertices.shape[1] == 2:
-        volume = False
-    else:
-        volume = True
+    volume = vertices.shape[1] != 2
 
     # reshape connec
     try:
-        ncol = int(3) if simplex and not volume else int(4)
+        ncol = 3 if simplex and not volume else 4
         connec = connec.reshape(-1, ncol)
         mesh = Volumes(vertices, connec) if volume else Faces(vertices, connec)
     except BaseException:
@@ -117,14 +114,14 @@ def to_nutils_simplex(mesh):
     else:
         raise TypeError("Only Triangle and Tetrahedrons are accepted.")
 
-    dic_to_nutils = dict()
+    dic_to_nutils = {}
 
     # Sort the Node IDs for each Element.
     sort_array = np.argsort(elements, axis=1)
     elements_sorted = np.take_along_axis(elements, sort_array, axis=1)
 
     # Let`s get the Boundaries
-    bcs = dict()
+    bcs = {}
     bcs_in = mixd.make_mrng(mesh)
     bcs_in = np.ndarray.reshape(
         bcs_in, (int(len(bcs_in) / (dimension + 1)), (dimension + 1))

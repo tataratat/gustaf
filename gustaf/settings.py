@@ -11,11 +11,11 @@ INT_DTYPE = "int32"
 # OPTIONS are <"vedo" | "trimesh" | "matplotlib">
 VISUALIZATION_BACKEND = "vedo"
 
-VEDO_DEFAULT_OPTIONS = dict(
-    vertex=dict(),
-    edges=dict(),
-    faces=dict(),
-    volumes=dict(),
-)
+VEDO_DEFAULT_OPTIONS = {
+    "vertex": {},
+    "edges": {},
+    "faces": {},
+    "volumes": {},
+}
 
 NTHREADS = 1

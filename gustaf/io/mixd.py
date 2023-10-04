@@ -71,12 +71,12 @@ def load(
     # connec
     connec = None
     try:
-        connec = (np.fromfile(mien, dtype=">i") - int(1)).astype(np.int32)
+        connec = (np.fromfile(mien, dtype=">i") - 1).astype(np.int32)
     except BaseException:
         log.debug(f"mien file, `{mien}`, does not exist. Skipping.")
 
     # boundary conditions
-    bcs = dict()
+    bcs = {}
     try:
         bcs_in = np.fromfile(mrng, dtype=">i").astype(np.int32)  # flattened
         uniq_bcs_in = np.unique(bcs_in)
@@ -94,8 +94,8 @@ def load(
 
     # reshape connec
     if connec is not None:
-        ncol = int(3) if simplex and not volume else int(4)
-        ncol = int(8) if ncol == int(4) and volume and not simplex else ncol
+        ncol = 3 if simplex and not volume else 4
+        ncol = 8 if ncol == 4 and volume and not simplex else ncol
 
         connec = connec.reshape(-1, ncol)
 
