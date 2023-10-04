@@ -25,7 +25,7 @@ def invalid_inherited_attr(attr_name, qualname, property_=False):
         behaves same as func if `property_` is correctly defined
     """
 
-    def raiser(self):
+    def raiser():
         raise AttributeError(
             f"{attr_name} is not supported from {qualname} "
             "and its subclasses thereof."
@@ -59,7 +59,7 @@ class ModuleImportRaiser:
             f"{original_message}"
         )
 
-    def __call__(self, *args: Any, **kwds: Any) -> Any:
+    def __call__(self, *_args: Any, **_kwargs: Any) -> Any:
         """Is called when the object is called by object().
 
         Will notify the user, that the functionality is not accessible

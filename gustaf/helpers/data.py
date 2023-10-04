@@ -31,7 +31,7 @@ class TrackedArray(np.ndarray):
         """Sets default flags for any arrays that maybe generated based on
         tracked array."""
         self._modified = True
-        self._source = int(0)
+        self._source = 0
 
         if isinstance(obj, type(self)):
             if isinstance(obj._source, int):
@@ -53,7 +53,7 @@ class TrackedArray(np.ndarray):
         if isinstance(self._source, type(self)):
             self._source._modified = True
 
-    def copy(self, *args, **kwargs):
+    def copy(self, *_args, **_kwargs):
         """copy gives np.ndarray.
 
         no more tracking.
@@ -170,10 +170,11 @@ def make_tracked_array(array, dtype=None, copy=True):
         array = []
     # make sure it is contiguous then view it as our subclass
     tracked = np.ascontiguousarray(array, dtype=dtype)
-    if copy:
-        tracked = tracked.copy().view(TrackedArray)
-    else:
-        tracked = tracked.view(TrackedArray)
+    tracked = (
+        tracked.copy().view(TrackedArray)
+        if copy
+        else tracked.view(TrackedArray)
+    )
 
     # should always be contiguous here
     assert tracked.flags["C_CONTIGUOUS"]
@@ -196,7 +197,7 @@ class DataHolder(GustafBase):
           GustafBase objects would probably make the most sense here.
         """
         self._helpee = helpee
-        self._saved = dict()
+        self._saved = {}
 
     def __setitem__(self, key, value):
         """Raise Error to disable direct value setting.
@@ -222,7 +223,7 @@ class DataHolder(GustafBase):
         --------
         value: object
         """
-        if key in self._saved.keys():
+        if key in self._saved:
             return self._saved[key]
 
         else:
@@ -247,7 +248,7 @@ class DataHolder(GustafBase):
         """
         Clears saved data by reassigning new dict
         """
-        self._saved = dict()
+        self._saved = {}
 
     def get(self, key, default_values=None):
         """Returns stored item if the key exists. Else, given default value. If
@@ -263,7 +264,7 @@ class DataHolder(GustafBase):
         --------
         value: object
         """
-        if key in self._saved.keys():
+        if key in self._saved:
             return self._saved[key]
         else:
             return default_values
@@ -302,7 +303,7 @@ class ComputedData(DataHolder):
 
     __slots__ = ()
 
-    def __init__(self, helpee, **kwargs):
+    def __init__(self, helpee, **_kwargs):
         """Stores last computed values.
 
         Keys are expected to be the same as helpee's function that computes the
@@ -341,19 +342,19 @@ class ComputedData(DataHolder):
             # initialize property
             # _depends is dict(str: list)
             if cls._depends is None:
-                cls._depends = dict()
+                cls._depends = {}
             if cls._depends.get(func.__name__, None) is None:
-                cls._depends[func.__name__] = list()
+                cls._depends[func.__name__] = []
             # add dependency info
             cls._depends[func.__name__].extend(var_names)
 
             # _inv_depends is dict(str: list)
             if cls._inv_depends is None:
-                cls._inv_depends = dict()
+                cls._inv_depends = {}
             # add inverse dependency
             for vn in var_names:
                 if cls._inv_depends.get(vn, None) is None:
-                    cls._inv_depends[vn] = list()
+                    cls._inv_depends[vn] = []
 
                 cls._inv_depends[vn].append(func.__name__)
 

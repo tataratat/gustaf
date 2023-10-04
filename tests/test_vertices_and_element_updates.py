@@ -147,7 +147,7 @@ def test_update_vertices(grid, request):
     # int based mask - let's keep 3 vertices
     n_original_vs = len(grid.vertices)
     n_vertices_to_keep = 3
-    int_mask = np.random.choice(
+    int_mask = np.random.default_rng().choice(
         np.arange(n_original_vs),
         n_vertices_to_keep,
         replace=False,
@@ -198,7 +198,7 @@ def test_update_elements(grid, request):
 
     n_original_es = len(grid.elements)
     n_elements_to_keep = 3
-    int_mask = np.random.choice(
+    int_mask = np.random.default_rng().choice(
         np.arange(n_original_es),
         n_elements_to_keep,
         replace=False,

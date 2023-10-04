@@ -49,7 +49,7 @@ def show(*gus_obj, **kwargs):
 
     if vis_b.startswith("vedo"):
         return show_vedo(*gus_obj, **kwargs)
-    elif vis_b.startswith("trimesh"):
+    elif vis_b.startswith("trimesh"):  # noqa: SIM114
         pass
     elif vis_b.startswith("matplotlib"):
         pass
@@ -161,8 +161,8 @@ def show_vedo(
         list_of_showables = []
         for sl in show_list:
             if not isinstance(sl, list):
-                sl = [sl]
-            for k, item in enumerate(sl):
+                sl = [sl]  # noqa: PLW2901
+            for _k, item in enumerate(sl):
                 if hasattr(item, "showable"):
                     tmp_showable = item.showable(backend="vedo", **kwargs)
                     # splines return dict
@@ -248,7 +248,7 @@ def _vedo_showable(obj, as_dict=False, **kwargs):
     vedo_obj = obj.show_options._initialize_showable()
     # as dict?
     if as_dict:
-        return_as_dict = dict()
+        return_as_dict = {}
 
     # set common values. Could be a perfect place to try :=, but we want to
     # support p3.6.
@@ -319,14 +319,12 @@ def _vedo_showable(obj, as_dict=False, **kwargs):
         # at last, scalarbar
         sb_kwargs = obj.show_options.get("scalarbar", None)
         if sb_kwargs is not None and sb_kwargs is not False:
-            sb_kwargs = dict() if isinstance(sb_kwargs, bool) else sb_kwargs
+            sb_kwargs = {} if isinstance(sb_kwargs, bool) else sb_kwargs
             vedo_obj.add_scalarbar(**sb_kwargs)
 
         sb3d_kwargs = obj.show_options.get("scalarbar3d", None)
         if sb3d_kwargs is not None and sb3d_kwargs is not False:
-            sb3d_kwargs = (
-                dict() if isinstance(sb3d_kwargs, bool) else sb3d_kwargs
-            )
+            sb3d_kwargs = {} if isinstance(sb3d_kwargs, bool) else sb3d_kwargs
             vedo_obj.add_scalarbar3d(**sb3d_kwargs)
 
     elif data_name is not None and vertex_data is None:
@@ -367,7 +365,7 @@ def _vedo_showable(obj, as_dict=False, **kwargs):
     axes_kw = obj.show_options.get("axes", None)
     # need to explicitly check if it is false
     if axes_kw is not None and axes_kw is not False:
-        axes_kw = dict() if isinstance(axes_kw, bool) else axes_kw
+        axes_kw = {} if isinstance(axes_kw, bool) else axes_kw
         axes = vedo.Axes(vedo_obj, **axes_kw)
         if not as_dict:
             vedo_obj += axes
@@ -385,12 +383,12 @@ def _vedo_showable(obj, as_dict=False, **kwargs):
         return return_as_dict
 
 
-def _trimesh_showable(obj):
+def _trimesh_showable(_obj):
     """"""
     pass
 
 
-def _matplotlib_showable(obj):
+def _matplotlib_showable(_obj):
     """"""
     pass
 
@@ -484,7 +482,7 @@ def interpolate_vedo_dictcam(cameras, resolutions, spline_degree=1):
             ds.append([float(cam[cam_keys[3]])])
             cs.append(list(cam[cam_keys[4]]))
 
-        interpolated = dict()
+        interpolated = {}
         for i, prop in enumerate([ps, fs, vs, ds, cs]):
             i_spline = splinepy.BSpline()
             i_spline.interpolate_curve(

@@ -47,12 +47,11 @@ def make_c_contiguous(array, dtype=None):
     if array is None:
         return None
 
-    if isinstance(array, np.ndarray):
-        if array.flags.c_contiguous:
-            if dtype is not None and array.dtype != dtype:
-                return array.astype(dtype)
+    if isinstance(array, np.ndarray) and array.flags.c_contiguous:
+        if dtype is not None and array.dtype != dtype:
+            return array.astype(dtype)
 
-            return array
+        return array
 
     if dtype:
         return np.ascontiguousarray(array, dtype=dtype)
@@ -146,7 +145,7 @@ def unique_rows(
 
 
 def close_rows(
-    arr, tolerance=None, return_intersection=False, nthreads=None, **kwargs
+    arr, tolerance=None, return_intersection=False, nthreads=None, **_kwargs
 ):
     """Similar to unique_rows, but if data type is floats, use this one.
     Performs radius search using KDTree. Currently uses
@@ -323,10 +322,9 @@ def select_with_ranges(arr, ranges):
     if len(masks) > 1:
         mask = np.zeros(arr.shape[0], dtype=bool)
         for i, m in enumerate(masks):
-            if i == 0:
-                mask = np.logical_or(mask, m)
-            else:
-                mask = np.logical_and(mask, m)
+            mask = (
+                np.logical_or(mask, m) if i == 0 else np.logical_and(mask, m)
+            )
 
     else:
         mask = masks[0]
@@ -426,9 +424,8 @@ def rotation_matrix_around_axis(axis=None, rotation=None, degree=True):
     # Assure angle is specified
     if rotation is None:
         raise ValueError("No rotation angle specified.")
-    else:
-        if degree:
-            rotation = np.radians(rotation)
+    elif degree:
+        rotation = np.radians(rotation)
 
     # Check Problem dimensions
     if axis is None:
