@@ -8,6 +8,7 @@ import struct
 
 import numpy as np
 
+from gustaf import settings
 from gustaf.faces import Faces
 from gustaf.io.ioutils import abs_fname, check_and_makedirs
 from gustaf.utils import log
@@ -127,8 +128,10 @@ def export(
     -----------
     mesh: Faces or Volumes
     fname: str
-    space_time : bool
+    space_time: bool
       Export Mesh as Space-Time Slab for discontinuous space-time
+    dual: bool
+      Includes dual-subelement information.
 
     Returns
     --------
@@ -190,33 +193,57 @@ def export(
         for c in mesh.elements.ravel() + 1:
             cf.write(struct.pack(big_endian_int, c))
 
-    # write bc
-    with open(bc_file, "wb") as bf:
-        boundaries = make_mrng(mesh)
+    # get boundaries of each element - subelement interface array
+    sub_interface = make_mrng(mesh)
 
-        for b in boundaries:
-            bf.write(struct.pack(big_endian_int, b))
-
+    # if dual is True, we fill dual infos.
     if dual:
-        with open(dual_file, "wb") as df:
-            boundaries = make_mrng(mesh)
-
-            _, _, _, intersec = close_rows(
-                mesh.to_edges(False).centers(), 1e-12, True
+        sub_elements = mesh.to_subelements(False)
+        # this should be always dividable without remnants
+        n_subelem_per_elem, rem = divmod(
+            len(sub_elements.elements), len(mesh.elements)
+        )
+        if rem != 0:
+            raise ValueError(
+                "something went wrong with subelement creation."
+                "Please report this issue, thank you!"
             )
-            assert len(boundaries) == len(intersec)
 
-            duals = []
-            for i, neigh in enumerate(intersec):
-                assert len(neigh) < 3
-                if len(neigh) == 1:
-                    duals.append(boundaries[i])
-                    continue
-                ind = 1 if i == neigh[0] else 0
-                duals.append(-int((neigh[ind] // 3) + 1))  # fortran's 1 offset
+        # get intersection - can use this info to determine duals
+        _, _, _, intersections = close_rows(
+            sub_elements.centers(), settings.TOLERANCE, True
+        )
 
-            for d in duals:
+        # loop intersections and look for 2 intersections
+        for i, intersection in enumerate(intersections):
+            n_inter = len(intersection)
+
+            # we modify interface only if there're 2 intersections.
+            if n_inter == 2:
+                first_inter, second_inter = intersection
+                dual_id = first_inter if first_inter != i else second_inter
+                # get element number and apply fortran's offset, 1
+                sub_interface[i] = -int(dual_id // n_subelem_per_elem + 1)
+                continue
+
+            # intersection should be at most 2. Otherwise, it either means
+            # that you have a bad mesh or to big tolerance
+            if n_inter > 2:
+                raise ValueError(
+                    f"{i}-th subelement overlaps more than once. "
+                    "Please check your elements or decrease "
+                    "gustaf.settings.TOLERANCE."
+                )
+
+        # write dual
+        with open(dual_file, "wb") as df:
+            for d in sub_interface:
                 df.write(struct.pack(big_endian_int, d))
+
+    # write bc - same as dual as dual
+    with open(bc_file, "wb") as bf:
+        for b in sub_interface:
+            bf.write(struct.pack(big_endian_int, b))
 
     # write info
     with open(info_file, "w") as infof:  # if and inf... just can't
@@ -268,11 +295,10 @@ def make_mrng(mesh):
     elif whatami.startswith("hexa"):
         nbelem += 3
 
-    # init boundaries with -1, as it is the value for non-boundary.
-    # alternatively, they could be (-1 * neighbor_elem_id).
-    # But they aren't.
+    # init boundaries with 0, as boundaries are marked with positive numbers
+    # staring from 1 and dual infos with negative values, starting with -1
     boundaries = np.empty(mesh.elements.shape[0] * nbelem, dtype=int)
-    boundaries[:] = -1
+    boundaries[:] = 0
 
     for i, belem_ids in enumerate(mesh.BC.values()):
         boundaries[belem_ids] = i + 1  # bid starts at 1
