@@ -329,5 +329,5 @@ class Faces(Edges):
         subelements: boundary class
         """
         return eval(
-            f"self.to_{self.__boundary_class__.__qual_name__.lower()}()"
+            f"self.to_{self.__boundary_class__.__qualname__.lower()}(unique)"
         )
