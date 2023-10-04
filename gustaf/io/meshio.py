@@ -170,15 +170,14 @@ def export(mesh, fname, submeshes=None, **kwargs):
     # Iterate the meshes and extract the element information in meshio format
     for m in meshes:
         whatami = m.whatami
-        if whatami not in meshio_dict.keys():
+        if whatami not in meshio_dict:
             raise NotImplementedError(
                 f"{whatami}-type meshes not supported (yet)."
             )
+        elif np.any(m.elements > len(m.vertices) - 1):
+            raise ValueError("Invalid vertex IDs in submesh connectivity.")
         else:
-            if np.any(m.elements > len(m.vertices) - 1):
-                raise ValueError("Invalid vertex IDs in submesh connectivity.")
-            else:
-                cells.append((meshio_dict[whatami], m.elements))
+            cells.append((meshio_dict[whatami], m.elements))
 
     # Export data to meshio and write file
     meshio.Mesh(

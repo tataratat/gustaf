@@ -145,13 +145,13 @@ def make_valid_options(*options):
     -------
     valid_options: dict()
     """
-    valid_options = dict()
+    valid_options = {}
     for opt in options:
         if not isinstance(opt, Option):
             raise TypeError("Please use `Option` to define options.")
 
         if not valid_options.get(opt.backend, False):
-            valid_options[opt.backend] = dict()
+            valid_options[opt.backend] = {}
 
         valid_options[opt.backend][opt.key] = opt
 
@@ -170,7 +170,7 @@ class ShowOption:
 
     __slots__ = ("_helpee", "_options", "_backend")
 
-    _valid_options = dict()
+    _valid_options = {}
 
     _helps = None
 
@@ -186,11 +186,11 @@ class ShowOption:
                 f"This show option is for {self._helps}. "
                 f"Given helpee is {type(helpee)}."
             )
-        self._options = dict()
+        self._options = {}
         self._backend = settings.VISUALIZATION_BACKEND
 
         # initialize backend specific option holder
-        self._options[self._backend] = dict()
+        self._options[self._backend] = {}
 
     def __repr__(self):
         """
@@ -204,7 +204,7 @@ class ShowOption:
         -------
         description: str
         """
-        valid_and_current = list()
+        valid_and_current = []
         for vo in self._valid_options[self._backend].values():
             valid = str(vo)
             current = ""
@@ -231,7 +231,7 @@ class ShowOption:
         -------
         None
         """
-        if key in self._valid_options[self._backend].keys():
+        if key in self._valid_options[self._backend]:
             # valid type check
             if not isinstance(
                 value, self._valid_options[self._backend][key].allowed_types
@@ -253,7 +253,7 @@ class ShowOption:
                 )
             self._backend = value
             if not self._options.get(self._backend, False):
-                self._options[self._backend] = dict()
+                self._options[self._backend] = {}
 
         else:
             raise ValueError(f"{key} is an invalid option for {self._helps}.")
@@ -273,7 +273,7 @@ class ShowOption:
         if isinstance(key, str):
             return self._options[self._backend][key]
         elif hasattr(key, "__iter__"):
-            items = dict()
+            items = {}
             for k in key:
                 if k in self._options[self._backend]:
                     items[k] = self._options[self._backend][k]
@@ -383,7 +383,7 @@ class ShowOption:
         """
         self._options.clear()
         # put back default backend option dict
-        self._options[self._backend] = dict()
+        self._options[self._backend] = {}
 
     def pop(self, *args, **kwargs):
         """
@@ -417,10 +417,7 @@ class ShowOption:
             raise TypeError("copy_to should be a ShowOption")
         valid_keys = copy_to.valid_keys()
 
-        if keys is not None:
-            items = self[keys].items()
-        else:
-            items = self.items()
+        items = self[keys].items() if keys is not None else self.items()
 
         for key, value in items:
             if key in valid_keys:

@@ -191,10 +191,7 @@ def faces_to_edges(faces):
 
     for i in range(vertices_per_face):
         # v_ind : corresponding vertex index for i value
-        if i == int(vertices_per_face - 1):
-            v_ind = 0
-        else:
-            v_ind = i + 1
+        v_ind = 0 if i == int(vertices_per_face - 1) else i + 1
 
         edges[i::vertices_per_face, 1] = faces[:, v_ind]
 
@@ -238,10 +235,7 @@ def range_to_edges(range_, closed=False, continuous=True):
 
     # continuous edges
     indices = np.repeat(indices, 2)
-    if closed:
-        indices = np.append(indices, indices[0])[1:]
-    else:
-        indices = indices[1:-1]
+    indices = np.append(indices, indices[0])[1:] if closed else indices[1:-1]
 
     return indices.reshape(-1, 2)
 
@@ -479,10 +473,10 @@ def subdivide_tri(
     subdivided_faces[~mask, :] = new_vertices_ids.reshape(-1, 3)
 
     if return_dict:
-        return dict(
-            vertices=new_vertices,
-            faces=subdivided_faces,
-        )
+        return {
+            "vertices": new_vertices,
+            "faces": subdivided_faces,
+        }
 
     else:
         return new_vertices, subdivided_faces
@@ -539,10 +533,10 @@ def subdivide_quad(
     )
 
     if return_dict:
-        return dict(
-            vertices=new_vertices,
-            faces=subdivided_faces,
-        )
+        return {
+            "vertices": new_vertices,
+            "faces": subdivided_faces,
+        }
 
     else:
         return new_vertices, subdivided_faces

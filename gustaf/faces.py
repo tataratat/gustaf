@@ -114,7 +114,7 @@ class Faces(Edges):
         elif elements is not None:
             self.faces = elements
 
-        self.BC = dict()
+        self.BC = {}
 
     @helpers.data.ComputedMeshData.depends_on(["elements"])
     def edges(self):
