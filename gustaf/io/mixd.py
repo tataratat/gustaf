@@ -220,10 +220,14 @@ def export(
 
             # we modify interface only if there're 2 intersections.
             if n_inter == 2:
-                first_inter, second_inter = intersection
-                dual_id = first_inter if first_inter != i else second_inter
+                # intersection is always sorted.
+                # we don't want dual to point to itself
+                dual_id = 0 if i != intersection[0] else 1
+
                 # get element number and apply fortran's offset, 1
-                sub_interface[i] = -int(dual_id // n_subelem_per_elem + 1)
+                sub_interface[i] = -int(
+                    intersection[dual_id] // n_subelem_per_elem + 1
+                )
                 continue
 
             # intersection should be at most 2. Otherwise, it either means
