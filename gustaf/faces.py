@@ -314,7 +314,10 @@ class Faces(Edges):
             edges=self.unique_edges().values if unique else self.edges(),
         )
 
-    def to_subelements(self, unique=True):
+    def to_subelements(
+        self,
+        unique=True,  # noqa ARG002 # used inside the return eval str
+    ):
         """Returns current elements represented as its boundary element class.
         For faces, this is equivalent to `to_edges()`.
         For volumes, `to_faces()`.
