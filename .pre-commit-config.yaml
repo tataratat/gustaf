@@ -45,6 +45,8 @@ repos:
   rev: v2.2.6
   hooks:
   - id: codespell
+    additional_dependencies:
+      - tomli
     args: [-w]
 
 - repo: https://github.com/keewis/blackdoc
