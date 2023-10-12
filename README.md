@@ -39,7 +39,7 @@ Now we create our first volume. It will be just a basic cube. Even here we can
 already choose between using a tetrahedron and a hexahedron-based
 mesh. The `Volume` class will use tetrahedrons if the volumes keyword is made
 up of a list of 4 elements (defining the corners of the tetrahedron), if 8
-elements are in each list hexahedrons are used ([defining the corners of the hexahedron in the correct order](https://tataratat.github.io/gustaf/gustaf.utils.html#gustaf.utils.connec.make_hexa_volumes)).
+elements are in each list hexahedrons are used ([defining the corners of the hexahedron in the correct order](https://tataratat.github.io/gustaf/_generated/gustaf.utils.connec.make_hexa_volumes.html#gustaf.utils.connec.make_hexa_volumes)).
 ```python
 # create tetrahedron mesh using Volumes
 # it requires vertices and connectivity info, volumes

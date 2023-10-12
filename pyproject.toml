@@ -28,3 +28,7 @@ ignore = [
 "setup.py" = ["T201"]
 "examples/*.py" = ["T201"]
 "tests/*.py" = ["T201", "B018"]
+
+[tool.codespell]
+ignore-words-list = "connec"
+skip="./docs/source/_generated/**,./docs/build/*,./build/*"
