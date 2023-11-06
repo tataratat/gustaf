@@ -331,6 +331,6 @@ class Faces(Edges):
         -------
         subelements: boundary class
         """
-        return eval(
-            f"self.to_{self.__boundary_class__.__qualname__.lower()}(unique)"
-        )
+        return getattr(
+            self, f"to_{self.__boundary_class__.__qualname__.lower()}"
+        )(unique)
