@@ -196,6 +196,11 @@ def export(
     # get boundaries of each element - subelement interface array
     sub_interface = make_mrng(mesh)
 
+    # write bc first - after writing it, we can modify inplace for dual.
+    with open(bc_file, "wb") as bf:
+        for b in sub_interface:
+            bf.write(struct.pack(big_endian_int, b))
+
     # if dual is True, we fill dual infos.
     if dual:
         sub_elements = mesh.to_subelements(False)
@@ -243,11 +248,6 @@ def export(
         with open(dual_file, "wb") as df:
             for d in sub_interface:
                 df.write(struct.pack(big_endian_int, d))
-
-    # write bc - same as dual as dual
-    with open(bc_file, "wb") as bf:
-        for b in sub_interface:
-            bf.write(struct.pack(big_endian_int, b))
 
     # write info
     with open(info_file, "w") as infof:  # if and inf... just can't
