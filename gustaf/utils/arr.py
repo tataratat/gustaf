@@ -483,7 +483,7 @@ def is_shape(arr, shape, strict=False):
 
     if arr.ndim != len(shape):
         if strict:
-            raise ValueError(f"array should be {arr.ndim}D")
+            raise ValueError(f"array should be {len(shape)}D")
         return False
 
     for i, (a, s) in enumerate(zip(arr.shape, shape)):
