@@ -10,20 +10,59 @@ from gustaf import settings
 class Option:
     """
     Minimal Class to hold each options. Mainly to replace nested dict.
+
+    Parameters
+    ----------
+    backends: set
+      set of strings.
+    key: str
+    description: str
+    allowed_types: set
+      set of types
+    default: one of allwed_types
+      Optional. Default is None
     """
 
     __slots__ = (
-        "backend",
+        "backends",
         "key",
         "description",
         "allowed_types",
+        "default",
     )
 
-    def __init__(self, backend, key, description, allowed_types):
-        self.backend = backend
-        self.key = key
-        self.description = description
-        self.allowed_types = allowed_types
+    def __init__(
+        self, backends, key, description, allowed_types, default=None
+    ):
+        """
+        Check types
+        """
+        if isinstance(backends, str):
+            self.backends = {backends}
+        elif getattr(backends, "__iter__", False):
+            self.backends = set(backends)
+        else:
+            raise TypeError("Invalid backends type")
+
+        if isinstance(key, str):
+            self.key = key
+        else:
+            raise TypeError("Invalid key type")
+
+        if isinstance(description, str):
+            self.description = description
+        else:
+            raise TypeError("Invalid description type")
+
+        if isinstance(allowed_types, (tuple, list, set)):
+            self.allowed_types = set(allowed_types)
+        else:
+            raise TypeError("Invalid allowed_types type")
+
+        if default is None or default in self.allowed_types:
+            self.default = default
+        else:
+            raise TypeError("Invalid default type")
 
     def __repr__(self):
         specific = "\n".join(
