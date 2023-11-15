@@ -39,7 +39,7 @@ class FacesShowOption(helpers.options.ShowOption):
 
     _helps = "Faces"
 
-    def _initialize_vedo_showable(self):
+    def _initialize_showable(self):
         """
         Initializes Faces as vedo.Mesh
 

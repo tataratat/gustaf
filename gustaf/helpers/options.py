@@ -4,8 +4,6 @@ Classes to help organize options.
 """
 from copy import deepcopy
 
-from gustaf import settings
-
 
 class Option:
     """
@@ -55,14 +53,14 @@ class Option:
             raise TypeError("Invalid description type")
 
         if isinstance(allowed_types, (tuple, list, set)):
-            self.allowed_types = set(allowed_types)
+            self.allowed_types = tuple(allowed_types)
         else:
             raise TypeError("Invalid allowed_types type")
 
-        if default is None or default in self.allowed_types:
+        if default is None or type(default) in self.allowed_types:
             self.default = default
         else:
-            raise TypeError("Invalid default type")
+            raise TypeError(f"{type(default)} is invalid default type")
 
     def __repr__(self):
         specific = "\n".join(
@@ -70,16 +68,28 @@ class Option:
                 "",
                 self.key,
                 "=" * len(self.key),
-                "backend: " + self.backend,
+                f"backends: {self.backends}",
                 "description:",
-                "  " + str(self.description),
+                f"  {self.description}",
                 "allowed_types:",
-                "  " + str(self.allowed_types),
+                f"  {self.allowed_types}",
                 super().__repr__(),
                 "",
             ]
         )
         return specific
+
+
+class SetDefault:
+    """
+    Default setter object. Can use as argument in `make_valid_options`
+    """
+
+    __slots__ = ("key", "default")
+
+    def __init__(self, key, default):
+        self.key = key
+        self.default = default
 
 
 # predefine recurring options
@@ -186,13 +196,19 @@ def make_valid_options(*options):
     """
     valid_options = {}
     for opt in options:
-        if not isinstance(opt, Option):
+        if isinstance(opt, Option):
+            # copy option object to avoid overwriting defaults
+            valid_options[opt.key] = deepcopy(opt)
+        elif isinstance(opt, SetDefault):
+            # overwrite default of existing option.
+            if opt.key not in valid_options:
+                raise KeyError("Given key is not in valid_option.")
+
+            if type(opt.default) not in valid_options[opt.key].allowed_types:
+                raise TypeError("Invalid default type")
+            valid_options[opt.key].default = opt.default
+        else:
             raise TypeError("Please use `Option` to define options.")
-
-        if not valid_options.get(opt.backend, False):
-            valid_options[opt.backend] = {}
-
-        valid_options[opt.backend][opt.key] = opt
 
     return valid_options
 
@@ -207,7 +223,7 @@ class ShowOption:
     specific common routines. ShowOption and ShowManager in a sense.
     """
 
-    __slots__ = ("_helpee", "_options", "_backend")
+    __slots__ = ("_helpee", "_options")
 
     _valid_options = {}
 
@@ -226,10 +242,6 @@ class ShowOption:
                 f"Given helpee is {type(helpee)}."
             )
         self._options = {}
-        self._backend = settings.VISUALIZATION_BACKEND
-
-        # initialize backend specific option holder
-        self._options[self._backend] = {}
 
     def __repr__(self):
         """
@@ -244,7 +256,7 @@ class ShowOption:
         description: str
         """
         valid_and_current = []
-        for vo in self._valid_options[self._backend].values():
+        for vo in self._valid_option.values():
             valid = str(vo)
             current = ""
             if vo.key in self.keys():
@@ -253,7 +265,6 @@ class ShowOption:
 
         header = [
             f"ShowOption for {self._helps}",
-            f"Selected Backend: {self._backend}",
         ]
         return "\n".join(header + valid_and_current)
 
@@ -270,29 +281,17 @@ class ShowOption:
         -------
         None
         """
-        if key in self._valid_options[self._backend]:
+        if key in self._valid_options:
             # valid type check
-            if not isinstance(
-                value, self._valid_options[self._backend][key].allowed_types
-            ):
+            if not isinstance(value, self._valid_options[key].allowed_types):
                 raise TypeError(
                     f"{type(value)} is invalid value type for '{key}'. "
                     f"Details for '{key}':\n"
-                    f"{self._valid_options[self._backend][key]}"
+                    f"{self._valid_options[key]}"
                 )
 
             # types are valid. let's add
-            self._options[self._backend][key] = value
-
-        elif key.startswith("backend"):
-            # special keyword.
-            if not isinstance(value, str):
-                raise TypeError(
-                    f"Invalid backend info ({value}). Must be a str"
-                )
-            self._backend = value
-            if not self._options.get(self._backend, False):
-                self._options[self._backend] = {}
+            self._options[key] = value
 
         else:
             raise ValueError(f"{key} is an invalid option for {self._helps}.")
@@ -310,19 +309,20 @@ class ShowOption:
         items: object or dict
         """
         if isinstance(key, str):
-            return self._options[self._backend][key]
+            return self._options[key]
         elif hasattr(key, "__iter__"):
             items = {}
             for k in key:
-                if k in self._options[self._backend]:
-                    items[k] = self._options[self._backend][k]
+                if k in self._options:
+                    items[k] = self._options[k]
             return items
         else:
             raise TypeError(f"Invalid key type for {type(self)}")
 
-    def get(self, key, default):
+    def get(self, key, default=None):
         """
-        Gets value from key and default. Similar to dict.get()
+        Gets value from key and default. Similar to dict.get(),
+        but this is always safe, as it will always return None
 
         Parameters
         ----------
@@ -333,7 +333,13 @@ class ShowOption:
         -------
         values: object
         """
-        return self._options[self._backend].get(key, default)
+        if default is not None:
+            return self._options.get(key, default)
+
+        # overwrite default with valid option's
+        default = getattr(self._valid_options.get(key, None), "default", None)
+
+        return self._options.get(key, default)
 
     def update(self, **kwargs):
         """
@@ -350,21 +356,19 @@ class ShowOption:
         for k, v in kwargs.items():
             self.__setitem__(k, v)
 
-    def valid_keys(self, backend=None):
+    def valid_keys(self):
         """
-        Returns valid keys. Can directly specify backend. If not, returns
-        valid_keys for currently selected backend.
+        Returns valid keys.
 
         Parameters
         ----------
-        backend: str
+        None
 
         Returns
         -------
         valid_keys: dict_keys
         """
-        backend = self._backend if backend is None else backend
-        return self._valid_options[backend].keys()
+        return self._valid_options.keys()
 
     def keys(self):
         """
@@ -378,7 +382,7 @@ class ShowOption:
         -------
         keys: dict_keys
         """
-        return self._options[self._backend].keys()
+        return self._options.keys()
 
     def values(self):
         """
@@ -392,7 +396,7 @@ class ShowOption:
         -------
         keys: dict_values
         """
-        return self._options[self._backend].values()
+        return self._options.values()
 
     def items(self):
         """
@@ -406,7 +410,7 @@ class ShowOption:
         -------
         items: dict_items
         """
-        return self._options[self._backend].items()
+        return self._options.items()
 
     def clear(self):
         """
@@ -421,12 +425,10 @@ class ShowOption:
         None
         """
         self._options.clear()
-        # put back default backend option dict
-        self._options[self._backend] = {}
 
     def pop(self, *args, **kwargs):
         """
-        Calls pop() on current backend options
+        Calls pop() on current options
 
         Parameters
         ----------
@@ -436,7 +438,7 @@ class ShowOption:
         -------
         value: object
         """
-        self._options[self._backend].pop(*args, **kwargs)
+        self._options.pop(*args, **kwargs)
 
     def copy_valid_options(self, copy_to, keys=None):
         """
@@ -474,4 +476,4 @@ class ShowOption:
         -------
         showable: object
         """
-        return eval(f"self._initialize_{self._backend}_showable()")
+        raise NotImplementedError("Derived class must implement this method")

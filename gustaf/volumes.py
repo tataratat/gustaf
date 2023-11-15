@@ -22,7 +22,7 @@ class VolumesShowOption(helpers.options.ShowOption):
 
     _helps = "Volumes"
 
-    def _initialize_vedo_showable(self):
+    def _initialize_showable(self):
         """
         Initialize volumes as vedo.UGrid or visually equivalent vedo.Mesh
 
@@ -68,7 +68,7 @@ class VolumesShowOption(helpers.options.ShowOption):
         faces = self._helpee.to_faces(unique=True)
         self.copy_valid_options(faces.show_options)
 
-        return faces.show_options._initialize_vedo_showable()
+        return faces.show_options._initialize_showable()
 
 
 class Volumes(Faces):

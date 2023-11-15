@@ -6,7 +6,7 @@ import sys
 
 import numpy as np
 
-from gustaf import settings, utils
+from gustaf import utils
 
 # @linux it raises error if vedo is imported inside the function.
 try:
@@ -34,30 +34,7 @@ class _CallableShowDotPy(sys.modules[__name__].__class__):
 sys.modules[__name__].__class__ = _CallableShowDotPy
 
 
-def show(*gus_obj, **kwargs):
-    """Shows using appropriate backend.
-
-    Parameters
-    -----------
-    *gus_obj: gustaf objects
-
-    Returns
-    --------
-    None
-    """
-    vis_b = settings.VISUALIZATION_BACKEND
-
-    if vis_b.startswith("vedo"):
-        return show_vedo(*gus_obj, **kwargs)
-    elif vis_b.startswith("trimesh"):  # noqa: SIM114
-        pass
-    elif vis_b.startswith("matplotlib"):
-        pass
-    else:
-        raise NotImplementedError
-
-
-def show_vedo(
+def show(
     *args,
     **kwargs,
 ):
@@ -164,7 +141,7 @@ def show_vedo(
                 sl = [sl]  # noqa: PLW2901
             for _k, item in enumerate(sl):
                 if hasattr(item, "showable"):
-                    tmp_showable = item.showable(backend="vedo", **kwargs)
+                    tmp_showable = item.showable(**kwargs)
                     # splines return dict
                     # - maybe it is time to do some typing..
                     if isinstance(tmp_showable, dict):
@@ -209,7 +186,7 @@ def show_vedo(
         return plt
 
 
-def _vedo_showable(obj, as_dict=False, **kwargs):
+def make_showable(obj, as_dict=False, **kwargs):
     """Generates a vedo obj based on `kind` attribute from given obj, as well
     as show_options.
 
@@ -381,46 +358,6 @@ def _vedo_showable(obj, as_dict=False, **kwargs):
     else:
         return_as_dict["main"] = vedo_obj
         return return_as_dict
-
-
-def _trimesh_showable(_obj):
-    """"""
-    pass
-
-
-def _matplotlib_showable(_obj):
-    """"""
-    pass
-
-
-def make_showable(obj, backend=settings.VISUALIZATION_BACKEND, **kwargs):
-    """Since gustaf does not natively support visualization, one of the
-    following library is used to visualize gustaf (visualizable) objects: (1)
-    vedo -> Fast, offers a lot of features (2) trimesh -> Fast, compatible with
-    old OpenGL (3) matplotlib -> Slow, offers vector graphics.
-
-    This determines showing types using `whatami`.
-
-    Parameters
-    -----------
-    obj: gustaf-objects
-    backend: str
-      (Optional) Default is `gustaf.settings.VISUALIZATION_BACKEND`.
-      Options are: "vedo" | "trimesh" | "matplotlib"
-
-    Returns
-    --------
-    showable_objs: list
-      List of showable objects.
-    """
-    if backend.startswith("vedo"):
-        return _vedo_showable(obj, **kwargs)
-    elif backend.startswith("trimesh"):
-        return _trimesh_showable(obj, **kwargs)
-    elif backend.startswith("matplotlib"):
-        return _matplotlib_showable(obj, **kwargs)
-    else:
-        raise NotImplementedError
 
 
 # possibly relocate, is this actually used?

@@ -42,7 +42,7 @@ class EdgesShowOption(helpers.options.ShowOption):
 
     _helps = "Edges"
 
-    def _initialize_vedo_showable(self):
+    def _initialize_showable(self):
         """
         Initializes edges as either vedo.Lines or vedo.Arrows
 

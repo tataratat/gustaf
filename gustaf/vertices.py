@@ -42,7 +42,7 @@ class VerticesShowOption(helpers.options.ShowOption):
 
     _helps = "Vertices"
 
-    def _initialize_vedo_showable(self):
+    def _initialize_showable(self):
         """
         Initialize Vertices showable for vedo.
 
