@@ -4,6 +4,8 @@ Classes to help organize options.
 """
 from copy import deepcopy
 
+from gustaf.helpers.raise_if import ModuleImportRaiser
+
 
 class Option:
     """
@@ -198,6 +200,15 @@ def make_valid_options(*options):
     for opt in options:
         if isinstance(opt, Option):
             # copy option object to avoid overwriting defaults
+            # only exception is if this option is a backend object
+            # and wrapped by ModuleImportRaiser
+            allowed_types = []
+            for at in opt.allowed_types:
+                if isinstance(at, ModuleImportRaiser):
+                    continue
+                allowed_types.append(at)
+            opt.allowed_types = tuple(allowed_types)
+
             valid_options[opt.key] = deepcopy(opt)
         elif isinstance(opt, SetDefault):
             # overwrite default of existing option.
