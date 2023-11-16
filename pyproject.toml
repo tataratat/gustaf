@@ -4,12 +4,10 @@ authors = [
     {name = "Jaewool Lee", email = "jaewooklee042@gmail.com"}
 ]
 description = "Process and visualize numerical-analysis-geometries."
-version="0.0.2"
 # fastapi uses hatling as build backend and it can use dynamic versioning
 # poetry needs static versioning (version defined in pyproject.toml)
 # setuptools (package itself) still uses the setup.py files, but as build
 #  system supports dynamic versioning
-readme = "README.md"
 keywords = [
     "numerical-analysis",
     "geometry",
@@ -22,7 +20,6 @@ classifiers = [
     "Development Status :: 2 - Pre-Alpha",
     "License :: OSI Approved :: MIT License",
     "Programming Language :: Python",
-    "Programming Language :: Python :: 3.6",
     "Programming Language :: Python :: 3.7",
     "Programming Language :: Python :: 3.8",
     "Programming Language :: Python :: 3.9",
@@ -34,16 +31,16 @@ classifiers = [
 dependencies = [
     "numpy",
 ]
+dynamic = ["version", "readme"]
 
 [project.optional-dependencies]
 all = [
-    "vedo>=2023.4.3",
+    "vedo>=2023.4.3,<2023.5.0",
     "scipy",
     "meshio",
     "napf>=0.0.5",
     "funi>=0.0.1",
-    "requests; python_version < '3.7'",
-    "dataclasses; python_version < '3.7'",
+    "requests"
 ]
 test = [
     "pytest",
@@ -65,6 +62,9 @@ packages = [
 requires = ["setuptools"]
 build-backend = "setuptools.build_meta"
 
+[tool.setuptools.dynamic]
+version = {attr = "gustaf._version.version"}
+readme = {file = "README.md"}
 
 [tool.ruff]
 line-length = 79
