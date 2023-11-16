@@ -16,7 +16,7 @@ jobs:
 
       - name: install gustaf
         run:  |
-          python3 setup.py develop
+          pip install -e .[all]
 
       - name: Install dependencies
         run:  pip install -r ./docs/requirements.txt

@@ -25,7 +25,7 @@ jobs:
     - name: install gustaf
       run: |
         python3 -m pip install numpy splinepy scipy
-        python3 setup.py install
+        pip install .
 
     - name: prepare test and test
       run: |
