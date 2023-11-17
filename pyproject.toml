@@ -1,3 +1,67 @@
+[project]
+name = "gustaf"
+authors = [
+    {name = "Jaewook Lee", email = "jaewooklee042@gmail.com"}
+]
+description = "Process and visualize numerical-analysis-geometries."
+keywords = [
+    "numerical-analysis",
+    "geometry",
+    "visualization",
+    "mesh",
+]
+requires-python = ">=3.7"
+license = {file = "LICENSE.txt"}
+classifiers = [
+    "Development Status :: 2 - Pre-Alpha",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3.7",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Natural Language :: English",
+    "Topic :: Scientific/Engineering",
+]
+dependencies = [
+    "numpy",
+]
+dynamic = ["version", "readme"]
+
+[project.optional-dependencies]
+all = [
+    "vedo>=2023.4.3,<2023.5.0",
+    "scipy",
+    "meshio",
+    "napf>=0.0.5",
+    "funi>=0.0.1",
+    "requests"
+]
+test = [
+    "pytest",
+    "funi",
+    "napf",
+]
+
+[tool.setuptools]
+packages = [
+    "gustaf",
+    "gustaf.io",
+    "gustaf.utils",
+    "gustaf.create",
+    "gustaf.helpers"
+]
+
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.dynamic]
+version = {attr = "gustaf._version.version"}
+readme = {file = "README.md"}
+
 [tool.ruff]
 line-length = 79
 select = [

@@ -10,7 +10,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        python-version: ["3.6", "3.7", "3.8", "3.9", "3.10", "3.11"]
+        python-version: ["3.7", "3.8", "3.9", "3.10", "3.11", "3.12"]
         os: [ubuntu-20.04, macos-latest]
 
     steps:
@@ -24,8 +24,8 @@ jobs:
 
     - name: install gustaf
       run: |
-        python3 -m pip install numpy splinepy scipy
-        python3 setup.py install
+        python3 -m pip install numpy scipy
+        pip install .
 
     - name: prepare test and test
       run: |
