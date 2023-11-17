@@ -1,20 +1,16 @@
 [project]
 name = "gustaf"
 authors = [
-    {name = "Jaewool Lee", email = "jaewooklee042@gmail.com"}
+    {name = "Jaewook Lee", email = "jaewooklee042@gmail.com"}
 ]
 description = "Process and visualize numerical-analysis-geometries."
-# fastapi uses hatling as build backend and it can use dynamic versioning
-# poetry needs static versioning (version defined in pyproject.toml)
-# setuptools (package itself) still uses the setup.py files, but as build
-#  system supports dynamic versioning
 keywords = [
     "numerical-analysis",
     "geometry",
     "visualization",
     "mesh",
 ]
-requires-python = ">=3.6"
+requires-python = ">=3.7"
 license = {file = "LICENSE.txt"}
 classifiers = [
     "Development Status :: 2 - Pre-Alpha",
@@ -25,6 +21,7 @@ classifiers = [
     "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
     "Natural Language :: English",
     "Topic :: Scientific/Engineering",
 ]
@@ -44,7 +41,6 @@ all = [
 ]
 test = [
     "pytest",
-    "pytest-cov",
     "funi",
     "napf",
 ]
