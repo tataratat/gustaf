@@ -8,7 +8,7 @@ even cooler, if it was palindrome.
 import numpy as np
 
 from gustaf import helpers, settings
-from gustaf.utils import arr
+from gustaf.utils import arr, log
 
 
 def tet_to_tri(volumes):
@@ -571,3 +571,91 @@ def sorted_unique(connectivity, sorted_=False):
         unique_stuff[2],  # inverse
         unique_stuff[3],  # counts
     )
+
+
+def edges_to_polygons(outline_edges, return_edges=False, max_polygons=100):
+    """
+    Organize outline edges, so that it describes a polygon.
+    Edges are expected to be extracted using `gus.Mesh.edges`, from
+    wind-consistent meshes.
+    Could utilizes `scipy.sparse.coo_matrix`, but we don't.
+
+    Parameters
+    -----------
+    outline_edges: (n, 2) list-like
+    return_edges: bool
+      (Optional) Default is False. If set True, returns polygon as edges.
+    max_polygons: int
+      (Optional) Default is 100. Maximum expected polygons.
+      Used as an exit criterium during polygon search.
+
+
+    Returns
+    --------
+    polygons: list
+      list of polygon vertices. Or edges iff return_edges is True.
+
+    Examples
+    ---------
+    >>> m = gus.load_mesh("path_to_mesh_2d.stl")
+    >>> polygon_edges = edges_to_polygon(m.edges()[m.single_edges()])
+    """
+    # Build a lookup_array
+    lookup_array = np.empty(outline_edges.max() + 1, dtype=np.int32)
+    lookup_array[outline_edges[:, 0]] = outline_edges[:, 1]
+    # create some status variables
+    watch_dog_max = abs(int(max_polygons))
+    watch_dog = 0
+
+    # select starting point - lowest index
+    starting_point = int(outline_edges.min())
+    # initialize a set to keep track of processes vertices
+    next_candidates = set(outline_edges[:, 0])
+    polygons = []
+    while True:
+        # Get polygon - start with first two points
+        polygon = [starting_point]
+        polygon.append(lookup_array[polygon[-1]])
+        # then keep looking until we come to the start.
+        # if there's only one edges, this will exit right away
+        while polygon[0] != polygon[-1]:
+            polygon.append(lookup_array[polygon[-1]])
+        # unless this is just a single edge, pop the last one
+        # since, it would be the same as the first one
+        if len(polygon) != 2:
+            polygon.pop()
+
+        # Append to polygons
+        polygons.append(polygon)
+
+        # check if we counted all the edges
+        # if so, exit
+        lens = [len(p) for p in polygons]
+        if sum(lens) == len(outline_edges):
+            break
+
+        else:
+            # let's try to find the next starting point
+            next_candidates.difference_update(polygons[-1])
+            # Assign new
+            starting_point = min(next_candidates)
+
+        watch_dog += 1
+        # Hope there're no more than number of max polygons.
+        if watch_dog >= watch_dog_max:
+            log.warning(
+                f"Stopping after given max number of polygons {watch_dog_max}."
+                " If you want to continue searching, please set "
+                "`max_polygons` to a bigger number"
+            )
+            break
+
+    if not return_edges:
+        return polygons
+
+    else:
+        polygon_edges = []
+        for p in polygons:
+            polygon_edges.append(sequence_to_edges(p, closed=True))
+
+        return polygon_edges
