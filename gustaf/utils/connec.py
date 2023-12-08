@@ -5,6 +5,8 @@ volumes. Named connec because connectivity is too long. Would have been
 even cooler, if it was palindrome.
 """
 
+import collections
+
 import numpy as np
 
 from gustaf import helpers, settings
@@ -657,5 +659,115 @@ def edges_to_polygons(outline_edges, return_edges=False, max_polygons=100):
         polygon_edges = []
         for p in polygons:
             polygon_edges.append(sequence_to_edges(p, closed=True))
+
+        return polygon_edges
+
+
+def e2p(edges, return_edges=False, max_polygons=100):
+    """ """
+    import napf
+    import numpy as np
+
+    # only applicable to closed polygons and open lines
+    # not for arbitrarily connected edges
+    bc = np.bincount(edges.ravel())
+    assert all(bc < 3)
+
+    # initialize a set to keep track of processes vertices
+    next_candidates = set(edges.ravel())
+
+    e = collections.namedtuple("a", "b")
+    e.a = edges[:, 0]
+    e.b = edges[:, 1]
+
+    t = collections.namedtuple("a", "b")
+    t.a = napf.KDT(e.a.reshape(-1, 1))
+    t.b = napf.KDT(e.b.reshape(-1, 1))
+
+    # radius search size
+    r = 0.1
+
+    current_id = 0
+    start_value = int(e.a[0])
+    other_col = e.b
+
+    polygons = []
+    is_polygon = []
+    while True:
+        polygon = [start_value, other_col[current_id]]
+        while polygon[0] != polygon[-1]:
+            hits = []
+            # search for ids
+            a_ids = t.a.radius_search([[polygon[-1]]], r, True)[0][0]
+            b_ids = t.b.radius_search([[polygon[-1]]], r, True)[0][0]
+
+            # in total, there should be 2 otherwise, we can end this search
+            # and this is not a polygon
+            hits = len(a_ids) + len(b_ids)
+            if hits != 2:
+                break
+
+            # so, we have 2 hits. we need to get the partner of non-current_id
+            # index
+            found = False
+            for ai in a_ids:
+                if ai != current_id:
+                    found = True
+                    current_id = ai
+                    polygon.append(e.b[current_id])
+                    break
+            if found:
+                continue
+
+            for bi in b_ids:
+                if bi != current_id:
+                    found = True
+                    current_id = bi
+                    polygon.append(e.a[current_id])
+                    break
+            if found:
+                continue
+
+            assert False
+
+        # if indices closes itself, it is a polygon.
+        # Otherwise it is an open line
+        if polygon[0] == polygon[-1]:
+            polygon.pop()
+            is_polygon.append(True)
+        else:
+            is_polygon.append(False)
+        polygons.append(polygon)
+
+        # check if we counted all the edges
+        # if so, exit
+        lens = [len(p) for p in polygons]
+        if sum(lens) == len(edges):
+            break
+        else:
+            # let's try to find the next starting point
+            next_candidates.difference_update(polygons[-1])
+            # Assign new
+            start_value = min(next_candidates)
+            a_ids = t.a.radius_search([[polygon[-1]]], r, True)[0][0]
+            if len(a_ids) != 0:
+                current_id = a_ids[0]
+                other_col = e.b
+                continue
+            b_ids = t.b.radius_search([[polygon[-1]]], r, True)[0][0]
+            if len(b_ids) != 0:
+                current_id = b_ids[0]
+                other_col = e.a
+                continue
+
+            assert False
+
+    if not return_edges:
+        return polygons
+
+    else:
+        polygon_edges = []
+        for p, is_p in zip(polygons, is_polygon):
+            polygon_edges.append(sequence_to_edges(p, closed=is_p))
 
         return polygon_edges
