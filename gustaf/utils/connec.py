@@ -673,6 +673,12 @@ def e2p(edges, return_edges=False, max_polygons=100):
     bc = np.bincount(edges.ravel())
     assert all(bc < 3)
 
+    # TODO TODO TODO
+    # Special treatment of only once occurring vertices:
+    # they are end points of a line, so we need to start with that index
+
+    # also, add winding orientation check and return CCW
+
     # initialize a set to keep track of processes vertices
     next_candidates = set(edges.ravel())
 
