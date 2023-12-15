@@ -7,6 +7,7 @@ import sys
 import numpy as np
 
 from gustaf import utils
+from gustaf.utils.notebook_helper import K3DPlotterN
 
 # @linux it raises error if vedo is imported inside the function.
 try:
@@ -41,6 +42,19 @@ class _CallableShowDotPy(sys.modules[__name__].__class__):
 
 
 sys.modules[__name__].__class__ = _CallableShowDotPy
+
+
+def is_ipython() -> bool:
+    """Returns True if the current environment is IPython.
+
+    Check if the code is run in a notebook.
+    """
+    try:
+        from IPython import get_ipython
+
+        return get_ipython() is not None
+    except ImportError:
+        return False
 
 
 def show(
@@ -91,14 +105,17 @@ def show(
 
     # get plotter
     if plt is None:
-        plt = vedo.Plotter(
-            N=N,
-            sharecam=False,
-            offscreen=offs,
-            size=size,
-            title=title,
-            bg=background,
-        )
+        if is_ipython():
+            plt = K3DPlotterN(N, size, background)
+        else:
+            plt = vedo.Plotter(
+                N=N,
+                sharecam=False,
+                offscreen=offs,
+                size=size,
+                title=title,
+                bg=background,
+            )
 
     else:
         # check if plt has enough Ns
@@ -180,6 +197,9 @@ def show(
                 # offscreen=offs,
             )
 
+    if is_ipython():
+        plt.display()
+        return
     if interact and not offs:
         # only way to ensure memory is released
         clear_vedo_plotter(plt, np.prod(plt.shape))
@@ -188,11 +208,31 @@ def show(
             # It seems to leak some memory, but here it goes.
             plt.close()  # if i close it, this cannot be reused...
             plt = None
-
     if return_show_list:
         return (plt, list_of_showables)
     else:
         return plt
+
+
+def show_notebook(
+    *args,
+    **kwargs,
+):
+    elements_to_show = []
+    for element in args:
+        if hasattr(element, "showable"):
+            elements_to_show.append([element.showable(**kwargs)])
+        elif isinstance(element, list):
+            sub_list = []
+            for sub_element in element:
+                if hasattr(sub_element, "showable"):
+                    sub_list.append(sub_element.showable(**kwargs))
+                else:
+                    raise TypeError(
+                        "Only gustaf objects can be shown in notebook"
+                    )
+        else:
+            raise TypeError("For vedo_show, only list or dict is valid input")
 
 
 def make_showable(obj, as_dict=False, **kwargs):
