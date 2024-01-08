@@ -580,7 +580,7 @@ def edges_to_polygons(outline_edges, return_edges=False, max_polygons=100):
     Organize outline edges, so that it describes a polygon.
     Edges are expected to be extracted using `gus.Mesh.edges`, from
     wind-consistent meshes.
-    Could utilizes `scipy.sparse.coo_matrix`, but we don't.
+    Could utilizes `scipy.sparse.coo_matrix`, alternatively.
 
     Parameters
     -----------
