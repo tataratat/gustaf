@@ -10,7 +10,7 @@ import collections
 import numpy as np
 
 from gustaf import helpers, settings
-from gustaf.utils import arr, log
+from gustaf.utils import arr
 
 
 def tet_to_tri(volumes):
@@ -562,7 +562,7 @@ def sorted_unique(connectivity, sorted_=False):
     )
 
 
-def edges_to_polygons(outline_edges, return_edges=False):
+def _sequentialize_ordered_edges(outline_edges, return_edges=False):
     """
     Organize outline edges, so that it describes a polygon.
     Edges are expected to be extracted using `gus.Mesh.edges`, from
@@ -589,7 +589,9 @@ def edges_to_polygons(outline_edges, return_edges=False):
     outline_edges = np.asanyarray(outline_edges)
 
     # Build a lookup_array
-    lookup_array = np.empty(outline_edges.max() + 1, dtype=settings.INT_DTYPE)
+    lookup_array = np.full(
+        outline_edges.max() + 1, -1, dtype=settings.INT_DTYPE
+    )
     lookup_array[outline_edges[:, 0]] = outline_edges[:, 1]
 
     # select starting point - lowest index
@@ -597,20 +599,27 @@ def edges_to_polygons(outline_edges, return_edges=False):
     # initialize a set to keep track of processes vertices
     next_candidates = set(outline_edges[:, 0])
     polygons = []
+    is_polygon = []
     for _ in range(len(outline_edges)):
         # Get polygon - start with first two points
         polygon = [starting_point]
         polygon.append(lookup_array[polygon[-1]])
+
         # then keep looking until we come to the start.
         # if there's only one edges, this will exit right away
-        while polygon[0] != polygon[-1]:
-            polygon.append(lookup_array[polygon[-1]])
-        # unless this is just a single edge, pop the last one
-        # since, it would be the same as the first one
-        if len(polygon) != 2:
-            polygon.pop()
+        for _ in range(len(next_candidates)):
+            # sequence closes -> polygon
+            if polygon[0] == polygon[-1]:
+                polygon.pop()
+                is_polygon.append(True)
+                break
 
-        # Append to polygons
+            # sequence leads to unspecified connection -> not polygon
+            if lookup_array[polygon[-1]] < 0:
+                is_polygon.append(False)
+                break
+            polygon.append(lookup_array[polygon[-1]])
+
         polygons.append(polygon)
 
         # check if we counted all the edges
@@ -623,17 +632,17 @@ def edges_to_polygons(outline_edges, return_edges=False):
         starting_point = min(next_candidates)
 
     if not return_edges:
-        return polygons
+        return polygons, is_polygon
 
     else:
         polygon_edges = []
-        for p in polygons:
-            polygon_edges.append(sequence_to_edges(p, closed=True))
+        for p, is_p in zip(polygons, is_polygon):
+            polygon_edges.append(sequence_to_edges(p, closed=is_p))
 
         return polygon_edges
 
 
-def e2p(edges, return_edges=False, max_polygons=100):
+def _sequentialize_edges(edges, return_edges=False):
     """ """
     import napf
     import numpy as np
@@ -641,13 +650,14 @@ def e2p(edges, return_edges=False, max_polygons=100):
     # only applicable to closed polygons and open lines
     # not for arbitrarily connected edges
     bc = np.bincount(edges.ravel())
-    assert all(bc < 3)
+    if not all(bc < 3):
+        raise ValueError(
+            "This function currently supports individual lines/polygons "
+            "search. Given edges include connections with more than 3 edges."
+        )
 
-    # TODO TODO TODO
-    # Special treatment of only once occurring vertices:
-    # they are end points of a line, so we need to start with that index
-
-    # also, add winding orientation check and return CCW
+    # we want to keep track of single occurrences, as they are line start
+    line_starts = set(np.where(bc == 1)[0])
 
     # initialize a set to keep track of processes vertices
     next_candidates = set(edges.ravel())
@@ -669,8 +679,9 @@ def e2p(edges, return_edges=False, max_polygons=100):
 
     polygons = []
     is_polygon = []
-    while True:
+    for _ in range(len(edges)):
         polygon = [start_value, other_col[current_id]]
+
         while polygon[0] != polygon[-1]:
             hits = []
             # search for ids
@@ -704,7 +715,10 @@ def e2p(edges, return_edges=False, max_polygons=100):
             if found:
                 continue
 
-            assert False
+            raise RuntimeError(
+                "Something went wrong. Please report this issue to "
+                "github.com/tataratat/gustaf/issues]"
+            )
 
         # if indices closes itself, it is a polygon.
         # Otherwise it is an open line
@@ -717,26 +731,38 @@ def e2p(edges, return_edges=False, max_polygons=100):
 
         # check if we counted all the edges
         # if so, exit
-        lens = [len(p) for p in polygons]
-        if sum(lens) == len(edges):
-            break
-        else:
-            # let's try to find the next starting point
-            next_candidates.difference_update(polygons[-1])
-            # Assign new
-            start_value = min(next_candidates)
-            a_ids = t.a.radius_search([[polygon[-1]]], r, True)[0][0]
-            if len(a_ids) != 0:
-                current_id = a_ids[0]
-                other_col = e.b
-                continue
-            b_ids = t.b.radius_search([[polygon[-1]]], r, True)[0][0]
-            if len(b_ids) != 0:
-                current_id = b_ids[0]
-                other_col = e.a
-                continue
+        # let's try to find the next starting point
+        next_candidates.difference_update(polygons[-1])
+        line_starts.difference_update(polygons[-1])
 
-            assert False
+        if len(next_candidates) == len(line_starts) == 0:
+            break
+
+        # Assign next starting point
+        # generally first value of (those are min() in a set) line start or
+        # leftover candidates
+        start_value = None
+        if len(line_starts) != 0:
+            start_value = line_starts[0]
+        else:
+            start_value = next_candidates[0]
+
+        # adjust state values
+        a_ids = t.a.radius_search([[polygon[-1]]], r, True)[0][0]
+        if len(a_ids) != 0:
+            current_id = a_ids[0]
+            other_col = e.b
+            continue
+        b_ids = t.b.radius_search([[polygon[-1]]], r, True)[0][0]
+        if len(b_ids) != 0:
+            current_id = b_ids[0]
+            other_col = e.a
+            continue
+
+        raise RuntimeError(
+            "Something went wrong. Please report this issue to "
+            "github.com/tataratat/gustaf/issues]"
+        )
 
     if not return_edges:
         return polygons
