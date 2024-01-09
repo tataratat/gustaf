@@ -112,9 +112,7 @@ def hexa_to_quad(volumes):
         raise ValueError("Given volumes are not `hexa` volumes")
 
     fpe = 6  # faces per element
-    faces = (
-        np.ones(((volumes.shape[0] * fpe), 4), dtype=settings.INT_DTYPE) * -1
-    )  # -1 for safety check
+    faces = np.empty(((volumes.shape[0] * fpe), 4), dtype=settings.INT_DTYPE)
 
     faces[::fpe] = volumes[:, [1, 0, 3, 2]]
     faces[1::fpe] = volumes[:, [0, 1, 5, 4]]
@@ -122,9 +120,6 @@ def hexa_to_quad(volumes):
     faces[3::fpe] = volumes[:, [2, 3, 7, 6]]
     faces[4::fpe] = volumes[:, [3, 0, 4, 7]]
     faces[5::fpe] = volumes[:, [4, 5, 6, 7]]
-
-    if (faces == -1).any():
-        raise ValueError("Something went wrong while computing faces")
 
     return faces
 
@@ -188,9 +183,8 @@ def faces_to_edges(faces):
     vertices_per_face = faces.shape[1]
 
     num_edges = int(num_faces * vertices_per_face)
-    edges = (
-        np.ones((num_edges, 2), dtype=settings.INT_DTYPE) * -1
-    )  # -1 for safety
+    edges = np.empty((num_edges, 2), dtype=settings.INT_DTYPE)
+
     edges[:, 0] = faces.ravel()
 
     for i in range(vertices_per_face):
@@ -198,10 +192,6 @@ def faces_to_edges(faces):
         v_ind = 0 if i == int(vertices_per_face - 1) else i + 1
 
         edges[i::vertices_per_face, 1] = faces[:, v_ind]
-
-    # Quick sanity check - No entries are left untouched.
-    if (edges == -1).any():
-        raise ValueError("There was an error while computing edges.")
 
     return edges
 
@@ -296,15 +286,12 @@ def make_quad_faces(resolutions):
     except ValueError as e:
         raise ValueError(f"Problem with generating node indices. {e}")
 
-    faces = np.ones((total_faces, 4), dtype=settings.INT_DTYPE) * -1
+    faces = np.empty((total_faces, 4), dtype=settings.INT_DTYPE)
 
     faces[:, 0] = node_indices[: (nnpd[1] - 1), : (nnpd[0] - 1)].ravel()
     faces[:, 1] = node_indices[: (nnpd[1] - 1), 1 : nnpd[0]].ravel()
     faces[:, 2] = node_indices[1 : nnpd[1], 1 : nnpd[0]].ravel()
     faces[:, 3] = node_indices[1 : nnpd[1], : (nnpd[0] - 1)].ravel()
-
-    if faces.all() == -1:
-        raise ValueError("Something went wrong during `make_quad_faces`.")
 
     return faces
 
@@ -343,7 +330,7 @@ def make_hexa_volumes(resolutions):
         nnpd[::-1]
     )
 
-    volumes = np.ones((total_volumes, 8), dtype=settings.INT_DTYPE) * int(-1)
+    volumes = np.empty((total_volumes, 8), dtype=settings.INT_DTYPE)
 
     volumes[:, 0] = node_indices[
         : (nnpd[2] - 1), : (nnpd[1] - 1), : (nnpd[0] - 1)
@@ -367,9 +354,6 @@ def make_hexa_volumes(resolutions):
     volumes[:, 7] = node_indices[
         1 : nnpd[2], 1 : nnpd[1], : (nnpd[0] - 1)
     ].ravel()
-
-    if (volumes == -1).any():
-        raise ValueError("Something went wrong during `make_hexa_volumes`.")
 
     return volumes
 
@@ -407,10 +391,7 @@ def subdivide_edges(edges):
     raise NotImplementedError
 
 
-def subdivide_tri(
-    mesh,
-    return_dict=False,
-):
+def subdivide_tri(mesh, return_dict=False):
     """Subdivide triangles. Each triangle is divided into 4 meshes.
 
     ``Subdivided Faces``
@@ -581,7 +562,7 @@ def sorted_unique(connectivity, sorted_=False):
     )
 
 
-def edges_to_polygons(outline_edges, return_edges=False, max_polygons=100):
+def edges_to_polygons(outline_edges, return_edges=False):
     """
     Organize outline edges, so that it describes a polygon.
     Edges are expected to be extracted using `gus.Mesh.edges`, from
@@ -593,10 +574,6 @@ def edges_to_polygons(outline_edges, return_edges=False, max_polygons=100):
     outline_edges: (n, 2) list-like
     return_edges: bool
       (Optional) Default is False. If set True, returns polygon as edges.
-    max_polygons: int
-      (Optional) Default is 100. Maximum expected polygons.
-      Used as an exit criterium during polygon search.
-
 
     Returns
     --------
@@ -608,19 +585,19 @@ def edges_to_polygons(outline_edges, return_edges=False, max_polygons=100):
     >>> m = gus.load_mesh("path_to_mesh_2d.stl")
     >>> polygon_edges = edges_to_polygon(m.edges()[m.single_edges()])
     """
+    # we want to have an np array
+    outline_edges = np.asanyarray(outline_edges)
+
     # Build a lookup_array
     lookup_array = np.empty(outline_edges.max() + 1, dtype=settings.INT_DTYPE)
     lookup_array[outline_edges[:, 0]] = outline_edges[:, 1]
-    # create some status variables
-    watch_dog_max = abs(int(max_polygons))
-    watch_dog = 0
 
     # select starting point - lowest index
     starting_point = int(outline_edges.min())
     # initialize a set to keep track of processes vertices
     next_candidates = set(outline_edges[:, 0])
     polygons = []
-    while True:
+    for _ in range(len(outline_edges)):
         # Get polygon - start with first two points
         polygon = [starting_point]
         polygon.append(lookup_array[polygon[-1]])
@@ -638,25 +615,12 @@ def edges_to_polygons(outline_edges, return_edges=False, max_polygons=100):
 
         # check if we counted all the edges
         # if so, exit
-        lens = [len(p) for p in polygons]
-        if sum(lens) == len(outline_edges):
+        next_candidates.difference_update(polygons[-1])
+        if len(next_candidates) == 0:
             break
 
-        else:
-            # let's try to find the next starting point
-            next_candidates.difference_update(polygons[-1])
-            # Assign new
-            starting_point = min(next_candidates)
-
-        watch_dog += 1
-        # Hope there're no more than number of max polygons.
-        if watch_dog >= watch_dog_max:
-            log.warning(
-                f"Stopping after given max number of polygons {watch_dog_max}."
-                " If you want to continue searching, please set "
-                "`max_polygons` to a bigger number"
-            )
-            break
+        # let's try to find the next starting point
+        starting_point = min(next_candidates)
 
     if not return_edges:
         return polygons
