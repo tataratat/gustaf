@@ -53,7 +53,7 @@ def tet_to_tri(volumes):
 
     fpe = 4  # faces per element
     faces = (
-        np.ones(((volumes.shape[0] * fpe), 3), dtype=np.int32) * -1
+        np.ones(((volumes.shape[0] * fpe), 3), dtype=settings.INT_DTYPE) * -1
     )  # -1 for safety check
 
     faces[:, 0] = volumes.ravel()
@@ -113,7 +113,7 @@ def hexa_to_quad(volumes):
 
     fpe = 6  # faces per element
     faces = (
-        np.ones(((volumes.shape[0] * fpe), 4), dtype=np.int32) * -1
+        np.ones(((volumes.shape[0] * fpe), 4), dtype=settings.INT_DTYPE) * -1
     )  # -1 for safety check
 
     faces[::fpe] = volumes[:, [1, 0, 3, 2]]
@@ -188,7 +188,9 @@ def faces_to_edges(faces):
     vertices_per_face = faces.shape[1]
 
     num_edges = int(num_faces * vertices_per_face)
-    edges = np.ones((num_edges, 2), dtype=np.int32) * -1  # -1 for safety
+    edges = (
+        np.ones((num_edges, 2), dtype=settings.INT_DTYPE) * -1
+    )  # -1 for safety
     edges[:, 0] = faces.ravel()
 
     for i in range(vertices_per_face):
@@ -288,11 +290,13 @@ def make_quad_faces(resolutions):
     total_nodes = np.prod(nnpd)
     total_faces = (nnpd[0] - 1) * (nnpd[1] - 1)
     try:
-        node_indices = np.arange(total_nodes).reshape(nnpd[1], nnpd[0])
+        node_indices = np.arange(
+            total_nodes, dtype=settings.INT_DTYPE
+        ).reshape(nnpd[1], nnpd[0])
     except ValueError as e:
         raise ValueError(f"Problem with generating node indices. {e}")
 
-    faces = np.ones((total_faces, 4)) * -1
+    faces = np.ones((total_faces, 4), dtype=settings.INT_DTYPE) * -1
 
     faces[:, 0] = node_indices[: (nnpd[1] - 1), : (nnpd[0] - 1)].ravel()
     faces[:, 1] = node_indices[: (nnpd[1] - 1), 1 : nnpd[0]].ravel()
@@ -302,7 +306,7 @@ def make_quad_faces(resolutions):
     if faces.all() == -1:
         raise ValueError("Something went wrong during `make_quad_faces`.")
 
-    return faces.astype(np.int32)
+    return faces
 
 
 def make_hexa_volumes(resolutions):
@@ -335,9 +339,11 @@ def make_hexa_volumes(resolutions):
 
     total_nodes = np.prod(nnpd)
     total_volumes = np.prod(nnpd - 1)
-    node_indices = np.arange(total_nodes, dtype=np.int32).reshape(nnpd[::-1])
+    node_indices = np.arange(total_nodes, dtype=settings.INT_DTYPE).reshape(
+        nnpd[::-1]
+    )
 
-    volumes = np.ones((total_volumes, 8), dtype=np.int32) * int(-1)
+    volumes = np.ones((total_volumes, 8), dtype=settings.INT_DTYPE) * int(-1)
 
     volumes[:, 0] = node_indices[
         : (nnpd[2] - 1), : (nnpd[1] - 1), : (nnpd[0] - 1)
@@ -365,7 +371,7 @@ def make_hexa_volumes(resolutions):
     if (volumes == -1).any():
         raise ValueError("Something went wrong during `make_hexa_volumes`.")
 
-    return volumes.astype(settings.INT_DTYPE)
+    return volumes
 
 
 def subdivide_edges(edges):
@@ -454,7 +460,7 @@ def subdivide_tri(
 
     subdivided_faces = np.empty(
         (mesh.faces.shape[0] * 4, mesh.faces.shape[1]),
-        dtype=np.int32,
+        dtype=settings.INT_DTYPE,
     )
 
     mask = np.ones(subdivided_faces.shape[0], dtype=bool)
@@ -520,7 +526,7 @@ def subdivide_quad(
 
     subdivided_faces = np.empty(
         (mesh.faces.shape[0] * 4, mesh.faces.shape[1]),
-        dtype=np.int32,
+        dtype=settings.INT_DTYPE,
     )
 
     subdivided_faces[:, 0] = mesh.faces.ravel()
@@ -528,7 +534,7 @@ def subdivide_quad(
     subdivided_faces[:, 2] = np.repeat(
         np.arange(len(face_centers)) + (len(mesh.vertices) + len(edge_mid_v)),
         4,
-        # dtype=np.int32,
+        dtype=settings.INT_DTYPE,
     )
     subdivided_faces[:, 3] = (
         subdivided_faces[:, 1].reshape(-1, 4)[:, [3, 0, 1, 2]].ravel()
@@ -603,7 +609,7 @@ def edges_to_polygons(outline_edges, return_edges=False, max_polygons=100):
     >>> polygon_edges = edges_to_polygon(m.edges()[m.single_edges()])
     """
     # Build a lookup_array
-    lookup_array = np.empty(outline_edges.max() + 1, dtype=np.int32)
+    lookup_array = np.empty(outline_edges.max() + 1, dtype=settings.INT_DTYPE)
     lookup_array[outline_edges[:, 0]] = outline_edges[:, 1]
     # create some status variables
     watch_dog_max = abs(int(max_polygons))
