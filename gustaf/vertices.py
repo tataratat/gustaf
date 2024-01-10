@@ -90,7 +90,6 @@ class Vertices(GustafBase):
         "_const_vertices",
         "_computed",
         "_show_options",
-        "_setter_copies",
         "_vertex_data",
     )
 
@@ -100,22 +99,18 @@ class Vertices(GustafBase):
     def __init__(
         self,
         vertices=None,
-        copy=True,
     ):
         """Vertices. It has vertices.
 
         Parameters
         -----------
         vertices: (n, d) np.ndarray
-        copy: bool
-          If false, all setter calls will try to avoid copy.
 
         Returns
         --------
         None
         """
         # call setters
-        self.setter_copies = copy
         self.vertices = vertices
 
         # init helpers
@@ -156,8 +151,9 @@ class Vertices(GustafBase):
         """
         self._logd("setting vertices")
 
+        # we try not to make copy.
         self._vertices = helpers.data.make_tracked_array(
-            vs, settings.FLOAT_DTYPE, self.setter_copies
+            vs, settings.FLOAT_DTYPE, copy=False
         )
 
         # shape check
@@ -207,39 +203,6 @@ class Vertices(GustafBase):
         return self._vertex_data
 
     @property
-    def setter_copies(self):
-        """
-        Switch to set if setter should copy or try to avoid copying.
-        If data is np.ndarray, c_contiguous, and has same dtype as
-        corresponding settings.<FLOAT/INT>_dtype, it can probably avoid being
-        copied. Setter will try to cast input to bool.
-
-        Parameters
-        ----------
-        None
-
-        Returns
-        -------
-        setter_copies: bool
-        """
-        return self._setter_copies
-
-    @setter_copies.setter
-    def setter_copies(self, should_copy):
-        """
-        Sets setter_copies
-
-        Parameters
-        ----------
-        should_copy: bool
-
-        Returns
-        -------
-        None
-        """
-        self._setter_copies = bool(should_copy)
-
-    @property
     def show_options(self):
         """
         Returns a show option manager for this object. Behaves similar to
@@ -256,22 +219,6 @@ class Vertices(GustafBase):
         """
         self._logd("returning show_options")
         return self._show_options
-
-    @property
-    def vis_dict(self):
-        """
-        Temporary backward compatibility
-        """
-        self._logw("`vis_dict` is deprecated. Please use `show_options`")
-        return self.show_options
-
-    @vis_dict.setter
-    def vis_dict(self, vd):
-        """
-        Tmp
-        """
-        self._logw("`vis_dict` is deprecated. Please use `show_options`")
-        self._show_options = vd
 
     @property
     def whatami(self):
