@@ -9,6 +9,13 @@ import collections
 
 import numpy as np
 
+try:
+    import napf
+except ImportError:
+    from gustaf.helpers.raise_if import ModuleImportRaiser
+
+    napf = ModuleImportRaiser("napf")
+
 from gustaf import helpers, settings
 from gustaf.utils import arr
 
@@ -562,45 +569,32 @@ def sorted_unique(connectivity, sorted_=False):
     )
 
 
-def _sequentialize_ordered_edges(outline_edges, return_edges=False):
+def _sequentialize_directed_edges(edges, start=None, return_edges=False):
     """
-    Organize outline edges, so that it describes a polygon.
-    Edges are expected to be extracted using `gus.Mesh.edges`, from
-    wind-consistent meshes.
-    Could utilizes `scipy.sparse.coo_matrix`, alternatively.
-
-    Parameters
-    -----------
-    outline_edges: (n, 2) list-like
-    return_edges: bool
-      (Optional) Default is False. If set True, returns polygon as edges.
-
-    Returns
-    --------
-    polygons: list
-      list of polygon vertices. Or edges iff return_edges is True.
-
-    Examples
-    ---------
-    >>> m = gus.load_mesh("path_to_mesh_2d.stl")
-    >>> polygon_edges = edges_to_polygon(m.edges()[m.single_edges()])
+    Sequentialize directed edges.
     """
     # we want to have an np array
-    outline_edges = np.asanyarray(outline_edges)
+    edges = np.asanyarray(edges)
 
     # Build a lookup_array
-    lookup_array = np.full(
-        outline_edges.max() + 1, -1, dtype=settings.INT_DTYPE
-    )
-    lookup_array[outline_edges[:, 0]] = outline_edges[:, 1]
+    lookup_array = np.full(edges.max() + 1, -1, dtype=settings.INT_DTYPE)
+    lookup_array[edges[:, 0]] = edges[:, 1]
 
     # select starting point - lowest index
-    starting_point = int(outline_edges.min())
+    starting_point = int(edges.min()) if start is None else int(start)
+
     # initialize a set to keep track of processes vertices
-    next_candidates = set(outline_edges[:, 0])
+    next_candidates = set(edges[:, 0])
+    # we want to keep track of single occurrences, as they are line start
+    line_starts = set(np.where(np.bincount(edges.ravel()) == 1)[0])
+    # for this to work, we can't have a line that starts at column 1.
+    # so, we remove those.
+    ls_col1 = set(np.where(np.bincount(edges[:, 1].ravel()) == 1)[0])
+    line_starts.difference_update(ls_col1)
+
     polygons = []
     is_polygon = []
-    for _ in range(len(outline_edges)):
+    for _ in range(len(edges)):
         # Get polygon - start with first two points
         polygon = [starting_point]
         polygon.append(lookup_array[polygon[-1]])
@@ -625,11 +619,17 @@ def _sequentialize_ordered_edges(outline_edges, return_edges=False):
         # check if we counted all the edges
         # if so, exit
         next_candidates.difference_update(polygons[-1])
-        if len(next_candidates) == 0:
+        line_starts.difference_update(polygons[-1])
+
+        if len(next_candidates) == len(line_starts) == 0:
             break
 
         # let's try to find the next starting point
-        starting_point = min(next_candidates)
+        starting_point = None
+        if len(line_starts) != 0:
+            starting_point = min(line_starts)
+        else:
+            starting_point = min(next_candidates)
 
     if not return_edges:
         return polygons, is_polygon
@@ -639,13 +639,14 @@ def _sequentialize_ordered_edges(outline_edges, return_edges=False):
         for p, is_p in zip(polygons, is_polygon):
             polygon_edges.append(sequence_to_edges(p, closed=is_p))
 
-        return polygon_edges
+        return polygon_edges, is_polygon
 
 
-def _sequentialize_edges(edges, return_edges=False):
-    """ """
-    import napf
-    import numpy as np
+def _sequentialize_edges(edges, start=None, return_edges=False):
+    """
+    sequentialize undirected edges. No overlaps are allowed, for now.
+    """
+    edges = np.asanyarray(edges)
 
     # only applicable to closed polygons and open lines
     # not for arbitrarily connected edges
@@ -673,8 +674,8 @@ def _sequentialize_edges(edges, return_edges=False):
     # radius search size
     r = 0.1
 
-    current_id = 0
-    start_value = int(e.a[0])
+    current_id = np.argmin(e.a) if start is None else start
+    start_value = int(e.a[current_id])
     other_col = e.b
 
     polygons = []
@@ -682,7 +683,10 @@ def _sequentialize_edges(edges, return_edges=False):
     for _ in range(len(edges)):
         polygon = [start_value, other_col[current_id]]
 
-        while polygon[0] != polygon[-1]:
+        #        while polygon[0] != polygon[-1]:
+        for _ in range(len(next_candidates)):
+            if polygon[0] == polygon[-1]:
+                break
             hits = []
             # search for ids
             a_ids = t.a.radius_search([[polygon[-1]]], r, True)[0][0]
@@ -743,17 +747,17 @@ def _sequentialize_edges(edges, return_edges=False):
         # leftover candidates
         start_value = None
         if len(line_starts) != 0:
-            start_value = line_starts[0]
+            start_value = min(line_starts)
         else:
-            start_value = next_candidates[0]
+            start_value = min(next_candidates)
 
         # adjust state values
-        a_ids = t.a.radius_search([[polygon[-1]]], r, True)[0][0]
+        a_ids = t.a.radius_search([[start_value]], r, True)[0][0]
         if len(a_ids) != 0:
             current_id = a_ids[0]
             other_col = e.b
             continue
-        b_ids = t.b.radius_search([[polygon[-1]]], r, True)[0][0]
+        b_ids = t.b.radius_search([[start_value]], r, True)[0][0]
         if len(b_ids) != 0:
             current_id = b_ids[0]
             other_col = e.a
@@ -761,11 +765,11 @@ def _sequentialize_edges(edges, return_edges=False):
 
         raise RuntimeError(
             "Something went wrong. Please report this issue to "
-            "github.com/tataratat/gustaf/issues]"
+            "github.com/tataratat/gustaf/issues"
         )
 
     if not return_edges:
-        return polygons
+        return polygons, is_polygon
 
     else:
         polygon_edges = []
@@ -773,3 +777,43 @@ def _sequentialize_edges(edges, return_edges=False):
             polygon_edges.append(sequence_to_edges(p, closed=is_p))
 
         return polygon_edges
+
+
+def sequentialize_edges(edges, start=None, return_edges=False, directed=False):
+    """
+    Organize edge connectivities to describe polygon or a line.
+    This supports edges that describes separated/individual polygons and lines.
+    In other words, it doesn't support edges of overlapping vertices.
+
+    Parameters
+    -----------
+    edges: (n, 2) list-like
+    start: int
+      (Optional) Specify starting point. It will take minimum index otherwise.
+    return_edges: bool
+      (Optional) Default is False. If set True, returns sequences as edges.
+    directed: bool
+      (Optional) Default is False. Set True, if given edges are directed.
+      It should return the result faster.
+
+    Returns
+    --------
+    sequences: list
+      list of vertex ids. Or edges iff return_edges is True.
+    is_polygon: list
+      Tells if the sequence is a polygon or a line.
+
+    Examples
+    ---------
+    >>> e = gus.Edges(vertices, edges)
+    >>> ordered_sequence, is_polygon = sequentialize_edges(e.edges)
+
+    >>> f = gus.Faces(vertices, faces)
+    >>> ordered_sequence, is_polygon = sequentialize_edges(
+    ...     f.edges()[f.single_edges()]
+    ... )
+    """
+    if directed:
+        return _sequentialize_directed_edges(edges, start, return_edges)
+    else:
+        return _sequentialize_edges(edges, start, return_edges)
