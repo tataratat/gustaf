@@ -53,7 +53,7 @@ def tet_to_tri(volumes):
     --------
     faces: (n * 4, 3) np.ndarray
     """
-    volumes = arr.make_c_contiguous(volumes, settings.INT_DTYPE)
+    volumes = np.asanyarray(volumes, settings.INT_DTYPE)
 
     if volumes.ndim != 2 or volumes.shape[1] != 4:
         raise ValueError("Given volumes are not `tet` volumes")
@@ -113,7 +113,7 @@ def hexa_to_quad(volumes):
     --------
     faces: (n * 8, 4) np.ndarray
     """
-    volumes = arr.make_c_contiguous(volumes, settings.INT_DTYPE)
+    volumes = np.asanyarray(volumes, settings.INT_DTYPE)
 
     if volumes.ndim != 2 or volumes.shape[1] != 8:
         raise ValueError("Given volumes are not `hexa` volumes")
@@ -142,7 +142,7 @@ def volumes_to_faces(volumes):
     --------
     faces: (n*4, 3) or (m*6, 4) np.ndarray
     """
-    volumes = arr.make_c_contiguous(volumes, settings.INT_DTYPE)
+    volumes = np.asanyarray(volumes, settings.INT_DTYPE)
     if volumes.shape[1] == 4:
         return tet_to_tri(volumes)
 
