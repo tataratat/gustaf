@@ -663,20 +663,22 @@ def _sequentialize_edges(edges, start=None, return_edges=False):
     # initialize a set to keep track of processes vertices
     next_candidates = set(edges.ravel())
 
-    e = collections.namedtuple("a", "b")
-    e.a = edges[:, 0]
-    e.b = edges[:, 1]
+    # create a look up to each edge column
+    edge_col = collections.namedtuple("a", "b")
+    edge_col.a = edges[:, 0]
+    edge_col.b = edges[:, 1]
 
-    t = collections.namedtuple("a", "b")
-    t.a = napf.KDT(e.a.reshape(-1, 1))
-    t.b = napf.KDT(e.b.reshape(-1, 1))
+    # create trees for each edge column
+    tree = collections.namedtuple("a", "b")
+    tree.a = napf.KDT(edge_col.a.reshape(-1, 1))
+    tree.b = napf.KDT(edge_col.b.reshape(-1, 1))
 
     # radius search size
     r = 0.1
 
-    current_id = np.argmin(e.a) if start is None else start
-    start_value = int(e.a[current_id])
-    other_col = e.b
+    current_id = np.argmin(edge_col.a) if start is None else start
+    start_value = int(edge_col.a[current_id])
+    other_col = edge_col.b
 
     polygons = []
     is_polygon = []
@@ -688,8 +690,8 @@ def _sequentialize_edges(edges, start=None, return_edges=False):
             if polygon[0] == polygon[-1]:
                 break
             # search for ids
-            a_ids = t.a.radius_search([[polygon[-1]]], r, True)[0][0]
-            b_ids = t.b.radius_search([[polygon[-1]]], r, True)[0][0]
+            a_ids = tree.a.radius_search([[polygon[-1]]], r, True)[0][0]
+            b_ids = tree.b.radius_search([[polygon[-1]]], r, True)[0][0]
 
             # in total, there should be 2 otherwise, we can end this search
             # and this is not a polygon
@@ -704,7 +706,7 @@ def _sequentialize_edges(edges, start=None, return_edges=False):
                 if ai != current_id:
                     found = True
                     current_id = ai
-                    polygon.append(e.b[current_id])
+                    polygon.append(edge_col.b[current_id])
                     break
             if found:
                 continue
@@ -713,7 +715,7 @@ def _sequentialize_edges(edges, start=None, return_edges=False):
                 if bi != current_id:
                     found = True
                     current_id = bi
-                    polygon.append(e.a[current_id])
+                    polygon.append(edge_col.a[current_id])
                     break
             if found:
                 continue
@@ -751,15 +753,15 @@ def _sequentialize_edges(edges, start=None, return_edges=False):
             start_value = min(next_candidates)
 
         # adjust state values
-        a_ids = t.a.radius_search([[start_value]], r, True)[0][0]
+        a_ids = tree.a.radius_search([[start_value]], r, True)[0][0]
         if len(a_ids) != 0:
             current_id = a_ids[0]
-            other_col = e.b
+            other_col = edge_col.b
             continue
-        b_ids = t.b.radius_search([[start_value]], r, True)[0][0]
+        b_ids = tree.b.radius_search([[start_value]], r, True)[0][0]
         if len(b_ids) != 0:
             current_id = b_ids[0]
-            other_col = e.a
+            other_col = edge_col.a
             continue
 
         raise RuntimeError(
