@@ -687,7 +687,6 @@ def _sequentialize_edges(edges, start=None, return_edges=False):
         for _ in range(len(next_candidates)):
             if polygon[0] == polygon[-1]:
                 break
-            hits = []
             # search for ids
             a_ids = t.a.radius_search([[polygon[-1]]], r, True)[0][0]
             b_ids = t.b.radius_search([[polygon[-1]]], r, True)[0][0]
