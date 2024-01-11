@@ -46,7 +46,7 @@ class VolumesShowOption(helpers.options.ShowOption):
 
             to_vtktype = {"tet": frau_tetra, "hexa": herr_hexa}
             grid_type = to_vtktype[self._helpee.whatami]
-            u_grid = show.vedo.UGrid(
+            u_grid = show.vedoUGrid(
                 [
                     self._helpee.const_vertices,
                     self._helpee.const_volumes,

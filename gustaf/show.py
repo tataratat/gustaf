@@ -11,6 +11,14 @@ from gustaf import utils
 # @linux it raises error if vedo is imported inside the function.
 try:
     import vedo
+
+    # class name UGrid is deprecated since 2023.5.0
+    # After *.5.1 release, we could remove this part by bumping min. version
+    # requirement
+    if vedo.__version__ < "2023.5.0":
+        vedoUGrid = vedo.UGrid
+    else:
+        vedoUGrid = vedo.UnstructuredGrid
 except ImportError as err:
     # overwrites the vedo module with an object which will throw an error
     # as soon as it is used the first time. This means that any non vedo
@@ -20,6 +28,7 @@ except ImportError as err:
     from gustaf.helpers.raise_if import ModuleImportRaiser
 
     vedo = ModuleImportRaiser("vedo", err)
+    vedoUGrid = vedo
 
 
 # enable `gus.show()`
