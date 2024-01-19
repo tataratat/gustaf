@@ -19,7 +19,12 @@ class VerticesShowOption(helpers.options.ShowOption):
 
     _valid_options = helpers.options.make_valid_options(
         *helpers.options.vedo_common_options,
-        Option("vedo", "r", "Radius of vertices in units of pixels.", (int,)),
+        Option(
+            "vedo",
+            "r",
+            "Radius of vertices in units of pixels.",
+            (float, int),
+        ),
         Option(
             "vedo",
             "labels",

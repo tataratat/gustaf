@@ -80,6 +80,7 @@ def show(
     title = kwargs.get("title", "gustaf")
     background = kwargs.get("background", "white")
     return_show_list = kwargs.get("return_showable_list", False)
+    axes = kwargs.get("axes", None)
 
     def clear_vedo_plotter(plotter, num_renderers, skip_cl=skip_clear):
         """enough said."""
@@ -105,9 +106,18 @@ def show(
 
     # get plotter
     if plt is None:
-        if is_ipython():
+        if is_ipython() and vedo.settings.default_backend == "k3d":
+            vedo.settings.backend_autoclose = False
             plt = K3DPlotterN(N, size, background)
         else:
+            if is_ipython():
+                utils.log.warning(
+                    "Gustaf plotting in notebooks is only supported with k3d"
+                    "backend. To use this backend, set "
+                    "vedo.settings.default_backend = 'k3d' in your notebook."
+                    " Using the default backend might give unexpected results "
+                    "and errors."
+                )
             plt = vedo.Plotter(
                 N=N,
                 sharecam=False,
@@ -118,6 +128,11 @@ def show(
             )
 
     else:
+        if is_ipython():
+            utils.log.warning(
+                "Please do not provide a plotter in IPython applications."
+                "This will produce an error shortly."
+            )
         # check if plt has enough Ns
         trueN = np.prod(plt.shape)
         clear_vedo_plotter(plt, trueN)  # always clear.
@@ -185,6 +200,7 @@ def show(
                 at=i,
                 interactive=interact,
                 camera=cam_tuple_to_list(cam),
+                axes=axes,
                 # offscreen=offs,
             )
 
@@ -194,6 +210,7 @@ def show(
                 at=i,
                 interactive=False,
                 camera=cam_tuple_to_list(cam),
+                axes=axes,
                 # offscreen=offs,
             )
 
@@ -212,27 +229,6 @@ def show(
         return (plt, list_of_showables)
     else:
         return plt
-
-
-def show_notebook(
-    *args,
-    **kwargs,
-):
-    elements_to_show = []
-    for element in args:
-        if hasattr(element, "showable"):
-            elements_to_show.append([element.showable(**kwargs)])
-        elif isinstance(element, list):
-            sub_list = []
-            for sub_element in element:
-                if hasattr(sub_element, "showable"):
-                    sub_list.append(sub_element.showable(**kwargs))
-                else:
-                    raise TypeError(
-                        "Only gustaf objects can be shown in notebook"
-                    )
-        else:
-            raise TypeError("For vedo_show, only list or dict is valid input")
 
 
 def make_showable(obj, as_dict=False, **kwargs):

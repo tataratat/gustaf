@@ -53,15 +53,16 @@ class K3DPlotterN(GridspecLayout):
             )
 
     def _at_get_location(self, N):
-        if self.x * self.y < N:
+        if (self.x * self.y) < N:
             return (self.x - 1, self.y - 1)
-        return (N // (self.y + 1), N % self.y)
+        return (N // (self.y), N % self.y)
 
-    def show(self, list_of_showables, at, interactive, camera):
+    def show(self, list_of_showables, at, interactive, camera, axes):
         self[self._at_get_location(at)] = self.renderers[at].show(
             list_of_showables,
             interactive=interactive,
             camera=camera,
+            axes=axes,
             # offscreen=offscreen,
         )
 
