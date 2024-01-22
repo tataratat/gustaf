@@ -7,7 +7,13 @@ import sys
 import numpy as np
 
 from gustaf import utils
-from gustaf.utils.notebook_helper import K3DPlotterN
+
+try:
+    from gustaf.utils.notebook_helper import K3DPlotterN
+except ImportError as err:
+    from gustaf.helpers.raise_if import ModuleImportRaiser
+
+    K3DPlotterN = ModuleImportRaiser("IPython and ipywidgets", err)
 
 # @linux it raises error if vedo is imported inside the function.
 try:

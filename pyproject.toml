@@ -41,7 +41,9 @@ all = [
     "meshio",
     "napf>=0.0.5",
     "funi>=0.0.1",
-    "requests"
+    "requests",
+    "ipywidgets",
+    "k3d",
 ]
 test = [
     "pytest",
@@ -57,6 +59,8 @@ dev = [
     "meshio",
     "requests",
     "pre-commit",
+    "ipywidgets",
+    "k3d",
 ]
 
 [tool.setuptools]

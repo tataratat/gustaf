@@ -1,3 +1,5 @@
+import importlib
+
 import numpy as np
 import vedo
 from IPython.display import display
@@ -39,6 +41,11 @@ def get_shape(N, x, y):
 
 class K3DPlotterN(GridspecLayout):
     def __init__(self, N, size, background=0xFFFFFF):
+        if importlib.util.find_spec("k3d") is None:
+            raise ImportError(
+                "k3d is not installed. Please install it with `pip "
+                "install k3d`."
+            )
         self.N = N
         self.x, self.y = get_shape(N, *(2160, 1440))
         self.shape = (self.x, self.y)
