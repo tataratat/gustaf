@@ -9,7 +9,7 @@ import numpy as np
 from gustaf import utils
 
 try:
-    from gustaf.utils.notebook_helper import K3DPlotterN
+    from gustaf.helpers.notebook import K3DPlotterN
 except ImportError as err:
     from gustaf.helpers.raise_if import ModuleImportRaiser
 
