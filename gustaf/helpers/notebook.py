@@ -1,3 +1,11 @@
+"""gustaf/gustaf/helpers/notebook.py.
+
+Enables the plotting in ipynb with k3d.
+
+There are no import guards since they are in the place where this module is
+imported. This should be enough since I do not think that this module
+will/should be used outside this place.
+"""
 import importlib
 
 import numpy as np
@@ -67,9 +75,9 @@ class K3DPlotterN(GridspecLayout):
         self.x, self.y = get_shape(N, *(2160, 1440))
         self.shape = (self.x, self.y)
         super().__init__(self.x, self.y)
-        self.renderers = []
+        self.vedo_plotters = []
         for _ in range(N):
-            self.renderers.append(
+            self.vedo_plotters.append(
                 vedo.Plotter(
                     size=size,
                     bg=background,
@@ -106,7 +114,7 @@ class K3DPlotterN(GridspecLayout):
         axes: bool
             Add axes to the plot. Will also cast int to bool.
         """
-        self[self._at_get_location(at)] = self.renderers[at].show(
+        self[self._at_get_location(at)] = self.vedo_plotters[at].show(
             list_of_showables,
             interactive=interactive,
             camera=camera,
@@ -115,9 +123,14 @@ class K3DPlotterN(GridspecLayout):
         )
 
     def display(self):
-        """Display the plotter."""
+        """Display the plotter.
+
+        This is needed in case the plotter is the last thing in a cell. In that
+        case the IPython will try to call this function to display this.
+        """
         display(self)
 
-    def clear(*args, **kwargs):
+    def clear(self, *args, **kwargs):
         """Clear the plotters."""
-        pass
+        for renderer in self.vedo_plotters:
+            renderer.clear(*args, deep=True, **kwargs)
