@@ -1,6 +1,7 @@
-from gustaf.helpers import data, raise_if
+from gustaf.helpers import data, options, raise_if
 
 __all__ = [
     "data",
+    "options",
     "raise_if",
 ]

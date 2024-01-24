@@ -22,7 +22,7 @@ class VolumesShowOption(helpers.options.ShowOption):
 
     _helps = "Volumes"
 
-    def _initialize_vedo_showable(self):
+    def _initialize_showable(self):
         """
         Initialize volumes as vedo.UGrid or visually equivalent vedo.Mesh
 
@@ -46,7 +46,7 @@ class VolumesShowOption(helpers.options.ShowOption):
 
             to_vtktype = {"tet": frau_tetra, "hexa": herr_hexa}
             grid_type = to_vtktype[self._helpee.whatami]
-            u_grid = show.vedo.UGrid(
+            u_grid = show.vedoUGrid(
                 [
                     self._helpee.const_vertices,
                     self._helpee.const_volumes,
@@ -68,7 +68,7 @@ class VolumesShowOption(helpers.options.ShowOption):
         faces = self._helpee.to_faces(unique=True)
         self.copy_valid_options(faces.show_options)
 
-        return faces.show_options._initialize_vedo_showable()
+        return faces.show_options._initialize_showable()
 
 
 class Volumes(Faces):

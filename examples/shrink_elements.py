@@ -17,7 +17,7 @@ if __name__ == "__main__":
     direct_toedges.show_options["as_arrows"] = True
 
     # not the most efficient way, but it is possible.
-    gus.show.show_vedo(
+    gus.show(
         ["v, Volumes", v],
         ["v.shrink()", v.shrink()],
         [

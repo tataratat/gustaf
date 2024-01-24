@@ -55,7 +55,7 @@ def main():
         backslash=True,
     )
 
-    gus.show.show_vedo(
+    gus.show(
         ["faces-box", mesh_faces_box],
         ["volumes-box", mesh_volumes_box],
         ["faces-triangle", mesh_faces_triangle],
