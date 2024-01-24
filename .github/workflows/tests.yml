@@ -24,8 +24,7 @@ jobs:
 
     - name: install gustaf
       run: |
-        python3 -m pip install numpy scipy
-        pip install .
+        pip install .[test]
 
     - name: prepare test and test
       run: |

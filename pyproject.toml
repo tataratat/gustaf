@@ -45,8 +45,8 @@ all = [
 ]
 test = [
     "pytest",
-    "funi",
-    "napf",
+    "funi>=0.0.1",
+    "napf>=0.0.5",
 ]
 
 [tool.setuptools]

@@ -5,7 +5,16 @@ volumes. Named connec because connectivity is too long. Would have been
 even cooler, if it was palindrome.
 """
 
+import collections
+
 import numpy as np
+
+try:
+    import napf
+except ImportError:
+    from gustaf.helpers.raise_if import ModuleImportRaiser
+
+    napf = ModuleImportRaiser("napf")
 
 from gustaf import helpers, settings
 from gustaf.utils import arr
@@ -51,7 +60,7 @@ def tet_to_tri(volumes):
 
     fpe = 4  # faces per element
     faces = (
-        np.ones(((volumes.shape[0] * fpe), 3), dtype=np.int32) * -1
+        np.ones(((volumes.shape[0] * fpe), 3), dtype=settings.INT_DTYPE) * -1
     )  # -1 for safety check
 
     faces[:, 0] = volumes.ravel()
@@ -110,9 +119,7 @@ def hexa_to_quad(volumes):
         raise ValueError("Given volumes are not `hexa` volumes")
 
     fpe = 6  # faces per element
-    faces = (
-        np.ones(((volumes.shape[0] * fpe), 4), dtype=np.int32) * -1
-    )  # -1 for safety check
+    faces = np.empty(((volumes.shape[0] * fpe), 4), dtype=settings.INT_DTYPE)
 
     faces[::fpe] = volumes[:, [1, 0, 3, 2]]
     faces[1::fpe] = volumes[:, [0, 1, 5, 4]]
@@ -120,9 +127,6 @@ def hexa_to_quad(volumes):
     faces[3::fpe] = volumes[:, [2, 3, 7, 6]]
     faces[4::fpe] = volumes[:, [3, 0, 4, 7]]
     faces[5::fpe] = volumes[:, [4, 5, 6, 7]]
-
-    if (faces == -1).any():
-        raise ValueError("Something went wrong while computing faces")
 
     return faces
 
@@ -186,7 +190,8 @@ def faces_to_edges(faces):
     vertices_per_face = faces.shape[1]
 
     num_edges = int(num_faces * vertices_per_face)
-    edges = np.ones((num_edges, 2), dtype=np.int32) * -1  # -1 for safety
+    edges = np.empty((num_edges, 2), dtype=settings.INT_DTYPE)
+
     edges[:, 0] = faces.ravel()
 
     for i in range(vertices_per_face):
@@ -194,10 +199,6 @@ def faces_to_edges(faces):
         v_ind = 0 if i == int(vertices_per_face - 1) else i + 1
 
         edges[i::vertices_per_face, 1] = faces[:, v_ind]
-
-    # Quick sanity check - No entries are left untouched.
-    if (edges == -1).any():
-        raise ValueError("There was an error while computing edges.")
 
     return edges
 
@@ -286,21 +287,20 @@ def make_quad_faces(resolutions):
     total_nodes = np.prod(nnpd)
     total_faces = (nnpd[0] - 1) * (nnpd[1] - 1)
     try:
-        node_indices = np.arange(total_nodes).reshape(nnpd[1], nnpd[0])
+        node_indices = np.arange(
+            total_nodes, dtype=settings.INT_DTYPE
+        ).reshape(nnpd[1], nnpd[0])
     except ValueError as e:
         raise ValueError(f"Problem with generating node indices. {e}")
 
-    faces = np.ones((total_faces, 4)) * -1
+    faces = np.empty((total_faces, 4), dtype=settings.INT_DTYPE)
 
     faces[:, 0] = node_indices[: (nnpd[1] - 1), : (nnpd[0] - 1)].ravel()
     faces[:, 1] = node_indices[: (nnpd[1] - 1), 1 : nnpd[0]].ravel()
     faces[:, 2] = node_indices[1 : nnpd[1], 1 : nnpd[0]].ravel()
     faces[:, 3] = node_indices[1 : nnpd[1], : (nnpd[0] - 1)].ravel()
 
-    if faces.all() == -1:
-        raise ValueError("Something went wrong during `make_quad_faces`.")
-
-    return faces.astype(np.int32)
+    return faces
 
 
 def make_hexa_volumes(resolutions):
@@ -333,9 +333,11 @@ def make_hexa_volumes(resolutions):
 
     total_nodes = np.prod(nnpd)
     total_volumes = np.prod(nnpd - 1)
-    node_indices = np.arange(total_nodes, dtype=np.int32).reshape(nnpd[::-1])
+    node_indices = np.arange(total_nodes, dtype=settings.INT_DTYPE).reshape(
+        nnpd[::-1]
+    )
 
-    volumes = np.ones((total_volumes, 8), dtype=np.int32) * int(-1)
+    volumes = np.empty((total_volumes, 8), dtype=settings.INT_DTYPE)
 
     volumes[:, 0] = node_indices[
         : (nnpd[2] - 1), : (nnpd[1] - 1), : (nnpd[0] - 1)
@@ -360,10 +362,7 @@ def make_hexa_volumes(resolutions):
         1 : nnpd[2], 1 : nnpd[1], : (nnpd[0] - 1)
     ].ravel()
 
-    if (volumes == -1).any():
-        raise ValueError("Something went wrong during `make_hexa_volumes`.")
-
-    return volumes.astype(settings.INT_DTYPE)
+    return volumes
 
 
 def subdivide_edges(edges):
@@ -399,10 +398,7 @@ def subdivide_edges(edges):
     raise NotImplementedError
 
 
-def subdivide_tri(
-    mesh,
-    return_dict=False,
-):
+def subdivide_tri(mesh, return_dict=False):
     """Subdivide triangles. Each triangle is divided into 4 meshes.
 
     ``Subdivided Faces``
@@ -452,7 +448,7 @@ def subdivide_tri(
 
     subdivided_faces = np.empty(
         (mesh.faces.shape[0] * 4, mesh.faces.shape[1]),
-        dtype=np.int32,
+        dtype=settings.INT_DTYPE,
     )
 
     mask = np.ones(subdivided_faces.shape[0], dtype=bool)
@@ -518,7 +514,7 @@ def subdivide_quad(
 
     subdivided_faces = np.empty(
         (mesh.faces.shape[0] * 4, mesh.faces.shape[1]),
-        dtype=np.int32,
+        dtype=settings.INT_DTYPE,
     )
 
     subdivided_faces[:, 0] = mesh.faces.ravel()
@@ -526,7 +522,7 @@ def subdivide_quad(
     subdivided_faces[:, 2] = np.repeat(
         np.arange(len(face_centers)) + (len(mesh.vertices) + len(edge_mid_v)),
         4,
-        # dtype=np.int32,
+        dtype=settings.INT_DTYPE,
     )
     subdivided_faces[:, 3] = (
         subdivided_faces[:, 1].reshape(-1, 4)[:, [3, 0, 1, 2]].ravel()
@@ -571,3 +567,254 @@ def sorted_unique(connectivity, sorted_=False):
         unique_stuff[2],  # inverse
         unique_stuff[3],  # counts
     )
+
+
+def _sequentialize_directed_edges(edges, start=None, return_edges=False):
+    """
+    Sequentialize directed edges.
+    """
+    # we want to have an np array
+    edges = np.asanyarray(edges)
+
+    # Build a lookup_array
+    lookup_array = np.full(edges.max() + 1, -1, dtype=settings.INT_DTYPE)
+    lookup_array[edges[:, 0]] = edges[:, 1]
+
+    # select starting point - lowest index
+    starting_point = int(edges.min()) if start is None else int(start)
+
+    # initialize a set to keep track of processes vertices
+    next_candidates = set(edges[:, 0])
+    # we want to keep track of single occurrences, as they are line start
+    line_starts = set(np.where(np.bincount(edges.ravel()) == 1)[0])
+    # for this to work, we can't have a line that starts at column 1.
+    # so, we remove those.
+    ls_col1 = set(np.where(np.bincount(edges[:, 1].ravel()) == 1)[0])
+    line_starts.difference_update(ls_col1)
+
+    polygons = []
+    is_polygon = []
+    for _ in range(len(edges)):
+        # Get polygon - start with first two points
+        polygon = [starting_point]
+        polygon.append(lookup_array[polygon[-1]])
+
+        # then keep looking until we come to the start.
+        # if there's only one edges, this will exit right away
+        for _ in range(len(next_candidates)):
+            # sequence closes -> polygon
+            if polygon[0] == polygon[-1]:
+                polygon.pop()
+                is_polygon.append(True)
+                break
+
+            # sequence leads to unspecified connection -> not polygon
+            if lookup_array[polygon[-1]] < 0:
+                is_polygon.append(False)
+                break
+            polygon.append(lookup_array[polygon[-1]])
+
+        polygons.append(polygon)
+
+        # check if we counted all the edges
+        # if so, exit
+        next_candidates.difference_update(polygons[-1])
+        line_starts.difference_update(polygons[-1])
+
+        if len(next_candidates) == len(line_starts) == 0:
+            break
+
+        # let's try to find the next starting point
+        starting_point = None
+        if len(line_starts) != 0:
+            starting_point = min(line_starts)
+        else:
+            starting_point = min(next_candidates)
+
+    if not return_edges:
+        return polygons, is_polygon
+
+    else:
+        polygon_edges = []
+        for p, is_p in zip(polygons, is_polygon):
+            polygon_edges.append(sequence_to_edges(p, closed=is_p))
+
+        return polygon_edges, is_polygon
+
+
+def _sequentialize_edges(edges, start=None, return_edges=False):
+    """
+    sequentialize undirected edges. No overlaps are allowed, for now.
+    """
+    edges = np.asanyarray(edges)
+
+    # only applicable to closed polygons and open lines
+    # not for arbitrarily connected edges
+    bc = np.bincount(edges.ravel())
+    if not all(bc < 3):
+        raise ValueError(
+            "This function currently supports individual lines/polygons "
+            "search. Given edges include connections with more than 3 edges."
+        )
+
+    # we want to keep track of single occurrences, as they are line start
+    line_starts = set(np.where(bc == 1)[0])
+
+    # initialize a set to keep track of processes vertices
+    next_candidates = set(edges.ravel())
+
+    # create a look up to each edge column
+    edge_col = collections.namedtuple("a", "b")
+    edge_col.a = edges[:, 0]
+    edge_col.b = edges[:, 1]
+
+    # create trees for each edge column
+    tree = collections.namedtuple("a", "b")
+    tree.a = napf.KDT(edge_col.a.reshape(-1, 1))
+    tree.b = napf.KDT(edge_col.b.reshape(-1, 1))
+
+    # radius search size
+    r = 0.1
+
+    current_id = np.argmin(edge_col.a) if start is None else start
+    start_value = int(edge_col.a[current_id])
+    other_col = edge_col.b
+
+    polygons = []
+    is_polygon = []
+    for _ in range(len(edges)):
+        polygon = [start_value, other_col[current_id]]
+
+        #        while polygon[0] != polygon[-1]:
+        for _ in range(len(next_candidates)):
+            if polygon[0] == polygon[-1]:
+                break
+            # search for ids
+            a_ids = tree.a.radius_search([[polygon[-1]]], r, True)[0][0]
+            b_ids = tree.b.radius_search([[polygon[-1]]], r, True)[0][0]
+
+            # in total, there should be 2 otherwise, we can end this search
+            # and this is not a polygon
+            hits = len(a_ids) + len(b_ids)
+            if hits != 2:
+                break
+
+            # so, we have 2 hits. we need to get the partner of non-current_id
+            # index
+            found = False
+            for ai in a_ids:
+                if ai != current_id:
+                    found = True
+                    current_id = ai
+                    polygon.append(edge_col.b[current_id])
+                    break
+            if found:
+                continue
+
+            for bi in b_ids:
+                if bi != current_id:
+                    found = True
+                    current_id = bi
+                    polygon.append(edge_col.a[current_id])
+                    break
+            if found:
+                continue
+
+            raise RuntimeError(
+                "Something went wrong. Please report this issue to "
+                "github.com/tataratat/gustaf/issues]"
+            )
+
+        # if indices closes itself, it is a polygon.
+        # Otherwise it is an open line
+        if polygon[0] == polygon[-1]:
+            polygon.pop()
+            is_polygon.append(True)
+        else:
+            is_polygon.append(False)
+        polygons.append(polygon)
+
+        # check if we counted all the edges
+        # if so, exit
+        # let's try to find the next starting point
+        next_candidates.difference_update(polygons[-1])
+        line_starts.difference_update(polygons[-1])
+
+        if len(next_candidates) == len(line_starts) == 0:
+            break
+
+        # Assign next starting point
+        # generally first value of (those are min() in a set) line start or
+        # leftover candidates
+        start_value = None
+        if len(line_starts) != 0:
+            start_value = min(line_starts)
+        else:
+            start_value = min(next_candidates)
+
+        # adjust state values
+        a_ids = tree.a.radius_search([[start_value]], r, True)[0][0]
+        if len(a_ids) != 0:
+            current_id = a_ids[0]
+            other_col = edge_col.b
+            continue
+        b_ids = tree.b.radius_search([[start_value]], r, True)[0][0]
+        if len(b_ids) != 0:
+            current_id = b_ids[0]
+            other_col = edge_col.a
+            continue
+
+        raise RuntimeError(
+            "Something went wrong. Please report this issue to "
+            "github.com/tataratat/gustaf/issues"
+        )
+
+    if not return_edges:
+        return polygons, is_polygon
+
+    else:
+        polygon_edges = []
+        for p, is_p in zip(polygons, is_polygon):
+            polygon_edges.append(sequence_to_edges(p, closed=is_p))
+
+        return polygon_edges
+
+
+def sequentialize_edges(edges, start=None, return_edges=False, directed=False):
+    """
+    Organize edge connectivities to describe polygon or a line.
+    This supports edges that describes separated/individual polygons and lines.
+    In other words, it doesn't support edges of overlapping vertices.
+
+    Parameters
+    -----------
+    edges: (n, 2) list-like
+    start: int
+      (Optional) Specify starting point. It will take minimum index otherwise.
+    return_edges: bool
+      (Optional) Default is False. If set True, returns sequences as edges.
+    directed: bool
+      (Optional) Default is False. Set True, if given edges are directed.
+      It should return the result faster.
+
+    Returns
+    --------
+    sequences: list
+      list of vertex ids. Or edges iff return_edges is True.
+    is_polygon: list
+      Tells if the sequence is a polygon or a line.
+
+    Examples
+    ---------
+    >>> e = gus.Edges(vertices, edges)
+    >>> ordered_sequence, is_polygon = sequentialize_edges(e.edges)
+
+    >>> f = gus.Faces(vertices, faces)
+    >>> ordered_sequence, is_polygon = sequentialize_edges(
+    ...     f.edges()[f.single_edges()]
+    ... )
+    """
+    if directed:
+        return _sequentialize_directed_edges(edges, start, return_edges)
+    else:
+        return _sequentialize_edges(edges, start, return_edges)
