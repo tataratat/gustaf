@@ -384,9 +384,7 @@ def rotate(arr, rotation, rotation_axis=None, degree=True):
     """
     arr = make_c_contiguous(arr, settings.FLOAT_DTYPE)
     if rotation_axis is not None:
-        rotation_axis = make_c_contiguous(
-            rotation_axis, settings.FLOAT_DTYPE
-        ).ravel()
+        rotation_axis = np.asanyarray(rotation_axis)
 
     if rotation_axis is None:
         return np.matmul(arr, rotation_matrix(rotation, degree))
