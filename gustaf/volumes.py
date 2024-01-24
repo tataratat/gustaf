@@ -98,7 +98,6 @@ class Volumes(Faces):
         vertices=None,
         volumes=None,
         elements=None,
-        copy=True,
     ):
         """Volumes. It has vertices and volumes. Volumes could be tetrahedrons
         or hexahedrons.
@@ -108,7 +107,7 @@ class Volumes(Faces):
         vertices: (n, d) np.ndarray
         volumes: (n, 4) or (n, 8) np.ndarray
         """
-        super().__init__(vertices=vertices, copy=copy)
+        super().__init__(vertices=vertices)
         if volumes is not None:
             self.volumes = volumes
         elif elements is not None:
@@ -192,7 +191,7 @@ class Volumes(Faces):
         self._volumes = helpers.data.make_tracked_array(
             vols,
             settings.INT_DTYPE,
-            self.setter_copies,
+            copy=False,
         )
         if vols is not None:
             utils.arr.is_one_of_shapes(
