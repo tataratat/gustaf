@@ -99,6 +99,11 @@ def show(
         if skip_cl:
             return None
 
+        # tmp workaround for linux
+        vedo_renderers = getattr(plotter, "renderers", None)
+        if vedo_renderers is not None and len(vedo_renderers) < num_renderers:
+            return None
+
         for i in range(num_renderers):
             plotter.clear(at=i, deep=True)
 

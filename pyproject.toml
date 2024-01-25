@@ -36,7 +36,7 @@ content-type = "text/markdown"
 
 [project.optional-dependencies]
 all = [
-    "vedo==2023.5.0",
+    "vedo>=2023.5.0",
     "scipy",
     "meshio",
     "napf>=0.0.5",
@@ -54,7 +54,7 @@ dev = [
     "pytest",
     "funi",
     "napf",
-    "vedo==2023.5.0",
+    "vedo>=2023.5.0",
     "scipy",
     "meshio",
     "requests",
