@@ -50,22 +50,13 @@ class _CallableShowDotPy(sys.modules[__name__].__class__):
 sys.modules[__name__].__class__ = _CallableShowDotPy
 
 
-def is_ipython():
-    """Returns True if the current environment is IPython.
+# True if the current environment is IPython else False.
+try:
+    from IPython import get_ipython
 
-    Check if the code is run in a notebook.
-
-    Returns
-    -------
-    bool
-        True if the current environment is IPython.
-    """
-    try:
-        from IPython import get_ipython
-
-        return get_ipython() is not None
-    except ImportError:
-        return False
+    is_ipython = get_ipython() is not None
+except ImportError:
+    is_ipython = False
 
 
 def show(
