@@ -121,6 +121,8 @@ class K3DPlotterN(GridspecLayout, GustafBase):
         if len(args) != 0 or len(kwargs) != 0:
             self._logd(f"*args ({args}) and **kwargs ({kwargs}) ignored")
 
+        # this converts vedo plotter to k3d plot.
+        # after this, vedo plotter has no relevance to what you see
         self[self._at_get_location(at)] = self.vedo_plotters[at].show(
             list_of_showables,
             interactive=interactive,
@@ -128,7 +130,7 @@ class K3DPlotterN(GridspecLayout, GustafBase):
             axes=axes,
         )
 
-    def display(self):
+    def display(self, close=True):
         """Display the plotter.
 
         This is needed in case the plotter is the last thing in a cell. In that
@@ -136,7 +138,17 @@ class K3DPlotterN(GridspecLayout, GustafBase):
         """
         display(self)
 
+        # we add option to close here, as we set default_autoclose = False
+        if close:
+            self.clear()
+            self.close()
+
     def clear(self, *args, **kwargs):
         """Clear the plotters."""
-        for renderer in self.vedo_plotters:
-            renderer.clear(*args, deep=True, **kwargs)
+        for v_plotter in self.vedo_plotters:
+            v_plotter.clear(*args, deep=True, **kwargs)
+
+    def close(self):
+        """Closes all vedo.Plotters"""
+        for v_plotter in self.vedo_plotters:
+            v_plotter.close()

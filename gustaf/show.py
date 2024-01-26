@@ -59,10 +59,7 @@ except ImportError:
     is_ipython = False
 
 
-def show(
-    *args,
-    **kwargs,
-):
+def show(*args, **kwargs):
     """`vedo.show` wrapper. Each args represent one section of window. In other
     words len(args) == N, where N corresponds to the parameter for vedo.show().
 
@@ -222,7 +219,7 @@ def show(
             )
 
     if is_ipython:
-        plt.display()
+        plt.display(close=close)
         return None
 
     if interact and not offs:
