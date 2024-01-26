@@ -205,7 +205,6 @@ def show(*args, **kwargs):
                 interactive=interact,
                 camera=cam_tuple_to_list(cam),
                 axes=axes,
-                offscreen=offs,
             )
 
         else:
@@ -215,7 +214,6 @@ def show(*args, **kwargs):
                 interactive=False,
                 camera=cam_tuple_to_list(cam),
                 axes=axes,
-                offscreen=offs,
             )
 
     if is_ipython:
