@@ -13,6 +13,8 @@ import vedo
 from IPython.display import display
 from ipywidgets import GridspecLayout
 
+from gustaf._base import GustafBase
+
 
 def get_shape(N, x, y):
     """Taken verbatim from vedo plotter:show function.
@@ -47,7 +49,7 @@ def get_shape(N, x, y):
     return lm[ind]
 
 
-class K3DPlotterN(GridspecLayout):
+class K3DPlotterN(GridspecLayout, GustafBase):
     """Helper to plot in notebooks with k3d.
 
     Sets up K3D plotter especially if multiple plots are to be shown in the
@@ -99,7 +101,9 @@ class K3DPlotterN(GridspecLayout):
             return (self.x - 1, self.y - 1)
         return (N // (self.y), N % self.y)
 
-    def show(self, list_of_showables, at, interactive, camera, axes):
+    def show(
+        self, list_of_showables, at, interactive, camera, axes, *args, **kwargs
+    ):
         """Add the showables to the renderer at the given location.
 
         Parameters
@@ -114,12 +118,14 @@ class K3DPlotterN(GridspecLayout):
         axes: bool
             Add axes to the plot. Will also cast int to bool.
         """
+        if len(args) != 0 or len(kwargs) != 0:
+            self._logd(f"*args ({args}) and **kwargs ({kwargs}) ignored")
+
         self[self._at_get_location(at)] = self.vedo_plotters[at].show(
             list_of_showables,
             interactive=interactive,
             camera=camera,
             axes=axes,
-            # offscreen=offscreen,
         )
 
     def display(self):

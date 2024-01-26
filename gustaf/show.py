@@ -208,7 +208,7 @@ def show(
                 interactive=interact,
                 camera=cam_tuple_to_list(cam),
                 axes=axes,
-                # offscreen=offs,
+                offscreen=offs,
             )
 
         else:
@@ -218,12 +218,13 @@ def show(
                 interactive=False,
                 camera=cam_tuple_to_list(cam),
                 axes=axes,
-                # offscreen=offs,
+                offscreen=offs,
             )
 
     if is_ipython:
         plt.display()
-        return
+        return None
+
     if interact and not offs:
         # only way to ensure memory is released
         clear_vedo_plotter(plt, np.prod(plt.shape))
