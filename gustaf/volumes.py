@@ -40,6 +40,7 @@ class VolumesShowOption(helpers.options.ShowOption):
             self.get("data_name", None) is None
             and not self.get("vertex_ids", False)
             and not self.get("arrow_data", False)
+            and not show.is_ipython
         ):
             from vtk import VTK_HEXAHEDRON as herr_hexa
             from vtk import VTK_TETRA as frau_tetra

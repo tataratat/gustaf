@@ -8,6 +8,13 @@ import numpy as np
 
 from gustaf import utils
 
+try:
+    from gustaf.helpers.notebook import K3DPlotterN
+except ImportError as err:
+    from gustaf.helpers.raise_if import ModuleImportRaiser
+
+    K3DPlotterN = ModuleImportRaiser("IPython and ipywidgets", err)
+
 # @linux it raises error if vedo is imported inside the function.
 try:
     import vedo
@@ -43,10 +50,16 @@ class _CallableShowDotPy(sys.modules[__name__].__class__):
 sys.modules[__name__].__class__ = _CallableShowDotPy
 
 
-def show(
-    *args,
-    **kwargs,
-):
+# True if the current environment is IPython else False.
+try:
+    from IPython import get_ipython
+
+    is_ipython = get_ipython() is not None
+except ImportError:
+    is_ipython = False
+
+
+def show(*args, **kwargs):
     """`vedo.show` wrapper. Each args represent one section of window. In other
     words len(args) == N, where N corresponds to the parameter for vedo.show().
 
@@ -66,11 +79,17 @@ def show(
     title = kwargs.get("title", "gustaf")
     background = kwargs.get("background", "white")
     return_show_list = kwargs.get("return_showable_list", False)
+    axes = kwargs.get("axes", None)
 
     def clear_vedo_plotter(plotter, num_renderers, skip_cl=skip_clear):
         """enough said."""
         # for whatever reason it is desired
         if skip_cl:
+            return None
+
+        # tmp workaround for linux
+        vedo_renderers = getattr(plotter, "renderers", None)
+        if vedo_renderers is not None and len(vedo_renderers) < num_renderers:
             return None
 
         for i in range(num_renderers):
@@ -91,16 +110,33 @@ def show(
 
     # get plotter
     if plt is None:
-        plt = vedo.Plotter(
-            N=N,
-            sharecam=False,
-            offscreen=offs,
-            size=size,
-            title=title,
-            bg=background,
-        )
+        if is_ipython and vedo.settings.default_backend == "k3d":
+            vedo.settings.backend_autoclose = False
+            plt = K3DPlotterN(N, size, background)
+        else:
+            if is_ipython:
+                utils.log.warning(
+                    "Gustaf plotting in notebooks is only supported with k3d"
+                    "backend. To use this backend, set "
+                    "vedo.settings.default_backend = 'k3d' in your notebook."
+                    " Using the default backend might give unexpected results "
+                    "and errors."
+                )
+            plt = vedo.Plotter(
+                N=N,
+                sharecam=False,
+                offscreen=offs,
+                size=size,
+                title=title,
+                bg=background,
+            )
 
     else:
+        if is_ipython:
+            utils.log.warning(
+                "Please do not provide a plotter in IPython applications."
+                "This will produce an error shortly."
+            )
         # check if plt has enough Ns
         trueN = np.prod(plt.shape)
         clear_vedo_plotter(plt, trueN)  # always clear.
@@ -168,7 +204,8 @@ def show(
                 at=i,
                 interactive=interact,
                 camera=cam_tuple_to_list(cam),
-                # offscreen=offs,
+                axes=axes,
+                offscreen=offs,
             )
 
         else:
@@ -177,8 +214,13 @@ def show(
                 at=i,
                 interactive=False,
                 camera=cam_tuple_to_list(cam),
-                # offscreen=offs,
+                axes=axes,
+                offscreen=offs,
             )
+
+    if is_ipython:
+        plt.display(close=close)
+        return None
 
     if interact and not offs:
         # only way to ensure memory is released
@@ -188,7 +230,6 @@ def show(
             # It seems to leak some memory, but here it goes.
             plt.close()  # if i close it, this cannot be reused...
             plt = None
-
     if return_show_list:
         return (plt, list_of_showables)
     else:

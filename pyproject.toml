@@ -36,17 +36,31 @@ content-type = "text/markdown"
 
 [project.optional-dependencies]
 all = [
-    "vedo>=2023.4.3,<2023.5.0",
+    "vedo>=2023.5.0",
     "scipy",
     "meshio",
     "napf>=0.0.5",
     "funi>=0.0.1",
-    "requests"
+    "requests",
+    "ipywidgets",
+    "k3d",
 ]
 test = [
     "pytest",
     "funi>=0.0.1",
     "napf>=0.0.5",
+]
+dev = [
+    "pytest",
+    "funi",
+    "napf",
+    "vedo>=2023.5.0",
+    "scipy",
+    "meshio",
+    "requests",
+    "pre-commit",
+    "ipywidgets",
+    "k3d",
 ]
 
 [tool.setuptools]

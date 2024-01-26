@@ -18,7 +18,12 @@ class EdgesShowOption(helpers.options.ShowOption):
 
     _valid_options = helpers.options.make_valid_options(
         *helpers.options.vedo_common_options,
-        Option("vedo", "lw", "Width of edges (lines) in pixel units.", (int,)),
+        Option(
+            "vedo",
+            "lw",
+            "Width of edges (lines) in pixel units.",
+            (float, int),
+        ),
         Option("vedo", "as_arrows", "Show edges as arrows.", (bool,)),
         Option(
             "vedo",
