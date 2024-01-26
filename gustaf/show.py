@@ -113,11 +113,11 @@ def show(
 
     # get plotter
     if plt is None:
-        if is_ipython() and vedo.settings.default_backend == "k3d":
+        if is_ipython and vedo.settings.default_backend == "k3d":
             vedo.settings.backend_autoclose = False
             plt = K3DPlotterN(N, size, background)
         else:
-            if is_ipython():
+            if is_ipython:
                 utils.log.warning(
                     "Gustaf plotting in notebooks is only supported with k3d"
                     "backend. To use this backend, set "
@@ -135,7 +135,7 @@ def show(
             )
 
     else:
-        if is_ipython():
+        if is_ipython:
             utils.log.warning(
                 "Please do not provide a plotter in IPython applications."
                 "This will produce an error shortly."
@@ -221,7 +221,7 @@ def show(
                 # offscreen=offs,
             )
 
-    if is_ipython():
+    if is_ipython:
         plt.display()
         return
     if interact and not offs:
