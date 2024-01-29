@@ -239,6 +239,19 @@ class DataHolder(HelperBase):
         else:
             raise KeyError(f"`{key}` is not stored for {type(self._helpee)}")
 
+    def __contains__(self, key):
+        """Returns if saved data contains the given key.
+
+        Parameters
+        ----------
+        key: str
+
+        Returns
+        -------
+        value
+        """
+        return key in self._saved
+
     def pop(self, key, default=None):
         """
         Applied pop() to saved data
