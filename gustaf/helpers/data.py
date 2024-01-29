@@ -9,7 +9,7 @@ from functools import wraps
 
 import numpy as np
 
-from gustaf._base import GustafBase
+from gustaf.helpers._base import HelperBase
 
 
 class TrackedArray(np.ndarray):
@@ -195,11 +195,8 @@ def make_tracked_array(array, dtype=None, copy=True):
     return tracked
 
 
-class DataHolder(GustafBase):
-    __slots__ = (
-        "_helpee",
-        "_saved",
-    )
+class DataHolder(HelperBase):
+    __slots__ = ("_saved",)
 
     def __init__(self, helpee):
         """Base class for any data holder. Behaves similar to dict.

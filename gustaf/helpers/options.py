@@ -4,6 +4,7 @@ Classes to help organize options.
 """
 from copy import deepcopy
 
+from gustaf.helpers._base import HelperBase
 from gustaf.helpers.raise_if import ModuleImportRaiser
 
 
@@ -224,7 +225,7 @@ def make_valid_options(*options):
     return valid_options
 
 
-class ShowOption:
+class ShowOption(HelperBase):
     """
     Behaves similar to dict, but will only accept a set of options that's
     applicable to the helpee class. Intended use is to create a
@@ -234,7 +235,7 @@ class ShowOption:
     specific common routines. ShowOption and ShowManager in a sense.
     """
 
-    __slots__ = ("_helpee", "_options")
+    __slots__ = ("_options",)
 
     _valid_options = {}
 
