@@ -2,6 +2,7 @@
 
 Edges. Also known as lines.
 """
+
 from copy import deepcopy
 
 import numpy as np

@@ -2,6 +2,7 @@
 
 Classes to help organize options.
 """
+
 from copy import deepcopy
 
 from gustaf.helpers._base import HelperBase

@@ -3,6 +3,7 @@
 This example shows how a gmsh file can be imported into gustaf with the meshio
 io module.
 """
+
 import pathlib
 
 import load_sample_file

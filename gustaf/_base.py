@@ -2,6 +2,7 @@
 
 Useful base class for gustaf. Plus some useful decorators.
 """
+
 from gustaf.utils import log
 
 

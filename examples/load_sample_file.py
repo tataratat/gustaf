@@ -1,4 +1,5 @@
 """Helper file for examples. Loads sample files from the tataratat/samples."""
+
 import pathlib
 
 import requests
