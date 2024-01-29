@@ -331,10 +331,6 @@ class ShowOption(HelperBase):
         else:
             raise TypeError(f"Invalid key type for {type(self)}")
 
-    def __call__(self, **kwargs):
-        """Alias to `update()`"""
-        self.update(**kwargs)
-
     def __contains__(self, key):
         """Returns if current option contains given key.
 
