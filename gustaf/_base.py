@@ -10,7 +10,7 @@ class GustafBase:
     methods are defined as classmethods..
     """
 
-    __slots__ = ()
+    __slots__ = ("__weakref__",)
 
     def __init_subclass__(cls, *args, **kwargs):
         """
