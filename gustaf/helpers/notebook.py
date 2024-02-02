@@ -6,6 +6,7 @@ There are no import guards since they are in the place where this module is
 imported. This should be enough since I do not think that this module
 will/should be used outside this place.
 """
+
 import importlib
 
 import numpy as np

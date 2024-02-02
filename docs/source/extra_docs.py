@@ -5,6 +5,7 @@ Feel free to extend!
 Contents:
 1. Create markdown table of show options.
 """
+
 import os
 
 import gustaf as gus

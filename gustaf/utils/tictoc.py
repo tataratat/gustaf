@@ -2,6 +2,7 @@
 
 Timer that tics, tocs and logs.
 """
+
 from time import perf_counter as now
 
 from gustaf._base import GustafBase

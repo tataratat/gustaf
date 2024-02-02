@@ -29,6 +29,7 @@ is created.
 mesh_faces_triangle_bs: Similar to mesh_faces_triangle, but with
 diagonalization in the other direction.
 """
+
 import gustaf as gus
 
 

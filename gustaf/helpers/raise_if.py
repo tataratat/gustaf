@@ -3,6 +3,7 @@
 Collection of wrapper functions/classes that raises Error with certain
 behavior
 """
+
 from typing import Any, Optional
 
 
