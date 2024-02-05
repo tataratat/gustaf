@@ -213,7 +213,7 @@ if __name__ == "__main__":
     ]
 
     f.vertex_data["arange"] = np.arange(len(f.vertices))
-    f.show_options["data_name"] = "arange"
+    f.show_options["data"] = "arange"
     f_2d = f.copy()
     f.show_options["scalarbar3d"] = {
         "title": "scalarbar title",

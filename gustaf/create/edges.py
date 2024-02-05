@@ -26,7 +26,7 @@ def from_data(gus_obj, data, scale=None, data_norm=None):
     gus_obj: Vertices
       gus.Vertices or its derived classes
     data: str or (n_vertices, d) array-like
-     If str, will be considered as data_name and search for saved vertex_data.
+     If str, will be considered as data and search for saved vertex_data.
     scale: float
       Absolute value.
     data_norm: float or array-like

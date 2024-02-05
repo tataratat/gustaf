@@ -107,7 +107,7 @@ vedo_common_options = (
     Option("vedo", "alpha", "Transparency in range [0, 1].", (float, int)),
     Option(
         "vedo",
-        "data_name",
+        "data",
         "Name of vertex_data to show. "
         "Object must have vertex_data with the same name.",
         (str,),

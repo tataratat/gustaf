@@ -115,7 +115,7 @@ and length.
 ```python
 # let's visualize some scalar data and vector data defined on vertices
 tet.vertex_data["arange"] = np.arange(len(tet.vertices))  # scalar
-tet.show_options["data_name"] = "arange"
+tet.show_options["data"] = "arange"
 tet.vertex_data["random"] = np.random.random((len(tet.vertices), 3))  # vector
 tet.show_options["arrow_data"] = "random"
 tet.show()

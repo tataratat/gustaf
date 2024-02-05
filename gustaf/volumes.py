@@ -37,7 +37,7 @@ class VolumesShowOption(helpers.options.ShowOption):
         # without a data to plot on the surface, return vedo.UGrid
         # if vertex_ids is on, we will go with mesh
         if (
-            self.get("data_name", None) is None
+            self.get("data", None) is None
             and not self.get("vertex_ids", False)
             and not self.get("arrow_data", False)
             and not show.is_ipython
