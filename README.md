@@ -25,7 +25,7 @@ pip install git+https://github.com/tataratat/gustaf.git@main
 ```
 
 # Quick Start
-This example shows how to visualize and extract properties of tetrahedrons and NURBS using gustaf.
+This example shows how to create volume elements and plot data on them.
 For visualization, gustaf uses [vedo](https://vedo.embl.es) as main backend.
 
 To begin we need to import the needed libraries:
@@ -37,7 +37,7 @@ import numpy as np
 ## Create a tetrahedron
 Now we create our first volume. It will be just a basic cube. Even here we can
 already choose between using a tetrahedron and a hexahedron-based
-mesh. The `Volume` class will use tetrahedrons if the volumes keyword is made
+mesh. The `Volumes` class will use tetrahedrons if the volumes keyword is made
 up of a list of 4 elements (defining the corners of the tetrahedron), if 8
 elements are in each list hexahedrons are used ([defining the corners of the hexahedron in the correct order](https://tataratat.github.io/gustaf/_generated/gustaf.utils.connec.make_hexa_volumes.html#gustaf.utils.connec.make_hexa_volumes)).
 ```python
@@ -68,7 +68,7 @@ tet = gus.Volumes(
 tet.show_options["lc"] = "black"
 tet.show_options["lw"] = 4
 
-tet.show()
+tet.show(background="grey")
 ```
 ![Tetrahedron based volume](docs/source/_static/tet.png)
 ```python
@@ -91,7 +91,7 @@ hexa = gus.Volumes(
 hexa.show_options["lc"] = "black"
 hexa.show_options["lw"] = 4
 
-hexa.show()
+hexa.show(background="grey")
 ```
 ![Hexahedron based volume](docs/source/_static/quad.png)
 ## Basic visualization
@@ -115,10 +115,10 @@ and length.
 ```python
 # let's visualize some scalar data and vector data defined on vertices
 tet.vertex_data["arange"] = np.arange(len(tet.vertices))  # scalar
-tet.show_options["data_name"] = "arange"
+tet.show_options["data"] = "arange"
 tet.vertex_data["random"] = np.random.random((len(tet.vertices), 3))  # vector
 tet.show_options["arrow_data"] = "random"
-tet.show()
+tet.show(background="grey")
 ```
 ![Add additional data to the object](docs/source/_static/tet_vertex_data.png)
 

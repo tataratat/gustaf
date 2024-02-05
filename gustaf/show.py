@@ -317,16 +317,16 @@ def make_showable(obj, as_dict=False, **kwargs):
             return_as_dict["element_ids"] = element_ids
 
     # data plotting
-    data_name = obj.show_options.get("data_name", None)
-    vertex_data = obj.vertex_data.as_scalar(data_name, None)
-    if data_name is not None and vertex_data is not None:
+    data = obj.show_options.get("data", None)
+    vertex_data = obj.vertex_data.as_scalar(data, None)
+    if data is not None and vertex_data is not None:
         # transfer data
         if obj.kind.startswith("edge"):
-            vedo_obj.pointdata[data_name] = vertex_data[obj.edges].reshape(
+            vedo_obj.pointdata[data] = vertex_data[obj.edges].reshape(
                 -1, vertex_data.shape[1]
             )
         else:
-            vedo_obj.pointdata[data_name] = vertex_data
+            vedo_obj.pointdata[data] = vertex_data
 
         # form cmap kwargs for init
         cmap_keys = ("vmin", "vmax")
@@ -334,8 +334,8 @@ def make_showable(obj, as_dict=False, **kwargs):
         # set a default cmap if needed
         cmap_kwargs["input_cmap"] = obj.show_options.get("cmap", "plasma")
         cmap_kwargs["alpha"] = obj.show_options.get("cmap_alpha", 1)
-        # add data_name
-        cmap_kwargs["input_array"] = data_name
+        # add data
+        cmap_kwargs["input_array"] = data
 
         # set cmap
         # pass input_cmap as positional arg to support 2023.4.3.
@@ -353,16 +353,14 @@ def make_showable(obj, as_dict=False, **kwargs):
             sb3d_kwargs = {} if isinstance(sb3d_kwargs, bool) else sb3d_kwargs
             vedo_obj.add_scalarbar3d(**sb3d_kwargs)
 
-    elif data_name is not None and vertex_data is None:
-        utils.log.debug(
-            f"No vertex_data named '{data_name}' for {obj}. Skipping"
-        )
+    elif data is not None and vertex_data is None:
+        utils.log.debug(f"No vertex_data named '{data}' for {obj}. Skipping")
 
     # arrow plots - this is independent from data plotting.
-    arrow_data_name = obj.show_options.get("arrow_data", None)
+    arrow_data = obj.show_options.get("arrow_data", None)
     # will raise if data is scalar
-    arrow_data_value = obj.vertex_data.as_arrow(arrow_data_name, None, True)
-    if arrow_data_name is not None and arrow_data_value is not None:
+    arrow_data_value = obj.vertex_data.as_arrow(arrow_data, None, True)
+    if arrow_data is not None and arrow_data_value is not None:
         from gustaf.create.edges import from_data
 
         # we are here because this data is not a scalar
@@ -377,7 +375,7 @@ def make_showable(obj, as_dict=False, **kwargs):
             obj,
             arrow_data_value,
             obj.show_options.get("arrow_data_scale", None),
-            data_norm=obj.vertex_data.as_scalar(arrow_data_name),
+            data_norm=obj.vertex_data.as_scalar(arrow_data),
         )
         arrows = vedo.Arrows(
             as_edges.vertices[as_edges.edges],

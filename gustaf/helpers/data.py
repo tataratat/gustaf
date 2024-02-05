@@ -537,6 +537,14 @@ class VertexData(DataHolder):
             len(self._helpee.vertices), -1
         )
 
+        # if "data" or "arrow_data" is empty in show_options, we want to
+        # set this data to show. We will always set this as "data".
+        show_options = getattr(self._helpee, "show_options", None)
+        if show_options is not None:
+            if "data" in show_options or "arrow_data" in show_options:
+                return None
+            show_options["data"] = key
+
     def __getitem__(self, key):
         """
         Validates data length before returning item.
