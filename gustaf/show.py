@@ -354,9 +354,7 @@ def make_showable(obj, as_dict=False, **kwargs):
             vedo_obj.add_scalarbar3d(**sb3d_kwargs)
 
     elif data is not None and vertex_data is None:
-        utils.log.debug(
-            f"No vertex_data named '{data}' for {obj}. Skipping"
-        )
+        utils.log.debug(f"No vertex_data named '{data}' for {obj}. Skipping")
 
     # arrow plots - this is independent from data plotting.
     arrow_data = obj.show_options.get("arrow_data", None)
