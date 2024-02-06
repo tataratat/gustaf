@@ -12,7 +12,7 @@ try:
 
     vedoPicture = vedo.Picture
     # there are other ways to get here, but this is exact path for our use
-    vtkTexture = vedo.mesh.vtk.vtkTexture
+    vtkTexture = vedo.vtkclasses.vtkTexture
 except ImportError as err:
     vedoPicture = helpers.raise_if.ModuleImportRaiser("vedo", err)
     vtkTexture = helpers.raise_if.ModuleImportRaiser("vedo", err)
