@@ -219,26 +219,26 @@ def range_to_edges(range_, closed=False, continuous=True):
     edges: (n, 2) np.ndarray
     """
     if isinstance(range_, int):
-        indices = np.arange(range_)
+        indices = np.arange(range_, dtype=settings.INT_DTYPE)
     elif isinstance(range_, (list, tuple)):
-        if len(range_) > 2:
-            raise ValueError("Input range is too long")
-
-        # keep the arange syntax. If this isn't wanted,
-        # change to (ran[0], ran[1]+1)
-        indices = np.arange(*range_)
+        # pass range_ as is and check for valid output
+        indices = np.arange(*range_, dtype=settings.INT_DTYPE)
+        if len(indices) < 2:
+            raise ValueError(
+                f"{range_} is invalid range input. "
+                "It must result in minimum of size=2 array."
+            )
 
     # closed is ignored
     if not continuous:
         if indices.size % 2 == 1:
-            raise ValueError("Ranges should result in even number of indices.")
+            raise ValueError(
+                "Ranges should result in even number of indices for "
+                "continuous edges."
+            )
         return indices.reshape(-1, 2)
 
-    # continuous edges
-    indices = np.repeat(indices, 2)
-    indices = np.append(indices, indices[0])[1:] if closed else indices[1:-1]
-
-    return indices.reshape(-1, 2)
+    return sequence_to_edges(indices, closed)
 
 
 def sequence_to_edges(seq, closed=False):
@@ -253,12 +253,20 @@ def sequence_to_edges(seq, closed=False):
     --------
     edges: (m, 2) np.ndarray
     """
-    edges = np.repeat(seq, 2)[1:-1]
-    edges = edges.reshape(-1, 2)
-    if closed:
-        edges = np.vstack((edges, [edges[-1, -1], edges[0, 0]]))
+    edges = np.repeat(seq, 2)
 
-    return edges
+    if closed:
+        first = int(edges[0])  # this is redundant copy to ensure detaching
+        # equivalent to np.roll(edges, -1) without copy
+        # safe since numpy is single thread
+        edges[:-1] = edges[1:]
+        edges[-1] = first
+    else:
+        # reselect only part of the array instead of copy
+        # this should only update array interface protocol
+        edges = edges[1:-1]
+
+    return edges.reshape(-1, 2)
 
 
 def make_quad_faces(resolutions):
