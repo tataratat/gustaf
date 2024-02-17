@@ -203,3 +203,104 @@ def to_quad(tri):
     faces[:, 3] = edge_mid_column.reshape(-1, 3)[:, [2, 0, 1]].ravel()
 
     return Faces(vertices=vertices, faces=faces)
+
+
+def expand(edges, scaled_normals):
+    """
+    Expands edges to hexa with given scaled_normals.
+
+    Parameters
+    ----------
+    edges: Edges
+      (n, d) vertices, (m, 2) edges
+    scaled_normals: (n, d) np.ndarray
+      Values will be used to subtract/add to existing vertices.
+
+    Returns
+    -------
+    expanded: Faces
+    """
+    if edges.whatami != "edges":
+        raise TypeError("expand currently only supports Edges.")
+
+    size = scaled_normals.shape[0]
+    dim = scaled_normals.shape[1]
+    if len(edges.vertices) != size:
+        raise ValueError("Edges.vertices and scaled_normals size mismatch.")
+
+    if dim != edges.vertices.shape[1]:
+        raise ValueError(
+            "Dimension mismatch between Edges.Vertices and scaled_normals"
+        )
+
+    vertices = np.empty((size * 2, dim), dtype=settings.FLOAT_DTYPE)
+    vertices[:size] = edges.vertices - scaled_normals
+    vertices[size:] = edges.vertices + scaled_normals
+
+    quad = np.empty((len(edges.edges), 4), dtype=settings.INT_DTYPE)
+    quad[:, :2] = edges.edges
+    quad[:, 2] = edges.edges[:, 1] + size
+    quad[:, 3] = edges.edges[:, 0] + size
+
+    return Faces(vertices, quad)
+
+
+def _two_ortho(trajectory):
+    aux = np.empty_like(trajectory)
+    aux[:, 0] = trajectory[:, -2]
+    aux[:, [1, 2]] = trajectory[:, [0, 1]]
+
+    # cross and normalize
+    o1 = utils.arr.cross3d(trajectory, aux)
+    norm_inv = np.linalg.norm(o1, axis=1)
+    np.reciprocal(norm_inv, out=norm_inv)
+    np.multiply(o1, norm_inv.reshape(-1, 1), out=o1)
+
+    # cross and normalize
+    o2 = np.cross(trajectory, o1)
+    norm_inv = np.linalg.norm(o2, axis=1)
+    np.reciprocal(norm_inv, out=norm_inv)
+    np.multiply(o2, norm_inv.reshape(-1, 1), out=o2)
+
+    return o1, o2
+
+
+def _circle_sample(centers, r, o1, o2, resolution):
+    """given two orthogonal vectors, this samples a circle on that plane"""
+    o_shape = o1.shape
+
+    cir = np.empty((resolution * o_shape[0], o_shape[1]))
+
+    q = np.linspace(0, 2 * np.pi, resolution + 1)[:-1]
+
+    cos = np.cos(q)
+    sin = np.sin(q)
+
+    for i, (c, s) in enumerate(zip(cos, sin)):
+        cir[i::resolution] = centers + (r * c * o1) + (r * s * o2)
+
+    return cir
+
+
+def cylinder_expand(edges, r, trajectory, resolution=10):
+    vertices = _circle_sample(
+        edges.vertices, r, *_two_ortho(trajectory), resolution
+    )
+
+    e = edges.edges * resolution
+    flip_e = e[:, [1, 0]]
+
+    quads = np.empty(
+        (len(edges.edges) * resolution, 4), dtype=settings.INT_DTYPE
+    )
+    quads[::resolution, [0, 1]] = e
+    quads[::resolution, [2, 3]] = flip_e + 1
+    for i in range(1, resolution - 1):
+        # offset_i = offset * i
+        quads[i::resolution, [0, 1]] = e + i
+        quads[i::resolution, [2, 3]] = flip_e + (i + 1)
+
+    quads[(resolution - 1) :: resolution, [0, 1]] = e + (resolution - 1)
+    quads[(resolution - 1) :: resolution, [2, 3]] = flip_e
+
+    return Faces(vertices, quads)
