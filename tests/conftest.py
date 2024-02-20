@@ -10,6 +10,11 @@ import gustaf as gus
 
 
 @pytest.fixture
+def np_rng():
+    return np.random.default_rng()
+
+
+@pytest.fixture
 def vertices_3d():
     V = np.array(
         [

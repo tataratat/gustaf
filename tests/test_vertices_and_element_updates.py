@@ -67,13 +67,13 @@ update_elements_params = (
 
 
 @pytest.mark.parametrize("grid", all_grids)
-def test_unique_vertices(grid, request):
+def test_unique_vertices(grid, np_rng, request):
     """Test unique_vertices. requires scipy."""
     grid = request.getfixturevalue(grid)
 
     # random vertices
     n_ran = 50
-    random_vertices = np.random.random((n_ran, grid.vertices.shape[1]))
+    random_vertices = np_rng.random((n_ran, grid.vertices.shape[1]))
     # copy original
     n_original_vertices = len(grid.vertices)
     original_vertices = grid.vertices.copy()
@@ -110,7 +110,7 @@ def test_unique_vertices(grid, request):
 
 
 @pytest.mark.parametrize("grid", all_grids)
-def test_bounds(grid, request):
+def test_bounds(grid, np_rng, request):
     """bounds should give you AABB"""
     grid = request.getfixturevalue(grid)
 
@@ -123,7 +123,7 @@ def test_bounds(grid, request):
     # add some random values of [0, 1)
     n_original_vs = len(grid.vertices)
     n_ran = 50
-    random_vertices = np.random.random((n_ran, grid.vertices.shape[1]))
+    random_vertices = np_rng.random((n_ran, grid.vertices.shape[1]))
     grid.vertices = np.vstack((grid.vertices, random_vertices))
 
     # bound shouldn't change
@@ -137,7 +137,7 @@ def test_bounds(grid, request):
 
 
 @pytest.mark.parametrize("grid", all_grids)
-def test_update_vertices(grid, request):
+def test_update_vertices(grid, np_rng, request):
     """update vertices should keep only masked values"""
     grid = request.getfixturevalue(grid)
 
@@ -147,7 +147,7 @@ def test_update_vertices(grid, request):
     # int based mask - let's keep 3 vertices
     n_original_vs = len(grid.vertices)
     n_vertices_to_keep = 3
-    int_mask = np.random.default_rng().choice(
+    int_mask = np_rng.choice(
         np.arange(n_original_vs),
         n_vertices_to_keep,
         replace=False,
@@ -192,13 +192,13 @@ def test_update_vertices(grid, request):
 
 
 @pytest.mark.parametrize("grid", update_elements_params)
-def test_update_elements(grid, request):
+def test_update_elements(grid, np_rng, request):
     """keep masked elements"""
     grid = request.getfixturevalue(grid)
 
     n_original_es = len(grid.elements)
     n_elements_to_keep = 3
-    int_mask = np.random.default_rng().choice(
+    int_mask = np_rng.choice(
         np.arange(n_original_es),
         n_elements_to_keep,
         replace=False,
