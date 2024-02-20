@@ -285,7 +285,7 @@ class Vertices(GustafBase):
         bounds: (d,) np.ndarray
         """
         self._logd("computing bounds")
-        return utils.arr.bounds(self.const_vertices)
+        return utils.arr.bounds(self.vertices)
 
     @helpers.data.ComputedMeshData.depends_on(["vertices"])
     def bounds_diagonal(self):
@@ -487,7 +487,14 @@ class Vertices(GustafBase):
         self_copy: type(self)
         """
         # all attributes are deepcopy-able
-        return copy.deepcopy(self)
+        copied = copy.deepcopy(self)
+
+        # update helpee. otherwise keeps reference to self
+        copied._show_options._helpee = copied
+        copied._vertex_data._helpee = copied
+        copied._computed._helpee = copied
+
+        return copied
 
     @classmethod
     def concat(cls, *instances):
