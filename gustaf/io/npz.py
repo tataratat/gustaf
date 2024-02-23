@@ -12,7 +12,7 @@ def load(fname, **kwargs):
 
     .. code-block:: python
 
-        tet = gustaf.io.npz.load('export/tet.npz')
+        tet = gustaf.io.npz.load("export/tet.npz")
         tet.show()
 
     Returns
@@ -38,7 +38,7 @@ def load(fname, **kwargs):
     if whatami == "vertices":
         gus_object = Vertices(vertices=loaded["vertices"])
     # Meshes
-    elif whatami in gus_object_types.keys():
+    elif whatami in gus_object_types:
         gus_object = gus_object_types[whatami](
             vertices=loaded["vertices"], elements=loaded["elements"]
         )
@@ -96,13 +96,15 @@ def export(gus_object, fname):
         )
 
         # Create hexa elements and set vertex data
-        hexa.vertex_data['arange'] = np.arange(len(vertices))
-        hexa.vertex_data['quad_x'] = [v[0]**2 for v in vertices]
-        hexa.BC = {'min_z' : np.array([0, 1, 2, 3]),
-        'max_z' : np.array([4, 5, 6, 7])}
+        hexa.vertex_data["arange"] = np.arange(len(vertices))
+        hexa.vertex_data["quad_x"] = [v[0] ** 2 for v in vertices]
+        hexa.BC = {
+            "min_z": np.array([0, 1, 2, 3]),
+            "max_z": np.array([4, 5, 6, 7]),
+        }
 
         # Export hexa
-        gustaf.io.npz.export(hexa, 'export/hexa.npz')
+        gustaf.io.npz.export(hexa, "export/hexa.npz")
 
     Parameters
     -----------
