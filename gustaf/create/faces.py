@@ -246,8 +246,12 @@ def expand(edges, scaled_normals):
 
 
 def _two_ortho(trajectory):
+    """
+    Finds two orthogonal vectors to trajectory.
+    This won't work if the vector is multiples of [-1, 1, -1].
+    """
     aux = np.empty_like(trajectory)
-    aux[:, 0] = trajectory[:, -2]
+    aux[:, 0] = -trajectory[:, 2]
     aux[:, [1, 2]] = trajectory[:, [0, 1]]
 
     # cross and normalize
@@ -257,7 +261,7 @@ def _two_ortho(trajectory):
     np.multiply(o1, norm_inv.reshape(-1, 1), out=o1)
 
     # cross and normalize
-    o2 = np.cross(trajectory, o1)
+    o2 = utils.arr.cross3d(trajectory, o1)
     norm_inv = np.linalg.norm(o2, axis=1)
     np.reciprocal(norm_inv, out=norm_inv)
     np.multiply(o2, norm_inv.reshape(-1, 1), out=o2)
@@ -304,3 +308,85 @@ def cylinder_expand(edges, r, trajectory, resolution=10):
     quads[(resolution - 1) :: resolution, [2, 3]] = flip_e
 
     return Faces(vertices, quads)
+
+
+def vertex_normals(faces, area_weighting, angle_weighting):
+    """
+    Computes vertex normals and saves it in vertex_data.
+    This calls inplace remove_unreferenced_vertices
+
+    Parameters
+    ----------
+    faces: Faces
+
+    Returns
+    -------
+    faces: Faces
+      faces with vertex_data["normals"] computed.
+    """
+    if not faces.whatami.startswith("tri"):
+        raise ValueError("Vertex normals only supports triangle faces")
+
+    if faces.vertices.shape[1] != 3:
+        raise ValueError("Vertex normals only support 3d triangles")
+
+    faces.remove_unreferenced_vertices()
+
+    triangles = faces.vertices[faces.faces]
+
+    # compute (1 - 0) and (2 - 0)
+    edge_ab = triangles[:, 1] - triangles[:, 0]
+    edge_bc = triangles[:, 2] - triangles[:, 1]
+
+    # get normal of each faces and normalize
+    crossed = utils.arr.cross3d(edge_ab, edge_bc)
+    crossed_length = np.linalg.norm(crossed, axis=1).reshape(-1, 1)
+
+    weights = np.ones_like(crossed, dtype=settings.FLOAT_DTYPE)
+
+    # get area based weights
+    if area_weighting:
+        weights *= crossed_length
+    #     crossed /= crossed_length
+    # else:
+    crossed /= crossed_length
+
+    # get triangle corner angles (same as faces.faces)
+    if angle_weighting:
+        angles = np.empty_like(crossed, dtype=settings.FLOAT_DTYPE)
+        norm_ab = np.linalg.norm(edge_ab, axis=1)
+        norm_bc = np.linalg.norm(edge_bc, axis=1)
+        edge_ca = edge_ab + edge_bc
+        norm_ca = np.linalg.norm(edge_ca, axis=1)
+        np.arcsin(
+            crossed_length.ravel() / (norm_ab * norm_bc).ravel(),
+            out=angles[:, 0],
+        )
+        np.arccos(
+            np.einsum("ij,ij->i", edge_bc, edge_ca) / (norm_bc * norm_ca),
+            out=angles[:, 1],
+        )
+        angles[:, 2] = np.pi - angles[:, 0] - angles[:, 1]
+
+        weights *= angles
+
+    # initialize
+    normals = np.zeros_like(faces.vertices, dtype=settings.FLOAT_DTYPE)
+
+    # sum normals and weights
+    np.add.at(
+        normals, faces.faces[:, 0], crossed * weights[:, 0].reshape(-1, 1)
+    )
+    np.add.at(
+        normals, faces.faces[:, 1], crossed * weights[:, 1].reshape(-1, 1)
+    )
+    np.add.at(
+        normals, faces.faces[:, 2], crossed * weights[:, 2].reshape(-1, 1)
+    )
+
+    # normalize
+    normals /= np.linalg.norm(normals, axis=1).reshape(-1, 1)
+
+    faces.vertex_data["normals"] = normals
+
+    return faces
