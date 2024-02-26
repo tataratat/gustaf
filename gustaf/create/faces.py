@@ -310,14 +310,33 @@ def cylinder_expand(edges, r, trajectory, resolution=10):
     return Faces(vertices, quads)
 
 
-def vertex_normals(faces, area_weighting, angle_weighting):
+def vertex_normals(
+    faces,
+    area_weighting=False,
+    angle_weighting=False,
+    return_original_ids=False,
+):
     """
     Computes vertex normals and saves it in vertex_data.
-    This calls inplace remove_unreferenced_vertices
+    This calls inplace remove_unreferenced_vertices, but original IDs can be
+    retrieved using the flag `return_original_ids`.
+
+    The normals are computed on the face-centers and their contributions are
+    weighted and added to the vertex normals. Per default, all element faces
+    that are adjacent to a vertex are added with equal contributions, but it is
+    also possible to use weightings by area of the adjacent element
+    (`area_weighting`) or by the angle between edges at the corner vertex.
 
     Parameters
     ----------
     faces: Faces
+    area_weighting : bool (false)
+      Use the element area as a weighting to its respective normal contribution
+    angle_weighting : bool (false)
+      Use the angle of between element edges as a weighting to its respective
+      normal contribution
+    return_original_ids : bool (false)
+      return the original ids in the global mesh
 
     Returns
     -------
@@ -329,6 +348,9 @@ def vertex_normals(faces, area_weighting, angle_weighting):
 
     if faces.vertices.shape[1] != 3:
         raise ValueError("Vertex normals only support 3d triangles")
+
+    if return_original_ids:
+        original_ids = np.where(faces.referenced_vertices())[0]
 
     faces.remove_unreferenced_vertices()
 
@@ -388,5 +410,7 @@ def vertex_normals(faces, area_weighting, angle_weighting):
     normals /= np.linalg.norm(normals, axis=1).reshape(-1, 1)
 
     faces.vertex_data["normals"] = normals
-
-    return faces
+    if return_original_ids:
+        return (faces, original_ids)
+    else:
+        return faces
