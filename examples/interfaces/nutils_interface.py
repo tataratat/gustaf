@@ -80,7 +80,7 @@ def example():
     deformation = lhs.reshape(m.vertices.shape)
     m.vertices += deformation
 
-    gus.show.show_vedo(
+    gus.show.show(
         [m_in, "gustaf_input-mesh"],
         [m, "gustaf_mesh-with-lhs"],
         [gustaf_mesh, "gustaf_mesh-bezier"],
