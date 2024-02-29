@@ -33,7 +33,7 @@ diagonalization in the other direction.
 import gustaf as gus
 
 
-def main():
+def example():
     mesh_faces_box = gus.create.faces.box(
         bounds=[[0, 0], [2, 2]], resolutions=[2, 3]
     )
@@ -65,4 +65,4 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    example()

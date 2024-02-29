@@ -3,7 +3,7 @@ import numpy as np
 import gustaf as gus
 
 
-def main():
+def example():
     # Creates a gustaf volume.
     mesh = create_mesh()
 
@@ -63,4 +63,4 @@ def create_mesh():
 
 
 if __name__ == "__main__":
-    main()
+    example()

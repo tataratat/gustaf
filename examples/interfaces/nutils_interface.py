@@ -14,7 +14,7 @@ from nutils.expression_v2 import Namespace
 import gustaf as gus
 
 
-def main():
+def example():
     # Simulation parameters
     degree = 1
     btype = "std"
@@ -143,4 +143,4 @@ def define_mesh():
 
 
 if __name__ == "__main__":
-    main()
+    example()
