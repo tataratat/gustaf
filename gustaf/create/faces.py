@@ -205,7 +205,7 @@ def to_quad(tri):
     return Faces(vertices=vertices, faces=faces)
 
 
-def expand(edges, scaled_normals):
+def edges_as_quad(edges, scaled_normals):
     """
     Expands edges to hexa with given scaled_normals.
 
@@ -245,23 +245,30 @@ def expand(edges, scaled_normals):
     return Faces(vertices, quad)
 
 
-def _two_ortho(trajectory):
+def _two_ortho(derivative, second_derivative=None):
     """
-    Finds two orthogonal vectors to trajectory.
-    This won't work if the vector is multiples of [-1, 1, -1].
+    Finds two orthogonal vectors to derivative.
+    Without second derivatives,
+    it doesn't work if the vector is multiples of [-1, 1, -1].
     """
-    aux = np.empty_like(trajectory)
-    aux[:, 0] = -trajectory[:, 2]
-    aux[:, [1, 2]] = trajectory[:, [0, 1]]
+    if second_derivative is None:
+        aux = np.empty_like(derivative)
+        aux[:, 0] = -derivative[:, 2]
+        aux[:, [1, 2]] = derivative[:, [0, 1]]
+    else:
+        # normalized_second_der / its_norm
+        aux = second_derivative / np.linalg.norm(
+            second_derivative, axis=1
+        ).reshape(-1, 1)
 
     # cross and normalize
-    o1 = utils.arr.cross3d(trajectory, aux)
+    o1 = utils.arr.cross3d(derivative, aux)
     norm_inv = np.linalg.norm(o1, axis=1)
     np.reciprocal(norm_inv, out=norm_inv)
     np.multiply(o1, norm_inv.reshape(-1, 1), out=o1)
 
     # cross and normalize
-    o2 = utils.arr.cross3d(trajectory, o1)
+    o2 = utils.arr.cross3d(derivative, o1)
     norm_inv = np.linalg.norm(o2, axis=1)
     np.reciprocal(norm_inv, out=norm_inv)
     np.multiply(o2, norm_inv.reshape(-1, 1), out=o2)
@@ -286,9 +293,36 @@ def _circle_sample(centers, r, o1, o2, resolution):
     return cir
 
 
-def cylinder_expand(edges, r, trajectory, resolution=10):
+def edges_as_cylinder(
+    edges, r, derivative, second_derivative=None, resolution=10
+):
+    """
+    Turns edges into cylinder.
+    Edges should be in 3D and works best,
+    if second derivative of the vertices are given.
+
+    Parameters
+    ----------
+    edges: Edges
+      Edges with `n` vertices
+    r: float
+      Radius of the cylinder
+    derivative: (n, 3) np.ndarray
+    second_derivative: (n, 3) np.ndarray
+      (Optional)
+    resolution: int
+      resolution of cylinder
+
+    Returns
+    -------
+    as_cylinder: Faces
+      This has open caps.
+    """
     vertices = _circle_sample(
-        edges.vertices, r, *_two_ortho(trajectory), resolution
+        edges.vertices,
+        r,
+        *_two_ortho(derivative, second_derivative),
+        resolution,
     )
 
     e = edges.edges * resolution
