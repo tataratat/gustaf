@@ -558,7 +558,7 @@ def derivatives_to_normals(derivatives, normalize=True):
         normals = cross3d(der[::2], der[1::2])
 
     if normalize:
-        normals *= 1.0 / np.linalg.norm(normals, axis=1).reshape(-1, 1)
+        normals /= np.linalg.norm(normals, axis=1).reshape(-1, 1)
 
     return normals
 
