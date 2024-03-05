@@ -525,3 +525,83 @@ def is_one_of_shapes(arr, shapes, strict=False):
         return False
 
     return True
+
+
+def derivatives_to_normals(derivatives, normalize=True):
+    """
+    Parameters
+    ----------
+    derivatives: (n, (d - 1), d) np.ndarray
+      Surface jacobian transposed.
+    normalize: bool
+
+    Returns
+    -------
+    normals: (n, d) np.ndarray
+    """
+    if derivatives.ndim != 3:
+        raise ValueError("derivatives for normals expect 3D arrays")
+
+    shape = derivatives.shape
+    if shape[0] != shape[1] - 1:
+        raise ValueError("derivatives are expected to have (d-1, d) shape")
+
+    # 2D is simple index flip
+    if shape[2] == 2:
+        der = derivatives.reshape(-1, shape[2])
+        normals = np.empty_like(der)
+        normals[:, 0] = der[:, 1]
+        normals[:, 1] = -der[:, 0]
+
+    elif shape[2] == 3:
+        der = derivatives.reshape(shape[0] * shape[1], shape[2])
+        normals = cross3d(der[::2], der[1::2])
+
+    if normalize:
+        normals /= np.linalg.norm(normals, axis=1).reshape(-1, 1)
+
+    return normals
+
+
+def cross3d(a, b):
+    """
+    Cross product for two 3D arrays. Usually faster than np.cross
+    as it just targets 3d.
+
+    Parameters
+    ----------
+    a: (n, 3) np.ndarray
+    b: (n, 3) np.ndarray
+
+    Returns
+    -------
+    crossed: (n, 3) np.ndarray
+    """
+    # (1 5 - 2 4, 2 3 - 0 5, 0 4 - 1 3).
+    # or from two arrays
+    # (1 2 - 2 1, 2 0 - 0 2, 0 1 - 1 0).
+    o = np.empty_like(a)
+
+    # temporary aux arrays
+    size = len(a)
+    t0 = np.empty(size)
+    t1 = np.empty(size)
+
+    # short cuts
+    a0, a1, a2 = a[..., 0], a[..., 1], a[..., 2]
+    b0, b1, b2 = b[..., 0], b[..., 1], b[..., 2]
+    o0, o1, o2 = o[..., 0], o[..., 1], o[..., 2]
+
+    np.multiply(a1, b2, out=t0)
+    np.multiply(a2, b1, out=t1)
+    np.subtract(t0, t1, out=o0)
+
+    np.multiply(a2, b0, out=t0)
+    np.multiply(a0, b2, out=t1)
+    np.subtract(t0, t1, out=o1)
+
+    np.multiply(a0, b1, out=t0)
+    np.multiply(a1, b0, out=t1)
+    np.subtract(t0, t1, out=o2)
+
+    return o

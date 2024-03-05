@@ -8,6 +8,33 @@ from gustaf import utils
 from gustaf.edges import Edges
 
 
+def from_vertices(vertices, closed=False, continuous=True):
+    """
+    Creates Edges with given vertices. If close==True,
+    last vertices will be connected to the first one.
+    If continuous==False, it assumes that every two vertices form
+    an independent line.
+
+    Parameters
+    ----------
+    vertices: (n, d) np.ndarray or Vertices
+    close: bool
+    continuous: bool
+
+    Returns
+    -------
+    edges: Edges
+    """
+    if hasattr(vertices, "vertices"):  # noqa SIM108
+        v = vertices.vertices
+    else:
+        v = vertices
+
+    edges = Edges(v, utils.connec.range_to_edges(len(v), closed, continuous))
+
+    return edges
+
+
 def from_data(gus_obj, data, scale=None, data_norm=None):
     """
     Creates edges from gustaf object with vertices.
