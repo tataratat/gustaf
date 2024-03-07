@@ -14,7 +14,7 @@ jobs:
       - name: enable headless render
         run: |
             sudo apt-get update
-            sudo apt-get install -y libgl1-mesa-glx libgl1-mesa-dev xvfb --no_install_recommends
+            sudo apt-get install -y libgl1-mesa-glx libgl1-mesa-dev xvfb
             set -x
             export DISPLAY=:99.0
             Xvfb :99 -screen 0 1024x768x24 > /dev/null 2>&1 &
