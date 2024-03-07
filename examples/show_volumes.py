@@ -2,7 +2,8 @@ import numpy as np
 
 import gustaf as gus
 
-if __name__ == "__main__":
+
+def example():
     # define coordinates
     v = np.array(
         [
@@ -55,3 +56,7 @@ if __name__ == "__main__":
     # set vertex_data to plot
     hexa.show_options["data"] = "arange"
     hexa.show()
+
+
+if __name__ == "__main__":
+    example()

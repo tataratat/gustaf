@@ -4,7 +4,8 @@ import numpy as np
 
 import gustaf as gus
 
-if __name__ == "__main__":
+
+def example():
     export_path = Path("export")
 
     # define coordinates
@@ -55,3 +56,7 @@ if __name__ == "__main__":
     # Export only tetrahedra
     gus.io.meshio.export(tet, export_path / "export_meshio.vtu")
     gus.io.meshio.export(tet.to_faces(), export_path / "export_meshio.stl")
+
+
+if __name__ == "__main__":
+    example()

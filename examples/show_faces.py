@@ -2,7 +2,8 @@ import numpy as np
 
 import gustaf as gus
 
-if __name__ == "__main__":
+
+def example():
     # define coordinates
     v = np.array(
         [
@@ -60,3 +61,7 @@ if __name__ == "__main__":
     # show
     tri.show()
     quad.show()
+
+
+if __name__ == "__main__":
+    example()

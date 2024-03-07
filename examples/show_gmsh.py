@@ -11,7 +11,8 @@ import load_sample_file
 import gustaf
 from gustaf import io
 
-if __name__ == "__main__":
+
+def example():
     mesh_file_tri = pathlib.Path("faces/tri/2DChannelTria.msh")
     mesh_file_quad = pathlib.Path("faces/quad/2DChannelQuad.msh")
     mesh_file_tetra = pathlib.Path("volumes/tet/3DBrickTet.msh")
@@ -39,3 +40,7 @@ if __name__ == "__main__":
         *[[msh.__class__.__name__, msh] for msh in loaded_mesh_default],
         title="3D mesh with tetrahedrons",
     )
+
+
+if __name__ == "__main__":
+    example()
