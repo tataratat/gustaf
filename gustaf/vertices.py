@@ -3,35 +3,51 @@
 Vertices. Base of all "Mesh" geometries.
 """
 
+from __future__ import annotations
+
 import copy
+from typing import TYPE_CHECKING
 
-import numpy as np
+import numpy as _np
 
-from gustaf import helpers, settings, show, utils
-from gustaf._base import GustafBase
-from gustaf.helpers.options import Option
+from gustaf import helpers as _helpers
+from gustaf import settings as _settings
+from gustaf import show as _show
+from gustaf import utils as _utils
+from gustaf._base import GustafBase as _GustafBase
+from gustaf.helpers.data import TrackedArray as _TrackedArray
+from gustaf.helpers.data import VertexData as _VertexData
+from gustaf.helpers.options import Option as _Option
+
+if TYPE_CHECKING:
+    from typing import Any
+
+    from gustaf.edges import EdgesShowOption as _EdgesShowOption
+    from gustaf.faces import FacesShowOption as _FacesShowOption
+    from gustaf.helpers.data import Unique2DFloats as _Unique2DFloats
+    from gustaf.volumes import VolumesShowOption as _VolumesShowOption
 
 
-class VerticesShowOption(helpers.options.ShowOption):
+class VerticesShowOption(_helpers.options.ShowOption):
     """
     Show options for vertices.
     """
 
-    _valid_options = helpers.options.make_valid_options(
-        *helpers.options.vedo_common_options,
-        Option(
+    _valid_options = _helpers.options.make_valid_options(
+        *_helpers.options.vedo_common_options,
+        _Option(
             "vedo",
             "r",
             "Radius of vertices in units of pixels.",
             (float, int),
         ),
-        Option(
+        _Option(
             "vedo",
             "labels",
             "Places a label/description str at the place of vertices.",
-            (np.ndarray, tuple, list),
+            (_np.ndarray, tuple, list),
         ),
-        Option(
+        _Option(
             "vedo",
             "label_options",
             "Label kwargs to be passed during initialization."
@@ -61,7 +77,7 @@ class VerticesShowOption(helpers.options.ShowOption):
         """
         init_options = ("r",)
 
-        vertices = show.vedo.Points(
+        vertices = _show.vedo.Points(
             self._helpee.const_vertices, **self[init_options]
         )
 
@@ -87,7 +103,7 @@ class VerticesShowOption(helpers.options.ShowOption):
             return vertices
 
 
-class Vertices(GustafBase):
+class Vertices(_GustafBase):
     kind = "vertex"
 
     __slots__ = (
@@ -103,8 +119,8 @@ class Vertices(GustafBase):
 
     def __init__(
         self,
-        vertices=None,
-    ):
+        vertices: list[list[float]] | _TrackedArray | _np.ndarray = None,
+    ) -> None:
         """Vertices. It has vertices.
 
         Parameters
@@ -119,12 +135,12 @@ class Vertices(GustafBase):
         self.vertices = vertices
 
         # init helpers
-        self._vertex_data = helpers.data.VertexData(self)
-        self._computed = helpers.data.ComputedMeshData(self)
+        self._vertex_data = _helpers.data.VertexData(self)
+        self._computed = _helpers.data.ComputedMeshData(self)
         self._show_options = self.__show_option__(self)
 
     @property
-    def vertices(self):
+    def vertices(self) -> _TrackedArray:
         """Returns vertices.
 
         Parameters
@@ -139,7 +155,9 @@ class Vertices(GustafBase):
         return self._vertices
 
     @vertices.setter
-    def vertices(self, vs):
+    def vertices(
+        self, vs: list[list[float]] | _TrackedArray | _np.ndarray
+    ) -> None:
         """Vertices setter. This will saved as a tracked array. This tracked
         array is very sensitive and if we do anything with it that may hint an
         inplace operation, it will be marked as modified. This includes copying
@@ -157,13 +175,13 @@ class Vertices(GustafBase):
         self._logd("setting vertices")
 
         # we try not to make copy.
-        self._vertices = helpers.data.make_tracked_array(
-            vs, settings.FLOAT_DTYPE, copy=False
+        self._vertices = _helpers.data.make_tracked_array(
+            vs, _settings.FLOAT_DTYPE, copy=False
         )
 
         # shape check
         if self._vertices.size > 0:
-            utils.arr.is_shape(self._vertices, (-1, -1), strict=True)
+            _utils.arr.is_shape(self._vertices, (-1, -1), strict=True)
 
         # exact same, but not tracked.
         self._const_vertices = self._vertices.view()
@@ -175,7 +193,7 @@ class Vertices(GustafBase):
             self.vertex_data._validate_len(raise_=False)
 
     @property
-    def const_vertices(self):
+    def const_vertices(self) -> _TrackedArray:
         """Returns non-mutable view of `vertices`. Naming inspired by c/cpp
         sessions.
 
@@ -191,7 +209,7 @@ class Vertices(GustafBase):
         return self._const_vertices
 
     @property
-    def vertex_data(self):
+    def vertex_data(self) -> _VertexData:
         """
         Returns vertex_data manager. Behaves similar to dict() and can be used
         to store values/data associated with each vertex.
@@ -208,7 +226,9 @@ class Vertices(GustafBase):
         return self._vertex_data
 
     @property
-    def show_options(self):
+    def show_options(
+        self,
+    ) -> _EdgesShowOption | _FacesShowOption | _VolumesShowOption:
         """
         Returns a show option manager for this object. Behaves similar to
         dict.
@@ -226,7 +246,7 @@ class Vertices(GustafBase):
         return self._show_options
 
     @property
-    def whatami(self):
+    def whatami(self) -> str:
         """Answers deep philosophical question: "what am i"?
 
         Parameters
@@ -240,8 +260,10 @@ class Vertices(GustafBase):
         """
         return "vertices"
 
-    @helpers.data.ComputedMeshData.depends_on(["vertices"])
-    def unique_vertices(self, tolerance=None, **kwargs):
+    @_helpers.data.ComputedMeshData.depends_on(["vertices"])
+    def unique_vertices(
+        self, tolerance: Any | None = None, **kwargs: Any
+    ) -> _Unique2DFloats:
         """Returns a namedtuple that holds unique vertices info. Unique here
         means "close-enough-within-tolerance".
 
@@ -259,21 +281,21 @@ class Vertices(GustafBase):
         """
         self._logd("computing unique vertices")
         if tolerance is None:
-            tolerance = settings.TOLERANCE
+            tolerance = _settings.TOLERANCE
 
-        values, ids, inverse, intersection = utils.arr.close_rows(
+        values, ids, inverse, intersection = _utils.arr.close_rows(
             self.const_vertices, tolerance=tolerance, **kwargs
         )
 
-        return helpers.data.Unique2DFloats(
+        return _helpers.data.Unique2DFloats(
             values,
             ids,
             inverse,
             intersection,
         )
 
-    @helpers.data.ComputedMeshData.depends_on(["vertices"])
-    def bounds(self):
+    @_helpers.data.ComputedMeshData.depends_on(["vertices"])
+    def bounds(self) -> _np.ndarray:
         """Returns bounds of the vertices. Bounds means AABB of the geometry.
 
         Parameters
@@ -285,10 +307,10 @@ class Vertices(GustafBase):
         bounds: (d,) np.ndarray
         """
         self._logd("computing bounds")
-        return utils.arr.bounds(self.vertices)
+        return _utils.arr.bounds(self.vertices)
 
-    @helpers.data.ComputedMeshData.depends_on(["vertices"])
-    def bounds_diagonal(self):
+    @_helpers.data.ComputedMeshData.depends_on(["vertices"])
+    def bounds_diagonal(self) -> _np.ndarray:
         """Returns diagonal vector of the bounding box.
 
         Parameters
@@ -304,8 +326,8 @@ class Vertices(GustafBase):
         bounds = self.bounds()
         return bounds[1] - bounds[0]
 
-    @helpers.data.ComputedMeshData.depends_on(["vertices"])
-    def bounds_diagonal_norm(self):
+    @_helpers.data.ComputedMeshData.depends_on(["vertices"])
+    def bounds_diagonal_norm(self) -> float:
         """Returns norm of bounds diagonal.
 
         Parameters
@@ -319,7 +341,9 @@ class Vertices(GustafBase):
         self._logd("computing bounds_diagonal_norm")
         return float(sum(self.bounds_diagonal() ** 2) ** 0.5)
 
-    def update_vertices(self, mask, inverse=None):
+    def update_vertices(
+        self, mask: _np.ndarray, inverse: _np.ndarray | None = None
+    ) -> Any:
         """Update vertices with a mask. In other words, keeps only masked
         vertices. Adapted from `github.com/mikedh/trimesh`. Updates
         connectivity accordingly too.
@@ -336,7 +360,7 @@ class Vertices(GustafBase):
         vertices = self.const_vertices.copy()
 
         # make mask numpy array
-        mask = np.asarray(mask)
+        mask = _np.asarray(mask)
 
         if (mask.dtype.name == "bool" and mask.all()) or len(mask) == 0:
             return self
@@ -344,12 +368,12 @@ class Vertices(GustafBase):
         # create inverse mask if not passed
         check_neg = False
         if inverse is None and self.kind != "vertex":
-            inverse = np.full(len(vertices), -11, dtype=settings.INT_DTYPE)
+            inverse = _np.full(len(vertices), -11, dtype=_settings.INT_DTYPE)
             check_neg = True
             if mask.dtype.kind == "b":
-                inverse[mask] = np.arange(mask.sum())
+                inverse[mask] = _np.arange(mask.sum())
             elif mask.dtype.kind == "i":
-                inverse[mask] = np.arange(len(mask))
+                inverse[mask] = _np.arange(len(mask))
             else:
                 inverse = None
 
@@ -369,9 +393,11 @@ class Vertices(GustafBase):
         # apply mask
         vertices = vertices[mask]
 
-        def update_vertex_data(obj, m, vertex_data):
+        def update_vertex_data(
+            obj: Any, m: _np.ndarray, vertex_data: dict
+        ) -> Any:
             """apply mask to vertex data if there's any."""
-            new_data = helpers.data.VertexData(obj)
+            new_data = _helpers.data.VertexData(obj)
 
             for key, values in vertex_data.items():
                 # should work, since this is called after updating vertices
@@ -394,7 +420,7 @@ class Vertices(GustafBase):
 
         return self
 
-    def select_vertices(self, ranges):
+    def select_vertices(self, ranges: list[list[float]]) -> _np.ndarray:
         """Returns vertices inside the given range.
 
         Parameters
@@ -406,7 +432,7 @@ class Vertices(GustafBase):
         --------
         ids: (n,) np.ndarray
         """
-        return utils.arr.select_with_ranges(self.vertices, ranges)
+        return _utils.arr.select_with_ranges(self.vertices, ranges)
 
     def remove_vertices(self, ids):
         """Removes vertices with given vertex ids.
@@ -419,12 +445,14 @@ class Vertices(GustafBase):
         --------
         new_self: type(self)
         """
-        mask = np.ones(len(self.vertices), dtype=bool)
+        mask = _np.ones(len(self.vertices), dtype=bool)
         mask[ids] = False
 
         return self.update_vertices(mask)
 
-    def merge_vertices(self, tolerance=None, **kwargs):
+    def merge_vertices(
+        self, tolerance: Any | None = None, **kwargs: Any
+    ) -> Any:
         """Based on unique vertices, merge vertices if it is mergeable.
 
         Parameters
@@ -459,7 +487,7 @@ class Vertices(GustafBase):
         showable: obj
           Obj of `gustaf.settings.VISUALIZATION_BACKEND`
         """
-        return show.make_showable(self, **kwargs)
+        return _show.make_showable(self, **kwargs)
 
     def show(self, **kwargs):
         """Show current object using visualization backend.
@@ -473,9 +501,9 @@ class Vertices(GustafBase):
         --------
         None
         """
-        return show.show(self, **kwargs)
+        return _show.show(self, **kwargs)
 
-    def copy(self):
+    def copy(self) -> Any:
         """Returns deepcopy of self.
 
         Parameters
@@ -497,12 +525,12 @@ class Vertices(GustafBase):
         return copied
 
     @classmethod
-    def concat(cls, *instances):
+    def concat(cls, *instances: Any) -> Any:
         """Sequentially put them together to make one object.
 
         Parameters
         -----------
-        *instances: List[type(cls)]
+        *instances: list[type(cls)]
           Allows one iterable object also.
 
         Returns
@@ -510,7 +538,7 @@ class Vertices(GustafBase):
         one_instance: type(cls)
         """
 
-        def is_concatable(inst):
+        def is_concatable(inst: Any) -> bool:
             """Return true, if it is same as type(cls)"""
             return bool(isinstance(inst, cls))
 
@@ -555,12 +583,12 @@ class Vertices(GustafBase):
 
         if has_elem:
             return cls(
-                vertices=np.vstack(vertices),
-                elements=np.vstack(elements),
+                vertices=_np.vstack(vertices),
+                elements=_np.vstack(elements),
             )
 
         else:
-            return Vertices(vertices=np.vstack(vertices))
+            return Vertices(vertices=_np.vstack(vertices))
 
     def __add__(self, to_add):
         """Concat in form of +.
