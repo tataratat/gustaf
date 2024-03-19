@@ -20,12 +20,15 @@ from gustaf.helpers.data import VertexData as _VertexData
 from gustaf.helpers.options import Option as _Option
 
 if TYPE_CHECKING:
+    import sys
     from typing import Any
 
-    from gustaf.edges import EdgesShowOption as _EdgesShowOption
-    from gustaf.faces import FacesShowOption as _FacesShowOption
+    if sys.version_info >= (3, 10):
+        from typing import Self
+    else:
+        from typing_extensions import Self
+
     from gustaf.helpers.data import Unique2DFloats as _Unique2DFloats
-    from gustaf.volumes import VolumesShowOption as _VolumesShowOption
 
 
 class VerticesShowOption(_helpers.options.ShowOption):
@@ -226,9 +229,7 @@ class Vertices(_GustafBase):
         return self._vertex_data
 
     @property
-    def show_options(
-        self,
-    ) -> _EdgesShowOption | _FacesShowOption | _VolumesShowOption:
+    def show_options(self) -> _helpers.options.ShowOption:
         """
         Returns a show option manager for this object. Behaves similar to
         dict.
@@ -262,7 +263,7 @@ class Vertices(_GustafBase):
 
     @_helpers.data.ComputedMeshData.depends_on(["vertices"])
     def unique_vertices(
-        self, tolerance: Any | None = None, **kwargs: Any
+        self, tolerance: float | None = None, **kwargs: Any
     ) -> _Unique2DFloats:
         """Returns a namedtuple that holds unique vertices info. Unique here
         means "close-enough-within-tolerance".
@@ -343,7 +344,7 @@ class Vertices(_GustafBase):
 
     def update_vertices(
         self, mask: _np.ndarray, inverse: _np.ndarray | None = None
-    ) -> Any:
+    ) -> Vertices:
         """Update vertices with a mask. In other words, keeps only masked
         vertices. Adapted from `github.com/mikedh/trimesh`. Updates
         connectivity accordingly too.
@@ -394,14 +395,14 @@ class Vertices(_GustafBase):
         vertices = vertices[mask]
 
         def update_vertex_data(
-            obj: Any, m: _np.ndarray, vertex_data: dict
+            obj: Vertices, mask: _np.ndarray, vertex_data: dict
         ) -> Any:
             """apply mask to vertex data if there's any."""
             new_data = _helpers.data.VertexData(obj)
 
             for key, values in vertex_data.items():
                 # should work, since this is called after updating vertices
-                new_data[key] = values[m]
+                new_data[key] = values[mask]
 
             obj._vertex_data = new_data
 
@@ -434,7 +435,7 @@ class Vertices(_GustafBase):
         """
         return _utils.arr.select_with_ranges(self.vertices, ranges)
 
-    def remove_vertices(self, ids):
+    def remove_vertices(self, ids: _np.ndarray) -> Vertices:
         """Removes vertices with given vertex ids.
 
         Parameters
@@ -451,8 +452,8 @@ class Vertices(_GustafBase):
         return self.update_vertices(mask)
 
     def merge_vertices(
-        self, tolerance: Any | None = None, **kwargs: Any
-    ) -> Any:
+        self, tolerance: float | None = None, **kwargs: Any
+    ) -> Vertices:
         """Based on unique vertices, merge vertices if it is mergeable.
 
         Parameters
@@ -503,7 +504,7 @@ class Vertices(_GustafBase):
         """
         return _show.show(self, **kwargs)
 
-    def copy(self) -> Any:
+    def copy(self) -> Vertices:
         """Returns deepcopy of self.
 
         Parameters
@@ -525,7 +526,7 @@ class Vertices(_GustafBase):
         return copied
 
     @classmethod
-    def concat(cls, *instances: Any) -> Any:
+    def concat(cls, *instances: Vertices) -> Vertices:
         """Sequentially put them together to make one object.
 
         Parameters
@@ -590,7 +591,7 @@ class Vertices(_GustafBase):
         else:
             return Vertices(vertices=_np.vstack(vertices))
 
-    def __add__(self, to_add):
+    def __add__(self, to_add: Self) -> Self:
         """Concat in form of +.
 
         Parameters
