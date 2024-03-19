@@ -1,0 +1,51 @@
+gustaf.helpers.data.VertexData
+==============================
+
+.. currentmodule:: gustaf.helpers.data
+
+.. autoclass:: VertexData
+   :show-inheritance:
+
+   
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+      :toctree:
+   
+      
+      
+        
+          VertexData.as_arrow
+        
+      
+      
+        
+          VertexData.as_scalar
+        
+      
+      
+        
+      
+      
+        
+      
+      
+        
+      
+      
+        
+      
+      
+        
+      
+      
+        
+      
+   
+   
+
+   
+   
+   

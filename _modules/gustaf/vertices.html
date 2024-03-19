@@ -1,0 +1,1097 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>gustaf.vertices &#8212; gustaf 0.0.24 documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "light";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
+<link href="../../_static/styles/bootstrap.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
+
+  
+  <link href="../../_static/vendor/fontawesome/6.5.1/css/all.min.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.1/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.1/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.1/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="../../_static/style.css?v=7ab72cc5" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=8d27b9dea8ad943066ae" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=8d27b9dea8ad943066ae" />
+  <script src="../../_static/vendor/fontawesome/6.5.1/js/all.min.js?digest=8d27b9dea8ad943066ae"></script>
+
+    <script src="../../_static/documentation_options.js?v=f91d8841"></script>
+    <script src="../../_static/doctools.js?v=888ff710"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/gustaf/vertices';</script>
+    <link rel="icon" href="../../_static/favicon.ico"/>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link href="../../_static/style.css" rel="stylesheet" type="text/css">
+
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <a id="pst-skip-link" class="skip-link" href="#main-content">Skip to main content</a>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>
+    Back to top
+  </button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__primary"
+          id="__primary"/>
+  <label class="overlay overlay-primary" for="__primary"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__secondary"
+          id="__secondary"/>
+  <label class="overlay overlay-secondary" for="__secondary"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar">
+<div class="bd-header__inner bd-page-width">
+  <label class="sidebar-toggle primary-toggle" for="__primary">
+    <span class="fa-solid fa-bars"></span>
+  </label>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+
+<a class="navbar-brand logo" href="../../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../_static/gus_light_mode.png" class="logo__image only-light" alt="gustaf 0.0.24 documentation - Home"/>
+    <script>document.write(`<img src="../../_static/gus_dark_mode.png" class="logo__image only-dark" alt="gustaf 0.0.24 documentation - Home"/>`);</script>
+  
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav class="navbar-nav">
+  <ul class="bd-navbar-elements navbar-nav">
+    
+                    <li class="nav-item">
+                      <a class="nav-link nav-external" href="http://github.com/tataratat/gustaf">
+                        Github
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../../CONTRIBUTING.html">
+                        Contiributing
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../../references.html">
+                        API references
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../../details.html">
+                        Feature details & options
+                      </a>
+                    </li>
+                
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+ <script>
+ document.write(`
+   <button class="btn navbar-btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="theme-switch nav-link" data-mode="light"><i class="fa-solid fa-sun fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="dark"><i class="fa-solid fa-moon fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg"></i></span>
+  </button>
+`);
+</script></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links navbar-nav"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/tataratat/gustaf" title="GitHub" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><span><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i></span>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://pypi.org/project/gustaf/" title="PyPI" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><span><i class="fa-solid fa-box fa-lg" aria-hidden="true"></i></span>
+            <span class="sr-only">PyPI</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+ <script>
+ document.write(`
+   <button class="btn navbar-btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script>
+    </div>
+  
+
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <div class="bd-sidebar-primary bd-sidebar hide-on-wide">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          <div class="navbar-item">
+<nav class="navbar-nav">
+  <ul class="bd-navbar-elements navbar-nav">
+    
+                    <li class="nav-item">
+                      <a class="nav-link nav-external" href="http://github.com/tataratat/gustaf">
+                        Github
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../../CONTRIBUTING.html">
+                        Contiributing
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../../references.html">
+                        API references
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../../details.html">
+                        Feature details & options
+                      </a>
+                    </li>
+                
+  </ul>
+</nav></div>
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="theme-switch nav-link" data-mode="light"><i class="fa-solid fa-sun fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="dark"><i class="fa-solid fa-moon fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg"></i></span>
+  </button>
+`);
+</script></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links navbar-nav"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/tataratat/gustaf" title="GitHub" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><span><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i></span>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://pypi.org/project/gustaf/" title="PyPI" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><span><i class="fa-solid fa-box fa-lg" aria-hidden="true"></i></span>
+            <span class="sr-only">PyPI</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+
+
+<nav aria-label="Breadcrumb">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../index.html" class="nav-link">Module code</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page">gustaf.vertices</li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <h1>Source code for gustaf.vertices</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;gustaf/gustaf/vertices.py.</span>
+
+<span class="sd">Vertices. Base of all &quot;Mesh&quot; geometries.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">copy</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+<span class="kn">from</span> <span class="nn">gustaf</span> <span class="kn">import</span> <span class="n">helpers</span><span class="p">,</span> <span class="n">settings</span><span class="p">,</span> <span class="n">show</span><span class="p">,</span> <span class="n">utils</span>
+<span class="kn">from</span> <span class="nn">gustaf._base</span> <span class="kn">import</span> <span class="n">GustafBase</span>
+<span class="kn">from</span> <span class="nn">gustaf.helpers.options</span> <span class="kn">import</span> <span class="n">Option</span>
+
+
+<div class="viewcode-block" id="VerticesShowOption">
+<a class="viewcode-back" href="../../_generated/gustaf.vertices.VerticesShowOption.html#gustaf.vertices.VerticesShowOption">[docs]</a>
+<span class="k">class</span> <span class="nc">VerticesShowOption</span><span class="p">(</span><span class="n">helpers</span><span class="o">.</span><span class="n">options</span><span class="o">.</span><span class="n">ShowOption</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Show options for vertices.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">_valid_options</span> <span class="o">=</span> <span class="n">helpers</span><span class="o">.</span><span class="n">options</span><span class="o">.</span><span class="n">make_valid_options</span><span class="p">(</span>
+        <span class="o">*</span><span class="n">helpers</span><span class="o">.</span><span class="n">options</span><span class="o">.</span><span class="n">vedo_common_options</span><span class="p">,</span>
+        <span class="n">Option</span><span class="p">(</span>
+            <span class="s2">&quot;vedo&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;r&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;Radius of vertices in units of pixels.&quot;</span><span class="p">,</span>
+            <span class="p">(</span><span class="nb">float</span><span class="p">,</span> <span class="nb">int</span><span class="p">),</span>
+        <span class="p">),</span>
+        <span class="n">Option</span><span class="p">(</span>
+            <span class="s2">&quot;vedo&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;labels&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;Places a label/description str at the place of vertices.&quot;</span><span class="p">,</span>
+            <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">,</span> <span class="nb">list</span><span class="p">),</span>
+        <span class="p">),</span>
+        <span class="n">Option</span><span class="p">(</span>
+            <span class="s2">&quot;vedo&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;label_options&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;Label kwargs to be passed during initialization.&quot;</span>
+            <span class="s2">&quot;Valid keywords are: {scale: float, xrot: float, yrot: float, &quot;</span>
+            <span class="s2">&quot;zrot: float, ratio: float, precision: int, italic: bool, &quot;</span>
+            <span class="s2">&quot;font: str, justify: str, c: (str, tuple, list, int), &quot;</span>
+            <span class="s2">&quot;alpha: float}. &quot;</span>
+            <span class="s2">&quot;As further hint, justify takes &#39;-&#39; joined combination of &quot;</span>
+            <span class="s2">&quot;{center, mid, right, left, top, bottom}.&quot;</span><span class="p">,</span>
+            <span class="p">(</span><span class="nb">dict</span><span class="p">,),</span>
+        <span class="p">),</span>
+    <span class="p">)</span>
+
+    <span class="n">_helps</span> <span class="o">=</span> <span class="s2">&quot;Vertices&quot;</span>
+
+    <span class="k">def</span> <span class="nf">_initialize_showable</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Initialize Vertices showable for vedo.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        None</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        vertices: vedo.Points</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">init_options</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;r&quot;</span><span class="p">,)</span>
+
+        <span class="n">vertices</span> <span class="o">=</span> <span class="n">show</span><span class="o">.</span><span class="n">vedo</span><span class="o">.</span><span class="n">Points</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_helpee</span><span class="o">.</span><span class="n">const_vertices</span><span class="p">,</span> <span class="o">**</span><span class="bp">self</span><span class="p">[</span><span class="n">init_options</span><span class="p">]</span>
+        <span class="p">)</span>
+
+        <span class="n">labels</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;labels&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">labels</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="c1"># check length</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">labels</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_helpee</span><span class="o">.</span><span class="n">const_vertices</span><span class="p">):</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;number of label contents (</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">labels</span><span class="p">)</span><span class="si">}</span><span class="s2">) and &quot;</span>
+                    <span class="s2">&quot;number of vertices&quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;(</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_helpee</span><span class="o">.</span><span class="n">const_vertices</span><span class="p">)</span><span class="si">}</span><span class="s2">) does not match.&quot;</span>
+                <span class="p">)</span>
+
+            <span class="c1"># apply options and return labels</span>
+            <span class="k">return</span> <span class="n">vertices</span><span class="o">.</span><span class="n">labels</span><span class="p">(</span>
+                <span class="n">content</span><span class="o">=</span><span class="n">labels</span><span class="p">,</span>
+                <span class="n">on</span><span class="o">=</span><span class="s2">&quot;points&quot;</span><span class="p">,</span>
+                <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;label_options&quot;</span><span class="p">,</span> <span class="p">{}),</span>
+            <span class="p">)</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># no labels, return Points</span>
+            <span class="k">return</span> <span class="n">vertices</span></div>
+
+
+
+<div class="viewcode-block" id="Vertices">
+<a class="viewcode-back" href="../../_generated/gustaf.vertices.Vertices.html#gustaf.vertices.Vertices">[docs]</a>
+<span class="k">class</span> <span class="nc">Vertices</span><span class="p">(</span><span class="n">GustafBase</span><span class="p">):</span>
+    <span class="n">kind</span> <span class="o">=</span> <span class="s2">&quot;vertex&quot;</span>
+
+    <span class="vm">__slots__</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="s2">&quot;_vertices&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;_const_vertices&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;_computed&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;_show_options&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;_vertex_data&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="c1"># define frequently used types as dunder variable</span>
+    <span class="n">__show_option__</span> <span class="o">=</span> <span class="n">VerticesShowOption</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">vertices</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Vertices. It has vertices.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        -----------</span>
+<span class="sd">        vertices: (n, d) np.ndarray</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        --------</span>
+<span class="sd">        None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># call setters</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">vertices</span> <span class="o">=</span> <span class="n">vertices</span>
+
+        <span class="c1"># init helpers</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_vertex_data</span> <span class="o">=</span> <span class="n">helpers</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">VertexData</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_computed</span> <span class="o">=</span> <span class="n">helpers</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">ComputedMeshData</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_show_options</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__show_option__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">vertices</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns vertices.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        -----------</span>
+<span class="sd">        None</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        --------</span>
+<span class="sd">        vertices: (n, d) np.ndarray</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_logd</span><span class="p">(</span><span class="s2">&quot;returning vertices&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_vertices</span>
+
+    <span class="nd">@vertices</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">vertices</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vs</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Vertices setter. This will saved as a tracked array. This tracked</span>
+<span class="sd">        array is very sensitive and if we do anything with it that may hint an</span>
+<span class="sd">        inplace operation, it will be marked as modified. This includes copying</span>
+<span class="sd">        and slicing. If you know you aren&#39;t going to modify the array, please</span>
+<span class="sd">        consider using `const_vertices`. Somewhat c-style hint in naming.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        -----------</span>
+<span class="sd">        vs: (n, d) np.ndarray</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        --------</span>
+<span class="sd">        None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_logd</span><span class="p">(</span><span class="s2">&quot;setting vertices&quot;</span><span class="p">)</span>
+
+        <span class="c1"># we try not to make copy.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_vertices</span> <span class="o">=</span> <span class="n">helpers</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">make_tracked_array</span><span class="p">(</span>
+            <span class="n">vs</span><span class="p">,</span> <span class="n">settings</span><span class="o">.</span><span class="n">FLOAT_DTYPE</span><span class="p">,</span> <span class="n">copy</span><span class="o">=</span><span class="kc">False</span>
+        <span class="p">)</span>
+
+        <span class="c1"># shape check</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_vertices</span><span class="o">.</span><span class="n">size</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">utils</span><span class="o">.</span><span class="n">arr</span><span class="o">.</span><span class="n">is_shape</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_vertices</span><span class="p">,</span> <span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">),</span> <span class="n">strict</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+        <span class="c1"># exact same, but not tracked.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_const_vertices</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_vertices</span><span class="o">.</span><span class="n">view</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_const_vertices</span><span class="o">.</span><span class="n">flags</span><span class="o">.</span><span class="n">writeable</span> <span class="o">=</span> <span class="kc">False</span>
+
+        <span class="c1"># at each setting, validate vertex_data</span>
+        <span class="c1"># --&gt; by len mismatch, will clear data</span>
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;vertex_data&quot;</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">vertex_data</span><span class="o">.</span><span class="n">_validate_len</span><span class="p">(</span><span class="n">raise_</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">const_vertices</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns non-mutable view of `vertices`. Naming inspired by c/cpp</span>
+<span class="sd">        sessions.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        -----------</span>
+<span class="sd">        None</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        --------</span>
+<span class="sd">        None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_logd</span><span class="p">(</span><span class="s2">&quot;returning const_vertices&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_const_vertices</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">vertex_data</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns vertex_data manager. Behaves similar to dict() and can be used</span>
+<span class="sd">        to store values/data associated with each vertex.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        None</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        vertex_data: VertexData</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_logd</span><span class="p">(</span><span class="s2">&quot;returning vertex_data&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_vertex_data</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">show_options</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns a show option manager for this object. Behaves similar to</span>
+<span class="sd">        dict.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        None</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        show_options: ShowOption</span>
+<span class="sd">          A derived class that&#39;s suitable for current class.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_logd</span><span class="p">(</span><span class="s2">&quot;returning show_options&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_show_options</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">whatami</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Answers deep philosophical question: &quot;what am i&quot;?</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        None</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        --------</span>
+<span class="sd">        whatami: str</span>
+<span class="sd">          vertices</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="s2">&quot;vertices&quot;</span>
+
+<div class="viewcode-block" id="Vertices.unique_vertices">
+<a class="viewcode-back" href="../../_generated/gustaf.vertices.Vertices.unique_vertices.html#gustaf.vertices.Vertices.unique_vertices">[docs]</a>
+    <span class="nd">@helpers</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">ComputedMeshData</span><span class="o">.</span><span class="n">depends_on</span><span class="p">([</span><span class="s2">&quot;vertices&quot;</span><span class="p">])</span>
+    <span class="k">def</span> <span class="nf">unique_vertices</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tolerance</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns a namedtuple that holds unique vertices info. Unique here</span>
+<span class="sd">        means &quot;close-enough-within-tolerance&quot;.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        -----------</span>
+<span class="sd">        tolerance: float</span>
+<span class="sd">          (Optional) Default is settings.TOLERANCE</span>
+<span class="sd">        recompute: bool</span>
+<span class="sd">          Only applicable as keyword argument. Force re-computes.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        --------</span>
+<span class="sd">        unique_vertices_info: Unique2DFloats</span>
+<span class="sd">          namedtuple with `values`, `ids`, `inverse`, `intersection`.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_logd</span><span class="p">(</span><span class="s2">&quot;computing unique vertices&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">tolerance</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">tolerance</span> <span class="o">=</span> <span class="n">settings</span><span class="o">.</span><span class="n">TOLERANCE</span>
+
+        <span class="n">values</span><span class="p">,</span> <span class="n">ids</span><span class="p">,</span> <span class="n">inverse</span><span class="p">,</span> <span class="n">intersection</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">arr</span><span class="o">.</span><span class="n">close_rows</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">const_vertices</span><span class="p">,</span> <span class="n">tolerance</span><span class="o">=</span><span class="n">tolerance</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span>
+        <span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">helpers</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">Unique2DFloats</span><span class="p">(</span>
+            <span class="n">values</span><span class="p">,</span>
+            <span class="n">ids</span><span class="p">,</span>
+            <span class="n">inverse</span><span class="p">,</span>
+            <span class="n">intersection</span><span class="p">,</span>
+        <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Vertices.bounds">
+<a class="viewcode-back" href="../../_generated/gustaf.vertices.Vertices.bounds.html#gustaf.vertices.Vertices.bounds">[docs]</a>
+    <span class="nd">@helpers</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">ComputedMeshData</span><span class="o">.</span><span class="n">depends_on</span><span class="p">([</span><span class="s2">&quot;vertices&quot;</span><span class="p">])</span>
+    <span class="k">def</span> <span class="nf">bounds</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns bounds of the vertices. Bounds means AABB of the geometry.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        -----------</span>
+<span class="sd">        None</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        --------</span>
+<span class="sd">        bounds: (d,) np.ndarray</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_logd</span><span class="p">(</span><span class="s2">&quot;computing bounds&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">utils</span><span class="o">.</span><span class="n">arr</span><span class="o">.</span><span class="n">bounds</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">vertices</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Vertices.bounds_diagonal">
+<a class="viewcode-back" href="../../_generated/gustaf.vertices.Vertices.bounds_diagonal.html#gustaf.vertices.Vertices.bounds_diagonal">[docs]</a>
+    <span class="nd">@helpers</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">ComputedMeshData</span><span class="o">.</span><span class="n">depends_on</span><span class="p">([</span><span class="s2">&quot;vertices&quot;</span><span class="p">])</span>
+    <span class="k">def</span> <span class="nf">bounds_diagonal</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns diagonal vector of the bounding box.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        -----------</span>
+<span class="sd">        None</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        --------</span>
+<span class="sd">        bounds_diagonal: (d,) np.ndarray</span>
+<span class="sd">          same as `bounds[1] - bounds[0]`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_logd</span><span class="p">(</span><span class="s2">&quot;computing bounds_diagonal&quot;</span><span class="p">)</span>
+        <span class="n">bounds</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">bounds</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">bounds</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">bounds</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="Vertices.bounds_diagonal_norm">
+<a class="viewcode-back" href="../../_generated/gustaf.vertices.Vertices.bounds_diagonal_norm.html#gustaf.vertices.Vertices.bounds_diagonal_norm">[docs]</a>
+    <span class="nd">@helpers</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">ComputedMeshData</span><span class="o">.</span><span class="n">depends_on</span><span class="p">([</span><span class="s2">&quot;vertices&quot;</span><span class="p">])</span>
+    <span class="k">def</span> <span class="nf">bounds_diagonal_norm</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns norm of bounds diagonal.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        -----------</span>
+<span class="sd">        None</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        --------</span>
+<span class="sd">        bounds_diagonal_norm: float</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_logd</span><span class="p">(</span><span class="s2">&quot;computing bounds_diagonal_norm&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="nb">sum</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">bounds_diagonal</span><span class="p">()</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span> <span class="o">**</span> <span class="mf">0.5</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Vertices.update_vertices">
+<a class="viewcode-back" href="../../_generated/gustaf.vertices.Vertices.update_vertices.html#gustaf.vertices.Vertices.update_vertices">[docs]</a>
+    <span class="k">def</span> <span class="nf">update_vertices</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mask</span><span class="p">,</span> <span class="n">inverse</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Update vertices with a mask. In other words, keeps only masked</span>
+<span class="sd">        vertices. Adapted from `github.com/mikedh/trimesh`. Updates</span>
+<span class="sd">        connectivity accordingly too.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        -----------</span>
+<span class="sd">        mask: (n,) bool or int</span>
+<span class="sd">        inverse: (len(self.vertices),) int</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        --------</span>
+<span class="sd">        updated_self: type(self)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">vertices</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">const_vertices</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
+        <span class="c1"># make mask numpy array</span>
+        <span class="n">mask</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">mask</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="n">mask</span><span class="o">.</span><span class="n">dtype</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="s2">&quot;bool&quot;</span> <span class="ow">and</span> <span class="n">mask</span><span class="o">.</span><span class="n">all</span><span class="p">())</span> <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="n">mask</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span>
+
+        <span class="c1"># create inverse mask if not passed</span>
+        <span class="n">check_neg</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="k">if</span> <span class="n">inverse</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">kind</span> <span class="o">!=</span> <span class="s2">&quot;vertex&quot;</span><span class="p">:</span>
+            <span class="n">inverse</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">vertices</span><span class="p">),</span> <span class="o">-</span><span class="mi">11</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">settings</span><span class="o">.</span><span class="n">INT_DTYPE</span><span class="p">)</span>
+            <span class="n">check_neg</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="k">if</span> <span class="n">mask</span><span class="o">.</span><span class="n">dtype</span><span class="o">.</span><span class="n">kind</span> <span class="o">==</span> <span class="s2">&quot;b&quot;</span><span class="p">:</span>
+                <span class="n">inverse</span><span class="p">[</span><span class="n">mask</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">mask</span><span class="o">.</span><span class="n">sum</span><span class="p">())</span>
+            <span class="k">elif</span> <span class="n">mask</span><span class="o">.</span><span class="n">dtype</span><span class="o">.</span><span class="n">kind</span> <span class="o">==</span> <span class="s2">&quot;i&quot;</span><span class="p">:</span>
+                <span class="n">inverse</span><span class="p">[</span><span class="n">mask</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">mask</span><span class="p">))</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">inverse</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="c1"># re-index elements from inverse</span>
+        <span class="c1"># TODO: Here could be a good place to preserve BCs.</span>
+        <span class="n">elements</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="n">inverse</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">kind</span> <span class="o">!=</span> <span class="s2">&quot;vertex&quot;</span><span class="p">:</span>
+            <span class="n">elements</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">const_elements</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+            <span class="n">elements</span> <span class="o">=</span> <span class="n">inverse</span><span class="p">[</span><span class="n">elements</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)]</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span>
+                <span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">elements</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+            <span class="p">)</span>
+            <span class="c1"># remove all the elements that&#39;s not part of inverse</span>
+            <span class="k">if</span> <span class="n">check_neg</span><span class="p">:</span>
+                <span class="n">elem_mask</span> <span class="o">=</span> <span class="p">(</span><span class="n">elements</span> <span class="o">&gt;</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+                <span class="n">elements</span> <span class="o">=</span> <span class="n">elements</span><span class="p">[</span><span class="n">elem_mask</span><span class="p">]</span>
+
+        <span class="c1"># apply mask</span>
+        <span class="n">vertices</span> <span class="o">=</span> <span class="n">vertices</span><span class="p">[</span><span class="n">mask</span><span class="p">]</span>
+
+        <span class="k">def</span> <span class="nf">update_vertex_data</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">m</span><span class="p">,</span> <span class="n">vertex_data</span><span class="p">):</span>
+<span class="w">            </span><span class="sd">&quot;&quot;&quot;apply mask to vertex data if there&#39;s any.&quot;&quot;&quot;</span>
+            <span class="n">new_data</span> <span class="o">=</span> <span class="n">helpers</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">VertexData</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
+
+            <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">values</span> <span class="ow">in</span> <span class="n">vertex_data</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="c1"># should work, since this is called after updating vertices</span>
+                <span class="n">new_data</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">values</span><span class="p">[</span><span class="n">m</span><span class="p">]</span>
+
+            <span class="n">obj</span><span class="o">.</span><span class="n">_vertex_data</span> <span class="o">=</span> <span class="n">new_data</span>
+
+            <span class="k">return</span> <span class="n">obj</span>
+
+        <span class="c1"># make shallow copy of saved vertex data</span>
+        <span class="n">v_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">vertex_data</span><span class="o">.</span><span class="n">_saved</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
+        <span class="c1"># update - if number of vertices changes, this will remove all the</span>
+        <span class="c1">#   length mis-matching data.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">vertices</span> <span class="o">=</span> <span class="n">vertices</span>
+        <span class="k">if</span> <span class="n">elements</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">elements</span> <span class="o">=</span> <span class="n">elements</span>
+
+        <span class="n">update_vertex_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mask</span><span class="p">,</span> <span class="n">v_data</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="bp">self</span></div>
+
+
+<div class="viewcode-block" id="Vertices.select_vertices">
+<a class="viewcode-back" href="../../_generated/gustaf.vertices.Vertices.select_vertices.html#gustaf.vertices.Vertices.select_vertices">[docs]</a>
+    <span class="k">def</span> <span class="nf">select_vertices</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ranges</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns vertices inside the given range.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        -----------</span>
+<span class="sd">        ranges: (d, 2) array-like</span>
+<span class="sd">          Takes None.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        --------</span>
+<span class="sd">        ids: (n,) np.ndarray</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">utils</span><span class="o">.</span><span class="n">arr</span><span class="o">.</span><span class="n">select_with_ranges</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">vertices</span><span class="p">,</span> <span class="n">ranges</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Vertices.remove_vertices">
+<a class="viewcode-back" href="../../_generated/gustaf.vertices.Vertices.remove_vertices.html#gustaf.vertices.Vertices.remove_vertices">[docs]</a>
+    <span class="k">def</span> <span class="nf">remove_vertices</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ids</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Removes vertices with given vertex ids.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        -----------</span>
+<span class="sd">        ids: (n,) np.ndarray</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        --------</span>
+<span class="sd">        new_self: type(self)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">mask</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">vertices</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">bool</span><span class="p">)</span>
+        <span class="n">mask</span><span class="p">[</span><span class="n">ids</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">update_vertices</span><span class="p">(</span><span class="n">mask</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Vertices.merge_vertices">
+<a class="viewcode-back" href="../../_generated/gustaf.vertices.Vertices.merge_vertices.html#gustaf.vertices.Vertices.merge_vertices">[docs]</a>
+    <span class="k">def</span> <span class="nf">merge_vertices</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tolerance</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Based on unique vertices, merge vertices if it is mergeable.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        -----------</span>
+<span class="sd">        tolerance: float</span>
+<span class="sd">          Default is settings.TOLERANCE</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        --------</span>
+<span class="sd">        merged_self: type(self)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">unique_vs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">unique_vertices</span><span class="p">(</span><span class="n">tolerance</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_logd</span><span class="p">(</span><span class="s2">&quot;number of vertices&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_logd</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  before merge: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">vertices</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_logd</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  after merge: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">unique_vs</span><span class="o">.</span><span class="n">ids</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">update_vertices</span><span class="p">(</span>
+            <span class="n">mask</span><span class="o">=</span><span class="n">unique_vs</span><span class="o">.</span><span class="n">ids</span><span class="p">,</span>
+            <span class="n">inverse</span><span class="o">=</span><span class="n">unique_vs</span><span class="o">.</span><span class="n">inverse</span><span class="p">,</span>
+        <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Vertices.showable">
+<a class="viewcode-back" href="../../_generated/gustaf.vertices.Vertices.showable.html#gustaf.vertices.Vertices.showable">[docs]</a>
+    <span class="k">def</span> <span class="nf">showable</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns showable object, meaning object of visualization backend.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        -----------</span>
+<span class="sd">        **kwargs:</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        --------</span>
+<span class="sd">        showable: obj</span>
+<span class="sd">          Obj of `gustaf.settings.VISUALIZATION_BACKEND`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">show</span><span class="o">.</span><span class="n">make_showable</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Vertices.show">
+<a class="viewcode-back" href="../../_generated/gustaf.vertices.Vertices.show.html#gustaf.vertices.Vertices.show">[docs]</a>
+    <span class="k">def</span> <span class="nf">show</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Show current object using visualization backend.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        -----------</span>
+<span class="sd">        **kwargs:</span>
+
+
+<span class="sd">        Returns</span>
+<span class="sd">        --------</span>
+<span class="sd">        None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">show</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Vertices.copy">
+<a class="viewcode-back" href="../../_generated/gustaf.vertices.Vertices.copy.html#gustaf.vertices.Vertices.copy">[docs]</a>
+    <span class="k">def</span> <span class="nf">copy</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns deepcopy of self.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        -----------</span>
+<span class="sd">        None</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        --------</span>
+<span class="sd">        self_copy: type(self)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># all attributes are deepcopy-able</span>
+        <span class="n">copied</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+
+        <span class="c1"># update helpee. otherwise keeps reference to self</span>
+        <span class="n">copied</span><span class="o">.</span><span class="n">_show_options</span><span class="o">.</span><span class="n">_helpee</span> <span class="o">=</span> <span class="n">copied</span>
+        <span class="n">copied</span><span class="o">.</span><span class="n">_vertex_data</span><span class="o">.</span><span class="n">_helpee</span> <span class="o">=</span> <span class="n">copied</span>
+        <span class="n">copied</span><span class="o">.</span><span class="n">_computed</span><span class="o">.</span><span class="n">_helpee</span> <span class="o">=</span> <span class="n">copied</span>
+
+        <span class="k">return</span> <span class="n">copied</span></div>
+
+
+<div class="viewcode-block" id="Vertices.concat">
+<a class="viewcode-back" href="../../_generated/gustaf.vertices.Vertices.concat.html#gustaf.vertices.Vertices.concat">[docs]</a>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">concat</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="o">*</span><span class="n">instances</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Sequentially put them together to make one object.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        -----------</span>
+<span class="sd">        *instances: List[type(cls)]</span>
+<span class="sd">          Allows one iterable object also.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        --------</span>
+<span class="sd">        one_instance: type(cls)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">def</span> <span class="nf">is_concatable</span><span class="p">(</span><span class="n">inst</span><span class="p">):</span>
+<span class="w">            </span><span class="sd">&quot;&quot;&quot;Return true, if it is same as type(cls)&quot;&quot;&quot;</span>
+            <span class="k">return</span> <span class="nb">bool</span><span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">inst</span><span class="p">,</span> <span class="bp">cls</span><span class="p">))</span>
+
+        <span class="c1"># If only one instance is given and it is iterable, adjust</span>
+        <span class="c1"># so that we will just iterate that.</span>
+        <span class="k">if</span> <span class="p">(</span>
+            <span class="nb">len</span><span class="p">(</span><span class="n">instances</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span>
+            <span class="ow">and</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">instances</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="nb">str</span><span class="p">)</span>
+            <span class="ow">and</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">instances</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="s2">&quot;__iter__&quot;</span><span class="p">)</span>
+        <span class="p">):</span>
+            <span class="n">instances</span> <span class="o">=</span> <span class="n">instances</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+        <span class="n">vertices</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">has_elem</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">kind</span> <span class="o">!=</span> <span class="s2">&quot;vertex&quot;</span>
+        <span class="k">if</span> <span class="n">has_elem</span><span class="p">:</span>
+            <span class="n">elements</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="c1"># check if everything is &quot;concatable&quot;.</span>
+        <span class="k">for</span> <span class="n">ins</span> <span class="ow">in</span> <span class="n">instances</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">is_concatable</span><span class="p">(</span><span class="n">ins</span><span class="p">):</span>
+                <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
+                    <span class="s2">&quot;Can&#39;t concat. One of the instances is not &quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;`</span><span class="si">{</span><span class="bp">cls</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">`.&quot;</span>
+                <span class="p">)</span>
+
+            <span class="n">tmp_ins</span> <span class="o">=</span> <span class="n">ins</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
+            <span class="c1"># make sure each element index starts from 0 &amp; end at len(vertices)</span>
+            <span class="k">if</span> <span class="n">has_elem</span><span class="p">:</span>
+                <span class="n">tmp_ins</span><span class="o">.</span><span class="n">remove_unreferenced_vertices</span><span class="p">()</span>
+
+            <span class="n">vertices</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">tmp_ins</span><span class="o">.</span><span class="n">vertices</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">has_elem</span><span class="p">:</span>
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">elements</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="n">elements</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">tmp_ins</span><span class="o">.</span><span class="n">elements</span><span class="p">)</span>
+                    <span class="n">e_offset</span> <span class="o">=</span> <span class="n">elements</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">()</span> <span class="o">+</span> <span class="mi">1</span>
+
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">elements</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">tmp_ins</span><span class="o">.</span><span class="n">elements</span> <span class="o">+</span> <span class="n">e_offset</span><span class="p">)</span>
+                    <span class="n">e_offset</span> <span class="o">=</span> <span class="n">elements</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">()</span> <span class="o">+</span> <span class="mi">1</span>
+
+        <span class="k">if</span> <span class="n">has_elem</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span>
+                <span class="n">vertices</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">(</span><span class="n">vertices</span><span class="p">),</span>
+                <span class="n">elements</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">(</span><span class="n">elements</span><span class="p">),</span>
+            <span class="p">)</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">Vertices</span><span class="p">(</span><span class="n">vertices</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">(</span><span class="n">vertices</span><span class="p">))</span></div>
+
+
+    <span class="k">def</span> <span class="fm">__add__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">to_add</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Concat in form of +.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        -----------</span>
+<span class="sd">        to_add: type(self)</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        --------</span>
+<span class="sd">        added: type(self)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">to_add</span><span class="p">)</span></div>
+
+</pre></div>
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../_static/scripts/bootstrap.js?digest=8d27b9dea8ad943066ae"></script>
+<script src="../../_static/scripts/pydata-sphinx-theme.js?digest=8d27b9dea8ad943066ae"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2022, Jaewook Lee.
+      <br/>
+    
+  </p>
+</div>
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.2.6.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.15.2.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

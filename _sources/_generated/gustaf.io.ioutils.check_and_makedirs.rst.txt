@@ -1,0 +1,6 @@
+gustaf.io.ioutils.check\_and\_makedirs
+======================================
+
+.. currentmodule:: gustaf.io.ioutils
+
+.. autofunction:: check_and_makedirs

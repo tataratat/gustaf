@@ -1,0 +1,37 @@
+.. _gustaf.utils:
+
+gustaf.utils
+============
+
+.. automodule:: gustaf.utils
+
+   
+   
+   
+
+   
+   
+   
+
+   
+   
+   
+
+   
+   
+   
+
+
+
+.. rubric:: Modules
+
+.. autosummary::
+   :toctree:
+   :template:
+   :recursive:
+
+   gustaf.utils.arr
+   gustaf.utils.connec
+   gustaf.utils.log
+   gustaf.utils.tictoc
+

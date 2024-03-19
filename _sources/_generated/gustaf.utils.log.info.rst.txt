@@ -1,0 +1,6 @@
+gustaf.utils.log.info
+=====================
+
+.. currentmodule:: gustaf.utils.log
+
+.. autofunction:: info

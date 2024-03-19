@@ -1,0 +1,845 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>gustaf.create.faces &#8212; gustaf 0.0.24 documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "light";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../_static/styles/theme.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
+<link href="../../../_static/styles/bootstrap.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
+<link href="../../../_static/styles/pydata-sphinx-theme.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
+
+  
+  <link href="../../../_static/vendor/fontawesome/6.5.1/css/all.min.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.1/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.1/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.1/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/style.css?v=7ab72cc5" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=8d27b9dea8ad943066ae" />
+<link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=8d27b9dea8ad943066ae" />
+  <script src="../../../_static/vendor/fontawesome/6.5.1/js/all.min.js?digest=8d27b9dea8ad943066ae"></script>
+
+    <script src="../../../_static/documentation_options.js?v=f91d8841"></script>
+    <script src="../../../_static/doctools.js?v=888ff710"></script>
+    <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/gustaf/create/faces';</script>
+    <link rel="icon" href="../../../_static/favicon.ico"/>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+    <link href="../../../_static/style.css" rel="stylesheet" type="text/css">
+
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <a id="pst-skip-link" class="skip-link" href="#main-content">Skip to main content</a>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>
+    Back to top
+  </button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__primary"
+          id="__primary"/>
+  <label class="overlay overlay-primary" for="__primary"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__secondary"
+          id="__secondary"/>
+  <label class="overlay overlay-secondary" for="__secondary"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar">
+<div class="bd-header__inner bd-page-width">
+  <label class="sidebar-toggle primary-toggle" for="__primary">
+    <span class="fa-solid fa-bars"></span>
+  </label>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+
+<a class="navbar-brand logo" href="../../../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../../_static/gus_light_mode.png" class="logo__image only-light" alt="gustaf 0.0.24 documentation - Home"/>
+    <script>document.write(`<img src="../../../_static/gus_dark_mode.png" class="logo__image only-dark" alt="gustaf 0.0.24 documentation - Home"/>`);</script>
+  
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav class="navbar-nav">
+  <ul class="bd-navbar-elements navbar-nav">
+    
+                    <li class="nav-item">
+                      <a class="nav-link nav-external" href="http://github.com/tataratat/gustaf">
+                        Github
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../../../CONTRIBUTING.html">
+                        Contiributing
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../../../references.html">
+                        API references
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../../../details.html">
+                        Feature details & options
+                      </a>
+                    </li>
+                
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+ <script>
+ document.write(`
+   <button class="btn navbar-btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="theme-switch nav-link" data-mode="light"><i class="fa-solid fa-sun fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="dark"><i class="fa-solid fa-moon fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg"></i></span>
+  </button>
+`);
+</script></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links navbar-nav"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/tataratat/gustaf" title="GitHub" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><span><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i></span>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://pypi.org/project/gustaf/" title="PyPI" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><span><i class="fa-solid fa-box fa-lg" aria-hidden="true"></i></span>
+            <span class="sr-only">PyPI</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+ <script>
+ document.write(`
+   <button class="btn navbar-btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script>
+    </div>
+  
+
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <div class="bd-sidebar-primary bd-sidebar hide-on-wide">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          <div class="navbar-item">
+<nav class="navbar-nav">
+  <ul class="bd-navbar-elements navbar-nav">
+    
+                    <li class="nav-item">
+                      <a class="nav-link nav-external" href="http://github.com/tataratat/gustaf">
+                        Github
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../../../CONTRIBUTING.html">
+                        Contiributing
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../../../references.html">
+                        API references
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../../../details.html">
+                        Feature details & options
+                      </a>
+                    </li>
+                
+  </ul>
+</nav></div>
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="theme-switch nav-link" data-mode="light"><i class="fa-solid fa-sun fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="dark"><i class="fa-solid fa-moon fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg"></i></span>
+  </button>
+`);
+</script></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links navbar-nav"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/tataratat/gustaf" title="GitHub" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><span><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i></span>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://pypi.org/project/gustaf/" title="PyPI" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><span><i class="fa-solid fa-box fa-lg" aria-hidden="true"></i></span>
+            <span class="sr-only">PyPI</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+
+
+<nav aria-label="Breadcrumb">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../../index.html" class="nav-link">Module code</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page">gustaf.create.faces</li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <h1>Source code for gustaf.create.faces</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;gustaf/create/faces.py</span>
+<span class="sd">Routines to create faces.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+<span class="kn">from</span> <span class="nn">gustaf</span> <span class="kn">import</span> <span class="n">create</span><span class="p">,</span> <span class="n">settings</span><span class="p">,</span> <span class="n">utils</span>
+<span class="kn">from</span> <span class="nn">gustaf.faces</span> <span class="kn">import</span> <span class="n">Faces</span>
+
+
+<div class="viewcode-block" id="box">
+<a class="viewcode-back" href="../../../_generated/gustaf.create.faces.box.html#gustaf.create.faces.box">[docs]</a>
+<span class="k">def</span> <span class="nf">box</span><span class="p">(</span><span class="n">bounds</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">resolutions</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">simplex</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">backslash</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Create structured quadrangle or triangle block mesh.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    -----------</span>
+<span class="sd">    bounds: (2, 2) array</span>
+<span class="sd">        Minimum and maximum coordinates.</span>
+<span class="sd">    resolutions: (2) array</span>
+<span class="sd">        Vertex count in each dimension.</span>
+<span class="sd">    simplex: boolean</span>
+<span class="sd">        If true, Mesh will be triangular (simplex).</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    --------</span>
+<span class="sd">    face_mesh: Volumes</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="n">resolutions</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">resolutions</span> <span class="o">=</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">bounds</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">bounds</span> <span class="o">=</span> <span class="p">[[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]]</span>
+    <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">bounds</span><span class="p">)</span><span class="o">.</span><span class="n">shape</span> <span class="o">!=</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Bounds must have a dimension of (2, 2).&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">resolutions</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">2</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Resolutions must have two entries.&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">greater</span><span class="p">(</span><span class="n">resolutions</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">():</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;All resolution values must be at least 2.&quot;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">simplex</span><span class="p">:</span>
+        <span class="c1"># create quad mesh as basis</span>
+        <span class="n">quad_mesh</span> <span class="o">=</span> <span class="n">box</span><span class="p">(</span><span class="n">bounds</span><span class="o">=</span><span class="n">bounds</span><span class="p">,</span> <span class="n">resolutions</span><span class="o">=</span><span class="n">resolutions</span><span class="p">)</span>
+
+        <span class="c1"># turn into triangles</span>
+        <span class="n">face_mesh</span> <span class="o">=</span> <span class="n">to_simplex</span><span class="p">(</span><span class="n">quad_mesh</span><span class="p">,</span> <span class="n">backslash</span><span class="p">)</span>
+
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">vertex_mesh</span> <span class="o">=</span> <span class="n">create</span><span class="o">.</span><span class="n">vertices</span><span class="o">.</span><span class="n">raster</span><span class="p">(</span><span class="n">bounds</span><span class="p">,</span> <span class="n">resolutions</span><span class="p">)</span>
+        <span class="n">connectivity</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">connec</span><span class="o">.</span><span class="n">make_quad_faces</span><span class="p">(</span><span class="n">resolutions</span><span class="p">)</span>
+        <span class="n">face_mesh</span> <span class="o">=</span> <span class="n">Faces</span><span class="p">(</span><span class="n">vertex_mesh</span><span class="o">.</span><span class="n">vertices</span><span class="p">,</span> <span class="n">connectivity</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">face_mesh</span></div>
+
+
+
+<div class="viewcode-block" id="to_simplex">
+<a class="viewcode-back" href="../../../_generated/gustaf.create.faces.to_simplex.html#gustaf.create.faces.to_simplex">[docs]</a>
+<span class="k">def</span> <span class="nf">to_simplex</span><span class="p">(</span><span class="n">quad</span><span class="p">,</span> <span class="n">alternate</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Given quad faces, diagonalize them to turn them into triangles.</span>
+
+<span class="sd">    If quad is counterclockwise (CCW), triangle will also be CCW and</span>
+<span class="sd">    vice versa. Will return a tri-mesh, if input is triangular.</span>
+<span class="sd">    Default diagonalization looks like this:</span>
+
+<span class="sd">    .. code-block:: text</span>
+
+<span class="sd">        (3) *---* (2)</span>
+<span class="sd">            |  /|</span>
+<span class="sd">            | / |</span>
+<span class="sd">            |/  |</span>
+<span class="sd">        (0) *---* (1)</span>
+
+<span class="sd">    resembling &#39;slash&#39;.</span>
+
+<span class="sd">    .. code-block:: text</span>
+
+<span class="sd">        (3) *---* (2)</span>
+<span class="sd">            |\\  |</span>
+<span class="sd">            | \\ |</span>
+<span class="sd">            |  \\|</span>
+<span class="sd">        (0) *---* (1)</span>
+
+<span class="sd">    resembling &#39;backslash&#39;.</span>
+
+<span class="sd">    If you want to alternate the `slash`-direction, set `alternate`-variable.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    quad: Faces</span>
+<span class="sd">      Faces representation which is to be converted from a cubic mesh into a</span>
+<span class="sd">      simplex mesh.</span>
+<span class="sd">    alternate: bool</span>
+<span class="sd">       Alternate between forward and back-slash to avoid &quot;favored&quot; meshing</span>
+<span class="sd">       direction (important in some analysis problem).</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    --------</span>
+<span class="sd">    tri: Faces</span>
+<span class="sd">        Simplexifyed mesh.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">quad</span><span class="p">,</span> <span class="n">Faces</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="s2">&quot;Input to to_simplex needs to be of type Faces, but it&#39;s &quot;</span>
+            <span class="o">+</span> <span class="nb">type</span><span class="p">(</span><span class="n">quad</span><span class="p">)</span>
+        <span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">quad</span><span class="o">.</span><span class="n">whatami</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;quad&quot;</span><span class="p">):</span>
+        <span class="c1"># split variants</span>
+        <span class="n">split_slash</span> <span class="o">=</span> <span class="p">[[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">0</span><span class="p">]]</span>
+        <span class="n">split_backslash</span> <span class="o">=</span> <span class="p">[[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">]]</span>
+
+        <span class="n">quad_faces</span> <span class="o">=</span> <span class="n">quad</span><span class="o">.</span><span class="n">faces</span>
+        <span class="n">tf_half</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">quad_faces</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="n">tri_faces</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">((</span><span class="n">tf_half</span> <span class="o">*</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">settings</span><span class="o">.</span><span class="n">INT_DTYPE</span><span class="p">)</span>
+
+        <span class="n">split</span> <span class="o">=</span> <span class="n">split_backslash</span> <span class="k">if</span> <span class="n">alternate</span> <span class="k">else</span> <span class="n">split_slash</span>
+
+        <span class="c1"># If backslash assign every other with backslash else only forward</span>
+        <span class="n">tri_faces</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="n">tf_half</span><span class="p">:</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="n">quad_faces</span><span class="p">[</span><span class="mi">0</span><span class="p">::</span><span class="mi">2</span><span class="p">,</span> <span class="n">split_slash</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span>
+        <span class="n">tri_faces</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="n">tf_half</span><span class="p">:</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="n">quad_faces</span><span class="p">[</span><span class="mi">1</span><span class="p">::</span><span class="mi">2</span><span class="p">,</span> <span class="n">split</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span>
+        <span class="n">tri_faces</span><span class="p">[</span><span class="n">tf_half</span><span class="p">::</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="n">quad_faces</span><span class="p">[</span><span class="mi">0</span><span class="p">::</span><span class="mi">2</span><span class="p">,</span> <span class="n">split_slash</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span>
+        <span class="n">tri_faces</span><span class="p">[(</span><span class="n">tf_half</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="p">::</span> <span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="n">quad_faces</span><span class="p">[</span><span class="mi">1</span><span class="p">::</span><span class="mi">2</span><span class="p">,</span> <span class="n">split</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span>
+
+        <span class="n">tri</span> <span class="o">=</span> <span class="n">Faces</span><span class="p">(</span>
+            <span class="n">vertices</span><span class="o">=</span><span class="n">quad</span><span class="o">.</span><span class="n">vertices</span><span class="o">.</span><span class="n">copy</span><span class="p">(),</span>
+            <span class="n">faces</span><span class="o">=</span><span class="n">tri_faces</span><span class="p">,</span>
+        <span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">tri</span> <span class="o">=</span> <span class="n">quad</span>
+        <span class="n">utils</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
+            <span class="s2">&quot;Non quadrilateral mesh provided, return original&quot;</span> <span class="s2">&quot; mesh.&quot;</span>
+        <span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">tri</span></div>
+
+
+
+<div class="viewcode-block" id="to_quad">
+<a class="viewcode-back" href="../../../_generated/gustaf.create.faces.to_quad.html#gustaf.create.faces.to_quad">[docs]</a>
+<span class="k">def</span> <span class="nf">to_quad</span><span class="p">(</span><span class="n">tri</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        In case current mesh is triangle surface mesh, it splits triangle faces</span>
+<span class="sd">        into three quad faces by inserting another vertices in the middle of</span>
+<span class="sd">        each triangle face. Warning: mesh quality could be bad!</span>
+
+<span class="sd">        ``(new) Quad Face``</span>
+
+<span class="sd">        .. code-block:: text</span>
+
+<span class="sd">            Ref: (node_ind), face_ind</span>
+
+<span class="sd">                     (2)</span>
+<span class="sd">                     / \</span>
+<span class="sd">                    / 2 \</span>
+<span class="sd">                (5)/\\   /\\(4)</span>
+<span class="sd">                  /  \\ /  \</span>
+<span class="sd">                 / 0  |(6) \</span>
+<span class="sd">                /_____|___1_\</span>
+<span class="sd">              (0)   (3)    (1)</span>
+
+<span class="sd">            face_ind | node_ind</span>
+<span class="sd">            ---------|----------</span>
+<span class="sd">            0        | 0 3 6 5</span>
+<span class="sd">            1        | 1 4 6 3</span>
+<span class="sd">            2        | 2 5 6 4</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        -----------</span>
+<span class="sd">        None</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        --------</span>
+<span class="sd">        quad_mesh: Mesh</span>
+<span class="sd">          Only if current mesh is triangle surface mesh. Otherwise, None.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">tri</span><span class="o">.</span><span class="n">elements</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">None</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">tri</span><span class="o">.</span><span class="n">whatami</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;tri&quot;</span><span class="p">):</span>
+        <span class="k">return</span> <span class="kc">None</span>
+
+    <span class="c1"># Form new vertices: 1. mid edge vertices; 2. center vertices.</span>
+    <span class="n">edge_mids</span> <span class="o">=</span> <span class="n">tri</span><span class="o">.</span><span class="n">to_edges</span><span class="p">(</span><span class="n">unique</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">centers</span><span class="p">()</span>
+
+    <span class="c1"># New vertices - current vertices &amp; mid edge vertices &amp; center vertices</span>
+    <span class="n">vertices</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">(</span>
+        <span class="p">(</span>
+            <span class="n">tri</span><span class="o">.</span><span class="n">const_vertices</span><span class="p">,</span>
+            <span class="n">edge_mids</span><span class="p">,</span>
+            <span class="n">tri</span><span class="o">.</span><span class="n">centers</span><span class="p">(),</span>
+        <span class="p">)</span>
+    <span class="p">)</span>
+    <span class="n">em_offset</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">tri</span><span class="o">.</span><span class="n">vertices</span><span class="p">)</span>  <span class="c1"># edge mid offset</span>
+    <span class="n">fc_offset</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">tri</span><span class="o">.</span><span class="n">vertices</span><span class="p">)</span> <span class="o">+</span> <span class="nb">len</span><span class="p">(</span><span class="n">edge_mids</span><span class="p">)</span>  <span class="c1"># faces center offset</span>
+
+    <span class="c1"># New faces - current faces * 3, as each triangle face should produce</span>
+    <span class="c1">#  3 quad faces</span>
+    <span class="n">faces</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="n">tri</span><span class="o">.</span><span class="n">faces</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">settings</span><span class="o">.</span><span class="n">INT_DTYPE</span><span class="p">)</span>
+
+    <span class="c1"># Assign face ind</span>
+    <span class="c1"># First col.</span>
+    <span class="n">faces</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">tri</span><span class="o">.</span><span class="n">faces</span><span class="o">.</span><span class="n">ravel</span><span class="p">()</span>
+    <span class="c1"># Second col.</span>
+    <span class="n">edge_mid_column</span> <span class="o">=</span> <span class="n">tri</span><span class="o">.</span><span class="n">unique_edges</span><span class="p">()</span><span class="o">.</span><span class="n">inverse</span> <span class="o">+</span> <span class="n">em_offset</span>
+    <span class="n">faces</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">edge_mid_column</span>
+    <span class="c1"># Third col.</span>
+    <span class="n">faces</span><span class="p">[:,</span> <span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">repeat</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">tri</span><span class="o">.</span><span class="n">faces</span><span class="p">))</span> <span class="o">+</span> <span class="n">fc_offset</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+    <span class="c1"># Fourth col.</span>
+    <span class="n">faces</span><span class="p">[:,</span> <span class="mi">3</span><span class="p">]</span> <span class="o">=</span> <span class="n">edge_mid_column</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">)[:,</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]]</span><span class="o">.</span><span class="n">ravel</span><span class="p">()</span>
+
+    <span class="k">return</span> <span class="n">Faces</span><span class="p">(</span><span class="n">vertices</span><span class="o">=</span><span class="n">vertices</span><span class="p">,</span> <span class="n">faces</span><span class="o">=</span><span class="n">faces</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="edges_as_quad">
+<a class="viewcode-back" href="../../../_generated/gustaf.create.faces.edges_as_quad.html#gustaf.create.faces.edges_as_quad">[docs]</a>
+<span class="k">def</span> <span class="nf">edges_as_quad</span><span class="p">(</span><span class="n">edges</span><span class="p">,</span> <span class="n">scaled_normals</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Expands edges to hexa with given scaled_normals.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    edges: Edges</span>
+<span class="sd">      (n, d) vertices, (m, 2) edges</span>
+<span class="sd">    scaled_normals: (n, d) np.ndarray</span>
+<span class="sd">      Values will be used to subtract/add to existing vertices.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    expanded: Faces</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">edges</span><span class="o">.</span><span class="n">whatami</span> <span class="o">!=</span> <span class="s2">&quot;edges&quot;</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;expand currently only supports Edges.&quot;</span><span class="p">)</span>
+
+    <span class="n">size</span> <span class="o">=</span> <span class="n">scaled_normals</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">dim</span> <span class="o">=</span> <span class="n">scaled_normals</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">edges</span><span class="o">.</span><span class="n">vertices</span><span class="p">)</span> <span class="o">!=</span> <span class="n">size</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Edges.vertices and scaled_normals size mismatch.&quot;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">dim</span> <span class="o">!=</span> <span class="n">edges</span><span class="o">.</span><span class="n">vertices</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="s2">&quot;Dimension mismatch between Edges.Vertices and scaled_normals&quot;</span>
+        <span class="p">)</span>
+
+    <span class="n">vertices</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="n">size</span> <span class="o">*</span> <span class="mi">2</span><span class="p">,</span> <span class="n">dim</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">settings</span><span class="o">.</span><span class="n">FLOAT_DTYPE</span><span class="p">)</span>
+    <span class="n">vertices</span><span class="p">[:</span><span class="n">size</span><span class="p">]</span> <span class="o">=</span> <span class="n">edges</span><span class="o">.</span><span class="n">vertices</span> <span class="o">-</span> <span class="n">scaled_normals</span>
+    <span class="n">vertices</span><span class="p">[</span><span class="n">size</span><span class="p">:]</span> <span class="o">=</span> <span class="n">edges</span><span class="o">.</span><span class="n">vertices</span> <span class="o">+</span> <span class="n">scaled_normals</span>
+
+    <span class="n">quad</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="nb">len</span><span class="p">(</span><span class="n">edges</span><span class="o">.</span><span class="n">edges</span><span class="p">),</span> <span class="mi">4</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">settings</span><span class="o">.</span><span class="n">INT_DTYPE</span><span class="p">)</span>
+    <span class="n">quad</span><span class="p">[:,</span> <span class="p">:</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="n">edges</span><span class="o">.</span><span class="n">edges</span>
+    <span class="n">quad</span><span class="p">[:,</span> <span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="n">edges</span><span class="o">.</span><span class="n">edges</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">size</span>
+    <span class="n">quad</span><span class="p">[:,</span> <span class="mi">3</span><span class="p">]</span> <span class="o">=</span> <span class="n">edges</span><span class="o">.</span><span class="n">edges</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">size</span>
+
+    <span class="k">return</span> <span class="n">Faces</span><span class="p">(</span><span class="n">vertices</span><span class="p">,</span> <span class="n">quad</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="vertex_normals">
+<a class="viewcode-back" href="../../../_generated/gustaf.create.faces.vertex_normals.html#gustaf.create.faces.vertex_normals">[docs]</a>
+<span class="k">def</span> <span class="nf">vertex_normals</span><span class="p">(</span>
+    <span class="n">faces</span><span class="p">,</span>
+    <span class="n">area_weighting</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="n">angle_weighting</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="n">return_original_ids</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Computes vertex normals and saves it in vertex_data.</span>
+<span class="sd">    This calls inplace remove_unreferenced_vertices, but original IDs can be</span>
+<span class="sd">    retrieved using the flag `return_original_ids`.</span>
+
+<span class="sd">    The normals are computed on the face-centers and their contributions are</span>
+<span class="sd">    weighted and added to the vertex normals. Per default, all element faces</span>
+<span class="sd">    that are adjacent to a vertex are added with equal contributions, but it is</span>
+<span class="sd">    also possible to use weightings by area of the adjacent element</span>
+<span class="sd">    (`area_weighting`) or by the angle between edges at the corner vertex.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    faces: Faces</span>
+<span class="sd">    area_weighting : bool (false)</span>
+<span class="sd">      Use the element area as a weighting to its respective normal contribution</span>
+<span class="sd">    angle_weighting : bool (false)</span>
+<span class="sd">      Use the angle of between element edges as a weighting to its respective</span>
+<span class="sd">      normal contribution</span>
+<span class="sd">    return_original_ids : bool (false)</span>
+<span class="sd">      return the original ids in the global mesh</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    faces: Faces</span>
+<span class="sd">      faces with vertex_data[&quot;normals&quot;] computed.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">faces</span><span class="o">.</span><span class="n">whatami</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;tri&quot;</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Vertex normals only supports triangle faces&quot;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">faces</span><span class="o">.</span><span class="n">vertices</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">!=</span> <span class="mi">3</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Vertex normals only support 3d triangles&quot;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">return_original_ids</span><span class="p">:</span>
+        <span class="n">original_ids</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">faces</span><span class="o">.</span><span class="n">referenced_vertices</span><span class="p">())[</span><span class="mi">0</span><span class="p">]</span>
+
+    <span class="n">faces</span><span class="o">.</span><span class="n">remove_unreferenced_vertices</span><span class="p">()</span>
+
+    <span class="n">triangles</span> <span class="o">=</span> <span class="n">faces</span><span class="o">.</span><span class="n">vertices</span><span class="p">[</span><span class="n">faces</span><span class="o">.</span><span class="n">faces</span><span class="p">]</span>
+
+    <span class="c1"># compute (1 - 0) and (2 - 0)</span>
+    <span class="n">edge_ab</span> <span class="o">=</span> <span class="n">triangles</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">triangles</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span>
+    <span class="n">edge_bc</span> <span class="o">=</span> <span class="n">triangles</span><span class="p">[:,</span> <span class="mi">2</span><span class="p">]</span> <span class="o">-</span> <span class="n">triangles</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]</span>
+
+    <span class="c1"># get normal of each faces and normalize</span>
+    <span class="n">crossed</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">arr</span><span class="o">.</span><span class="n">cross3d</span><span class="p">(</span><span class="n">edge_ab</span><span class="p">,</span> <span class="n">edge_bc</span><span class="p">)</span>
+    <span class="n">crossed_length</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">crossed</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+
+    <span class="n">weights</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="n">crossed</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">settings</span><span class="o">.</span><span class="n">FLOAT_DTYPE</span><span class="p">)</span>
+
+    <span class="c1"># get area based weights</span>
+    <span class="k">if</span> <span class="n">area_weighting</span><span class="p">:</span>
+        <span class="n">weights</span> <span class="o">*=</span> <span class="n">crossed_length</span>
+    <span class="c1">#     crossed /= crossed_length</span>
+    <span class="c1"># else:</span>
+    <span class="n">crossed</span> <span class="o">/=</span> <span class="n">crossed_length</span>
+
+    <span class="c1"># get triangle corner angles (same as faces.faces)</span>
+    <span class="k">if</span> <span class="n">angle_weighting</span><span class="p">:</span>
+        <span class="n">angles</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty_like</span><span class="p">(</span><span class="n">crossed</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">settings</span><span class="o">.</span><span class="n">FLOAT_DTYPE</span><span class="p">)</span>
+        <span class="n">norm_ab</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">edge_ab</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">norm_bc</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">edge_bc</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">edge_ca</span> <span class="o">=</span> <span class="n">edge_ab</span> <span class="o">+</span> <span class="n">edge_bc</span>
+        <span class="n">norm_ca</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">edge_ca</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">arcsin</span><span class="p">(</span>
+            <span class="n">crossed_length</span><span class="o">.</span><span class="n">ravel</span><span class="p">()</span> <span class="o">/</span> <span class="p">(</span><span class="n">norm_ab</span> <span class="o">*</span> <span class="n">norm_bc</span><span class="p">)</span><span class="o">.</span><span class="n">ravel</span><span class="p">(),</span>
+            <span class="n">out</span><span class="o">=</span><span class="n">angles</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">],</span>
+        <span class="p">)</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">arccos</span><span class="p">(</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">einsum</span><span class="p">(</span><span class="s2">&quot;ij,ij-&gt;i&quot;</span><span class="p">,</span> <span class="n">edge_bc</span><span class="p">,</span> <span class="n">edge_ca</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">norm_bc</span> <span class="o">*</span> <span class="n">norm_ca</span><span class="p">),</span>
+            <span class="n">out</span><span class="o">=</span><span class="n">angles</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">],</span>
+        <span class="p">)</span>
+        <span class="n">angles</span><span class="p">[:,</span> <span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">-</span> <span class="n">angles</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="n">angles</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]</span>
+
+        <span class="n">weights</span> <span class="o">*=</span> <span class="n">angles</span>
+
+    <span class="c1"># initialize</span>
+    <span class="n">normals</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">faces</span><span class="o">.</span><span class="n">vertices</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">settings</span><span class="o">.</span><span class="n">FLOAT_DTYPE</span><span class="p">)</span>
+
+    <span class="c1"># sum normals and weights</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">add</span><span class="o">.</span><span class="n">at</span><span class="p">(</span>
+        <span class="n">normals</span><span class="p">,</span> <span class="n">faces</span><span class="o">.</span><span class="n">faces</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">crossed</span> <span class="o">*</span> <span class="n">weights</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="p">)</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">add</span><span class="o">.</span><span class="n">at</span><span class="p">(</span>
+        <span class="n">normals</span><span class="p">,</span> <span class="n">faces</span><span class="o">.</span><span class="n">faces</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">crossed</span> <span class="o">*</span> <span class="n">weights</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="p">)</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">add</span><span class="o">.</span><span class="n">at</span><span class="p">(</span>
+        <span class="n">normals</span><span class="p">,</span> <span class="n">faces</span><span class="o">.</span><span class="n">faces</span><span class="p">[:,</span> <span class="mi">2</span><span class="p">],</span> <span class="n">crossed</span> <span class="o">*</span> <span class="n">weights</span><span class="p">[:,</span> <span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="p">)</span>
+
+    <span class="c1"># normalize</span>
+    <span class="n">normals</span> <span class="o">/=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">normals</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+
+    <span class="n">faces</span><span class="o">.</span><span class="n">vertex_data</span><span class="p">[</span><span class="s2">&quot;normals&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">normals</span>
+    <span class="k">if</span> <span class="n">return_original_ids</span><span class="p">:</span>
+        <span class="k">return</span> <span class="p">(</span><span class="n">faces</span><span class="p">,</span> <span class="n">original_ids</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">faces</span></div>
+
+</pre></div>
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../../_static/scripts/bootstrap.js?digest=8d27b9dea8ad943066ae"></script>
+<script src="../../../_static/scripts/pydata-sphinx-theme.js?digest=8d27b9dea8ad943066ae"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2022, Jaewook Lee.
+      <br/>
+    
+  </p>
+</div>
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.2.6.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.15.2.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

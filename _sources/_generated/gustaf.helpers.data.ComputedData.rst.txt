@@ -1,0 +1,46 @@
+gustaf.helpers.data.ComputedData
+================================
+
+.. currentmodule:: gustaf.helpers.data
+
+.. autoclass:: ComputedData
+   :show-inheritance:
+
+   
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+      :toctree:
+   
+      
+      
+        
+      
+      
+        
+          ComputedData.depends_on
+        
+      
+      
+        
+      
+      
+        
+      
+      
+        
+      
+      
+        
+      
+      
+        
+      
+   
+   
+
+   
+   
+   

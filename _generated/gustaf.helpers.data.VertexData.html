@@ -1,0 +1,809 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>gustaf.helpers.data.VertexData &#8212; gustaf 0.0.24 documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "light";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
+<link href="../_static/styles/bootstrap.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
+
+  
+  <link href="../_static/vendor/fontawesome/6.5.1/css/all.min.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.1/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.1/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.1/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="../_static/style.css?v=7ab72cc5" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=8d27b9dea8ad943066ae" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=8d27b9dea8ad943066ae" />
+  <script src="../_static/vendor/fontawesome/6.5.1/js/all.min.js?digest=8d27b9dea8ad943066ae"></script>
+
+    <script src="../_static/documentation_options.js?v=f91d8841"></script>
+    <script src="../_static/doctools.js?v=888ff710"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_generated/gustaf.helpers.data.VertexData';</script>
+    <link rel="icon" href="../_static/favicon.ico"/>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="gustaf.helpers.data.VertexData.as_arrow" href="gustaf.helpers.data.VertexData.as_arrow.html" />
+    <link rel="prev" title="gustaf.helpers.data.Unique2DIntegers.values" href="gustaf.helpers.data.Unique2DIntegers.values.html" />
+    <link href="../_static/style.css" rel="stylesheet" type="text/css">
+
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <a id="pst-skip-link" class="skip-link" href="#main-content">Skip to main content</a>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>
+    Back to top
+  </button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__primary"
+          id="__primary"/>
+  <label class="overlay overlay-primary" for="__primary"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__secondary"
+          id="__secondary"/>
+  <label class="overlay overlay-secondary" for="__secondary"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar">
+<div class="bd-header__inner bd-page-width">
+  <label class="sidebar-toggle primary-toggle" for="__primary">
+    <span class="fa-solid fa-bars"></span>
+  </label>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+
+<a class="navbar-brand logo" href="../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../_static/gus_light_mode.png" class="logo__image only-light" alt="gustaf 0.0.24 documentation - Home"/>
+    <script>document.write(`<img src="../_static/gus_dark_mode.png" class="logo__image only-dark" alt="gustaf 0.0.24 documentation - Home"/>`);</script>
+  
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav class="navbar-nav">
+  <ul class="bd-navbar-elements navbar-nav">
+    
+                    <li class="nav-item">
+                      <a class="nav-link nav-external" href="http://github.com/tataratat/gustaf">
+                        Github
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../CONTRIBUTING.html">
+                        Contiributing
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item current active">
+                      <a class="nav-link nav-internal" href="../references.html">
+                        API references
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../details.html">
+                        Feature details & options
+                      </a>
+                    </li>
+                
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+ <script>
+ document.write(`
+   <button class="btn navbar-btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="theme-switch nav-link" data-mode="light"><i class="fa-solid fa-sun fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="dark"><i class="fa-solid fa-moon fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg"></i></span>
+  </button>
+`);
+</script></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links navbar-nav"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/tataratat/gustaf" title="GitHub" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><span><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i></span>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://pypi.org/project/gustaf/" title="PyPI" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><span><i class="fa-solid fa-box fa-lg" aria-hidden="true"></i></span>
+            <span class="sr-only">PyPI</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+ <script>
+ document.write(`
+   <button class="btn navbar-btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script>
+    </div>
+  
+
+  
+    <label class="sidebar-toggle secondary-toggle" for="__secondary" tabindex="0">
+      <span class="fa-solid fa-outdent"></span>
+    </label>
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          <div class="navbar-item">
+<nav class="navbar-nav">
+  <ul class="bd-navbar-elements navbar-nav">
+    
+                    <li class="nav-item">
+                      <a class="nav-link nav-external" href="http://github.com/tataratat/gustaf">
+                        Github
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../CONTRIBUTING.html">
+                        Contiributing
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item current active">
+                      <a class="nav-link nav-internal" href="../references.html">
+                        API references
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../details.html">
+                        Feature details & options
+                      </a>
+                    </li>
+                
+  </ul>
+</nav></div>
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="theme-switch nav-link" data-mode="light"><i class="fa-solid fa-sun fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="dark"><i class="fa-solid fa-moon fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg"></i></span>
+  </button>
+`);
+</script></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links navbar-nav"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/tataratat/gustaf" title="GitHub" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><span><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i></span>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://pypi.org/project/gustaf/" title="PyPI" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><span><i class="fa-solid fa-box fa-lg" aria-hidden="true"></i></span>
+            <span class="sr-only">PyPI</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+<nav class="bd-docs-nav bd-links"
+     aria-label="Section Navigation">
+  <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
+  <div class="bd-toc-item navbar-nav"><ul class="current nav bd-sidenav">
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="gustaf.html">gustaf</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-1"><i class="fa-solid fa-chevron-down"></i></label><ul class="current">
+<li class="toctree-l2 has-children"><a class="reference internal" href="gustaf.create.html">gustaf.create</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-2"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l3 has-children"><a class="reference internal" href="gustaf.create.edges.html">gustaf.create.edges</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-3"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="gustaf.create.edges.from_data.html">gustaf.create.edges.from_data</a></li>
+<li class="toctree-l4"><a class="reference internal" href="gustaf.create.edges.from_vertices.html">gustaf.create.edges.from_vertices</a></li>
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="gustaf.create.faces.html">gustaf.create.faces</a><input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-4"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="gustaf.create.faces.box.html">gustaf.create.faces.box</a></li>
+<li class="toctree-l4"><a class="reference internal" href="gustaf.create.faces.edges_as_quad.html">gustaf.create.faces.edges_as_quad</a></li>
+<li class="toctree-l4"><a class="reference internal" href="gustaf.create.faces.to_quad.html">gustaf.create.faces.to_quad</a></li>
+<li class="toctree-l4"><a class="reference internal" href="gustaf.create.faces.to_simplex.html">gustaf.create.faces.to_simplex</a></li>
+<li class="toctree-l4"><a class="reference internal" href="gustaf.create.faces.vertex_normals.html">gustaf.create.faces.vertex_normals</a></li>
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="gustaf.create.vertices.html">gustaf.create.vertices</a><input class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-5"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="gustaf.create.vertices.raster.html">gustaf.create.vertices.raster</a></li>
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="gustaf.create.volumes.html">gustaf.create.volumes</a><input class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-6"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="gustaf.create.volumes.box.html">gustaf.create.volumes.box</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="gustaf.edges.html">gustaf.edges</a><input class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-7"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l3 has-children"><a class="reference internal" href="gustaf.edges.Edges.html">gustaf.edges.Edges</a><input class="toctree-checkbox" id="toctree-checkbox-8" name="toctree-checkbox-8" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-8"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="gustaf.edges.Edges.centers.html">gustaf.edges.Edges.centers</a></li>
+<li class="toctree-l4"><a class="reference internal" href="gustaf.edges.Edges.dashed.html">gustaf.edges.Edges.dashed</a></li>
+<li class="toctree-l4"><a class="reference internal" href="gustaf.edges.Edges.referenced_vertices.html">gustaf.edges.Edges.referenced_vertices</a></li>
+<li class="toctree-l4"><a class="reference internal" href="gustaf.edges.Edges.remove_unreferenced_vertices.html">gustaf.edges.Edges.remove_unreferenced_vertices</a></li>
+<li class="toctree-l4"><a class="reference internal" href="gustaf.edges.Edges.shrink.html">gustaf.edges.Edges.shrink</a></li>
+<li class="toctree-l4"><a class="reference internal" href="gustaf.edges.Edges.single_edges.html">gustaf.edges.Edges.single_edges</a></li>
+<li class="toctree-l4"><a class="reference internal" href="gustaf.edges.Edges.sorted_edges.html">gustaf.edges.Edges.sorted_edges</a></li>
+<li class="toctree-l4"><a class="reference internal" href="gustaf.edges.Edges.to_vertices.html">gustaf.edges.Edges.to_vertices</a></li>
+<li class="toctree-l4"><a class="reference internal" href="gustaf.edges.Edges.unique_edges.html">gustaf.edges.Edges.unique_edges</a></li>
+<li class="toctree-l4"><a class="reference internal" href="gustaf.edges.Edges.update_edges.html">gustaf.edges.Edges.update_edges</a></li>
+<li class="toctree-l4"><a class="reference internal" href="gustaf.edges.Edges.update_elements.html">gustaf.edges.Edges.update_elements</a></li>
+<li class="toctree-l4"><a class="reference internal" href="gustaf.edges.Edges.const_edges.html">gustaf.edges.Edges.const_edges</a></li>
+<li class="toctree-l4"><a class="reference internal" href="gustaf.edges.Edges.const_elements.html">gustaf.edges.Edges.const_elements</a></li>
+<li class="toctree-l4"><a class="reference internal" href="gustaf.edges.Edges.edges.html">gustaf.edges.Edges.edges</a></li>
+<li class="toctree-l4"><a class="reference internal" href="gustaf.edges.Edges.elements.html">gustaf.edges.Edges.elements</a></li>
+<li class="toctree-l4"><a class="reference internal" href="gustaf.edges.Edges.kind.html">gustaf.edges.Edges.kind</a></li>
+<li class="toctree-l4"><a class="reference internal" href="gustaf.edges.Edges.whatami.html">gustaf.edges.Edges.whatami</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="gustaf.edges.EdgesShowOption.html">gustaf.edges.EdgesShowOption</a></li>
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="gustaf.faces.html">gustaf.faces</a><input class="toctree-checkbox" id="toctree-checkbox-9" name="toctree-checkbox-9" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-9"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l3 has-children"><a class="reference internal" href="gustaf.faces.Faces.html">gustaf.faces.Faces</a><input class="toctree-checkbox" id="toctree-checkbox-10" name="toctree-checkbox-10" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-10"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="gustaf.faces.Faces.dashed.html">gustaf.faces.Faces.dashed</a></li>
+<li class="toctree-l4"><a class="reference internal" href="gustaf.faces.Faces.edges.html">gustaf.faces.Faces.edges</a></li>
+<li class="toctree-l4"><a class="reference internal" href="gustaf.faces.Faces.single_faces.html">gustaf.faces.Faces.single_faces</a></li>
+<li class="toctree-l4"><a class="reference internal" href="gustaf.faces.Faces.sorted_faces.html">gustaf.faces.Faces.sorted_faces</a></li>
+<li class="toctree-l4"><a class="reference internal" href="gustaf.faces.Faces.to_edges.html">gustaf.faces.Faces.to_edges</a></li>
+<li class="toctree-l4"><a class="reference internal" href="gustaf.faces.Faces.to_subelements.html">gustaf.faces.Faces.to_subelements</a></li>
+<li class="toctree-l4"><a class="reference internal" href="gustaf.faces.Faces.unique_faces.html">gustaf.faces.Faces.unique_faces</a></li>
+<li class="toctree-l4"><a class="reference internal" href="gustaf.faces.Faces.update_edges.html">gustaf.faces.Faces.update_edges</a></li>
+<li class="toctree-l4"><a class="reference internal" href="gustaf.faces.Faces.update_faces.html">gustaf.faces.Faces.update_faces</a></li>
+<li class="toctree-l4"><a class="reference internal" href="gustaf.faces.Faces.whatareyou.html">gustaf.faces.Faces.whatareyou</a></li>
+<li class="toctree-l4"><a class="reference internal" href="gustaf.faces.Faces.BC.html">gustaf.faces.Faces.BC</a></li>
+<li class="toctree-l4"><a class="reference internal" href="gustaf.faces.Faces.const_edges.html">gustaf.faces.Faces.const_edges</a></li>
+<li class="toctree-l4"><a class="reference internal" href="gustaf.faces.Faces.const_faces.html">gustaf.faces.Faces.const_faces</a></li>
+<li class="toctree-l4"><a class="reference internal" href="gustaf.faces.Faces.faces.html">gustaf.faces.Faces.faces</a></li>
+<li class="toctree-l4"><a class="reference internal" href="gustaf.faces.Faces.kind.html">gustaf.faces.Faces.kind</a></li>
+<li class="toctree-l4"><a class="reference internal" href="gustaf.faces.Faces.whatami.html">gustaf.faces.Faces.whatami</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="gustaf.faces.FacesShowOption.html">gustaf.faces.FacesShowOption</a></li>
+</ul>
+</li>
+<li class="toctree-l2 current active has-children"><a class="reference internal" href="gustaf.helpers.html">gustaf.helpers</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-11" name="toctree-checkbox-11" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-11"><i class="fa-solid fa-chevron-down"></i></label><ul class="current">
+<li class="toctree-l3 current active has-children"><a class="reference internal" href="gustaf.helpers.data.html">gustaf.helpers.data</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-12" name="toctree-checkbox-12" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-12"><i class="fa-solid fa-chevron-down"></i></label><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="gustaf.helpers.data.make_tracked_array.html">gustaf.helpers.data.make_tracked_array</a></li>
+<li class="toctree-l4"><a class="reference internal" href="gustaf.helpers.data.ComputedData.html">gustaf.helpers.data.ComputedData</a></li>
+<li class="toctree-l4"><a class="reference internal" href="gustaf.helpers.data.ComputedMeshData.html">gustaf.helpers.data.ComputedMeshData</a></li>
+<li class="toctree-l4"><a class="reference internal" href="gustaf.helpers.data.DataHolder.html">gustaf.helpers.data.DataHolder</a></li>
+<li class="toctree-l4"><a class="reference internal" href="gustaf.helpers.data.TrackedArray.html">gustaf.helpers.data.TrackedArray</a></li>
+<li class="toctree-l4"><a class="reference internal" href="gustaf.helpers.data.Unique2DFloats.html">gustaf.helpers.data.Unique2DFloats</a></li>
+<li class="toctree-l4"><a class="reference internal" href="gustaf.helpers.data.Unique2DIntegers.html">gustaf.helpers.data.Unique2DIntegers</a></li>
+<li class="toctree-l4 current active"><a class="current reference internal" href="#">gustaf.helpers.data.VertexData</a></li>
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="gustaf.helpers.notebook.html">gustaf.helpers.notebook</a><input class="toctree-checkbox" id="toctree-checkbox-13" name="toctree-checkbox-13" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-13"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="gustaf.helpers.notebook.get_shape.html">gustaf.helpers.notebook.get_shape</a></li>
+<li class="toctree-l4"><a class="reference internal" href="gustaf.helpers.notebook.K3DPlotterN.html">gustaf.helpers.notebook.K3DPlotterN</a></li>
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="gustaf.helpers.options.html">gustaf.helpers.options</a><input class="toctree-checkbox" id="toctree-checkbox-14" name="toctree-checkbox-14" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-14"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="gustaf.helpers.options.make_valid_options.html">gustaf.helpers.options.make_valid_options</a></li>
+<li class="toctree-l4"><a class="reference internal" href="gustaf.helpers.options.Option.html">gustaf.helpers.options.Option</a></li>
+<li class="toctree-l4"><a class="reference internal" href="gustaf.helpers.options.SetDefault.html">gustaf.helpers.options.SetDefault</a></li>
+<li class="toctree-l4"><a class="reference internal" href="gustaf.helpers.options.ShowOption.html">gustaf.helpers.options.ShowOption</a></li>
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="gustaf.helpers.raise_if.html">gustaf.helpers.raise_if</a><input class="toctree-checkbox" id="toctree-checkbox-15" name="toctree-checkbox-15" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-15"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="gustaf.helpers.raise_if.invalid_inherited_attr.html">gustaf.helpers.raise_if.invalid_inherited_attr</a></li>
+<li class="toctree-l4"><a class="reference internal" href="gustaf.helpers.raise_if.ModuleImportRaiser.html">gustaf.helpers.raise_if.ModuleImportRaiser</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="gustaf.io.html">gustaf.io</a><input class="toctree-checkbox" id="toctree-checkbox-16" name="toctree-checkbox-16" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-16"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l3 has-children"><a class="reference internal" href="gustaf.io.default.html">gustaf.io.default</a><input class="toctree-checkbox" id="toctree-checkbox-17" name="toctree-checkbox-17" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-17"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="gustaf.io.default.load.html">gustaf.io.default.load</a></li>
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="gustaf.io.ioutils.html">gustaf.io.ioutils</a><input class="toctree-checkbox" id="toctree-checkbox-18" name="toctree-checkbox-18" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-18"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="gustaf.io.ioutils.abs_fname.html">gustaf.io.ioutils.abs_fname</a></li>
+<li class="toctree-l4"><a class="reference internal" href="gustaf.io.ioutils.check_and_makedirs.html">gustaf.io.ioutils.check_and_makedirs</a></li>
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="gustaf.io.meshio.html">gustaf.io.meshio</a><input class="toctree-checkbox" id="toctree-checkbox-19" name="toctree-checkbox-19" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-19"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="gustaf.io.meshio.export.html">gustaf.io.meshio.export</a></li>
+<li class="toctree-l4"><a class="reference internal" href="gustaf.io.meshio.load.html">gustaf.io.meshio.load</a></li>
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="gustaf.io.mfem.html">gustaf.io.mfem</a><input class="toctree-checkbox" id="toctree-checkbox-20" name="toctree-checkbox-20" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-20"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="gustaf.io.mfem.export.html">gustaf.io.mfem.export</a></li>
+<li class="toctree-l4"><a class="reference internal" href="gustaf.io.mfem.load.html">gustaf.io.mfem.load</a></li>
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="gustaf.io.mixd.html">gustaf.io.mixd</a><input class="toctree-checkbox" id="toctree-checkbox-21" name="toctree-checkbox-21" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-21"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="gustaf.io.mixd.export.html">gustaf.io.mixd.export</a></li>
+<li class="toctree-l4"><a class="reference internal" href="gustaf.io.mixd.load.html">gustaf.io.mixd.load</a></li>
+<li class="toctree-l4"><a class="reference internal" href="gustaf.io.mixd.make_mrng.html">gustaf.io.mixd.make_mrng</a></li>
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="gustaf.io.nutils.html">gustaf.io.nutils</a><input class="toctree-checkbox" id="toctree-checkbox-22" name="toctree-checkbox-22" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-22"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="gustaf.io.nutils.export.html">gustaf.io.nutils.export</a></li>
+<li class="toctree-l4"><a class="reference internal" href="gustaf.io.nutils.load.html">gustaf.io.nutils.load</a></li>
+<li class="toctree-l4"><a class="reference internal" href="gustaf.io.nutils.to_nutils_simplex.html">gustaf.io.nutils.to_nutils_simplex</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="gustaf.settings.html">gustaf.settings</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="gustaf.show.html">gustaf.show</a><input class="toctree-checkbox" id="toctree-checkbox-23" name="toctree-checkbox-23" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-23"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="gustaf.show.interpolate_vedo_dictcam.html">gustaf.show.interpolate_vedo_dictcam</a></li>
+<li class="toctree-l3"><a class="reference internal" href="gustaf.show.make_showable.html">gustaf.show.make_showable</a></li>
+<li class="toctree-l3"><a class="reference internal" href="gustaf.show.show.html">gustaf.show.show</a></li>
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="gustaf.utils.html">gustaf.utils</a><input class="toctree-checkbox" id="toctree-checkbox-24" name="toctree-checkbox-24" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-24"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l3 has-children"><a class="reference internal" href="gustaf.utils.arr.html">gustaf.utils.arr</a><input class="toctree-checkbox" id="toctree-checkbox-25" name="toctree-checkbox-25" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-25"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="gustaf.utils.arr.bounds.html">gustaf.utils.arr.bounds</a></li>
+<li class="toctree-l4"><a class="reference internal" href="gustaf.utils.arr.bounds_diagonal.html">gustaf.utils.arr.bounds_diagonal</a></li>
+<li class="toctree-l4"><a class="reference internal" href="gustaf.utils.arr.bounds_mean.html">gustaf.utils.arr.bounds_mean</a></li>
+<li class="toctree-l4"><a class="reference internal" href="gustaf.utils.arr.bounds_norm.html">gustaf.utils.arr.bounds_norm</a></li>
+<li class="toctree-l4"><a class="reference internal" href="gustaf.utils.arr.close_rows.html">gustaf.utils.arr.close_rows</a></li>
+<li class="toctree-l4"><a class="reference internal" href="gustaf.utils.arr.cross3d.html">gustaf.utils.arr.cross3d</a></li>
+<li class="toctree-l4"><a class="reference internal" href="gustaf.utils.arr.derivatives_to_normals.html">gustaf.utils.arr.derivatives_to_normals</a></li>
+<li class="toctree-l4"><a class="reference internal" href="gustaf.utils.arr.enforce_len.html">gustaf.utils.arr.enforce_len</a></li>
+<li class="toctree-l4"><a class="reference internal" href="gustaf.utils.arr.is_one_of_shapes.html">gustaf.utils.arr.is_one_of_shapes</a></li>
+<li class="toctree-l4"><a class="reference internal" href="gustaf.utils.arr.is_shape.html">gustaf.utils.arr.is_shape</a></li>
+<li class="toctree-l4"><a class="reference internal" href="gustaf.utils.arr.make_c_contiguous.html">gustaf.utils.arr.make_c_contiguous</a></li>
+<li class="toctree-l4"><a class="reference internal" href="gustaf.utils.arr.rotate.html">gustaf.utils.arr.rotate</a></li>
+<li class="toctree-l4"><a class="reference internal" href="gustaf.utils.arr.rotation_matrix.html">gustaf.utils.arr.rotation_matrix</a></li>
+<li class="toctree-l4"><a class="reference internal" href="gustaf.utils.arr.rotation_matrix_around_axis.html">gustaf.utils.arr.rotation_matrix_around_axis</a></li>
+<li class="toctree-l4"><a class="reference internal" href="gustaf.utils.arr.select_with_ranges.html">gustaf.utils.arr.select_with_ranges</a></li>
+<li class="toctree-l4"><a class="reference internal" href="gustaf.utils.arr.unique_rows.html">gustaf.utils.arr.unique_rows</a></li>
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="gustaf.utils.connec.html">gustaf.utils.connec</a><input class="toctree-checkbox" id="toctree-checkbox-26" name="toctree-checkbox-26" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-26"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="gustaf.utils.connec.faces_to_edges.html">gustaf.utils.connec.faces_to_edges</a></li>
+<li class="toctree-l4"><a class="reference internal" href="gustaf.utils.connec.hexa_to_quad.html">gustaf.utils.connec.hexa_to_quad</a></li>
+<li class="toctree-l4"><a class="reference internal" href="gustaf.utils.connec.make_hexa_volumes.html">gustaf.utils.connec.make_hexa_volumes</a></li>
+<li class="toctree-l4"><a class="reference internal" href="gustaf.utils.connec.make_quad_faces.html">gustaf.utils.connec.make_quad_faces</a></li>
+<li class="toctree-l4"><a class="reference internal" href="gustaf.utils.connec.range_to_edges.html">gustaf.utils.connec.range_to_edges</a></li>
+<li class="toctree-l4"><a class="reference internal" href="gustaf.utils.connec.sequence_to_edges.html">gustaf.utils.connec.sequence_to_edges</a></li>
+<li class="toctree-l4"><a class="reference internal" href="gustaf.utils.connec.sequentialize_edges.html">gustaf.utils.connec.sequentialize_edges</a></li>
+<li class="toctree-l4"><a class="reference internal" href="gustaf.utils.connec.sorted_unique.html">gustaf.utils.connec.sorted_unique</a></li>
+<li class="toctree-l4"><a class="reference internal" href="gustaf.utils.connec.subdivide_edges.html">gustaf.utils.connec.subdivide_edges</a></li>
+<li class="toctree-l4"><a class="reference internal" href="gustaf.utils.connec.subdivide_quad.html">gustaf.utils.connec.subdivide_quad</a></li>
+<li class="toctree-l4"><a class="reference internal" href="gustaf.utils.connec.subdivide_tri.html">gustaf.utils.connec.subdivide_tri</a></li>
+<li class="toctree-l4"><a class="reference internal" href="gustaf.utils.connec.tet_to_tri.html">gustaf.utils.connec.tet_to_tri</a></li>
+<li class="toctree-l4"><a class="reference internal" href="gustaf.utils.connec.volumes_to_faces.html">gustaf.utils.connec.volumes_to_faces</a></li>
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="gustaf.utils.log.html">gustaf.utils.log</a><input class="toctree-checkbox" id="toctree-checkbox-27" name="toctree-checkbox-27" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-27"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="gustaf.utils.log.configure.html">gustaf.utils.log.configure</a></li>
+<li class="toctree-l4"><a class="reference internal" href="gustaf.utils.log.debug.html">gustaf.utils.log.debug</a></li>
+<li class="toctree-l4"><a class="reference internal" href="gustaf.utils.log.info.html">gustaf.utils.log.info</a></li>
+<li class="toctree-l4"><a class="reference internal" href="gustaf.utils.log.prepended_log.html">gustaf.utils.log.prepended_log</a></li>
+<li class="toctree-l4"><a class="reference internal" href="gustaf.utils.log.warning.html">gustaf.utils.log.warning</a></li>
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="gustaf.utils.tictoc.html">gustaf.utils.tictoc</a><input class="toctree-checkbox" id="toctree-checkbox-28" name="toctree-checkbox-28" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-28"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="gustaf.utils.tictoc.Tic.html">gustaf.utils.tictoc.Tic</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="gustaf.vertices.html">gustaf.vertices</a><input class="toctree-checkbox" id="toctree-checkbox-29" name="toctree-checkbox-29" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-29"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l3 has-children"><a class="reference internal" href="gustaf.vertices.Vertices.html">gustaf.vertices.Vertices</a><input class="toctree-checkbox" id="toctree-checkbox-30" name="toctree-checkbox-30" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-30"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="gustaf.vertices.Vertices.bounds.html">gustaf.vertices.Vertices.bounds</a></li>
+<li class="toctree-l4"><a class="reference internal" href="gustaf.vertices.Vertices.bounds_diagonal.html">gustaf.vertices.Vertices.bounds_diagonal</a></li>
+<li class="toctree-l4"><a class="reference internal" href="gustaf.vertices.Vertices.bounds_diagonal_norm.html">gustaf.vertices.Vertices.bounds_diagonal_norm</a></li>
+<li class="toctree-l4"><a class="reference internal" href="gustaf.vertices.Vertices.concat.html">gustaf.vertices.Vertices.concat</a></li>
+<li class="toctree-l4"><a class="reference internal" href="gustaf.vertices.Vertices.copy.html">gustaf.vertices.Vertices.copy</a></li>
+<li class="toctree-l4"><a class="reference internal" href="gustaf.vertices.Vertices.merge_vertices.html">gustaf.vertices.Vertices.merge_vertices</a></li>
+<li class="toctree-l4"><a class="reference internal" href="gustaf.vertices.Vertices.remove_vertices.html">gustaf.vertices.Vertices.remove_vertices</a></li>
+<li class="toctree-l4"><a class="reference internal" href="gustaf.vertices.Vertices.select_vertices.html">gustaf.vertices.Vertices.select_vertices</a></li>
+<li class="toctree-l4"><a class="reference internal" href="gustaf.vertices.Vertices.show.html">gustaf.vertices.Vertices.show</a></li>
+<li class="toctree-l4"><a class="reference internal" href="gustaf.vertices.Vertices.showable.html">gustaf.vertices.Vertices.showable</a></li>
+<li class="toctree-l4"><a class="reference internal" href="gustaf.vertices.Vertices.unique_vertices.html">gustaf.vertices.Vertices.unique_vertices</a></li>
+<li class="toctree-l4"><a class="reference internal" href="gustaf.vertices.Vertices.update_vertices.html">gustaf.vertices.Vertices.update_vertices</a></li>
+<li class="toctree-l4"><a class="reference internal" href="gustaf.vertices.Vertices.const_vertices.html">gustaf.vertices.Vertices.const_vertices</a></li>
+<li class="toctree-l4"><a class="reference internal" href="gustaf.vertices.Vertices.kind.html">gustaf.vertices.Vertices.kind</a></li>
+<li class="toctree-l4"><a class="reference internal" href="gustaf.vertices.Vertices.show_options.html">gustaf.vertices.Vertices.show_options</a></li>
+<li class="toctree-l4"><a class="reference internal" href="gustaf.vertices.Vertices.vertex_data.html">gustaf.vertices.Vertices.vertex_data</a></li>
+<li class="toctree-l4"><a class="reference internal" href="gustaf.vertices.Vertices.vertices.html">gustaf.vertices.Vertices.vertices</a></li>
+<li class="toctree-l4"><a class="reference internal" href="gustaf.vertices.Vertices.whatami.html">gustaf.vertices.Vertices.whatami</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="gustaf.vertices.VerticesShowOption.html">gustaf.vertices.VerticesShowOption</a></li>
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="gustaf.volumes.html">gustaf.volumes</a><input class="toctree-checkbox" id="toctree-checkbox-31" name="toctree-checkbox-31" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-31"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l3 has-children"><a class="reference internal" href="gustaf.volumes.Volumes.html">gustaf.volumes.Volumes</a><input class="toctree-checkbox" id="toctree-checkbox-32" name="toctree-checkbox-32" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-32"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="gustaf.volumes.Volumes.faces.html">gustaf.volumes.Volumes.faces</a></li>
+<li class="toctree-l4"><a class="reference internal" href="gustaf.volumes.Volumes.sorted_volumes.html">gustaf.volumes.Volumes.sorted_volumes</a></li>
+<li class="toctree-l4"><a class="reference internal" href="gustaf.volumes.Volumes.to_faces.html">gustaf.volumes.Volumes.to_faces</a></li>
+<li class="toctree-l4"><a class="reference internal" href="gustaf.volumes.Volumes.unique_volumes.html">gustaf.volumes.Volumes.unique_volumes</a></li>
+<li class="toctree-l4"><a class="reference internal" href="gustaf.volumes.Volumes.update_faces.html">gustaf.volumes.Volumes.update_faces</a></li>
+<li class="toctree-l4"><a class="reference internal" href="gustaf.volumes.Volumes.update_volumes.html">gustaf.volumes.Volumes.update_volumes</a></li>
+<li class="toctree-l4"><a class="reference internal" href="gustaf.volumes.Volumes.whatareyou.html">gustaf.volumes.Volumes.whatareyou</a></li>
+<li class="toctree-l4"><a class="reference internal" href="gustaf.volumes.Volumes.const_faces.html">gustaf.volumes.Volumes.const_faces</a></li>
+<li class="toctree-l4"><a class="reference internal" href="gustaf.volumes.Volumes.const_volumes.html">gustaf.volumes.Volumes.const_volumes</a></li>
+<li class="toctree-l4"><a class="reference internal" href="gustaf.volumes.Volumes.kind.html">gustaf.volumes.Volumes.kind</a></li>
+<li class="toctree-l4"><a class="reference internal" href="gustaf.volumes.Volumes.volumes.html">gustaf.volumes.Volumes.volumes</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="gustaf.volumes.VolumesShowOption.html">gustaf.volumes.VolumesShowOption</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+
+
+
+
+<nav aria-label="Breadcrumb">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../references.html" class="nav-link">Library References</a></li>
+    
+    
+    <li class="breadcrumb-item"><i class="fa-solid fa-ellipsis"></i></li>
+    
+    
+    <li class="breadcrumb-item"><a href="gustaf.helpers.data.html" class="nav-link">gustaf.helpers.data</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page">gustaf.helpe...</li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="gustaf-helpers-data-vertexdata">
+<h1>gustaf.helpers.data.VertexData<a class="headerlink" href="#gustaf-helpers-data-vertexdata" title="Link to this heading">#</a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="gustaf.helpers.data.VertexData">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gustaf.helpers.data.</span></span><span class="sig-name descname"><span class="pre">VertexData</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">helpee</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gustaf/helpers/data.html#VertexData"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gustaf.helpers.data.VertexData" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="gustaf.helpers.data.DataHolder.html#gustaf.helpers.data.DataHolder" title="gustaf.helpers.data.DataHolder"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataHolder</span></code></a></p>
+<p>Minimal manager for vertex data. Checks input array size, transforms
+data on request. __setitem__ and __getitem__ will perform length checks.
+key(), values(), items(), and get() will return whatever is currently
+stored.</p>
+<p>gustaf supports two kinds of data representation: scalar-data with cmap
+and vector-data with arrows.</p>
+<p class="rubric">Methods</p>
+<table class="autosummary longtable table autosummary">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="gustaf.helpers.data.VertexData.as_arrow.html#gustaf.helpers.data.VertexData.as_arrow" title="gustaf.helpers.data.VertexData.as_arrow"><code class="xref py py-obj docutils literal notranslate"><span class="pre">VertexData.as_arrow</span></code></a>(key[, default, raise_])</p></td>
+<td><p>Returns an array as is, only if it is showable as arrow.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="gustaf.helpers.data.VertexData.as_scalar.html#gustaf.helpers.data.VertexData.as_scalar" title="gustaf.helpers.data.VertexData.as_scalar"><code class="xref py py-obj docutils literal notranslate"><span class="pre">VertexData.as_scalar</span></code></a>(key[, default])</p></td>
+<td><p>Returns scalar version of requested data.</p></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="gustaf.helpers.data.Unique2DIntegers.values.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">gustaf.helpers.data.Unique2DIntegers.values</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="gustaf.helpers.data.VertexData.as_arrow.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">gustaf.helpers.data.VertexData.as_arrow</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#gustaf.helpers.data.VertexData"><code class="docutils literal notranslate"><span class="pre">VertexData</span></code></a></li>
+</ul>
+  </nav></div>
+
+  <div class="sidebar-secondary-item">
+
+  <div class="tocsection sourcelink">
+    <a href="../_sources/_generated/gustaf.helpers.data.VertexData.rst.txt">
+      <i class="fa-solid fa-file-lines"></i> Show Source
+    </a>
+  </div>
+</div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../_static/scripts/bootstrap.js?digest=8d27b9dea8ad943066ae"></script>
+<script src="../_static/scripts/pydata-sphinx-theme.js?digest=8d27b9dea8ad943066ae"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2022, Jaewook Lee.
+      <br/>
+    
+  </p>
+</div>
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.2.6.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.15.2.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

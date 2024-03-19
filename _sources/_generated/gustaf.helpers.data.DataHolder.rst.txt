@@ -1,0 +1,53 @@
+gustaf.helpers.data.DataHolder
+==============================
+
+.. currentmodule:: gustaf.helpers.data
+
+.. autoclass:: DataHolder
+   :show-inheritance:
+
+   
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+      :toctree:
+   
+      
+      
+        
+          DataHolder.clear
+        
+      
+      
+        
+          DataHolder.get
+        
+      
+      
+        
+          DataHolder.items
+        
+      
+      
+        
+          DataHolder.keys
+        
+      
+      
+        
+          DataHolder.pop
+        
+      
+      
+        
+          DataHolder.values
+        
+      
+   
+   
+
+   
+   
+   

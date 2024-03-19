@@ -1,0 +1,843 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>gustaf.faces &#8212; gustaf 0.0.24 documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "light";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
+<link href="../../_static/styles/bootstrap.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
+
+  
+  <link href="../../_static/vendor/fontawesome/6.5.1/css/all.min.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.1/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.1/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.1/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="../../_static/style.css?v=7ab72cc5" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=8d27b9dea8ad943066ae" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=8d27b9dea8ad943066ae" />
+  <script src="../../_static/vendor/fontawesome/6.5.1/js/all.min.js?digest=8d27b9dea8ad943066ae"></script>
+
+    <script src="../../_static/documentation_options.js?v=f91d8841"></script>
+    <script src="../../_static/doctools.js?v=888ff710"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/gustaf/faces';</script>
+    <link rel="icon" href="../../_static/favicon.ico"/>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link href="../../_static/style.css" rel="stylesheet" type="text/css">
+
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <a id="pst-skip-link" class="skip-link" href="#main-content">Skip to main content</a>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>
+    Back to top
+  </button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__primary"
+          id="__primary"/>
+  <label class="overlay overlay-primary" for="__primary"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__secondary"
+          id="__secondary"/>
+  <label class="overlay overlay-secondary" for="__secondary"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar">
+<div class="bd-header__inner bd-page-width">
+  <label class="sidebar-toggle primary-toggle" for="__primary">
+    <span class="fa-solid fa-bars"></span>
+  </label>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+
+<a class="navbar-brand logo" href="../../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../_static/gus_light_mode.png" class="logo__image only-light" alt="gustaf 0.0.24 documentation - Home"/>
+    <script>document.write(`<img src="../../_static/gus_dark_mode.png" class="logo__image only-dark" alt="gustaf 0.0.24 documentation - Home"/>`);</script>
+  
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav class="navbar-nav">
+  <ul class="bd-navbar-elements navbar-nav">
+    
+                    <li class="nav-item">
+                      <a class="nav-link nav-external" href="http://github.com/tataratat/gustaf">
+                        Github
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../../CONTRIBUTING.html">
+                        Contiributing
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../../references.html">
+                        API references
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../../details.html">
+                        Feature details & options
+                      </a>
+                    </li>
+                
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+ <script>
+ document.write(`
+   <button class="btn navbar-btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="theme-switch nav-link" data-mode="light"><i class="fa-solid fa-sun fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="dark"><i class="fa-solid fa-moon fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg"></i></span>
+  </button>
+`);
+</script></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links navbar-nav"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/tataratat/gustaf" title="GitHub" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><span><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i></span>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://pypi.org/project/gustaf/" title="PyPI" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><span><i class="fa-solid fa-box fa-lg" aria-hidden="true"></i></span>
+            <span class="sr-only">PyPI</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+ <script>
+ document.write(`
+   <button class="btn navbar-btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script>
+    </div>
+  
+
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <div class="bd-sidebar-primary bd-sidebar hide-on-wide">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          <div class="navbar-item">
+<nav class="navbar-nav">
+  <ul class="bd-navbar-elements navbar-nav">
+    
+                    <li class="nav-item">
+                      <a class="nav-link nav-external" href="http://github.com/tataratat/gustaf">
+                        Github
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../../CONTRIBUTING.html">
+                        Contiributing
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../../references.html">
+                        API references
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../../details.html">
+                        Feature details & options
+                      </a>
+                    </li>
+                
+  </ul>
+</nav></div>
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="theme-switch nav-link" data-mode="light"><i class="fa-solid fa-sun fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="dark"><i class="fa-solid fa-moon fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg"></i></span>
+  </button>
+`);
+</script></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links navbar-nav"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/tataratat/gustaf" title="GitHub" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><span><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i></span>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://pypi.org/project/gustaf/" title="PyPI" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><span><i class="fa-solid fa-box fa-lg" aria-hidden="true"></i></span>
+            <span class="sr-only">PyPI</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+
+
+<nav aria-label="Breadcrumb">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../index.html" class="nav-link">Module code</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page">gustaf.faces</li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <h1>Source code for gustaf.faces</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;gustaf/gustaf/faces.py.&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+<span class="kn">from</span> <span class="nn">gustaf</span> <span class="kn">import</span> <span class="n">helpers</span><span class="p">,</span> <span class="n">settings</span><span class="p">,</span> <span class="n">show</span><span class="p">,</span> <span class="n">utils</span>
+<span class="kn">from</span> <span class="nn">gustaf.edges</span> <span class="kn">import</span> <span class="n">Edges</span>
+<span class="kn">from</span> <span class="nn">gustaf.helpers.options</span> <span class="kn">import</span> <span class="n">Option</span>
+
+<span class="c1"># special types for face texture option</span>
+<span class="k">try</span><span class="p">:</span>
+    <span class="kn">import</span> <span class="nn">vedo</span>
+
+    <span class="n">vedoPicture</span> <span class="o">=</span> <span class="n">vedo</span><span class="o">.</span><span class="n">Picture</span>
+    <span class="c1"># there are other ways to get here, but this is exact path for our use</span>
+    <span class="n">vtkTexture</span> <span class="o">=</span> <span class="n">vedo</span><span class="o">.</span><span class="n">vtkclasses</span><span class="o">.</span><span class="n">vtkTexture</span>
+<span class="k">except</span> <span class="ne">ImportError</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
+    <span class="n">vedoPicture</span> <span class="o">=</span> <span class="n">helpers</span><span class="o">.</span><span class="n">raise_if</span><span class="o">.</span><span class="n">ModuleImportRaiser</span><span class="p">(</span><span class="s2">&quot;vedo&quot;</span><span class="p">,</span> <span class="n">err</span><span class="p">)</span>
+    <span class="n">vtkTexture</span> <span class="o">=</span> <span class="n">helpers</span><span class="o">.</span><span class="n">raise_if</span><span class="o">.</span><span class="n">ModuleImportRaiser</span><span class="p">(</span><span class="s2">&quot;vedo&quot;</span><span class="p">,</span> <span class="n">err</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="FacesShowOption">
+<a class="viewcode-back" href="../../_generated/gustaf.faces.FacesShowOption.html#gustaf.faces.FacesShowOption">[docs]</a>
+<span class="k">class</span> <span class="nc">FacesShowOption</span><span class="p">(</span><span class="n">helpers</span><span class="o">.</span><span class="n">options</span><span class="o">.</span><span class="n">ShowOption</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Show options for vertices.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">_valid_options</span> <span class="o">=</span> <span class="n">helpers</span><span class="o">.</span><span class="n">options</span><span class="o">.</span><span class="n">make_valid_options</span><span class="p">(</span>
+        <span class="o">*</span><span class="n">helpers</span><span class="o">.</span><span class="n">options</span><span class="o">.</span><span class="n">vedo_common_options</span><span class="p">,</span>
+        <span class="n">Option</span><span class="p">(</span><span class="s2">&quot;vedo&quot;</span><span class="p">,</span> <span class="s2">&quot;lw&quot;</span><span class="p">,</span> <span class="s2">&quot;Width of edges (lines) in pixel units.&quot;</span><span class="p">,</span> <span class="p">(</span><span class="nb">int</span><span class="p">,)),</span>
+        <span class="n">Option</span><span class="p">(</span>
+            <span class="s2">&quot;vedo&quot;</span><span class="p">,</span> <span class="s2">&quot;lc&quot;</span><span class="p">,</span> <span class="s2">&quot;Color of edges (lines).&quot;</span><span class="p">,</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span>
+        <span class="p">),</span>
+        <span class="n">Option</span><span class="p">(</span>
+            <span class="s2">&quot;vedo&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;texture&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;Texture of faces in array, vedo.Picture, vtk.vtkTexture, &quot;</span>
+            <span class="s2">&quot;or path to an image.&quot;</span><span class="p">,</span>
+            <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">,</span> <span class="nb">list</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="n">vedoPicture</span><span class="p">,</span> <span class="n">vtkTexture</span><span class="p">),</span>
+        <span class="p">),</span>
+    <span class="p">)</span>
+
+    <span class="n">_helps</span> <span class="o">=</span> <span class="s2">&quot;Faces&quot;</span>
+
+    <span class="k">def</span> <span class="nf">_initialize_showable</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Initializes Faces as vedo.Mesh</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        None</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        faces: vedo.Mesh</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">faces</span> <span class="o">=</span> <span class="n">show</span><span class="o">.</span><span class="n">vedo</span><span class="o">.</span><span class="n">Mesh</span><span class="p">(</span>
+            <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_helpee</span><span class="o">.</span><span class="n">const_vertices</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_helpee</span><span class="o">.</span><span class="n">const_faces</span><span class="p">],</span>
+        <span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">option</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;lw&quot;</span><span class="p">,</span> <span class="s2">&quot;lc&quot;</span><span class="p">,</span> <span class="s2">&quot;texture&quot;</span><span class="p">]:</span>
+            <span class="n">val</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">option</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">val</span><span class="p">:</span>
+                <span class="nb">getattr</span><span class="p">(</span><span class="n">faces</span><span class="p">,</span> <span class="n">option</span><span class="p">)(</span><span class="n">val</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">faces</span></div>
+
+
+
+<div class="viewcode-block" id="Faces">
+<a class="viewcode-back" href="../../_generated/gustaf.faces.Faces.html#gustaf.faces.Faces">[docs]</a>
+<span class="k">class</span> <span class="nc">Faces</span><span class="p">(</span><span class="n">Edges</span><span class="p">):</span>
+    <span class="n">kind</span> <span class="o">=</span> <span class="s2">&quot;face&quot;</span>
+
+    <span class="n">const_edges</span> <span class="o">=</span> <span class="n">helpers</span><span class="o">.</span><span class="n">raise_if</span><span class="o">.</span><span class="n">invalid_inherited_attr</span><span class="p">(</span>
+        <span class="s2">&quot;Edges.const_edges&quot;</span><span class="p">,</span>
+        <span class="vm">__qualname__</span><span class="p">,</span>
+        <span class="n">property_</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">update_edges</span> <span class="o">=</span> <span class="n">helpers</span><span class="o">.</span><span class="n">raise_if</span><span class="o">.</span><span class="n">invalid_inherited_attr</span><span class="p">(</span>
+        <span class="s2">&quot;Edges.update_edges&quot;</span><span class="p">,</span>
+        <span class="vm">__qualname__</span><span class="p">,</span>
+        <span class="n">property_</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">dashed</span> <span class="o">=</span> <span class="n">helpers</span><span class="o">.</span><span class="n">raise_if</span><span class="o">.</span><span class="n">invalid_inherited_attr</span><span class="p">(</span>
+        <span class="s2">&quot;Edges.dashed&quot;</span><span class="p">,</span>
+        <span class="vm">__qualname__</span><span class="p">,</span>
+        <span class="n">property_</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="vm">__slots__</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="s2">&quot;_faces&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;_const_faces&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;BC&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="n">__show_option__</span> <span class="o">=</span> <span class="n">FacesShowOption</span>
+    <span class="n">__boundary_class__</span> <span class="o">=</span> <span class="n">Edges</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">vertices</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">faces</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">elements</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Faces. It has vertices and faces. Faces could be triangles or</span>
+<span class="sd">        quadrilaterals.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        -----------</span>
+<span class="sd">        vertices: (n, d) np.ndarray</span>
+<span class="sd">        faces: (n, 3) or (n, 4) np.ndarray</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">vertices</span><span class="o">=</span><span class="n">vertices</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">faces</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">faces</span> <span class="o">=</span> <span class="n">faces</span>
+
+        <span class="k">elif</span> <span class="n">elements</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">faces</span> <span class="o">=</span> <span class="n">elements</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">BC</span> <span class="o">=</span> <span class="p">{}</span>
+
+<div class="viewcode-block" id="Faces.edges">
+<a class="viewcode-back" href="../../_generated/gustaf.faces.Faces.edges.html#gustaf.faces.Faces.edges">[docs]</a>
+    <span class="nd">@helpers</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">ComputedMeshData</span><span class="o">.</span><span class="n">depends_on</span><span class="p">([</span><span class="s2">&quot;elements&quot;</span><span class="p">])</span>
+    <span class="k">def</span> <span class="nf">edges</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Edges from here aren&#39;t main property. So this needs to be computed.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        -----------</span>
+<span class="sd">        None</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        --------</span>
+<span class="sd">        edges: (n, 2) np.ndarray</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_logd</span><span class="p">(</span><span class="s2">&quot;computing edges&quot;</span><span class="p">)</span>
+        <span class="n">faces</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_attr</span><span class="p">(</span><span class="s2">&quot;faces&quot;</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">utils</span><span class="o">.</span><span class="n">connec</span><span class="o">.</span><span class="n">faces_to_edges</span><span class="p">(</span><span class="n">faces</span><span class="p">)</span></div>
+
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">whatami</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Determines whatami.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        -----------</span>
+<span class="sd">        None</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        --------</span>
+<span class="sd">        None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">whatareyou</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+
+<div class="viewcode-block" id="Faces.whatareyou">
+<a class="viewcode-back" href="../../_generated/gustaf.faces.Faces.whatareyou.html#gustaf.faces.Faces.whatareyou">[docs]</a>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">whatareyou</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">face_obj</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;classmethod that tells you if the Faces is tri or quad or invalid</span>
+<span class="sd">        kind.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        -----------</span>
+<span class="sd">        face_obj: Faces</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        --------</span>
+<span class="sd">        whatareyou: str</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">cls</span><span class="o">.</span><span class="n">kind</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="n">face_obj</span><span class="o">.</span><span class="n">kind</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;Given obj is not </span><span class="si">{cls.__qualname__}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">face_obj</span><span class="o">.</span><span class="n">faces</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+            <span class="k">return</span> <span class="s2">&quot;tri&quot;</span>
+
+        <span class="k">elif</span> <span class="n">face_obj</span><span class="o">.</span><span class="n">faces</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="mi">4</span><span class="p">:</span>
+            <span class="k">return</span> <span class="s2">&quot;quad&quot;</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">&quot;Invalid faces connectivity shape. It should be (n, 3) or &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;(n, 4), but given: </span><span class="si">{</span><span class="n">face_obj</span><span class="o">.</span><span class="n">faces</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="p">)</span></div>
+
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">faces</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns faces.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        -----------</span>
+<span class="sd">        None</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        --------</span>
+<span class="sd">        faces</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_logd</span><span class="p">(</span><span class="s2">&quot;returning faces&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_faces</span>
+
+    <span class="nd">@faces</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">faces</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fs</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Faces setter. Similar to vertices, this will be a tracked array.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        -----------</span>
+<span class="sd">        fs: (n, 2) np.ndarray</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        --------</span>
+<span class="sd">        None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_logd</span><span class="p">(</span><span class="s2">&quot;setting faces&quot;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_faces</span> <span class="o">=</span> <span class="n">helpers</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">make_tracked_array</span><span class="p">(</span>
+            <span class="n">fs</span><span class="p">,</span>
+            <span class="n">settings</span><span class="o">.</span><span class="n">INT_DTYPE</span><span class="p">,</span>
+            <span class="n">copy</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="c1"># shape check</span>
+        <span class="k">if</span> <span class="n">fs</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">utils</span><span class="o">.</span><span class="n">arr</span><span class="o">.</span><span class="n">is_one_of_shapes</span><span class="p">(</span>
+                <span class="n">fs</span><span class="p">,</span>
+                <span class="p">((</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">4</span><span class="p">)),</span>
+                <span class="n">strict</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="p">)</span>
+
+        <span class="c1"># same, but non-writeable view of tracked array</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_const_faces</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_faces</span><span class="o">.</span><span class="n">view</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_const_faces</span><span class="o">.</span><span class="n">flags</span><span class="o">.</span><span class="n">writeable</span> <span class="o">=</span> <span class="kc">False</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">const_faces</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns non-writeable view of faces.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        -----------</span>
+<span class="sd">        None</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        --------</span>
+<span class="sd">        const_faces: (n, 2</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_const_faces</span>
+
+<div class="viewcode-block" id="Faces.sorted_faces">
+<a class="viewcode-back" href="../../_generated/gustaf.faces.Faces.sorted_faces.html#gustaf.faces.Faces.sorted_faces">[docs]</a>
+    <span class="nd">@helpers</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">ComputedMeshData</span><span class="o">.</span><span class="n">depends_on</span><span class="p">([</span><span class="s2">&quot;elements&quot;</span><span class="p">])</span>
+    <span class="k">def</span> <span class="nf">sorted_faces</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Similar to edges_sorted but for faces.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        -----------</span>
+<span class="sd">        None</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        --------</span>
+<span class="sd">        sorted_faces: (self.faces.shape) np.ndarray</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">faces</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_attr</span><span class="p">(</span><span class="s2">&quot;faces&quot;</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">faces</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Faces.unique_faces">
+<a class="viewcode-back" href="../../_generated/gustaf.faces.Faces.unique_faces.html#gustaf.faces.Faces.unique_faces">[docs]</a>
+    <span class="nd">@helpers</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">ComputedMeshData</span><span class="o">.</span><span class="n">depends_on</span><span class="p">([</span><span class="s2">&quot;elements&quot;</span><span class="p">])</span>
+    <span class="k">def</span> <span class="nf">unique_faces</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns a namedtuple of unique faces info. Similar to unique_edges.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        -----------</span>
+<span class="sd">        None</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        --------</span>
+<span class="sd">        unique_info: Unique2DIntegers</span>
+<span class="sd">          valid attributes are {values, ids, inverse, counts}</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">unique_info</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">connec</span><span class="o">.</span><span class="n">sorted_unique</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">sorted_faces</span><span class="p">(),</span> <span class="n">sorted_</span><span class="o">=</span><span class="kc">True</span>
+        <span class="p">)</span>
+
+        <span class="n">faces</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_attr</span><span class="p">(</span><span class="s2">&quot;faces&quot;</span><span class="p">)</span>
+
+        <span class="n">unique_info</span><span class="o">.</span><span class="n">values</span><span class="p">[:]</span> <span class="o">=</span> <span class="n">faces</span><span class="p">[</span><span class="n">unique_info</span><span class="o">.</span><span class="n">ids</span><span class="p">]</span>
+
+        <span class="k">return</span> <span class="n">unique_info</span></div>
+
+
+<div class="viewcode-block" id="Faces.single_faces">
+<a class="viewcode-back" href="../../_generated/gustaf.faces.Faces.single_faces.html#gustaf.faces.Faces.single_faces">[docs]</a>
+    <span class="nd">@helpers</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">ComputedMeshData</span><span class="o">.</span><span class="n">depends_on</span><span class="p">([</span><span class="s2">&quot;elements&quot;</span><span class="p">])</span>
+    <span class="k">def</span> <span class="nf">single_faces</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns indices of very unique faces: faces that appear only once.</span>
+<span class="sd">        For well constructed volumes, this can be considered as surfaces.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        -----------</span>
+<span class="sd">        None</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        --------</span>
+<span class="sd">        single_faces: (m,) np.ndarray</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">unique_info</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">unique_faces</span><span class="p">()</span>
+
+        <span class="k">return</span> <span class="n">unique_info</span><span class="o">.</span><span class="n">ids</span><span class="p">[</span><span class="n">unique_info</span><span class="o">.</span><span class="n">counts</span> <span class="o">==</span> <span class="mi">1</span><span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="Faces.update_faces">
+<a class="viewcode-back" href="../../_generated/gustaf.faces.Faces.update_faces.html#gustaf.faces.Faces.update_faces">[docs]</a>
+    <span class="k">def</span> <span class="nf">update_faces</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Alias to update_elements.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">update_elements</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Faces.to_edges">
+<a class="viewcode-back" href="../../_generated/gustaf.faces.Faces.to_edges.html#gustaf.faces.Faces.to_edges">[docs]</a>
+    <span class="k">def</span> <span class="nf">to_edges</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">unique</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns Edges obj.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        -----------</span>
+<span class="sd">        unique: bool</span>
+<span class="sd">          Default is True. If True, only takes unique edges.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        --------</span>
+<span class="sd">        edges: Edges</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">Edges</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">vertices</span><span class="p">,</span>
+            <span class="n">edges</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">unique_edges</span><span class="p">()</span><span class="o">.</span><span class="n">values</span> <span class="k">if</span> <span class="n">unique</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">edges</span><span class="p">(),</span>
+        <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Faces.to_subelements">
+<a class="viewcode-back" href="../../_generated/gustaf.faces.Faces.to_subelements.html#gustaf.faces.Faces.to_subelements">[docs]</a>
+    <span class="k">def</span> <span class="nf">to_subelements</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">unique</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>  <span class="c1"># noqa ARG002 # used inside the return eval str</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns current elements represented as its boundary element class.</span>
+<span class="sd">        For faces, this is equivalent to `to_edges()`.</span>
+<span class="sd">        For volumes, `to_faces()`.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        unique: bool</span>
+<span class="sd">          Default is True. If True, only takes unique edges.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        subelements: boundary class</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span>
+            <span class="bp">self</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;to_</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">__boundary_class__</span><span class="o">.</span><span class="vm">__qualname__</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="p">)(</span><span class="n">unique</span><span class="p">)</span></div>
+</div>
+
+</pre></div>
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../_static/scripts/bootstrap.js?digest=8d27b9dea8ad943066ae"></script>
+<script src="../../_static/scripts/pydata-sphinx-theme.js?digest=8d27b9dea8ad943066ae"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2022, Jaewook Lee.
+      <br/>
+    
+  </p>
+</div>
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.2.6.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.15.2.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

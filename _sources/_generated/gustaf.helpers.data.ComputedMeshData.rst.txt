@@ -1,0 +1,44 @@
+gustaf.helpers.data.ComputedMeshData
+====================================
+
+.. currentmodule:: gustaf.helpers.data
+
+.. autoclass:: ComputedMeshData
+   :show-inheritance:
+
+   
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+      :toctree:
+   
+      
+      
+        
+      
+      
+        
+      
+      
+        
+      
+      
+        
+      
+      
+        
+      
+      
+        
+      
+      
+        
+      
+   
+   
+
+   
+   
+   

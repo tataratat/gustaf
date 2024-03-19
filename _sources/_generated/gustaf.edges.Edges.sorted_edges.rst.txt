@@ -1,0 +1,6 @@
+gustaf.edges.Edges.sorted\_edges
+================================
+
+.. currentmodule:: gustaf.edges
+
+.. automethod:: Edges.sorted_edges

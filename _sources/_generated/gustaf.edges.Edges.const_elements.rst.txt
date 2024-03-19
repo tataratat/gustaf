@@ -1,0 +1,6 @@
+gustaf.edges.Edges.const\_elements
+==================================
+
+.. currentmodule:: gustaf.edges
+
+.. autoproperty:: Edges.const_elements
