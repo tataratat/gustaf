@@ -3,42 +3,55 @@
 Edges. Also known as lines.
 """
 
+from __future__ import annotations
+
 from copy import deepcopy
+from typing import TYPE_CHECKING
 
-import numpy as np
+import numpy as _np
 
-from gustaf import helpers, settings, show, utils
-from gustaf.helpers.options import Option
-from gustaf.vertices import Vertices
+from gustaf import helpers as _helpers
+from gustaf import settings as _settings
+from gustaf import show as _show
+from gustaf import utils as _utils
+from gustaf.helpers.options import Option as _Option
+from gustaf.vertices import Vertices as _Vertices
+
+if TYPE_CHECKING:
+    from typing import Any
+
+    from gustaf.faces import Faces
+    from gustaf.helpers.data import TrackedArray, Unique2DIntegers
+    from gustaf.volumes import Volumes
 
 
-class EdgesShowOption(helpers.options.ShowOption):
+class EdgesShowOption(_helpers.options.ShowOption):
     """
     Show options for vertices.
     """
 
-    _valid_options = helpers.options.make_valid_options(
-        *helpers.options.vedo_common_options,
-        Option(
+    _valid_options = _helpers.options.make_valid_options(
+        *_helpers.options.vedo_common_options,
+        _Option(
             "vedo",
             "lw",
             "Width of edges (lines) in pixel units.",
             (float, int),
         ),
-        Option("vedo", "as_arrows", "Show edges as arrows.", (bool,)),
-        Option(
+        _Option("vedo", "as_arrows", "Show edges as arrows.", (bool,)),
+        _Option(
             "vedo",
             "head_radius",
             "Radius of arrow head. Applicable if as_arrows is True",
             (float, int),
         ),
-        Option(
+        _Option(
             "vedo",
             "head_length",
             "Length of arrow head. Applicable if as_arrows is True",
             (float, int),
         ),
-        Option(
+        _Option(
             "vedo",
             "shaft_radius",
             "Radius of arrow shaft. Applicable if as_arrows is True",
@@ -62,20 +75,20 @@ class EdgesShowOption(helpers.options.ShowOption):
         """
         if self.get("as_arrows", False):
             init_options = ("head_radius", "head_length", "shaft_radius")
-            return show.vedo.Arrows(
+            return _show.vedo.Arrows(
                 self._helpee.const_vertices[self._helpee.edges],
                 **self[init_options],
             )
 
         else:
             init_options = ("lw",)
-            return show.vedo.Lines(
+            return _show.vedo.Lines(
                 self._helpee.const_vertices[self._helpee.edges],
                 **self[init_options],
             )
 
 
-class Edges(Vertices):
+class Edges(_Vertices):
     kind = "edge"
 
     __slots__ = (
@@ -84,14 +97,14 @@ class Edges(Vertices):
     )
 
     __show_option__ = EdgesShowOption
-    __boundary_class__ = Vertices
+    __boundary_class__ = _Vertices
 
     def __init__(
         self,
-        vertices=None,
-        edges=None,
-        elements=None,
-    ):
+        vertices: list[list[float]] | TrackedArray | _np.ndarray = None,
+        edges: _np.ndarray | None = None,
+        elements: _np.ndarray | None = None,
+    ) -> None:
         """Edges. It has vertices and edges. Also known as lines.
 
         Parameters
@@ -108,7 +121,7 @@ class Edges(Vertices):
             self.edges = elements
 
     @property
-    def edges(self):
+    def edges(self) -> TrackedArray:
         """Returns edges. If edges is not its original property.
 
         Parameters
@@ -123,7 +136,7 @@ class Edges(Vertices):
         return self._edges
 
     @edges.setter
-    def edges(self, es):
+    def edges(self, es: TrackedArray | _np.ndarray) -> None:
         """Edges setter. Similar to vertices, this is a tracked array.
 
         Parameters
@@ -136,20 +149,20 @@ class Edges(Vertices):
         """
         self._logd("setting edges")
 
-        self._edges = helpers.data.make_tracked_array(
-            es, settings.INT_DTYPE, copy=False
+        self._edges = _helpers.data.make_tracked_array(
+            es, _settings.INT_DTYPE, copy=False
         )
 
         # shape check
         if es is not None:
-            utils.arr.is_shape(es, (-1, 2), strict=True)
+            _utils.arr.is_shape(es, (-1, 2), strict=True)
 
         # same, but non-writeable view of tracked array
         self._const_edges = self._edges.view()
         self._const_edges.flags.writeable = False
 
     @property
-    def const_edges(self):
+    def const_edges(self) -> TrackedArray:
         """Returns non-writeable version of edges.
 
         Parameters
@@ -163,7 +176,7 @@ class Edges(Vertices):
         return self._const_edges
 
     @property
-    def whatami(self):
+    def whatami(self) -> str:
         """whatami?
 
         Parameters
@@ -176,8 +189,8 @@ class Edges(Vertices):
         """
         return "edges"
 
-    @helpers.data.ComputedMeshData.depends_on(["elements"])
-    def sorted_edges(self):
+    @_helpers.data.ComputedMeshData.depends_on(["elements"])
+    def sorted_edges(self) -> _np.ndarray:
         """Sort edges along axis=1.
 
         Parameters
@@ -190,10 +203,10 @@ class Edges(Vertices):
         """
         edges = self._get_attr("edges")
 
-        return np.sort(edges, axis=1)
+        return _np.sort(edges, axis=1)
 
-    @helpers.data.ComputedMeshData.depends_on(["elements"])
-    def unique_edges(self):
+    @_helpers.data.ComputedMeshData.depends_on(["elements"])
+    def unique_edges(self) -> Unique2DIntegers:
         """Returns a named tuple of unique edge info. Info includes unique
         values, ids of unique edges, inverse ids, count of each unique values.
 
@@ -206,7 +219,7 @@ class Edges(Vertices):
         unique_info: Unique2DIntegers
           valid attributes are {values, ids, inverse, counts}
         """
-        unique_info = utils.connec.sorted_unique(
+        unique_info = _utils.connec.sorted_unique(
             self.sorted_edges(), sorted_=True
         )
 
@@ -217,8 +230,8 @@ class Edges(Vertices):
 
         return unique_info
 
-    @helpers.data.ComputedMeshData.depends_on(["elements"])
-    def single_edges(self):
+    @_helpers.data.ComputedMeshData.depends_on(["elements"])
+    def single_edges(self) -> _np.ndarray:
         """Returns indices of very unique edges: edges that appear only once.
         For well constructed faces, this can be considered as outlines.
 
@@ -235,7 +248,7 @@ class Edges(Vertices):
         return unique_info.ids[unique_info.counts == 1]
 
     @property
-    def elements(self):
+    def elements(self) -> TrackedArray:
         """Returns current connectivity. A short cut in FE friendly term.
         Elements mean different things for different classes: Vertices ->
         vertices Edges -> edges Faces -> faces Volumes -> volumes.
@@ -255,7 +268,7 @@ class Edges(Vertices):
         return getattr(self, elem_name)
 
     @elements.setter
-    def elements(self, elements):
+    def elements(self, elements: TrackedArray | _np.ndarray) -> Any | None:
         """Calls corresponding connectivity setter. A short cut in FEM friendly
         term. Vertices -> vertices Edges -> edges Faces -> faces Volumes ->
         volumes.
@@ -274,7 +287,7 @@ class Edges(Vertices):
         return setattr(self, elem_name, elements)
 
     @property
-    def const_elements(self):
+    def const_elements(self) -> TrackedArray:
         """Returns non-mutable version of elements.
 
         Parameters
@@ -288,8 +301,8 @@ class Edges(Vertices):
         self._logd("returning const_elements")
         return getattr(self, "const_" + type(self).__qualname__.lower())
 
-    @helpers.data.ComputedMeshData.depends_on(["vertices", "elements"])
-    def centers(self):
+    @_helpers.data.ComputedMeshData.depends_on(["vertices", "elements"])
+    def centers(self) -> TrackedArray:
         """Center of elements.
 
         Parameters
@@ -304,10 +317,10 @@ class Edges(Vertices):
 
         return self.const_vertices[self.const_elements].mean(axis=1)
 
-    @helpers.data.ComputedMeshData.depends_on(["vertices", "elements"])
+    @_helpers.data.ComputedMeshData.depends_on(["vertices", "elements"])
     def referenced_vertices(
         self,
-    ):
+    ) -> _np.ndarray:
         """Returns mask of referenced vertices.
 
         Parameters
@@ -318,12 +331,12 @@ class Edges(Vertices):
         --------
         referenced: (n,) np.ndarray
         """
-        referenced = np.zeros(len(self.const_vertices), dtype=bool)
+        referenced = _np.zeros(len(self.const_vertices), dtype=bool)
         referenced[self.const_elements] = True
 
         return referenced
 
-    def remove_unreferenced_vertices(self):
+    def remove_unreferenced_vertices(self) -> Edges | Faces | Volumes:
         """Remove unreferenced vertices. Adapted from
         `github.com/mikedh/trimesh`
 
@@ -337,15 +350,15 @@ class Edges(Vertices):
         """
         referenced = self.referenced_vertices()
 
-        inverse = np.zeros(len(self.vertices), dtype=settings.INT_DTYPE)
-        inverse[referenced] = np.arange(referenced.sum())
+        inverse = _np.zeros(len(self.vertices), dtype=_settings.INT_DTYPE)
+        inverse[referenced] = _np.arange(referenced.sum())
 
         return self.update_vertices(
             mask=referenced,
             inverse=inverse,
         )
 
-    def update_elements(self, mask):
+    def update_elements(self, mask: _np.ndarray) -> Edges | Faces | Volumes:
         """Similar to update_vertices, but for elements.
 
         Parameters
@@ -364,7 +377,7 @@ class Edges(Vertices):
         """Alias to update_elements."""
         return self.update_elements(*args, **kwargs)
 
-    def dashed(self, spacing=None):
+    def dashed(self, spacing: Any | None = None) -> Edges:
         """Turn edges into dashed edges(=lines). Given spacing, it will try to
         chop edges as close to it as possible. Pattern should look:
 
@@ -395,30 +408,34 @@ class Edges(Vertices):
         v0s = self.vertices[self.edges[:, 0]]
         v1s = self.vertices[self.edges[:, 1]]
 
-        distances = np.linalg.norm(v0s - v1s, axis=1)
-        linspaces = (((distances // (spacing * 1.5)) + 1) * 3).astype(np.int32)
+        distances = _np.linalg.norm(v0s - v1s, axis=1)
+        linspaces = (((distances // (spacing * 1.5)) + 1) * 3).astype(
+            _np.int32
+        )
 
         # chop vertices!
         new_vs = []
         for v0, v1, lins in zip(v0s, v1s, linspaces):
-            new_vs.append(np.linspace(v0, v1, lins))
+            new_vs.append(_np.linspace(v0, v1, lins))
 
         # we need all chopped vertices.
         # there might be duplicating vertices. you can use merge_vertices
-        new_vs = np.vstack(new_vs)
+        new_vs = _np.vstack(new_vs)
         # all mid points are explicitly defined, but they aren't required
         # so, rm.
-        mask = np.ones(len(new_vs), dtype=bool)
+        mask = _np.ones(len(new_vs), dtype=bool)
         mask[1::3] = False
         new_vs = new_vs[mask]
 
         # prepare edges
-        tmp_es = utils.connec.range_to_edges((0, len(new_vs)), closed=False)
+        tmp_es = _utils.connec.range_to_edges((0, len(new_vs)), closed=False)
         new_es = tmp_es[::2]
 
         return Edges(vertices=new_vs, edges=new_es)
 
-    def shrink(self, ratio=0.8, map_vertex_data=True):
+    def shrink(
+        self, ratio: float = 0.8, map_vertex_data: bool = True
+    ) -> Edges | Faces | Volumes:
         """Returns shrunk elements.
 
         Parameters
@@ -434,13 +451,13 @@ class Edges(Vertices):
           shrunk elements
         """
         elements = self.const_elements
-        vs = np.vstack(self.vertices[elements])
-        es = np.arange(len(vs))
+        vs = _np.vstack(self.vertices[elements])
+        es = _np.arange(len(vs))
 
         nodes_per_element = elements.shape[1]
         es = es.reshape(-1, nodes_per_element)
 
-        mids = np.repeat(self.centers(), nodes_per_element, axis=0)
+        mids = _np.repeat(self.centers(), nodes_per_element, axis=0)
 
         vs -= mids
         vs *= ratio
@@ -460,7 +477,7 @@ class Edges(Vertices):
 
         return s_elements
 
-    def to_vertices(self):
+    def to_vertices(self) -> _Vertices:
         """Returns Vertices obj.
 
         Parameters
@@ -471,9 +488,9 @@ class Edges(Vertices):
         --------
         vertices: Vertices
         """
-        return Vertices(self.vertices)
+        return _Vertices(self.vertices)
 
-    def _get_attr(self, attr):
+    def _get_attr(self, attr: str) -> TrackedArray | _np.ndarray:
         """Internal function to get attribute that maybe property or callable.
         Some properties are replaced by callable in subclasses as it may depend
         on other properties of subclass.
