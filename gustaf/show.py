@@ -334,6 +334,7 @@ def make_showable(obj, as_dict=False, **kwargs):
         # set a default cmap if needed
         cmap_kwargs["input_cmap"] = obj.show_options.get("cmap", "plasma")
         cmap_kwargs["alpha"] = obj.show_options.get("cmap_alpha", 1)
+        cmap_kwargs["n_colors"] = obj.show_options.get("cmap_n_colors", None)
         # add data
         cmap_kwargs["input_array"] = data
 

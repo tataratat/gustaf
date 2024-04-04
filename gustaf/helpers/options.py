@@ -132,6 +132,12 @@ vedo_common_options = (
     ),
     Option(
         "vedo",
+        "cmap_n_colors",
+        "Set the number of available colors",
+        (int,),
+    ),
+    Option(
+        "vedo",
         "scalarbar",
         "Scalarbar describing cmap. At least an empty dict or "
         "dict with following items are accepted: "
