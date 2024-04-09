@@ -8,7 +8,7 @@ import gustaf
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
 
 project = "gustaf"
-copyright = "2022, Jaewook Lee"
+copyright = "2022, Jaewook Lee"  # noqa A001
 author = "Jaewook Lee"
 release = gustaf.__version__
 

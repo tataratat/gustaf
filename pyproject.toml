@@ -95,7 +95,10 @@ select = [
   "NPY",         # numpy specific rules
   "I",           # isort specific rules
   "UP",          # pyupdate specific rules
-  "C400","C401","C402","C403","C404","C405" # additional pyupgrade rules
+  "C400","C401","C402","C403","C404","C405", # additional pyupgrade rules
+  "FURB",        # refurb items
+  "YTT",         # flake8 check version comparison mistakes
+  "A",           # flake8-builtins
 ]
 fixable = ["ALL"]
 ignore = [
