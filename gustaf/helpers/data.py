@@ -324,7 +324,7 @@ class DataHolder(HelperBase):
 
         Parameters
         ----------
-        kwargs: **kwargs
+        **kwargs: kwargs
 
         Returns
         -------
