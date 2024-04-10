@@ -318,6 +318,20 @@ class DataHolder(HelperBase):
         """
         return self._saved.items()
 
+    def update(self, **kwargs):
+        """
+        Updates given kwargs using __setitem__.
+
+        Parameters
+        ----------
+        kwargs: **kwargs
+
+        Returns
+        -------
+        None
+        """
+        self._saved.update(**kwargs)
+
 
 class ComputedData(DataHolder):
     _depends = None
