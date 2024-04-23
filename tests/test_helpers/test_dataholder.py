@@ -180,5 +180,71 @@ def test_DataHolder():
     assert len(dataholder) == 0
 
 
-def test_ComputedData():
-    pass
+@pytest.mark.parametrize(
+    "grid", ("edges", "faces_tri", "faces_quad", "volumes_tet", "volumes_hexa")
+)
+def test_ComputedData(grid, request):
+    grid = request.getfixturevalue(grid)
+
+    # vertex related data
+    v_data = (
+        "unique_vertices",
+        "bounds",
+        "bounds_diagonal",
+        "bounds_diagonal_norm",
+    )
+
+    # element related data
+    e_data = (
+        "sorted_edges",
+        "unique_edges",
+        "single_edges",
+        "edges",
+        "sorted_faces",
+        "unique_faces",
+        "single_faces",
+        "faces",
+        "sorted_volumes",
+        "unique_volumes",
+    )
+
+    # for both
+    both_data = ("centers", "referenced_vertices")
+
+    # entities before modification
+    data_dependency = {"vertex": v_data, "element": e_data, "both": both_data}
+    before = {}
+    for dependency, attributes in data_dependency.items():
+        # init
+        before[dependency] = {}
+        for attr in attributes:
+            func = getattr(grid, attr, None)
+            if attr is not None and callable(func):
+                before[dependency][attr] = func()
+
+        # ensure that func is called at least once
+        assert len(before[dependency]) != 0
+
+    # loop to check if you get the saved data
+    for attributes in before.values():
+        for attr, value in attributes.items():
+            func = getattr(grid, attr, None)
+            assert value is func()
+
+    # change vertices - assign new vertices
+    grid.vertices = grid.vertices.copy()
+    for dependency, attributes in before.items():
+        if dependency == "element":
+            continue
+        for attr, value in attributes.items():
+            func = getattr(grid, attr, None)
+            assert value is not func()  # should be different object
+
+    # change elements - assign new elements
+    grid.elements = grid.elements.copy()
+    for dependency, attributes in before.items():
+        if dependency == "vertex":
+            continue
+        for attr, value in attributes.items():
+            func = getattr(grid, attr, None)
+            assert value is not func()
