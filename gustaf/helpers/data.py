@@ -251,6 +251,20 @@ class DataHolder(HelperBase):
         """
         return key in self._saved
 
+    def __len__(self):
+        """
+        Returns number of items.
+
+        Parameters
+        ----------
+        None
+
+        Returns
+        -------
+        len: int
+        """
+        return len(self._saved)
+
     def pop(self, key, default=None):
         """
         Applied pop() to saved data
