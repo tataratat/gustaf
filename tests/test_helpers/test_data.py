@@ -1,3 +1,5 @@
+import sys
+
 import numpy as np
 import pytest
 
@@ -54,9 +56,11 @@ def test_TrackedArray():
     ta /= 1.5
     assert ta.modified
 
-    ta = new_tracked_array()
-    ta @= ta
-    assert ta.modified
+    # old distributions of numpy does not have this feature
+    if sys.version_info > (3, 9):
+        ta = new_tracked_array()
+        ta @= ta
+        assert ta.modified
 
     ta = new_tracked_array()
     ta **= 2
