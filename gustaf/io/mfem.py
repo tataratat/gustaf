@@ -107,15 +107,15 @@ def load(fname):
         return mesh
 
 
-def export(mesh, fname):
+def export(fname, mesh):
     """Export mesh in MFEM format. Supports 2D triangle and quadrilateral
     meshes. Does not support different element attributes or difference in
     vertex dimension and mesh dimension.
 
     Parameters
     ------------
-    mesh: Faces
     fname: str
+    mesh: Faces
 
     Returns
     ------------

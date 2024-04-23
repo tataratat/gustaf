@@ -84,7 +84,7 @@ def load(fname):
     return meshes[0] if len(meshes) == 1 else meshes
 
 
-def export(mesh, fname, submeshes=None, **kwargs):
+def export(fname, mesh, submeshes=None, **kwargs):
     """Export mesh elements and vertex data into meshio and use its write
     function. The definition of submeshes with identical vertex coordinates
     is possible. In that case vertex numbering and data from the main mesh
@@ -132,10 +132,10 @@ def export(mesh, fname, submeshes=None, **kwargs):
 
     Parameters
     ------------
-    mesh: Edges, Faces or Volumes
-      Input mesh
     fname: Union[str, pathlib.Path]
       File to save the mesh in.
+    mesh: Edges, Faces or Volumes
+      Input mesh
     submeshes: Iterable
       Submeshes where the vertices are identical to the main mesh. The element
       type can be identical to mesh.elements or lower-dimensional (e.g.
@@ -164,7 +164,8 @@ def export(mesh, fname, submeshes=None, **kwargs):
 
     cells = []
     # Merge main mesh and submeshes in one list
-    meshes = [mesh]
+    meshes = mesh if isinstance(mesh, list) else [mesh]
+
     if submeshes is not None:
         meshes.extend(submeshes)
 
