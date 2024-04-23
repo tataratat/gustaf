@@ -248,3 +248,51 @@ def test_ComputedData(grid, request):
         for attr, value in attributes.items():
             func = getattr(grid, attr, None)
             assert value is not func()
+
+
+@pytest.mark.parametrize(
+    "grid", ("edges", "faces_tri", "faces_quad", "volumes_tet", "volumes_hexa")
+)
+def test_VertexData(grid, request):
+    grid = request.getfixturevalue(grid)
+
+    key = "vertices"
+
+    # set data
+    grid.vertex_data[key] = grid.vertices
+
+    # get_data - data is viewed as TrackedArray, so check against base
+    assert grid.vertices is grid.vertex_data[key].base
+
+    # scalar extraction should return a norm
+    assert np.allclose(
+        grid.vertex_data.as_scalar(key).ravel(),
+        np.linalg.norm(grid.vertex_data.get(key), axis=1),
+    )
+
+    # norms should be saved, as long as data array isn't changed
+    assert grid.vertex_data.as_scalar(key) is grid.vertex_data.as_scalar(key)
+
+    before = grid.vertex_data.as_scalar(key)
+    # trigger modified flag on data - either reset or inplace change
+    # reset first - with copy, just so that we can try to make inplace changes
+    # later
+    grid.vertex_data[key] = grid.vertex_data[key].copy()
+    assert before is not grid.vertex_data.as_scalar(key)
+    assert grid.vertex_data.as_scalar(key) is grid.vertex_data.as_scalar(key)
+
+    grid.vertex_data[key][0] = grid.vertex_data[key][0]
+    assert before is not grid.vertex_data.as_scalar(key)
+    assert grid.vertex_data.as_scalar(key) is grid.vertex_data.as_scalar(key)
+
+    # check arrow data
+    assert grid.vertex_data[key] is grid.vertex_data.as_arrow(key)
+
+    # check wrong length assignment
+    with pytest.raises(ValueError):
+        grid.vertex_data["bad"] = np.vstack((grid.vertices, grid.vertices))
+
+    # check wrong arrow data request
+    with pytest.raises(ValueError):
+        grid.vertex_data["norm"] = grid.vertex_data.as_scalar(key)
+        grid.vertex_data.as_arrow("norm")
