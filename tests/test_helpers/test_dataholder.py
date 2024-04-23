@@ -1,6 +1,105 @@
+import numpy as np
 import pytest
 
 import gustaf
+
+
+def new_tracked_array(dtype=float):
+    """
+    create new tracked array and checks if default flags are set correctly.
+    Then sets modified to False, to give an easy start for testing
+    """
+    ta = gustaf.helpers.data.make_tracked_array(
+        [
+            [0, 1, 2],
+            [3, 4, 5],
+            [6, 7, 8],
+        ],
+        dtype=dtype,
+    )
+
+    assert ta.modified
+    assert ta._super_arr
+
+    ta.modified = False
+
+    return ta
+
+
+def test_TrackedArray():
+    """test if modified flag is well set"""
+    # 1. set item
+    ta = new_tracked_array()
+    ta[0] = 1
+    assert ta.modified
+
+    ta = new_tracked_array()
+    ta[1, 1] = 2
+    assert ta.modified
+
+    # in place
+    ta = new_tracked_array()
+    ta += 5
+    assert ta.modified
+
+    ta = new_tracked_array()
+    ta -= 3
+    assert ta.modified
+
+    ta = new_tracked_array()
+    ta *= 1
+    assert ta.modified
+
+    ta = new_tracked_array()
+    ta /= 1.5
+    assert ta.modified
+
+    ta = new_tracked_array()
+    ta @= ta
+    assert ta.modified
+
+    ta = new_tracked_array()
+    ta **= 2
+    assert ta.modified
+
+    ta = new_tracked_array()
+    ta %= 3
+    assert ta.modified
+
+    ta = new_tracked_array()
+    ta //= 2
+    assert ta.modified
+
+    ta = new_tracked_array(int)
+    ta <<= 3
+    assert ta.modified
+
+    ta = new_tracked_array(int)
+    ta >>= 1
+    assert ta.modified
+
+    ta = new_tracked_array(int)
+    ta |= 3
+    assert ta.modified
+
+    ta = new_tracked_array(int)
+    ta &= 3
+    assert ta.modified
+
+    ta = new_tracked_array(int)
+    ta ^= 3
+    assert ta.modified
+
+    # child array modification
+    ta = new_tracked_array()
+    ta_child = ta[0]
+    assert ta_child.base is ta
+    ta_child += 5
+    assert ta.modified
+    assert ta_child.modified
+
+    # copy returns normal np.ndarray
+    assert isinstance(new_tracked_array().copy(), np.ndarray)
 
 
 def test_DataHolder():
@@ -39,7 +138,7 @@ def test_DataHolder():
     assert len(dataholder) == 3
 
     # pop
-    assert dataholder.pop("c") == 33
+    assert dataholder.pop("c") == 3
     assert "c" not in dataholder
 
     # get
@@ -79,3 +178,7 @@ def test_DataHolder():
     assert "c" not in dataholder
     assert "d" not in dataholder
     assert len(dataholder) == 0
+
+
+def test_ComputedData():
+    pass
