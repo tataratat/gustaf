@@ -116,8 +116,8 @@ def load(
 
 
 def export(
-    mesh,
     fname,
+    mesh,
     space_time=False,
     dual=False,
 ):

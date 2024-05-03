@@ -61,14 +61,14 @@ def load(fname):
     return mesh
 
 
-def export(mesh, fname):
+def export(fname, mesh):
     """Export in Nutils format. Files are saved as np.savez().
     Supports triangle,and tetrahedron Meshes.
 
     Parameters
     -----------
-    mesh: Faces or Volumes
     fname: str
+    mesh: Faces or Volumes
 
     Returns
     --------
