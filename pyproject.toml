@@ -10,13 +10,12 @@ keywords = [
     "visualization",
     "mesh",
 ]
-requires-python = ">=3.7"
+requires-python = ">=3.8"
 license = {file = "LICENSE.txt"}
 classifiers = [
     "Development Status :: 3 - Alpha",
     "License :: OSI Approved :: MIT License",
     "Programming Language :: Python",
-    "Programming Language :: Python :: 3.7",
     "Programming Language :: Python :: 3.8",
     "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
@@ -81,7 +80,7 @@ version = {attr = "gustaf._version.version"}
 
 [tool.ruff]
 line-length = 79
-target-version = "py37"
+target-version = "py38"
 
 [tool.ruff.lint]
 select = [
@@ -107,7 +106,6 @@ ignore = [
     "PLR0913", # Too many arguments to function call
     "PLR0915", # Too many statements
     "B904", # Within an `except` clause, raise exceptions with ...
-    # "PLR0911", # Too many return statements
 ]
 
 [tool.ruff.lint.per-file-ignores]
