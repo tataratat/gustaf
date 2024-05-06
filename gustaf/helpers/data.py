@@ -251,6 +251,20 @@ class DataHolder(HelperBase):
         """
         return key in self._saved
 
+    def __len__(self):
+        """
+        Returns number of items.
+
+        Parameters
+        ----------
+        None
+
+        Returns
+        -------
+        len: int
+        """
+        return len(self._saved)
+
     def pop(self, key, default=None):
         """
         Applied pop() to saved data
@@ -317,6 +331,20 @@ class DataHolder(HelperBase):
         values: dict_values
         """
         return self._saved.items()
+
+    def update(self, **kwargs):
+        """
+        Updates given kwargs using __setitem__.
+
+        Parameters
+        ----------
+        **kwargs: kwargs
+
+        Returns
+        -------
+        None
+        """
+        self._saved.update(**kwargs)
 
 
 class ComputedData(DataHolder):
