@@ -351,6 +351,32 @@ class ShowOption(HelperBase):
         """
         return key in self._options
 
+    def __call__(self, **kwargs):
+        """A short-cut to update(), but it returns helpee object.
+        This is mainly to support one-line/inline visualizations.
+
+        Parameters
+        ----------
+        kwargs: **kwargs
+
+        Returns
+        -------
+        helpee: Any
+
+        Example
+        -------
+        .. code-block:: python
+
+            gus.show(
+                mesh1.show_options(c="red"),
+                mesh2.show_options(c="green"),
+                mesh3.show_options(c="blue"),
+            )
+        """
+        self.update(**kwargs)
+
+        return self._helpee
+
     def get(self, key, default=None):
         """
         Gets value from key and default. Similar to dict.get(),
