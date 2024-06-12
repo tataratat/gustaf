@@ -1,10 +1,21 @@
 """gustaf/gustaf/faces.py."""
 
-import numpy as np
+from __future__ import annotations
 
-from gustaf import helpers, settings, show, utils
-from gustaf.edges import Edges
-from gustaf.helpers.options import Option
+from typing import TYPE_CHECKING
+
+import numpy as _np
+
+from gustaf import helpers as _helpers
+from gustaf import settings as _settings
+from gustaf import show as _show
+from gustaf import utils as _utils
+from gustaf.edges import Edges as _Edges
+from gustaf.helpers.options import Option as _Option
+
+if TYPE_CHECKING:
+
+    from gustaf.helpers.data import TrackedArray, Unique2DIntegers
 
 # special types for face texture option
 try:
@@ -14,27 +25,29 @@ try:
     # there are other ways to get here, but this is exact path for our use
     vtkTexture = vedo.vtkclasses.vtkTexture
 except ImportError as err:
-    vedoPicture = helpers.raise_if.ModuleImportRaiser("vedo", err)
-    vtkTexture = helpers.raise_if.ModuleImportRaiser("vedo", err)
+    vedoPicture = _helpers.raise_if.ModuleImportRaiser("vedo", err)
+    vtkTexture = _helpers.raise_if.ModuleImportRaiser("vedo", err)
 
 
-class FacesShowOption(helpers.options.ShowOption):
+class FacesShowOption(_helpers.options.ShowOption):
     """
     Show options for vertices.
     """
 
-    _valid_options = helpers.options.make_valid_options(
-        *helpers.options.vedo_common_options,
-        Option("vedo", "lw", "Width of edges (lines) in pixel units.", (int,)),
-        Option(
+    _valid_options = _helpers.options.make_valid_options(
+        *_helpers.options.vedo_common_options,
+        _Option(
+            "vedo", "lw", "Width of edges (lines) in pixel units.", (int,)
+        ),
+        _Option(
             "vedo", "lc", "Color of edges (lines).", (int, str, tuple, list)
         ),
-        Option(
+        _Option(
             "vedo",
             "texture",
             "Texture of faces in array, vedo.Picture, vtk.vtkTexture, "
             "or path to an image.",
-            (np.ndarray, tuple, list, str, vedoPicture, vtkTexture),
+            (_np.ndarray, tuple, list, str, vedoPicture, vtkTexture),
         ),
     )
 
@@ -53,7 +66,7 @@ class FacesShowOption(helpers.options.ShowOption):
         faces: vedo.Mesh
         """
 
-        faces = show.vedo.Mesh(
+        faces = _show.vedo.Mesh(
             [self._helpee.const_vertices, self._helpee.const_faces],
         )
 
@@ -65,20 +78,20 @@ class FacesShowOption(helpers.options.ShowOption):
         return faces
 
 
-class Faces(Edges):
+class Faces(_Edges):
     kind = "face"
 
-    const_edges = helpers.raise_if.invalid_inherited_attr(
+    const_edges = _helpers.raise_if.invalid_inherited_attr(
         "Edges.const_edges",
         __qualname__,
         property_=True,
     )
-    update_edges = helpers.raise_if.invalid_inherited_attr(
+    update_edges = _helpers.raise_if.invalid_inherited_attr(
         "Edges.update_edges",
         __qualname__,
         property_=False,
     )
-    dashed = helpers.raise_if.invalid_inherited_attr(
+    dashed = _helpers.raise_if.invalid_inherited_attr(
         "Edges.dashed",
         __qualname__,
         property_=False,
@@ -91,14 +104,14 @@ class Faces(Edges):
     )
 
     __show_option__ = FacesShowOption
-    __boundary_class__ = Edges
+    __boundary_class__ = _Edges
 
     def __init__(
         self,
-        vertices=None,
-        faces=None,
-        elements=None,
-    ):
+        vertices: list[list[float]] | TrackedArray | _np.ndarray = None,
+        faces: _np.ndarray | None = None,
+        elements: _np.ndarray | None = None,
+    ) -> None:
         """Faces. It has vertices and faces. Faces could be triangles or
         quadrilaterals.
 
@@ -116,8 +129,8 @@ class Faces(Edges):
 
         self.BC = {}
 
-    @helpers.data.ComputedMeshData.depends_on(["elements"])
-    def edges(self):
+    @_helpers.data.ComputedMeshData.depends_on(["elements"])
+    def edges(self) -> _np.ndarray:
         """Edges from here aren't main property. So this needs to be computed.
 
         Parameters
@@ -131,10 +144,10 @@ class Faces(Edges):
         self._logd("computing edges")
         faces = self._get_attr("faces")
 
-        return utils.connec.faces_to_edges(faces)
+        return _utils.connec.faces_to_edges(faces)
 
     @property
-    def whatami(self):
+    def whatami(self) -> str:
         """Determines whatami.
 
         Parameters
@@ -148,7 +161,7 @@ class Faces(Edges):
         return type(self).whatareyou(self)
 
     @classmethod
-    def whatareyou(cls, face_obj):
+    def whatareyou(cls, face_obj: Faces) -> str:
         """classmethod that tells you if the Faces is tri or quad or invalid
         kind.
 
@@ -176,7 +189,7 @@ class Faces(Edges):
             )
 
     @property
-    def faces(self):
+    def faces(self) -> TrackedArray:
         """Returns faces.
 
         Parameters
@@ -191,7 +204,7 @@ class Faces(Edges):
         return self._faces
 
     @faces.setter
-    def faces(self, fs):
+    def faces(self, fs: TrackedArray | _np.ndarray) -> None:
         """Faces setter. Similar to vertices, this will be a tracked array.
 
         Parameters
@@ -204,14 +217,14 @@ class Faces(Edges):
         """
         self._logd("setting faces")
 
-        self._faces = helpers.data.make_tracked_array(
+        self._faces = _helpers.data.make_tracked_array(
             fs,
-            settings.INT_DTYPE,
+            _settings.INT_DTYPE,
             copy=False,
         )
         # shape check
         if fs is not None:
-            utils.arr.is_one_of_shapes(
+            _utils.arr.is_one_of_shapes(
                 fs,
                 ((-1, 3), (-1, 4)),
                 strict=True,
@@ -222,7 +235,7 @@ class Faces(Edges):
         self._const_faces.flags.writeable = False
 
     @property
-    def const_faces(self):
+    def const_faces(self) -> TrackedArray:
         """Returns non-writeable view of faces.
 
         Parameters
@@ -235,8 +248,8 @@ class Faces(Edges):
         """
         return self._const_faces
 
-    @helpers.data.ComputedMeshData.depends_on(["elements"])
-    def sorted_faces(self):
+    @_helpers.data.ComputedMeshData.depends_on(["elements"])
+    def sorted_faces(self) -> _np.ndarray:
         """Similar to edges_sorted but for faces.
 
         Parameters
@@ -249,10 +262,10 @@ class Faces(Edges):
         """
         faces = self._get_attr("faces")
 
-        return np.sort(faces, axis=1)
+        return _np.sort(faces, axis=1)
 
-    @helpers.data.ComputedMeshData.depends_on(["elements"])
-    def unique_faces(self):
+    @_helpers.data.ComputedMeshData.depends_on(["elements"])
+    def unique_faces(self) -> Unique2DIntegers:
         """Returns a namedtuple of unique faces info. Similar to unique_edges.
 
         Parameters
@@ -264,7 +277,7 @@ class Faces(Edges):
         unique_info: Unique2DIntegers
           valid attributes are {values, ids, inverse, counts}
         """
-        unique_info = utils.connec.sorted_unique(
+        unique_info = _utils.connec.sorted_unique(
             self.sorted_faces(), sorted_=True
         )
 
@@ -274,8 +287,8 @@ class Faces(Edges):
 
         return unique_info
 
-    @helpers.data.ComputedMeshData.depends_on(["elements"])
-    def single_faces(self):
+    @_helpers.data.ComputedMeshData.depends_on(["elements"])
+    def single_faces(self) -> _np.ndarray:
         """Returns indices of very unique faces: faces that appear only once.
         For well constructed volumes, this can be considered as surfaces.
 
@@ -307,7 +320,7 @@ class Faces(Edges):
         --------
         edges: Edges
         """
-        return Edges(
+        return _Edges(
             self.vertices,
             edges=self.unique_edges().values if unique else self.edges(),
         )

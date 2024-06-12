@@ -3,7 +3,10 @@
 Everything related to show/visualization.
 """
 
+from __future__ import annotations
+
 import sys
+from typing import TYPE_CHECKING
 
 import numpy as np
 
@@ -37,6 +40,11 @@ except ImportError as err:
 
     vedo = ModuleImportRaiser("vedo", err)
     vedoUGrid = vedo
+
+if TYPE_CHECKING:
+    from typing import Any
+
+    from gustaf._base import GustafBase
 
 
 # enable `gus.show()`
@@ -82,7 +90,9 @@ def show(*args, **kwargs):
     return_show_list = kwargs.get("return_showable_list", False)
     axes = kwargs.get("axes", None)
 
-    def clear_vedo_plotter(plotter, num_renderers, skip_cl=skip_clear):
+    def clear_vedo_plotter(
+        plotter: vedo.Plotter, num_renderers: int, skip_cl: bool = skip_clear
+    ):
         """enough said."""
         # for whatever reason it is desired
         if skip_cl:
@@ -98,7 +108,7 @@ def show(*args, **kwargs):
 
         return None
 
-    def cam_tuple_to_list(dict_cam):
+    def cam_tuple_to_list(dict_cam: None | dict[str, Any]):
         """if entity is tuple, turns it into list."""
         if dict_cam is None:
             return None
@@ -235,7 +245,9 @@ def show(*args, **kwargs):
         return plt
 
 
-def make_showable(obj, as_dict=False, **kwargs):
+# TODO the type of obj is not really easy to define since it in reality it
+# should be gustaf.Vertice but it might also be splinepy.Spline
+def make_showable(obj: GustafBase, as_dict: bool = False, **kwargs):
     """Generates a vedo obj based on `kind` attribute from given obj, as well
     as show_options.
 
@@ -411,7 +423,9 @@ def make_showable(obj, as_dict=False, **kwargs):
 
 # possibly relocate, is this actually used?
 # could not find any usage in this repo
-def interpolate_vedo_dictcam(cameras, resolutions, spline_degree=1):
+def interpolate_vedo_dictcam(
+    cameras: list[dict[str, Any]], resolutions: int, spline_degree: int = 1
+):
     """Interpolate between vedo dict cameras.
 
     Parameters

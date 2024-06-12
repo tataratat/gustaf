@@ -1,21 +1,34 @@
 """gustaf/gustaf/volumes.py."""
 
-import numpy as np
+from __future__ import annotations
 
-from gustaf import helpers, settings, show, utils
-from gustaf.faces import Faces
-from gustaf.helpers.options import Option
+from typing import TYPE_CHECKING
+
+import numpy as _np
+
+from gustaf import helpers as _helpers
+from gustaf import settings as _settings
+from gustaf import show as _show
+from gustaf import utils as _utils
+from gustaf.faces import Faces as _Faces
+from gustaf.helpers.options import Option as _Option
+
+if TYPE_CHECKING:
+
+    from gustaf.helpers.data import TrackedArray, Unique2DIntegers
 
 
-class VolumesShowOption(helpers.options.ShowOption):
+class VolumesShowOption(_helpers.options.ShowOption):
     """
     Show options for vertices.
     """
 
-    _valid_options = helpers.options.make_valid_options(
-        *helpers.options.vedo_common_options,
-        Option("vedo", "lw", "Width of edges (lines) in pixel units.", (int,)),
-        Option(
+    _valid_options = _helpers.options.make_valid_options(
+        *_helpers.options.vedo_common_options,
+        _Option(
+            "vedo", "lw", "Width of edges (lines) in pixel units.", (int,)
+        ),
+        _Option(
             "vedo", "lc", "Color of edges (lines).", (int, str, tuple, list)
         ),
     )
@@ -40,14 +53,14 @@ class VolumesShowOption(helpers.options.ShowOption):
             self.get("data", None) is None
             and not self.get("vertex_ids", False)
             and not self.get("arrow_data", False)
-            and not show.is_ipython
+            and not _show.is_ipython
         ):
             from vtk import VTK_HEXAHEDRON as herr_hexa
             from vtk import VTK_TETRA as frau_tetra
 
             to_vtktype = {"tet": frau_tetra, "hexa": herr_hexa}
             grid_type = to_vtktype[self._helpee.whatami]
-            u_grid = show.vedoUGrid(
+            u_grid = _show.vedoUGrid(
                 [
                     self._helpee.const_vertices,
                     self._helpee.const_volumes,
@@ -72,15 +85,15 @@ class VolumesShowOption(helpers.options.ShowOption):
         return faces.show_options._initialize_showable()
 
 
-class Volumes(Faces):
+class Volumes(_Faces):
     kind = "volume"
 
-    const_faces = helpers.raise_if.invalid_inherited_attr(
+    const_faces = _helpers.raise_if.invalid_inherited_attr(
         "Faces.const_faces",
         __qualname__,
         property_=True,
     )
-    update_faces = helpers.raise_if.invalid_inherited_attr(
+    update_faces = _helpers.raise_if.invalid_inherited_attr(
         "Faces.update_edges",
         __qualname__,
         property_=False,
@@ -92,14 +105,14 @@ class Volumes(Faces):
     )
 
     __show_option__ = VolumesShowOption
-    __boundary_class__ = Faces
+    __boundary_class__ = _Faces
 
     def __init__(
         self,
-        vertices=None,
-        volumes=None,
-        elements=None,
-    ):
+        vertices: list[list[float]] | _np.ndarray = None,
+        volumes: list[list[int]] | None | _np.ndarray = None,
+        elements: _np.ndarray | None = None,
+    ) -> None:
         """Volumes. It has vertices and volumes. Volumes could be tetrahedrons
         or hexahedrons.
 
@@ -114,8 +127,8 @@ class Volumes(Faces):
         elif elements is not None:
             self.volumes = elements
 
-    @helpers.data.ComputedMeshData.depends_on(["elements"])
-    def faces(self):
+    @_helpers.data.ComputedMeshData.depends_on(["elements"])
+    def faces(self) -> _np.ndarray:
         """Faces here aren't main property. So this needs to be computed.
 
         Parameters
@@ -129,14 +142,14 @@ class Volumes(Faces):
         whatami = self.whatami
         faces = None
         if whatami.startswith("tet"):
-            faces = utils.connec.tet_to_tri(self.volumes)
+            faces = _utils.connec.tet_to_tri(self.volumes)
         elif whatami.startswith("hexa"):
-            faces = utils.connec.hexa_to_quad(self.volumes)
+            faces = _utils.connec.hexa_to_quad(self.volumes)
 
         return faces
 
     @classmethod
-    def whatareyou(cls, volume_obj):
+    def whatareyou(cls, volume_obj: Volumes) -> str:
         """overwrites Faces.whatareyou to tell you is this volume is tet or
         hexa.
 
@@ -164,7 +177,7 @@ class Volumes(Faces):
             )
 
     @property
-    def volumes(self):
+    def volumes(self) -> TrackedArray:
         """Returns volumes.
 
         Parameters
@@ -178,7 +191,9 @@ class Volumes(Faces):
         return self._volumes
 
     @volumes.setter
-    def volumes(self, vols):
+    def volumes(
+        self, vols: list[list[int]] | TrackedArray | _np.ndarray
+    ) -> None:
         """volumes setter. Similar to vertices, this will be a tracked array.
 
         Parameters
@@ -189,13 +204,13 @@ class Volumes(Faces):
         --------
         None
         """
-        self._volumes = helpers.data.make_tracked_array(
+        self._volumes = _helpers.data.make_tracked_array(
             vols,
-            settings.INT_DTYPE,
+            _settings.INT_DTYPE,
             copy=False,
         )
         if vols is not None:
-            utils.arr.is_one_of_shapes(
+            _utils.arr.is_one_of_shapes(
                 vols,
                 ((-1, 4), (-1, 8)),
                 strict=True,
@@ -205,7 +220,7 @@ class Volumes(Faces):
         self._const_volumes.flags.writeable = False
 
     @property
-    def const_volumes(self):
+    def const_volumes(self) -> TrackedArray:
         """Returns non-writeable view of volumes.
 
         Parameters
@@ -218,8 +233,8 @@ class Volumes(Faces):
         """
         return self._const_volumes
 
-    @helpers.data.ComputedMeshData.depends_on(["elements"])
-    def sorted_volumes(self):
+    @_helpers.data.ComputedMeshData.depends_on(["elements"])
+    def sorted_volumes(self) -> _np.ndarray:
         """Sort volumes along axis=1.
 
         Parameters
@@ -232,10 +247,10 @@ class Volumes(Faces):
         """
         volumes = self._get_attr("volumes")
 
-        return np.sort(volumes, axis=1)
+        return _np.sort(volumes, axis=1)
 
-    @helpers.data.ComputedMeshData.depends_on(["elements"])
-    def unique_volumes(self):
+    @_helpers.data.ComputedMeshData.depends_on(["elements"])
+    def unique_volumes(self) -> Unique2DIntegers:
         """Returns a namedtuple of unique volumes info. Similar to
         unique_edges.
 
@@ -248,7 +263,7 @@ class Volumes(Faces):
         unique_info: Unique2DIntegers
           valid attributes are {values, ids, inverse, counts}
         """
-        unique_info = utils.connec.sorted_unique(
+        unique_info = _utils.connec.sorted_unique(
             self.sorted_volumes(),
             sorted_=True,
         )
@@ -263,7 +278,7 @@ class Volumes(Faces):
         """Alias to update_elements."""
         self.update_elements(*args, **kwargs)
 
-    def to_faces(self, unique=True):
+    def to_faces(self, unique: bool = True) -> _Faces:
         """Returns Faces obj.
 
         Parameters
@@ -275,7 +290,7 @@ class Volumes(Faces):
         --------
         faces: Faces
         """
-        return Faces(
+        return _Faces(
             self.vertices,
             faces=self.unique_faces().values if unique else self.faces(),
         )
