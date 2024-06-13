@@ -19,3 +19,7 @@ VEDO_DEFAULT_OPTIONS = {
 }
 
 NTHREADS = 1
+
+DEFAULT_OFFSCREEN = False
+#: If True, the visualization will default to offscreen. This is useful for
+#: running tests on CI/CD servers.

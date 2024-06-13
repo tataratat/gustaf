@@ -2,7 +2,8 @@ import numpy as np
 
 import gustaf as gus
 
-if __name__ == "__main__":
+
+def example():
     f = gus.Faces()
     f.vertices = [
         [1.16670818, 0.116044],
@@ -223,3 +224,7 @@ if __name__ == "__main__":
         "nlabels": 12,
     }
     gus.show.show([f, "3D scalarbar"], [f_2d, "2D scalarbar"])
+
+
+if __name__ == "__main__":
+    example()

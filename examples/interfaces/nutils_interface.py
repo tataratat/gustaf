@@ -14,7 +14,7 @@ from nutils.expression_v2 import Namespace
 import gustaf as gus
 
 
-def main():
+def example():
     # Simulation parameters
     degree = 1
     btype = "std"
@@ -80,7 +80,7 @@ def main():
     deformation = lhs.reshape(m.vertices.shape)
     m.vertices += deformation
 
-    gus.show.show_vedo(
+    gus.show.show(
         [m_in, "gustaf_input-mesh"],
         [m, "gustaf_mesh-with-lhs"],
         [gustaf_mesh, "gustaf_mesh-bezier"],
@@ -143,4 +143,4 @@ def define_mesh():
 
 
 if __name__ == "__main__":
-    main()
+    example()

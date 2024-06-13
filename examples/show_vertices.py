@@ -2,7 +2,8 @@ import numpy as np
 
 import gustaf as gus
 
-if __name__ == "__main__":
+
+def example():
     # define coordinates
     v = np.array(
         [
@@ -27,3 +28,7 @@ if __name__ == "__main__":
     vert.show_options["r"] = 10
     vert.show_options["vertex_ids"] = True
     vert.show()
+
+
+if __name__ == "__main__":
+    example()

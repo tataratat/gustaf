@@ -1,6 +1,7 @@
 import gustaf as gus
 
-if __name__ == "__main__":
+
+def example():
     # create 2x3x4 test hexa element
     v_res = [2, 3, 4]
     vertices = gus.create.vertices.raster(
@@ -37,3 +38,7 @@ if __name__ == "__main__":
             direct_toedges,
         ],
     )
+
+
+if __name__ == "__main__":
+    example()

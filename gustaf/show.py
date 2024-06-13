@@ -7,7 +7,7 @@ import sys
 
 import numpy as np
 
-from gustaf import utils
+from gustaf import settings, utils
 
 try:
     from gustaf.helpers.notebook import K3DPlotterN
@@ -70,7 +70,7 @@ def show(*args, **kwargs):
     """
     # vedo plotter parameter
     N = len(args)
-    offs = kwargs.get("offscreen", False)
+    offs = kwargs.get("offscreen", settings.DEFAULT_OFFSCREEN)
     interact = kwargs.get("interactive", True)
     plt = kwargs.get("vedoplot", None)
     skip_clear = kwargs.get("skip_clear", False)
