@@ -1,0 +1,6 @@
+gustaf.edges.Edges.single\_edges
+================================
+
+.. currentmodule:: gustaf.edges
+
+.. automethod:: Edges.single_edges

@@ -1,0 +1,166 @@
+gustaf.faces.Faces
+==================
+
+.. currentmodule:: gustaf.faces
+
+.. autoclass:: Faces
+   :show-inheritance:
+
+   
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+      :toctree:
+   
+      
+      
+        
+      
+      
+        
+      
+      
+        
+      
+      
+        
+      
+      
+        
+      
+      
+        
+      
+      
+        
+          Faces.dashed
+        
+      
+      
+        
+          Faces.edges
+        
+      
+      
+        
+      
+      
+        
+      
+      
+        
+      
+      
+        
+      
+      
+        
+      
+      
+        
+      
+      
+        
+      
+      
+        
+      
+      
+        
+      
+      
+        
+          Faces.single_faces
+        
+      
+      
+        
+      
+      
+        
+          Faces.sorted_faces
+        
+      
+      
+        
+          Faces.to_edges
+        
+      
+      
+        
+          Faces.to_subelements
+        
+      
+      
+        
+      
+      
+        
+      
+      
+        
+          Faces.unique_faces
+        
+      
+      
+        
+      
+      
+        
+          Faces.update_edges
+        
+      
+      
+        
+      
+      
+        
+          Faces.update_faces
+        
+      
+      
+        
+      
+      
+        
+          Faces.whatareyou
+        
+      
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+      :toctree:
+   
+      
+         Faces.BC
+      
+      
+         Faces.const_edges
+      
+      
+      
+         Faces.const_faces
+      
+      
+      
+      
+         Faces.faces
+      
+      
+         Faces.kind
+      
+      
+      
+      
+      
+         Faces.whatami
+      
+   
+   

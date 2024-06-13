@@ -1,0 +1,6 @@
+gustaf.faces.Faces.dashed
+=========================
+
+.. currentmodule:: gustaf.faces
+
+.. automethod:: Faces.dashed

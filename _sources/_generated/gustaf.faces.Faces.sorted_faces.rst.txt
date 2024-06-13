@@ -1,0 +1,6 @@
+gustaf.faces.Faces.sorted\_faces
+================================
+
+.. currentmodule:: gustaf.faces
+
+.. automethod:: Faces.sorted_faces

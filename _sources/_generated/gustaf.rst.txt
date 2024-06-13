@@ -1,0 +1,43 @@
+﻿.. _gustaf:
+
+gustaf
+======
+
+.. automodule:: gustaf
+
+   
+   
+   
+
+   
+   
+   
+
+   
+   
+   
+
+   
+   
+   
+
+
+
+.. rubric:: Modules
+
+.. autosummary::
+   :toctree:
+   :template:
+   :recursive:
+
+   gustaf.create
+   gustaf.edges
+   gustaf.faces
+   gustaf.helpers
+   gustaf.io
+   gustaf.settings
+   gustaf.show
+   gustaf.utils
+   gustaf.vertices
+   gustaf.volumes
+

@@ -1,0 +1,37 @@
+.. _gustaf.create:
+
+gustaf.create
+=============
+
+.. automodule:: gustaf.create
+
+   
+   
+   
+
+   
+   
+   
+
+   
+   
+   
+
+   
+   
+   
+
+
+
+.. rubric:: Modules
+
+.. autosummary::
+   :toctree:
+   :template:
+   :recursive:
+
+   gustaf.create.edges
+   gustaf.create.faces
+   gustaf.create.vertices
+   gustaf.create.volumes
+
