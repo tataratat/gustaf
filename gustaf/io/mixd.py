@@ -15,6 +15,9 @@ from gustaf.utils import log
 from gustaf.utils.arr import close_rows
 from gustaf.volumes import Volumes
 
+_big_endian_int = ">i"
+_big_endian_double = ">d"
+
 
 def load(
     simplex=True,
@@ -73,19 +76,23 @@ def load(
         mrng = fbase + "mrng"
 
     # vertices
-    vertices = np.fromfile(mxyz, dtype=">d").astype(np.float64)
+    vertices = np.fromfile(mxyz, dtype=_big_endian_double).astype(np.float64)
 
     # connec
     connec = None
     try:
-        connec = (np.fromfile(mien, dtype=">i") - 1).astype(np.int32)
+        connec = (np.fromfile(mien, dtype=_big_endian_int) - 1).astype(
+            np.int32
+        )
     except BaseException:
         log.debug(f"mien file, `{mien}`, does not exist. Skipping.")
 
     # boundary conditions
     bcs = {}
     try:
-        bcs_in = np.fromfile(mrng, dtype=">i").astype(np.int32)  # flattened
+        bcs_in = np.fromfile(mrng, dtype="_big_endian_int").astype(
+            np.int32
+        )  # flattened
         uniq_bcs_in = np.unique(bcs_in)
         uniq_bcs_in = uniq_bcs_in[uniq_bcs_in > 0]  # keep only natural nums
         sub_elem_ids = np.arange(bcs_in.size)
@@ -113,6 +120,43 @@ def load(
         mesh.BC = bcs
 
     return mesh
+
+
+def _ravel(array):
+    """
+    Ravel if it is an array. Else, just return
+    """
+    if isinstance(array, np.ndarray):
+        return array.ravel()
+    return array
+
+
+def _write_raveled_int(file, array):
+    """
+    Writes raveled array to the file as big endian int.
+
+    Parameters
+    ----------
+    file: _io.TextIOWrapper
+      Objects for calling `open(fname)`
+    array: np.ndarray
+    """
+    for v in _ravel(array):
+        file.write(struct.pack(_big_endian_int, v))
+
+
+def _write_raveled_double(file, array):
+    """
+    Writes raveled array to the file as big endian double.
+
+    Parameters
+    ----------
+    file: _io.TextIOWrapper
+      Objects for calling `open(fname)`
+    array: np.ndarray
+    """
+    for v in _ravel(array):
+        file.write(struct.pack(_big_endian_double, v))
 
 
 def export(
@@ -152,8 +196,6 @@ def export(
 
     # basic infos
     dim = mesh.vertices.shape[1]
-    big_endian_int = ">i"
-    big_endian_double = ">d"
 
     # prep files
     fbase, ext = os.path.splitext(fname)
@@ -181,25 +223,24 @@ def export(
 
     # write v
     with open(vert_file, "wb") as vf:
-        for v in mesh.vertices.ravel():
-            vf.write(struct.pack(big_endian_double, v))
+        _write_raveled_double(vf, mesh.vertices)
 
+        # write it one more time for Discontinuous Prismic Space Time meshes
+        # used to be called Flat Space Time mesh.
         if space_time:
-            for v in mesh.vertices.ravel():
-                vf.write(struct.pack(big_endian_double, v))
+            _write_raveled_double(vf, mesh.vertices)
 
     # write connec
     with open(connec_file, "wb") as cf:
-        for c in mesh.elements.ravel() + 1:
-            cf.write(struct.pack(big_endian_int, c))
+        # let's not forget fortran numbering (+ 1)
+        _write_raveled_int(cf, mesh.elements.ravel() + 1)
 
     # get boundaries of each element - subelement interface array
     sub_interface = make_mrng(mesh)
 
     # write bc first - after writing it, we can modify inplace for dual.
     with open(bc_file, "wb") as bf:
-        for b in sub_interface:
-            bf.write(struct.pack(big_endian_int, b))
+        _write_raveled_int(bf, sub_interface)
 
     # if dual is True, we fill dual infos.
     if dual:
@@ -246,8 +287,7 @@ def export(
 
         # write dual
         with open(dual_file, "wb") as df:
-            for d in sub_interface:
-                df.write(struct.pack(big_endian_int, d))
+            _write_raveled_int(df, sub_interface)
 
     # write info
     with open(info_file, "w") as infof:  # if and inf... just can't
