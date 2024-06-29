@@ -275,7 +275,7 @@ class ShowOption(HelperBase):
         description: str
         """
         valid_and_current = []
-        for vo in self._valid_option.values():
+        for vo in self._valid_options.values():
             valid = str(vo)
             current = ""
             if vo.key in self.keys():
