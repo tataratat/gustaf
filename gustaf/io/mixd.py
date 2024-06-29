@@ -90,9 +90,7 @@ def load(
     # boundary conditions
     bcs = {}
     try:
-        bcs_in = np.fromfile(mrng, dtype="_big_endian_int").astype(
-            np.int32
-        )  # flattened
+        bcs_in = np.fromfile(mrng, dtype=_big_endian_int).astype(np.int32)
         uniq_bcs_in = np.unique(bcs_in)
         uniq_bcs_in = uniq_bcs_in[uniq_bcs_in > 0]  # keep only natural nums
         sub_elem_ids = np.arange(bcs_in.size)
