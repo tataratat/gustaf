@@ -107,15 +107,19 @@ def load(fname):
         return mesh
 
 
-def export(fname, mesh):
+def export(fname, mesh, BC=None):
     """Export mesh in MFEM format. Supports 2D triangle and quadrilateral
-    meshes. Does not support different element attributes or difference in
-    vertex dimension and mesh dimension.
+    meshes as well as 3D tetrahedral meshes. Does not support different
+    element attributes or difference in vertex dimension and mesh dimension.
 
     Parameters
     ------------
     fname: str
     mesh: Faces
+    BC: dict
+        Boundary conditions for 3D case.
+        Keys are boundary IDs and values are lists of face IDs.
+        If none are provided, all boundary faces are assigned to 1.
 
     Returns
     ------------
@@ -198,6 +202,58 @@ def export(fname, mesh):
 
     # Export 3D mesh
     else:
-        raise NotImplementedError(
-            f"Sorry, we cannot export mesh of dimension {dim}."
+        # Elements
+        element_attribute = 1  # Other numbers not yet supported
+        elements = mesh.elements
+        n_elements, n_element_vertices = elements.shape
+        if n_element_vertices == 4:
+            geometry_type = geometry_types["TETRAHEDRON"]
+        else:
+            raise NotImplementedError(
+                "Sorry, we cannot export mesh with elements "
+                f"with {n_element_vertices} vertices."
+            )
+        e = np.ones((n_elements, 1), dtype=settings.INT_DTYPE)
+        elements_array = np.hstack(
+            (element_attribute * e, geometry_type * e, elements)
         )
+        elements_array_string = format_array(elements_array)
+        elements_string = f"elements\n{n_elements}\n"
+        elements_string += f"{elements_array_string}\n\n"
+
+        # Boundary
+        faces = mesh.faces()
+        if BC is None:
+            BC = {1: mesh.to_faces(False).single_faces()}
+
+        nboundary_faces = sum(map(len, BC.values()))
+        boundary_array = np.empty(
+            (nboundary_faces, 5), dtype=settings.INT_DTYPE
+        )
+        startrow = 0
+        # Add boundary one by one as TRIANGLEs
+        for bid, faceids in BC.items():
+            nfaces = len(faceids)
+            e = np.ones(nfaces).reshape(-1, 1)
+            vertex_list = faces[faceids, :]
+            boundary_array[startrow : (startrow + nfaces), :] = np.hstack(
+                (int(bid) * e, geometry_types["TRIANGLE"] * e, vertex_list)
+            )
+            startrow += nfaces
+
+        boundary_array_string = format_array(boundary_array)
+        boundary_string = f"boundary\n{nboundary_faces}\n"
+        boundary_string += f"{boundary_array_string}\n\n"
+
+        # Vertices
+        vdim = 3  # Currently only option
+        vertices_array_string = format_array(mesh.vertices)
+        vertices_string = f"vertices\n{nvertices}\n{vdim}\n"
+        vertices_string += f"{vertices_array_string}"
+
+        with open(fname, "w") as f:
+            f.write("MFEM mesh v1.0\n\n")
+            f.write(f"dimension\n{dim}\n\n")
+            f.write(elements_string)
+            f.write(boundary_string)
+            f.write(vertices_string)
