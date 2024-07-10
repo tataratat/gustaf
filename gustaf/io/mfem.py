@@ -107,10 +107,11 @@ def load(fname):
         return mesh
 
 
-def export(fname, mesh, BC=None):
-    """Export mesh in MFEM format. Supports 2D triangle and quadrilateral
-    meshes as well as 3D tetrahedral meshes. Does not support different
-    element attributes or difference in vertex dimension and mesh dimension.
+def export(fname, mesh):
+    """Export mesh in MFEM format. Supports 2D triangle and quadrilateral 
+    meshes as well as 3D tetrahedral meshes. Handles boundary conditions for
+    3D tetrahedral meshes. Does not support different element attributes or 
+    difference in vertex dimension and mesh dimension.
 
     Parameters
     ------------
@@ -223,16 +224,14 @@ def export(fname, mesh, BC=None):
 
         # Boundary
         faces = mesh.faces()
-        if BC is None:
-            BC = {1: mesh.to_faces(False).single_faces()}
 
-        nboundary_faces = sum(map(len, BC.values()))
+        nboundary_faces = sum(map(len, mesh.BC.values()))
         boundary_array = np.empty(
             (nboundary_faces, 5), dtype=settings.INT_DTYPE
         )
         startrow = 0
         # Add boundary one by one as TRIANGLEs
-        for bid, faceids in BC.items():
+        for bid, faceids in mesh.BC.items():
             nfaces = len(faceids)
             e = np.ones(nfaces).reshape(-1, 1)
             vertex_list = faces[faceids, :]
