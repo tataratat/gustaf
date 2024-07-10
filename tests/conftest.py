@@ -5,6 +5,9 @@ Common imports/routines needed for testing.
 
 import numpy as np
 import pytest
+import re
+import os
+import contextlib
 
 import gustaf as gus
 
@@ -160,3 +163,80 @@ def provide_data_to_unittest(
     request.cls.QF = quad_connec
     request.cls.TV = tet_connec
     request.cls.HV = hexa_connec
+
+
+@pytest.fixture
+def are_stripped_lines_same():
+    def _are_stripped_lines_same(a, b, ignore_order=False):
+        """returns True if items in a and b same, preceding and tailing whitespaces
+        are ignored and strings are joined"""
+        all_same = True
+
+        for i, (line_a, line_b) in enumerate(zip(a, b)):
+            # check stripped string
+            stripped_a, stripped_b = line_a.strip(), line_b.strip()
+
+            # print general info
+            if stripped_a != stripped_b:
+                print(f"stripped line at index-{i} are not the same")
+                print(f"  from first: {line_a}")
+                print(f"  from second: {line_b}")
+
+            # give one more chance if ignore_order
+            if stripped_a != stripped_b and ignore_order:
+                print("  checking again, while ignoring word order:")
+
+                # This is meant for attributes
+                delimiters = r" |\>|\<|\t|,"
+                splitted_a = list(
+                    filter(None, re.split(delimiters, stripped_a))
+                )
+                splitted_b = list(
+                    filter(None, re.split(delimiters, stripped_b))
+                )
+                # first, len check
+                len_a, len_b = len(splitted_a), len(splitted_b)
+                if len(splitted_a) != len(splitted_b):
+                    print(
+                        f"    different word counts: a-{len_a}, b-{len_b}"
+                    )
+                    all_same = False
+                else:
+                    # word order
+                    a_to_b = []
+                    nums_b = None
+                    for word_a in splitted_a:
+                        try:
+                            a_to_b.append(splitted_b.index(word_a))
+                        except BaseException:
+                            try:
+                                num_a = float(word_a)
+                            except ValueError:
+                                pass
+                            else:
+                                if nums_b is None:
+                                    nums_b = []
+                                    for idx, num_b in enumerate(splitted_b):
+                                        with contextlib.suppress(ValueError):
+                                            nums_b.append((idx, float(num_b)))
+                                for idx, num_b in nums_b:
+                                    if np.isclose(num_a, num_b):
+                                        a_to_b.append(idx)
+                                        break
+                                else:
+                                    print(
+                                        f"    second does not contain ({word_a})"
+                                    )
+                                    all_same = False
+
+        return all_same
+
+    return _are_stripped_lines_same
+
+@pytest.fixture
+def to_tmpf():
+    def _to_tmpf(tmpd):
+        """given tmpd, returns tmpf"""
+        return os.path.join(tmpd, "nqv248p90")
+
+    return _to_tmpf
