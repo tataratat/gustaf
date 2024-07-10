@@ -108,9 +108,9 @@ def load(fname):
 
 
 def export(fname, mesh):
-    """Export mesh in MFEM format. Supports 2D triangle and quadrilateral 
+    """Export mesh in MFEM format. Supports 2D triangle and quadrilateral
     meshes as well as 3D tetrahedral meshes. Handles boundary conditions for
-    3D tetrahedral meshes. Does not support different element attributes or 
+    3D tetrahedral meshes. Does not support different element attributes or
     difference in vertex dimension and mesh dimension.
 
     Parameters

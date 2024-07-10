@@ -3,11 +3,12 @@
 Common imports/routines needed for testing.
 """
 
+import contextlib
+import os
+import re
+
 import numpy as np
 import pytest
-import re
-import os
-import contextlib
 
 import gustaf as gus
 
@@ -197,9 +198,7 @@ def are_stripped_lines_same():
                 # first, len check
                 len_a, len_b = len(splitted_a), len(splitted_b)
                 if len(splitted_a) != len(splitted_b):
-                    print(
-                        f"    different word counts: a-{len_a}, b-{len_b}"
-                    )
+                    print(f"    different word counts: a-{len_a}, b-{len_b}")
                     all_same = False
                 else:
                     # word order
@@ -232,6 +231,7 @@ def are_stripped_lines_same():
         return all_same
 
     return _are_stripped_lines_same
+
 
 @pytest.fixture
 def to_tmpf():

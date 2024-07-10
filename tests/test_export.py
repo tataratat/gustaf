@@ -1,8 +1,9 @@
-import numpy as np
-import gustaf as gus
-
-import tempfile
 import os
+import tempfile
+
+import numpy as np
+
+import gustaf as gus
 
 mesh = gus.Volumes(
     vertices=[
@@ -28,11 +29,12 @@ mesh = gus.Volumes(
 tets = mesh.volumes
 verts = mesh.vertices
 
+
 def test_mfem_export(to_tmpf, are_stripped_lines_same):
     faces = mesh.to_faces(False)
     boundary_faces = faces.single_faces()
 
-    BC = {1: [], 2: [], 3: []} 
+    BC = {1: [], 2: [], 3: []}
     for i in boundary_faces:
         # mark boundaries at x = 0 with 1
         if np.max(verts[faces.const_faces[i], 0]) < 0.1:
@@ -45,8 +47,8 @@ def test_mfem_export(to_tmpf, are_stripped_lines_same):
             BC[3].append(i)
 
     mesh.BC = BC
-    
-        # Test output
+
+    # Test output
     with tempfile.TemporaryDirectory() as tmpd:
         tmpf = to_tmpf(tmpd)
         gus.io.mfem.export(tmpf, mesh)
