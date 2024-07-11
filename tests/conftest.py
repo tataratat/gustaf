@@ -170,7 +170,7 @@ def provide_data_to_unittest(
 def are_stripped_lines_same():
     def _are_stripped_lines_same(a, b, ignore_order=False):
         """returns True if items in a and b same, preceding and tailing
-        whitepaces are ignored and strings are joined"""
+        whitespaces are ignored and strings are joined"""
         all_same = True
 
         for i, (line_a, line_b) in enumerate(zip(a, b)):
