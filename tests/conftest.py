@@ -169,8 +169,8 @@ def provide_data_to_unittest(
 @pytest.fixture
 def are_stripped_lines_same():
     def _are_stripped_lines_same(a, b, ignore_order=False):
-        """returns True if items in a and b same, preceding and tailing whitespaces
-        are ignored and strings are joined"""
+        """returns True if items in a and b same, preceding and tailing
+        whitepaces are ignored and strings are joined"""
         all_same = True
 
         for i, (line_a, line_b) in enumerate(zip(a, b)):
@@ -180,12 +180,12 @@ def are_stripped_lines_same():
             # print general info
             if stripped_a != stripped_b:
                 print(f"stripped line at index-{i} are not the same")
-                print(f"  from first: {line_a}")
-                print(f"  from second: {line_b}")
+                print(f"\tfrom first: {line_a}")
+                print(f"\tfrom second: {line_b}")
 
             # give one more chance if ignore_order
             if stripped_a != stripped_b and ignore_order:
-                print("  checking again, while ignoring word order:")
+                print("\tchecking again, while ignoring word order:")
 
                 # This is meant for attributes
                 delimiters = r" |\>|\<|\t|,"
@@ -198,7 +198,7 @@ def are_stripped_lines_same():
                 # first, len check
                 len_a, len_b = len(splitted_a), len(splitted_b)
                 if len(splitted_a) != len(splitted_b):
-                    print(f"    different word counts: a-{len_a}, b-{len_b}")
+                    print(f"\t\tdifferent word counts: a-{len_a}, b-{len_b}")
                     all_same = False
                 else:
                     # word order
@@ -224,7 +224,7 @@ def are_stripped_lines_same():
                                         break
                                 else:
                                     print(
-                                        f"    second does not contain ({word_a})"
+                                        f"\t\tsecond does not contain ({word_a})"
                                     )
                                     all_same = False
 
