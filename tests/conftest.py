@@ -224,7 +224,8 @@ def are_stripped_lines_same():
                                         break
                                 else:
                                     print(
-                                        f"\t\tsecond does not contain ({word_a})"
+                                        f"\t\tsecond does not contain "
+                                        f"({word_a})"
                                     )
                                     all_same = False
 
