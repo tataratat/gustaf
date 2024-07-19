@@ -208,7 +208,13 @@ def export(fname, mesh):
         elements = mesh.elements
         n_elements, n_element_vertices = elements.shape
         if n_element_vertices == 4:
-            geometry_type = geometry_types["TETRAHEDRON"]
+            body_geometry_type = geometry_types["TETRAHEDRON"]
+            face_geometry_type = geometry_types["TRIANGLE"]
+            n_face_vertices = 3
+        elif n_element_vertices == 8:
+            body_geometry_type = geometry_types["CUBE"]
+            face_geometry_type = geometry_types["SQUARE"]
+            n_face_vertices = 4
         else:
             raise NotImplementedError(
                 "Sorry, we cannot export mesh with elements "
@@ -216,7 +222,7 @@ def export(fname, mesh):
             )
         e = np.ones((n_elements, 1), dtype=settings.INT_DTYPE)
         elements_array = np.hstack(
-            (element_attribute * e, geometry_type * e, elements)
+            (element_attribute * e, body_geometry_type * e, elements)
         )
         elements_array_string = format_array(elements_array)
         elements_string = f"elements\n{n_elements}\n"
@@ -227,7 +233,7 @@ def export(fname, mesh):
 
         nboundary_faces = sum(map(len, mesh.BC.values()))
         boundary_array = np.empty(
-            (nboundary_faces, 5), dtype=settings.INT_DTYPE
+            (nboundary_faces, n_face_vertices + 2), dtype=settings.INT_DTYPE
         )
         startrow = 0
         # Add boundary one by one as TRIANGLEs
@@ -236,7 +242,7 @@ def export(fname, mesh):
             e = np.ones(nfaces).reshape(-1, 1)
             vertex_list = faces[faceids, :]
             boundary_array[startrow : (startrow + nfaces), :] = np.hstack(
-                (int(bid) * e, geometry_types["TRIANGLE"] * e, vertex_list)
+                (int(bid) * e, face_geometry_type * e, vertex_list)
             )
             startrow += nfaces
 
