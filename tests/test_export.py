@@ -7,33 +7,9 @@ import pytest
 import gustaf as gus
 
 all_grids = (
-    ("volumes_hexa333", "mfem_hexahedra_3d.mesh"),
-    ("volumes_tetra", "mfem_tetrahedra_3d.mesh"),
+    ("volumes_hexa", "mfem_hexahedra_3d.mesh"),
+    ("volumes_tet", "mfem_tetrahedra_3d.mesh"),
 )
-
-
-@pytest.fixture
-def volumes_tetra():
-    v = [
-        [0.0, 0.0, 0.0],
-        [1.0, 0.0, 0.0],
-        [0.0, 1.0, 0.0],
-        [1.0, 1.0, 0.0],
-        [0.0, 0.0, 1.0],
-        [1.0, 0.0, 1.0],
-        [0.0, 1.0, 1.0],
-        [1.0, 1.0, 1.0],
-    ]
-    vol = [
-        [0, 2, 7, 3],
-        [0, 2, 6, 7],
-        [0, 6, 4, 7],
-        [5, 0, 4, 7],
-        [5, 0, 7, 1],
-        [7, 0, 3, 1],
-    ]
-    return gus.Volumes(v, vol)
-
 
 @pytest.mark.parametrize("grid", all_grids)
 def test_mfem_export(to_tmpf, are_stripped_lines_same, grid, request):
