@@ -2,11 +2,19 @@ import os
 import tempfile
 
 import numpy as np
+import pytest
 
 import gustaf as gus
 
-mesh = gus.Volumes(
-    vertices=[
+all_grids = (
+    ("volumes_hexa333", "mfem_hexahedra_3d.mesh"),
+    ("volumes_tetra", "mfem_tetrahedra_3d.mesh"),
+)
+
+
+@pytest.fixture
+def volumes_tetra():
+    v = [
         [0.0, 0.0, 0.0],
         [1.0, 0.0, 0.0],
         [0.0, 1.0, 0.0],
@@ -15,22 +23,25 @@ mesh = gus.Volumes(
         [1.0, 0.0, 1.0],
         [0.0, 1.0, 1.0],
         [1.0, 1.0, 1.0],
-    ],
-    volumes=[
+    ]
+    vol = [
         [0, 2, 7, 3],
         [0, 2, 6, 7],
         [0, 6, 4, 7],
         [5, 0, 4, 7],
         [5, 0, 7, 1],
         [7, 0, 3, 1],
-    ],
-)
-
-tets = mesh.volumes
-verts = mesh.vertices
+    ]
+    return gus.Volumes(v, vol)
 
 
-def test_mfem_export(to_tmpf, are_stripped_lines_same):
+@pytest.mark.parametrize("grid", all_grids)
+def test_mfem_export(to_tmpf, are_stripped_lines_same, grid, request):
+    mesh = request.getfixturevalue(grid[0])
+    ground_truth_filename = grid[1]
+
+    verts = mesh.vertices
+
     faces = mesh.to_faces(False)
     boundary_faces = faces.single_faces()
 
@@ -54,8 +65,9 @@ def test_mfem_export(to_tmpf, are_stripped_lines_same):
         gus.io.mfem.export(tmpf, mesh)
 
         with open(tmpf) as tmp_read, open(
-            os.path.dirname(__file__) + "/./data/mfem_tetrahedra_3d.mesh"
+            os.path.dirname(__file__) + f"/./data/{ground_truth_filename}"
         ) as base_file:
+            print(base_file.readlines())
             assert are_stripped_lines_same(
                 base_file.readlines(), tmp_read.readlines(), True
             )
