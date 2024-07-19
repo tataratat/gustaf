@@ -11,6 +11,7 @@ all_grids = (
     ("volumes_tet", "mfem_tetrahedra_3d.mesh"),
 )
 
+
 @pytest.mark.parametrize("grid", all_grids)
 def test_mfem_export(to_tmpf, are_stripped_lines_same, grid, request):
     mesh = request.getfixturevalue(grid[0])
