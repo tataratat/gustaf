@@ -520,19 +520,19 @@ class VertexData(DataHolder):
 
         # here, check all saved values.
         to_pop = []
-        for key, value in self._saved.items():
-            if len(value) != helpee_len:
+        for key, d_value in self._saved.items():
+            if len(d_value) != helpee_len:
                 valid = False
 
             if not valid:
                 if raise_:
                     raise ValueError(
-                        f"`{key}`-data len ({len(value)}) doesn't match "
+                        f"`{key}`-data len ({len(d_value)}) doesn't match "
                         f"expected len ({helpee_len})"
                     )
                 else:
                     self._logd(
-                        f"`{key}`-data len ({len(value)}) doesn't match "
+                        f"`{key}`-data len ({len(d_value)}) doesn't match "
                         f"expected len ({helpee_len}). Deleting `{key}`."
                     )
                 # pop invalid data
