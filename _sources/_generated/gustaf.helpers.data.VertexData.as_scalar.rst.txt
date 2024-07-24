@@ -1,0 +1,6 @@
+gustaf.helpers.data.VertexData.as\_scalar
+=========================================
+
+.. currentmodule:: gustaf.helpers.data
+
+.. automethod:: VertexData.as_scalar

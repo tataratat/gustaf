@@ -1,0 +1,6 @@
+gustaf.utils.arr.close\_rows
+============================
+
+.. currentmodule:: gustaf.utils.arr
+
+.. autofunction:: close_rows

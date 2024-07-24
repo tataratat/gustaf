@@ -1,0 +1,6 @@
+gustaf.utils.log.prepended\_log
+===============================
+
+.. currentmodule:: gustaf.utils.log
+
+.. autofunction:: prepended_log

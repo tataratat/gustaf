@@ -1,0 +1,6 @@
+gustaf.helpers.data.TrackedArray.view
+=====================================
+
+.. currentmodule:: gustaf.helpers.data
+
+.. automethod:: TrackedArray.view

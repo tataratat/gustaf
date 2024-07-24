@@ -1,0 +1,107 @@
+gustaf.vertices.Vertices
+========================
+
+.. currentmodule:: gustaf.vertices
+
+.. autoclass:: Vertices
+   :show-inheritance:
+
+   
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+      :toctree:
+   
+      
+      
+        
+          Vertices.bounds
+        
+      
+      
+        
+          Vertices.bounds_diagonal
+        
+      
+      
+        
+          Vertices.bounds_diagonal_norm
+        
+      
+      
+        
+          Vertices.concat
+        
+      
+      
+        
+          Vertices.copy
+        
+      
+      
+        
+          Vertices.merge_vertices
+        
+      
+      
+        
+          Vertices.remove_vertices
+        
+      
+      
+        
+          Vertices.select_vertices
+        
+      
+      
+        
+          Vertices.show
+        
+      
+      
+        
+          Vertices.showable
+        
+      
+      
+        
+          Vertices.unique_vertices
+        
+      
+      
+        
+          Vertices.update_vertices
+        
+      
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+      :toctree:
+   
+      
+         Vertices.const_vertices
+      
+      
+         Vertices.kind
+      
+      
+         Vertices.show_options
+      
+      
+         Vertices.vertex_data
+      
+      
+         Vertices.vertices
+      
+      
+         Vertices.whatami
+      
+   
+   

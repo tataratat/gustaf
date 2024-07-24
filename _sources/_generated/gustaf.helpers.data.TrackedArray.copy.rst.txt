@@ -1,0 +1,6 @@
+gustaf.helpers.data.TrackedArray.copy
+=====================================
+
+.. currentmodule:: gustaf.helpers.data
+
+.. automethod:: TrackedArray.copy

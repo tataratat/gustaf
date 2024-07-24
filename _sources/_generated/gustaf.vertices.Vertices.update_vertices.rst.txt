@@ -1,0 +1,6 @@
+gustaf.vertices.Vertices.update\_vertices
+=========================================
+
+.. currentmodule:: gustaf.vertices
+
+.. automethod:: Vertices.update_vertices

@@ -1,0 +1,6 @@
+gustaf.io.default.load
+======================
+
+.. currentmodule:: gustaf.io.default
+
+.. autofunction:: load

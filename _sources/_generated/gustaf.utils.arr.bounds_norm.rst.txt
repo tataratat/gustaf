@@ -1,0 +1,6 @@
+gustaf.utils.arr.bounds\_norm
+=============================
+
+.. currentmodule:: gustaf.utils.arr
+
+.. autofunction:: bounds_norm
