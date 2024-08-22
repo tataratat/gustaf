@@ -3,10 +3,13 @@
 Classes to help organize options.
 """
 
-from copy import deepcopy
+from __future__ import annotations
 
-from gustaf.helpers._base import HelperBase
-from gustaf.helpers.raise_if import ModuleImportRaiser
+from copy import deepcopy as _deepcopy
+from typing import Any as _Any
+
+from gustaf.helpers._base import HelperBase as _HelperBase
+from gustaf.helpers.raise_if import ModuleImportRaiser as _ModuleImportRaiser
 
 
 class Option:
@@ -21,8 +24,8 @@ class Option:
     description: str
     allowed_types: set
       set of types
-    default: one of allwed_types
-      Optional. Default is None
+    default: one of allowed_types
+      _Optional. Default is None
     """
 
     __slots__ = (
@@ -34,8 +37,13 @@ class Option:
     )
 
     def __init__(
-        self, backends, key, description, allowed_types, default=None
-    ):
+        self,
+        backends: int | str,
+        key: int | str,
+        description: int | str,
+        allowed_types: tuple[type, ...] | int,
+        default: int | str | None = None,
+    ) -> None:
         """
         Check types
         """
@@ -91,7 +99,7 @@ class SetDefault:
 
     __slots__ = ("key", "default")
 
-    def __init__(self, key, default):
+    def __init__(self, key: str, default: int | str) -> None:
         self.key = key
         self.default = default
 
@@ -192,7 +200,7 @@ vedo_common_options = (
 )
 
 
-def make_valid_options(*options):
+def make_valid_options(*options: _Any) -> dict[str, Option]:
     """
     Forms valid options. Should run only once during module loading.
 
@@ -212,12 +220,12 @@ def make_valid_options(*options):
             # and wrapped by ModuleImportRaiser
             allowed_types = []
             for at in opt.allowed_types:
-                if isinstance(at, ModuleImportRaiser):
+                if isinstance(at, _ModuleImportRaiser):
                     continue
                 allowed_types.append(at)
             opt.allowed_types = tuple(allowed_types)
 
-            valid_options[opt.key] = deepcopy(opt)
+            valid_options[opt.key] = _deepcopy(opt)
         elif isinstance(opt, SetDefault):
             # overwrite default of existing option.
             if opt.key not in valid_options:
@@ -232,7 +240,7 @@ def make_valid_options(*options):
     return valid_options
 
 
-class ShowOption(HelperBase):
+class ShowOption(_HelperBase):
     """
     Behaves similar to dict, but will only accept a set of options that's
     applicable to the helpee class. Intended use is to create a
@@ -248,7 +256,7 @@ class ShowOption(HelperBase):
 
     _helps = None
 
-    def __init__(self, helpee):
+    def __init__(self, helpee: _Any) -> None:
         """
         Parameters
         ----------
@@ -520,7 +528,7 @@ class ShowOption(HelperBase):
 
         for key, value in items:
             if key in valid_keys:
-                copy_to[key] = deepcopy(value)  # is deepcopy necessary?
+                copy_to[key] = _deepcopy(value)  # is deepcopy necessary?
 
     def _initialize_showable(self):
         """

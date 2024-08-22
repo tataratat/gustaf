@@ -3,15 +3,18 @@
 Helps helpee to manage data. Some useful data structures.
 """
 
-from collections import namedtuple
-from functools import wraps
+from __future__ import annotations
 
-import numpy as np
+from collections import namedtuple as _namedtuple
+from functools import wraps as _wraps
+from typing import Any as _Any
 
-from gustaf.helpers._base import HelperBase
+import numpy as _np
+
+from gustaf.helpers._base import HelperBase as _HelperBase
 
 
-class TrackedArray(np.ndarray):
+class TrackedArray(_np.ndarray):
     """numpy array object that keeps mirroring inplace changes to the source.
     Meant to help control_points.
     """
@@ -21,7 +24,9 @@ class TrackedArray(np.ndarray):
         "_modified",
     )
 
-    def __array_finalize__(self, obj):
+    def __array_finalize__(
+        self, obj: TrackedArray | _np.ndarray
+    ) -> _Any | None:
         """Sets default flags for any arrays that maybe generated based on
         physical space array. For more information,
         see https://numpy.org/doc/stable/user/basics.subclassing.html"""
@@ -63,23 +68,23 @@ class TrackedArray(np.ndarray):
         return self._modified
 
     @modified.setter
-    def modified(self, m):
+    def modified(self, m: bool) -> None:
         if self._super_arr is not None and self._super_arr is not True:
             self._super_arr._modified = m
         else:
             self._modified = m
 
-    def copy(self, *args, **kwargs):
+    def copy(self, *args: _Any, **kwargs: _Any) -> _np.ndarray:
         """copy creates regular numpy array"""
-        return np.array(self, *args, copy=True, **kwargs)
+        return _np.array(self, *args, copy=True, **kwargs)
 
-    def view(self, *args, **kwargs):
+    def view(self, *args: type, **kwargs: _Any) -> TrackedArray:
         """Set writeable flags to False for the view."""
         v = super(self.__class__, self).view(*args, **kwargs)
         v.flags.writeable = False
         return v
 
-    def __iadd__(self, *args, **kwargs):
+    def __iadd__(self, *args: TrackedArray, **kwargs: _Any) -> TrackedArray:
         sr = super(self.__class__, self).__iadd__(*args, **kwargs)
         self.modified = True
         return sr
@@ -149,14 +154,16 @@ class TrackedArray(np.ndarray):
         self.modified = True
         return sr
 
-    def __setitem__(self, key, value):
+    def __setitem__(self, key: _Any, value: TrackedArray) -> _Any | None:
         # set first. invalid setting will cause error
         sr = super(self.__class__, self).__setitem__(key, value)
         self.modified = True
         return sr
 
 
-def make_tracked_array(array, dtype=None, copy=True):
+def make_tracked_array(
+    array: _Any, dtype: str = None, copy: bool = True
+) -> TrackedArray:
     """Motivated by nice implementations of `trimesh` (see LICENSE.txt).
     `https://github.com/mikedh/trimesh/blob/main/trimesh/caching.py`.
 
@@ -182,9 +189,9 @@ def make_tracked_array(array, dtype=None, copy=True):
         array = []
 
     if copy:
-        array = np.array(array, dtype=dtype)
+        array = _np.array(array, dtype=dtype)
     else:
-        array = np.asanyarray(array, dtype=dtype)
+        array = _np.asanyarray(array, dtype=dtype)
 
     tracked = array.view(TrackedArray)
 
@@ -194,10 +201,10 @@ def make_tracked_array(array, dtype=None, copy=True):
     return tracked
 
 
-class DataHolder(HelperBase):
+class DataHolder(_HelperBase):
     __slots__ = ("_saved",)
 
-    def __init__(self, helpee):
+    def __init__(self, helpee: _Any) -> None:
         """Base class for any data holder. Behaves similar to dict.
 
         Parameters
@@ -323,7 +330,7 @@ class DataHolder(HelperBase):
         """
         return self._saved.values()
 
-    def items(self):
+    def items(self) -> _Any:
         """Returns items of data holding dict.
 
         Returns
@@ -353,7 +360,7 @@ class ComputedData(DataHolder):
 
     __slots__ = ()
 
-    def __init__(self, helpee, **_kwargs):
+    def __init__(self, helpee: _Any, **_kwargs: _Any) -> None:
         """Stores last computed values.
 
         Keys are expected to be the same as helpee's function that computes the
@@ -408,8 +415,10 @@ class ComputedData(DataHolder):
 
                 cls._inv_depends[vn].append(func.__name__)
 
-            @wraps(func)
-            def compute_or_return_saved(*args, **kwargs):
+            @_wraps(func)
+            def compute_or_return_saved(
+                *args: _Any, **kwargs: _Any
+            ) -> Unique2DIntegers | _np.ndarray:
                 """Check if the key should be computed,"""
                 # extract some related info
                 self = args[0]  # the helpee itself
@@ -440,7 +449,7 @@ class ComputedData(DataHolder):
 
                 # we've reached this point because we have to compute this
                 computed = func(*args, **kwargs)
-                if isinstance(computed, np.ndarray):
+                if isinstance(computed, _np.ndarray):
                     computed.flags.writeable = False  # configurable?
                 self._computed._saved[func.__name__] = computed
 
@@ -472,7 +481,7 @@ class VertexData(DataHolder):
 
     __slots__ = ()
 
-    def __init__(self, helpee):
+    def __init__(self, helpee: _Any) -> None:
         """Checks if helpee has vertices as attr beforehand.
 
         Parameters
@@ -485,7 +494,9 @@ class VertexData(DataHolder):
 
         super().__init__(helpee)
 
-    def _validate_len(self, value=None, raise_=True):
+    def _validate_len(
+        self, value: _Any | None = None, raise_: bool = True
+    ) -> bool:
         """Checks if given value is a valid vertex_data based of its length.
 
         If raise_, throws error, else, deletes all incompatible values.
@@ -633,7 +644,7 @@ class VertexData(DataHolder):
         if value.shape[1] == 1:
             value_norm = value
         else:
-            value_norm = np.linalg.norm(value, axis=1).reshape(-1, 1)
+            value_norm = _np.linalg.norm(value, axis=1).reshape(-1, 1)
 
         # save norm
         self[norm_key] = value_norm
@@ -670,7 +681,7 @@ class VertexData(DataHolder):
         return value
 
 
-Unique2DFloats = namedtuple(
+Unique2DFloats = _namedtuple(
     "Unique2DFloats", ["values", "ids", "inverse", "intersection"]
 )
 Unique2DFloats.__doc__ = """
@@ -690,7 +701,7 @@ Unique2DFloats.intersection.__doc__ = """`(m) list of list`
   Field number 3
 """
 
-Unique2DIntegers = namedtuple(
+Unique2DIntegers = _namedtuple(
     "Unique2DIntegers", ["values", "ids", "inverse", "counts"]
 )
 Unique2DIntegers.__doc__ = """
