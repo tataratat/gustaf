@@ -149,15 +149,14 @@ def export(fname, mesh):
         # Elements
         element_attribute = 1  # Other numbers not yet supported
         elements = mesh.elements
-        n_elements, n_element_vertices = elements.shape
-        if n_element_vertices == 3:
+        n_elements = elements.shape[0]
+        if mesh.whatami == "tri":
             geometry_type = geometry_types["TRIANGLE"]
-        elif n_element_vertices == 4:
+        elif mesh.whatami == "quad":
             geometry_type = geometry_types["SQUARE"]
         else:
             raise NotImplementedError(
-                "Sorry, we cannot export mesh with elements "
-                f"with {n_element_vertices} vertices."
+                f"Sorry, we cannot export 2D meshes of type {mesh.whatami}."
             )
         e = np.ones((n_elements, 1), dtype=settings.INT_DTYPE)
         elements_array = np.hstack(
@@ -206,19 +205,18 @@ def export(fname, mesh):
         # Elements
         element_attribute = 1  # Other numbers not yet supported
         elements = mesh.elements
-        n_elements, n_element_vertices = elements.shape
-        if n_element_vertices == 4:
+        n_elements = elements.shape[0]
+        if mesh.whatami == "tet":
             body_geometry_type = geometry_types["TETRAHEDRON"]
             face_geometry_type = geometry_types["TRIANGLE"]
             n_face_vertices = 3
-        elif n_element_vertices == 8:
+        elif mesh.whatami == "hexa":
             body_geometry_type = geometry_types["CUBE"]
             face_geometry_type = geometry_types["SQUARE"]
             n_face_vertices = 4
         else:
             raise NotImplementedError(
-                "Sorry, we cannot export mesh with elements "
-                f"with {n_element_vertices} vertices."
+                f"Sorry, we cannot export 3D meshes of type {mesh.whatami}."
             )
         e = np.ones((n_elements, 1), dtype=settings.INT_DTYPE)
         elements_array = np.hstack(
