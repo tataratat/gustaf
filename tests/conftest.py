@@ -37,6 +37,20 @@ def vertices_3d():
 
 
 @pytest.fixture
+def vertices_2d():
+    V2d = np.array(
+        [
+            [0.0, 0.0],
+            [1.0, 0.0],
+            [0.0, 1.0],
+            [1.0, 1.0],
+        ],
+        dtype=np.float64,
+    )
+    return V2d
+
+
+@pytest.fixture
 def vertices(vertices_3d):
     return gus.Vertices(vertices_3d)
 
@@ -91,8 +105,25 @@ def tri_connec():
 
 
 @pytest.fixture
+def tri_connec_2d():
+    TF2d = np.array(
+        [
+            [1, 0, 2],
+            [2, 3, 1],
+        ],
+        dtype=np.int32,
+    )
+    return TF2d
+
+
+@pytest.fixture
 def faces_tri(vertices_3d, tri_connec):
     return gus.Faces(vertices_3d, tri_connec)
+
+
+@pytest.fixture
+def faces_tri_2d(vertices_2d, tri_connec_2d):
+    return gus.Faces(vertices_2d, tri_connec_2d)
 
 
 @pytest.fixture
@@ -112,8 +143,24 @@ def quad_connec():
 
 
 @pytest.fixture
+def quad_connec_2d():
+    QF2d = np.array(
+        [
+            [1, 0, 2, 3],
+        ],
+        dtype=np.int32,
+    )
+    return QF2d
+
+
+@pytest.fixture
 def faces_quad(vertices_3d, quad_connec):
     return gus.Faces(vertices_3d, quad_connec)
+
+
+@pytest.fixture
+def faces_quad_2d(vertices_2d, quad_connec_2d):
+    return gus.Faces(vertices_2d, quad_connec_2d)
 
 
 @pytest.fixture
@@ -152,16 +199,22 @@ def volumes_hexa(vertices_3d, hexa_connec):
 def provide_data_to_unittest(
     request,
     vertices_3d,
+    vertices_2d,
     edge_connec,
     tri_connec,
+    tri_connec_2d,
     quad_connec,
+    quad_connec_2d,
     tet_connec,
     hexa_connec,
 ):
     request.cls.V = vertices_3d
+    request.cls.V2d = vertices_2d
     request.cls.E = edge_connec
     request.cls.TF = tri_connec
+    request.cls.TF2d = tri_connec_2d
     request.cls.QF = quad_connec
+    request.cls.QF2d = quad_connec_2d
     request.cls.TV = tet_connec
     request.cls.HV = hexa_connec
 
