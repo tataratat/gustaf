@@ -153,7 +153,7 @@ vedo_common_options = (
         "dict with following items are accepted: "
         "{title: str, pos: tuple, size: list, title_font: str, "
         "title_xoffset: float, title_yoffset: float, title_size: float, "
-        "title_rotation: float, nlabels: int, label_font:str, "
+        "title_rotation: float, nlabels: int, label_font: str, "
         "label_size: float, label_offset: float, label_rotation: int, "
         "label_format: str, draw_box: bool, above_text: str, below_text: str, "
         "nan_text: str, categories: list}",
@@ -179,6 +179,13 @@ vedo_common_options = (
         "Color for arrow data. Can be either cmap name or color. For "
         "cmap, colors are based on the size of the arrows.",
         (str, tuple, list, int),
+    ),
+    Option(
+        "vedo",
+        "arrow_data_to_origin",
+        "Points arrow data to geometric origin."
+        "Equivalent to shifting arrows backwards with their own magitudes.",
+        (bool,),
     ),
     Option(
         "vedo",

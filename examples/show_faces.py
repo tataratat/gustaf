@@ -58,5 +58,17 @@ if __name__ == "__main__":
     )
 
     # show
-    tri.show()
-    quad.show()
+    gus.show(["triangles", tri], ["quads", quad])
+
+    # plot data - plots vector data as arrows
+    for mesh in [tri, quad]:
+        mesh.vertex_data["coords"] = np.random.default_rng().random(
+            tri.vertices.shape
+        )
+        mesh.show_options(arrow_data="coords")
+    gus.show(["triangles", tri], ["quads", quad])
+
+    # point data to origin
+    for mesh in [tri, quad]:
+        mesh.show_options(arrow_data_to_origin=True)
+    gus.show(["triangles", tri], ["quads", quad])

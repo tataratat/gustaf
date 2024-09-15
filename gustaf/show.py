@@ -367,10 +367,11 @@ def make_showable(obj, as_dict=False, **kwargs):
 
         # we are here because this data is not a scalar
         # is showable?
-        if arrow_data_value.shape[1] not in (2, 3):
+        a_data_dim = arrow_data_value.shape[1]
+        if a_data_dim not in (2, 3):
             raise ValueError(
                 "Only 2D or 3D data can be shown.",
-                f"Requested data is {arrow_data_value.shape[1]}",
+                f"Requested data is {a_data_dim}D.",
             )
 
         as_edges = from_data(
@@ -379,6 +380,16 @@ def make_showable(obj, as_dict=False, **kwargs):
             obj.show_options.get("arrow_data_scale", None),
             data_norm=obj.vertex_data.as_scalar(arrow_data),
         )
+
+        if obj.show_options.get("arrow_data_to_origin", False):
+            # point arrow to the origin instead
+            arrow_shift = np.diff(
+                as_edges.vertices.reshape(-1, 2, a_data_dim), axis=1
+            )
+            as_edges.vertices[:] = (
+                as_edges.vertices.reshape(-1, 2, a_data_dim) - arrow_shift
+            ).reshape(-1, a_data_dim)
+
         arrows = vedo.Arrows(
             as_edges.vertices[as_edges.edges],
             c=obj.show_options.get("arrow_data_color", "plasma"),
