@@ -72,15 +72,15 @@ def show(*args, **kwargs):
     N = len(args)
     offs = kwargs.get("offscreen", False)
     interact = kwargs.get("interactive", True)
-    plt = kwargs.get("vedoplot", None)
+    plt = kwargs.get("vedoplot")
     skip_clear = kwargs.get("skip_clear", False)
-    close = kwargs.get("close", None)
+    close = kwargs.get("close")
     size = kwargs.get("size", "auto")
-    cam = kwargs.get("cam", None)
+    cam = kwargs.get("cam")
     title = kwargs.get("title", "gustaf")
     background = kwargs.get("background", "white")
     return_show_list = kwargs.get("return_showable_list", False)
-    axes = kwargs.get("axes", None)
+    axes = kwargs.get("axes")
 
     def clear_vedo_plotter(plotter, num_renderers, skip_cl=skip_clear):
         """enough said."""
