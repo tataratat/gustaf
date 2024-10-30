@@ -8,8 +8,8 @@ def main():
     mesh = create_mesh()
 
     # Export it as .mixd-file and .npz-file
-    gus.io.mixd.export(mesh, "export/export_mixd.xns")
-    gus.io.nutils.export(mesh, "export/export_npz.npz")
+    gus.io.mixd.export("export/export_mixd.xns", mesh)
+    gus.io.nutils.export("export/export_npz.npz", mesh)
 
     # Load the mixd-file and the .npz-file
     mesh_mixd = gus.io.mixd.load(
