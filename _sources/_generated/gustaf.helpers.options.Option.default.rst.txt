@@ -1,0 +1,6 @@
+gustaf.helpers.options.Option.default
+=====================================
+
+.. currentmodule:: gustaf.helpers.options
+
+.. autoattribute:: Option.default

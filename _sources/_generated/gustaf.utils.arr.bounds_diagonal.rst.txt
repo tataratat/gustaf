@@ -1,0 +1,6 @@
+gustaf.utils.arr.bounds\_diagonal
+=================================
+
+.. currentmodule:: gustaf.utils.arr
+
+.. autofunction:: bounds_diagonal

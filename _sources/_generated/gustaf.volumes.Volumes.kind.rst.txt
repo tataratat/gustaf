@@ -1,0 +1,6 @@
+gustaf.volumes.Volumes.kind
+===========================
+
+.. currentmodule:: gustaf.volumes
+
+.. autoattribute:: Volumes.kind

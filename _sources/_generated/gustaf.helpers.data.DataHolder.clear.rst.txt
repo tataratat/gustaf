@@ -1,0 +1,6 @@
+gustaf.helpers.data.DataHolder.clear
+====================================
+
+.. currentmodule:: gustaf.helpers.data
+
+.. automethod:: DataHolder.clear
