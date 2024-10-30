@@ -44,14 +44,14 @@ if __name__ == "__main__":
 
     # Export with subgroup triangles
     gus.io.meshio.export(
-        tet, export_path / "export_meshio_subgroups.vtu", submeshes=[fac]
+        export_path / "export_meshio_subgroups.vtu", tet, submeshes=[fac]
     )
     # The mesh still has to conform the needed format, e.g. stl will discard
     # tetrahedra
     gus.io.meshio.export(
-        tet, export_path / "export_meshio_subgroups.stl", submeshes=[fac]
+        export_path / "export_meshio_subgroups.stl", tet, submeshes=[fac]
     )
 
     # Export only tetrahedra
-    gus.io.meshio.export(tet, export_path / "export_meshio.vtu")
-    gus.io.meshio.export(tet.to_faces(), export_path / "export_meshio.stl")
+    gus.io.meshio.export(export_path / "export_meshio.vtu", tet)
+    gus.io.meshio.export(export_path / "export_meshio.stl", tet.to_faces())
