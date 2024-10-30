@@ -66,9 +66,11 @@ if __name__ == "__main__":
             tri.vertices.shape
         )
         mesh.show_options(arrow_data="coords")
-    gus.show(["triangles", tri], ["quads", quad])
+    gus.show(["triangles with arrows", tri], ["quads with arrows", quad])
 
     # point data to origin
     for mesh in [tri, quad]:
         mesh.show_options(arrow_data_to_origin=True)
-    gus.show(["triangles", tri], ["quads", quad])
+    gus.show(
+        ["triangles arrows to origin", tri], ["quads arrows to origin", quad]
+    )
