@@ -1,0 +1,6 @@
+gustaf.helpers.data.make\_tracked\_array
+========================================
+
+.. currentmodule:: gustaf.helpers.data
+
+.. autofunction:: make_tracked_array

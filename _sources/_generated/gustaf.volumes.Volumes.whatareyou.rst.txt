@@ -1,0 +1,6 @@
+gustaf.volumes.Volumes.whatareyou
+=================================
+
+.. currentmodule:: gustaf.volumes
+
+.. automethod:: Volumes.whatareyou

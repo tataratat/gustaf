@@ -1,0 +1,6 @@
+gustaf.utils.arr.is\_one\_of\_shapes
+====================================
+
+.. currentmodule:: gustaf.utils.arr
+
+.. autofunction:: is_one_of_shapes

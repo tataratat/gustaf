@@ -1,0 +1,6 @@
+gustaf.faces.Faces.const\_faces
+===============================
+
+.. currentmodule:: gustaf.faces
+
+.. autoproperty:: Faces.const_faces

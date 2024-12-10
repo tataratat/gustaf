@@ -1,0 +1,47 @@
+gustaf.helpers.data.Unique2DIntegers
+====================================
+
+.. currentmodule:: gustaf.helpers.data
+
+.. autoclass:: Unique2DIntegers
+   :show-inheritance:
+
+   
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+      :toctree:
+   
+      
+      
+        
+      
+      
+        
+      
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+      :toctree:
+   
+      
+         Unique2DIntegers.counts
+      
+      
+         Unique2DIntegers.ids
+      
+      
+         Unique2DIntegers.inverse
+      
+      
+         Unique2DIntegers.values
+      
+   
+   

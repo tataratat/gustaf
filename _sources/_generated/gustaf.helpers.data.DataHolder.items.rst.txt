@@ -1,0 +1,6 @@
+gustaf.helpers.data.DataHolder.items
+====================================
+
+.. currentmodule:: gustaf.helpers.data
+
+.. automethod:: DataHolder.items
