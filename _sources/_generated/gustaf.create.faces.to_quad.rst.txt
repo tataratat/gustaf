@@ -1,0 +1,6 @@
+gustaf.create.faces.to\_quad
+============================
+
+.. currentmodule:: gustaf.create.faces
+
+.. autofunction:: to_quad

@@ -1,0 +1,6 @@
+gustaf.faces.Faces.update\_faces
+================================
+
+.. currentmodule:: gustaf.faces
+
+.. automethod:: Faces.update_faces

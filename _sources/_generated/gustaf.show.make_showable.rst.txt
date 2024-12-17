@@ -1,0 +1,6 @@
+gustaf.show.make\_showable
+==========================
+
+.. currentmodule:: gustaf.show
+
+.. autofunction:: make_showable

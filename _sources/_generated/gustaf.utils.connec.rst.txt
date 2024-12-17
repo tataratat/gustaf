@@ -1,0 +1,44 @@
+.. _gustaf.utils.connec:
+
+gustaf.utils.connec
+===================
+
+.. automodule:: gustaf.utils.connec
+
+   
+   
+   
+
+   
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+      :toctree:
+   
+      faces_to_edges
+      hexa_to_quad
+      make_hexa_volumes
+      make_quad_faces
+      range_to_edges
+      sequence_to_edges
+      sequentialize_edges
+      sorted_unique
+      subdivide_edges
+      subdivide_quad
+      subdivide_tri
+      tet_to_tri
+      volumes_to_faces
+   
+   
+
+   
+   
+   
+
+   
+   
+   
+
+
+

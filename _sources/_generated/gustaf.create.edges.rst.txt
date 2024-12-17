@@ -1,0 +1,33 @@
+.. _gustaf.create.edges:
+
+gustaf.create.edges
+===================
+
+.. automodule:: gustaf.create.edges
+
+   
+   
+   
+
+   
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+      :toctree:
+   
+      from_data
+      from_vertices
+   
+   
+
+   
+   
+   
+
+   
+   
+   
+
+
+

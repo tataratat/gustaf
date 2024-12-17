@@ -1,0 +1,46 @@
+.. _gustaf.helpers.data:
+
+gustaf.helpers.data
+===================
+
+.. automodule:: gustaf.helpers.data
+
+   
+   
+   
+
+   
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+      :toctree:
+   
+      make_tracked_array
+   
+   
+
+   
+   
+   .. rubric:: Classes
+
+   .. autosummary::
+      :toctree:
+      :template:
+   
+      ComputedData
+      ComputedMeshData
+      DataHolder
+      TrackedArray
+      Unique2DFloats
+      Unique2DIntegers
+      VertexData
+   
+   
+
+   
+   
+   
+
+
+

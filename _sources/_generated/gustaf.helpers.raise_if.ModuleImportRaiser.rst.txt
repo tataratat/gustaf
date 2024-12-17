@@ -1,0 +1,23 @@
+gustaf.helpers.raise\_if.ModuleImportRaiser
+===========================================
+
+.. currentmodule:: gustaf.helpers.raise_if
+
+.. autoclass:: ModuleImportRaiser
+   :show-inheritance:
+
+   
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+      :toctree:
+   
+      
+   
+   
+
+   
+   
+   

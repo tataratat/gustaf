@@ -1,0 +1,6 @@
+gustaf.create.faces.to\_simplex
+===============================
+
+.. currentmodule:: gustaf.create.faces
+
+.. autofunction:: to_simplex
