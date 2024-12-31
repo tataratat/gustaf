@@ -1,0 +1,6 @@
+gustaf.helpers.raise\_if.invalid\_inherited\_attr
+=================================================
+
+.. currentmodule:: gustaf.helpers.raise_if
+
+.. autofunction:: invalid_inherited_attr

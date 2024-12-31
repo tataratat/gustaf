@@ -1,0 +1,6 @@
+gustaf.helpers.options.Option.description
+=========================================
+
+.. currentmodule:: gustaf.helpers.options
+
+.. autoattribute:: Option.description

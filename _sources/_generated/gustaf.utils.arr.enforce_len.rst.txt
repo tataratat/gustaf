@@ -1,0 +1,6 @@
+gustaf.utils.arr.enforce\_len
+=============================
+
+.. currentmodule:: gustaf.utils.arr
+
+.. autofunction:: enforce_len

@@ -1,0 +1,6 @@
+gustaf.faces.Faces.update\_edges
+================================
+
+.. currentmodule:: gustaf.faces
+
+.. automethod:: Faces.update_edges
