@@ -4,7 +4,9 @@ Collection of wrapper functions/classes that raises Error with certain
 behavior
 """
 
-from typing import Any, Optional
+from __future__ import annotations
+
+from typing import Any
 
 
 def invalid_inherited_attr(attr_name, qualname, property_=False):
@@ -48,7 +50,7 @@ class ModuleImportRaiser:
     them to function. Examples are `splinepy` and `vedo`.
     """
 
-    def __init__(self, lib_name: str, error_message: Optional[str] = None):
+    def __init__(self, lib_name: str, error_message: str | None = None):
         original_message = ""
         if error_message is not None:
             original_message = f"\nOriginal error message - {error_message}"

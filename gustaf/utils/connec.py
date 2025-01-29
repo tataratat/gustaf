@@ -5,9 +5,15 @@ volumes. Named connec because connectivity is too long. Would have been
 even cooler, if it was palindrome.
 """
 
-import collections
+from __future__ import annotations
 
-import numpy as np
+import collections as _collections
+from typing import Any as _Any
+
+import numpy as _np
+
+from gustaf.helpers.data import TrackedArray as _TrackedArray
+from gustaf.helpers.data import Unique2DIntegers as _Unique2DIntegers
 
 try:
     import napf
@@ -20,7 +26,7 @@ from gustaf import helpers, settings
 from gustaf.utils import arr
 
 
-def tet_to_tri(volumes):
+def tet_to_tri(volumes: _TrackedArray | _np.ndarray) -> _np.ndarray:
     """Computes tri faces based on following index scheme.
 
     ``Tetrahedron``
@@ -53,14 +59,14 @@ def tet_to_tri(volumes):
     --------
     faces: (n * 4, 3) np.ndarray
     """
-    volumes = np.asanyarray(volumes, settings.INT_DTYPE)
+    volumes = _np.asanyarray(volumes, settings.INT_DTYPE)
 
     if volumes.ndim != 2 or volumes.shape[1] != 4:
         raise ValueError("Given volumes are not `tet` volumes")
 
     fpe = 4  # faces per element
     faces = (
-        np.ones(((volumes.shape[0] * fpe), 3), dtype=settings.INT_DTYPE) * -1
+        _np.ones(((volumes.shape[0] * fpe), 3), dtype=settings.INT_DTYPE) * -1
     )  # -1 for safety check
 
     faces[:, 0] = volumes.ravel()
@@ -75,7 +81,7 @@ def tet_to_tri(volumes):
     return faces
 
 
-def hexa_to_quad(volumes):
+def hexa_to_quad(volumes: _TrackedArray | _np.ndarray) -> _np.ndarray:
     """Computes quad faces based on following index scheme.
 
     ``Hexahedron``
@@ -113,13 +119,13 @@ def hexa_to_quad(volumes):
     --------
     faces: (n * 8, 4) np.ndarray
     """
-    volumes = np.asanyarray(volumes, settings.INT_DTYPE)
+    volumes = _np.asanyarray(volumes, settings.INT_DTYPE)
 
     if volumes.ndim != 2 or volumes.shape[1] != 8:
         raise ValueError("Given volumes are not `hexa` volumes")
 
     fpe = 6  # faces per element
-    faces = np.empty(((volumes.shape[0] * fpe), 4), dtype=settings.INT_DTYPE)
+    faces = _np.empty(((volumes.shape[0] * fpe), 4), dtype=settings.INT_DTYPE)
 
     faces[::fpe] = volumes[:, [1, 0, 3, 2]]
     faces[1::fpe] = volumes[:, [0, 1, 5, 4]]
@@ -142,7 +148,7 @@ def volumes_to_faces(volumes):
     --------
     faces: (n*4, 3) or (m*6, 4) np.ndarray
     """
-    volumes = np.asanyarray(volumes, settings.INT_DTYPE)
+    volumes = _np.asanyarray(volumes, settings.INT_DTYPE)
     if volumes.shape[1] == 4:
         return tet_to_tri(volumes)
 
@@ -150,7 +156,7 @@ def volumes_to_faces(volumes):
         return hexa_to_quad(volumes)
 
 
-def faces_to_edges(faces):
+def faces_to_edges(faces: _TrackedArray | _np.ndarray) -> _np.ndarray:
     """Compute edges based on following edge scheme.
 
     .. code-block:: text
@@ -190,7 +196,7 @@ def faces_to_edges(faces):
     vertices_per_face = faces.shape[1]
 
     num_edges = int(num_faces * vertices_per_face)
-    edges = np.empty((num_edges, 2), dtype=settings.INT_DTYPE)
+    edges = _np.empty((num_edges, 2), dtype=settings.INT_DTYPE)
 
     edges[:, 0] = faces.ravel()
 
@@ -203,7 +209,9 @@ def faces_to_edges(faces):
     return edges
 
 
-def range_to_edges(range_, closed=False, continuous=True):
+def range_to_edges(
+    range_: tuple[int, int], closed: bool = False, continuous: bool = True
+) -> _np.ndarray:
     """Given range, for example (a, b), returns an edge sequence that
     sequentially connects indices. If int is given as range, it is considered
     as (0, value). Used to be called "closed/open_loop_index_train".
@@ -219,10 +227,10 @@ def range_to_edges(range_, closed=False, continuous=True):
     edges: (n, 2) np.ndarray
     """
     if isinstance(range_, int):
-        indices = np.arange(range_, dtype=settings.INT_DTYPE)
+        indices = _np.arange(range_, dtype=settings.INT_DTYPE)
     elif isinstance(range_, (list, tuple)):
         # pass range_ as is and check for valid output
-        indices = np.arange(*range_, dtype=settings.INT_DTYPE)
+        indices = _np.arange(*range_, dtype=settings.INT_DTYPE)
         if len(indices) < 2:
             raise ValueError(
                 f"{range_} is invalid range input. "
@@ -241,7 +249,7 @@ def range_to_edges(range_, closed=False, continuous=True):
     return sequence_to_edges(indices, closed)
 
 
-def sequence_to_edges(seq, closed=False):
+def sequence_to_edges(seq: _np.ndarray, closed: bool = False) -> _np.ndarray:
     """Given a sequence of int, "connect" to turn them into edges.
 
     Parameters
@@ -253,7 +261,7 @@ def sequence_to_edges(seq, closed=False):
     --------
     edges: (m, 2) np.ndarray
     """
-    edges = np.repeat(seq, 2)
+    edges = _np.repeat(seq, 2)
 
     if closed:
         first = int(edges[0])  # this is redundant copy to ensure detaching
@@ -269,7 +277,7 @@ def sequence_to_edges(seq, closed=False):
     return edges.reshape(-1, 2)
 
 
-def make_quad_faces(resolutions):
+def make_quad_faces(resolutions: list[int]) -> _np.ndarray:
     """Given number of nodes per each dimension, returns connectivity
     information of a structured mesh. Counter clock wise connectivity.
 
@@ -288,20 +296,20 @@ def make_quad_faces(resolutions):
     -------
     faces: (n, 4) np.ndarray
     """
-    nnpd = np.asarray(resolutions)  # number of nodes per dimension
+    nnpd = _np.asarray(resolutions)  # number of nodes per dimension
     if any(nnpd < 1):
         raise ValueError(f"The number of nodes per dimension is wrong: {nnpd}")
 
-    total_nodes = np.prod(nnpd)
+    total_nodes = _np.prod(nnpd)
     total_faces = (nnpd[0] - 1) * (nnpd[1] - 1)
     try:
-        node_indices = np.arange(
+        node_indices = _np.arange(
             total_nodes, dtype=settings.INT_DTYPE
         ).reshape(nnpd[1], nnpd[0])
     except ValueError as e:
         raise ValueError(f"Problem with generating node indices. {e}")
 
-    faces = np.empty((total_faces, 4), dtype=settings.INT_DTYPE)
+    faces = _np.empty((total_faces, 4), dtype=settings.INT_DTYPE)
 
     faces[:, 0] = node_indices[: (nnpd[1] - 1), : (nnpd[0] - 1)].ravel()
     faces[:, 1] = node_indices[: (nnpd[1] - 1), 1 : nnpd[0]].ravel()
@@ -311,7 +319,7 @@ def make_quad_faces(resolutions):
     return faces
 
 
-def make_hexa_volumes(resolutions):
+def make_hexa_volumes(resolutions: list[int]) -> _np.ndarray:
     """Given number of nodes per each dimension, returns connectivity
     information of structured hexahedron elements. Counter clock wise
     connectivity.
@@ -335,17 +343,17 @@ def make_hexa_volumes(resolutions):
     --------
     elements: (n, 8) np.ndarray
     """
-    nnpd = np.asarray(resolutions)  # number of nodes per dimension
+    nnpd = _np.asarray(resolutions)  # number of nodes per dimension
     if any(nnpd < 1):
         raise ValueError(f"The number of nodes per dimension is wrong: {nnpd}")
 
-    total_nodes = np.prod(nnpd)
-    total_volumes = np.prod(nnpd - 1)
-    node_indices = np.arange(total_nodes, dtype=settings.INT_DTYPE).reshape(
+    total_nodes = _np.prod(nnpd)
+    total_volumes = _np.prod(nnpd - 1)
+    node_indices = _np.arange(total_nodes, dtype=settings.INT_DTYPE).reshape(
         nnpd[::-1]
     )
 
-    volumes = np.empty((total_volumes, 8), dtype=settings.INT_DTYPE)
+    volumes = _np.empty((total_volumes, 8), dtype=settings.INT_DTYPE)
 
     volumes[:, 0] = node_indices[
         : (nnpd[2] - 1), : (nnpd[1] - 1), : (nnpd[0] - 1)
@@ -452,14 +460,14 @@ def subdivide_tri(mesh, return_dict=False):
 
     # Form new vertices
     edge_mid_v = mesh.vertices[mesh.unique_edges().values].mean(axis=1)
-    new_vertices = np.vstack((mesh.vertices, edge_mid_v))
+    new_vertices = _np.vstack((mesh.vertices, edge_mid_v))
 
-    subdivided_faces = np.empty(
+    subdivided_faces = _np.empty(
         (mesh.faces.shape[0] * 4, mesh.faces.shape[1]),
         dtype=settings.INT_DTYPE,
     )
 
-    mask = np.ones(subdivided_faces.shape[0], dtype=bool)
+    mask = _np.ones(subdivided_faces.shape[0], dtype=bool)
     mask[3::4] = False
 
     # 0th column minus (every 4th row, starting from 3rd row)
@@ -512,7 +520,7 @@ def subdivide_quad(
     # Form new vertices
     edge_mid_v = mesh.vertices[mesh.unique_edges().values].mean(axis=1)
     face_centers = mesh.centers()
-    new_vertices = np.vstack(
+    new_vertices = _np.vstack(
         (
             mesh.vertices,
             edge_mid_v,
@@ -520,15 +528,15 @@ def subdivide_quad(
         )
     )
 
-    subdivided_faces = np.empty(
+    subdivided_faces = _np.empty(
         (mesh.faces.shape[0] * 4, mesh.faces.shape[1]),
         dtype=settings.INT_DTYPE,
     )
 
     subdivided_faces[:, 0] = mesh.faces.ravel()
     subdivided_faces[:, 1] = mesh.unique_edges().inverse + len(mesh.vertices)
-    subdivided_faces[:, 2] = np.repeat(
-        np.arange(len(face_centers)) + (len(mesh.vertices) + len(edge_mid_v)),
+    subdivided_faces[:, 2] = _np.repeat(
+        _np.arange(len(face_centers)) + (len(mesh.vertices) + len(edge_mid_v)),
         4,
         dtype=settings.INT_DTYPE,
     )
@@ -546,7 +554,9 @@ def subdivide_quad(
         return new_vertices, subdivided_faces
 
 
-def sorted_unique(connectivity, sorted_=False):
+def sorted_unique(
+    connectivity: _np.ndarray, sorted_: bool = False
+) -> _Unique2DIntegers:
     """Given connectivity array, finds unique entries, based on its axis=1
     sorted values. Returned value will be sorted.
 
@@ -559,7 +569,7 @@ def sorted_unique(connectivity, sorted_=False):
     --------
     unique_info: Unique2DIntegers
     """
-    s_connec = connectivity if sorted_ else np.sort(connectivity, axis=1)
+    s_connec = connectivity if sorted_ else _np.sort(connectivity, axis=1)
 
     unique_stuff = arr.unique_rows(
         s_connec,
@@ -577,15 +587,23 @@ def sorted_unique(connectivity, sorted_=False):
     )
 
 
-def _sequentialize_directed_edges(edges, start=None, return_edges=False):
+def _sequentialize_directed_edges(
+    edges: _np.ndarray,
+    start: _Any | None = None,
+    return_edges: bool = False,
+) -> tuple[
+    list[list[int | _np.int32]]
+    | list[list[int | _np.int32] | list[_np.int32 | _np.int64]],
+    list[bool],
+]:
     """
     Sequentialize directed edges.
     """
     # we want to have an np array
-    edges = np.asanyarray(edges)
+    edges = _np.asanyarray(edges)
 
     # Build a lookup_array
-    lookup_array = np.full(edges.max() + 1, -1, dtype=settings.INT_DTYPE)
+    lookup_array = _np.full(edges.max() + 1, -1, dtype=settings.INT_DTYPE)
     lookup_array[edges[:, 0]] = edges[:, 1]
 
     # select starting point - lowest index
@@ -594,10 +612,10 @@ def _sequentialize_directed_edges(edges, start=None, return_edges=False):
     # initialize a set to keep track of processes vertices
     next_candidates = set(edges[:, 0])
     # we want to keep track of single occurrences, as they are line start
-    line_starts = set(np.where(np.bincount(edges.ravel()) == 1)[0])
+    line_starts = set(_np.where(_np.bincount(edges.ravel()) == 1)[0])
     # for this to work, we can't have a line that starts at column 1.
     # so, we remove those.
-    ls_col1 = set(np.where(np.bincount(edges[:, 1].ravel()) == 1)[0])
+    ls_col1 = set(_np.where(_np.bincount(edges[:, 1].ravel()) == 1)[0])
     line_starts.difference_update(ls_col1)
 
     polygons = []
@@ -650,15 +668,23 @@ def _sequentialize_directed_edges(edges, start=None, return_edges=False):
         return polygon_edges, is_polygon
 
 
-def _sequentialize_edges(edges, start=None, return_edges=False):
+def _sequentialize_edges(
+    edges: _np.ndarray,
+    start: _Any | None = None,
+    return_edges: bool = False,
+) -> tuple[
+    list[list[int | _np.int64]]
+    | list[list[int | _np.int64] | list[_np.int64]],
+    list[bool],
+]:
     """
     sequentialize undirected edges. No overlaps are allowed, for now.
     """
-    edges = np.asanyarray(edges)
+    edges = _np.asanyarray(edges)
 
     # only applicable to closed polygons and open lines
     # not for arbitrarily connected edges
-    bc = np.bincount(edges.ravel())
+    bc = _np.bincount(edges.ravel())
     if not all(bc < 3):
         raise ValueError(
             "This function currently supports individual lines/polygons "
@@ -666,25 +692,25 @@ def _sequentialize_edges(edges, start=None, return_edges=False):
         )
 
     # we want to keep track of single occurrences, as they are line start
-    line_starts = set(np.where(bc == 1)[0])
+    line_starts = set(_np.where(bc == 1)[0])
 
     # initialize a set to keep track of processes vertices
     next_candidates = set(edges.ravel())
 
     # create a look up to each edge column
-    edge_col = collections.namedtuple("a", "b")
+    edge_col = _collections.namedtuple("a", "b")
     edge_col.a = edges[:, 0]
     edge_col.b = edges[:, 1]
 
     # create trees for each edge column
-    tree = collections.namedtuple("a", "b")
+    tree = _collections.namedtuple("a", "b")
     tree.a = napf.KDT(edge_col.a.reshape(-1, 1))
     tree.b = napf.KDT(edge_col.b.reshape(-1, 1))
 
     # radius search size
     r = 0.1
 
-    current_id = np.argmin(edge_col.a) if start is None else start
+    current_id = _np.argmin(edge_col.a) if start is None else start
     start_value = int(edge_col.a[current_id])
     other_col = edge_col.b
 
@@ -788,7 +814,12 @@ def _sequentialize_edges(edges, start=None, return_edges=False):
         return polygon_edges
 
 
-def sequentialize_edges(edges, start=None, return_edges=False, directed=False):
+def sequentialize_edges(
+    edges: _np.ndarray,
+    start: _Any | None = None,
+    return_edges: bool = False,
+    directed: bool = False,
+) -> tuple[_Any, list[bool]]:
     """
     Organize edge connectivities to describe polygon or a line.
     This supports edges that describes separated/individual polygons and lines.
@@ -798,11 +829,11 @@ def sequentialize_edges(edges, start=None, return_edges=False, directed=False):
     -----------
     edges: (n, 2) list-like
     start: int
-      (Optional) Specify starting point. It will take minimum index otherwise.
+      (_Optional) Specify starting point. It will take minimum index otherwise.
     return_edges: bool
-      (Optional) Default is False. If set True, returns sequences as edges.
+      (_Optional) Default is False. If set True, returns sequences as edges.
     directed: bool
-      (Optional) Default is False. Set True, if given edges are directed.
+      (_Optional) Default is False. Set True, if given edges are directed.
       It should return the result faster.
 
     Returns
