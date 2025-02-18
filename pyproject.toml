@@ -26,6 +26,8 @@ classifiers = [
 ]
 dependencies = [
     "numpy",
+    "packaging",
+
 ]
 dynamic = ["version"]
 
