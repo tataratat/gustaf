@@ -1,0 +1,6 @@
+gustaf.show.interpolate\_vedo\_dictcam
+======================================
+
+.. currentmodule:: gustaf.show
+
+.. autofunction:: interpolate_vedo_dictcam

@@ -1,0 +1,6 @@
+gustaf.volumes.Volumes.update\_volumes
+======================================
+
+.. currentmodule:: gustaf.volumes
+
+.. automethod:: Volumes.update_volumes

@@ -1,0 +1,6 @@
+gustaf.volumes.Volumes.volumes
+==============================
+
+.. currentmodule:: gustaf.volumes
+
+.. autoproperty:: Volumes.volumes

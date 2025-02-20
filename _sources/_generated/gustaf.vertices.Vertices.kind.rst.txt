@@ -1,0 +1,6 @@
+gustaf.vertices.Vertices.kind
+=============================
+
+.. currentmodule:: gustaf.vertices
+
+.. autoattribute:: Vertices.kind

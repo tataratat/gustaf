@@ -1,0 +1,6 @@
+gustaf.edges.Edges.to\_vertices
+===============================
+
+.. currentmodule:: gustaf.edges
+
+.. automethod:: Edges.to_vertices
