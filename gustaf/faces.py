@@ -1,6 +1,7 @@
 """gustaf/gustaf/faces.py."""
 
 import numpy as np
+from packaging.version import Version
 
 from gustaf import helpers, settings, show, utils
 from gustaf.edges import Edges
@@ -10,7 +11,10 @@ from gustaf.helpers.options import Option
 try:
     import vedo
 
-    vedoPicture = vedo.Picture
+    if Version(vedo.__version__) < Version("2025.5.3"):
+        vedoPicture = vedo.Picture
+    else:
+        vedoPicture = vedo.Image
     # there are other ways to get here, but this is exact path for our use
     vtkTexture = vedo.vtkclasses.vtkTexture
 except ImportError as err:
@@ -32,7 +36,7 @@ class FacesShowOption(helpers.options.ShowOption):
         Option(
             "vedo",
             "texture",
-            "Texture of faces in array, vedo.Picture, vtk.vtkTexture, "
+            "Texture of faces in array, vedo.Picture/Image, vtk.vtkTexture, "
             "or path to an image.",
             (np.ndarray, tuple, list, str, vedoPicture, vtkTexture),
         ),
