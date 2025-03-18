@@ -400,8 +400,8 @@ class Edges(Vertices):
 
         # chop vertices!
         new_vs = []
-        for v0, v1, lins in zip(v0s, v1s, linspaces):
-            new_vs.append(np.linspace(v0, v1, lins))
+        for v0, v1, lin_space in zip(v0s, v1s, linspaces):
+            new_vs.append(np.linspace(v0, v1, lin_space))
 
         # we need all chopped vertices.
         # there might be duplicating vertices. you can use merge_vertices
