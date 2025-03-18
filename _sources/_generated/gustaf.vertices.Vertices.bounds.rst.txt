@@ -1,0 +1,6 @@
+gustaf.vertices.Vertices.bounds
+===============================
+
+.. currentmodule:: gustaf.vertices
+
+.. automethod:: Vertices.bounds

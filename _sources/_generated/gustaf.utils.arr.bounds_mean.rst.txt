@@ -1,0 +1,6 @@
+gustaf.utils.arr.bounds\_mean
+=============================
+
+.. currentmodule:: gustaf.utils.arr
+
+.. autofunction:: bounds_mean

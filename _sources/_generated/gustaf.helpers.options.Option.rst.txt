@@ -1,0 +1,44 @@
+gustaf.helpers.options.Option
+=============================
+
+.. currentmodule:: gustaf.helpers.options
+
+.. autoclass:: Option
+   :show-inheritance:
+
+   
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+      :toctree:
+   
+      
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+      :toctree:
+   
+      
+         Option.backends
+      
+      
+         Option.key
+      
+      
+         Option.description
+      
+      
+         Option.allowed_types
+      
+      
+         Option.default
+      
+   
+   

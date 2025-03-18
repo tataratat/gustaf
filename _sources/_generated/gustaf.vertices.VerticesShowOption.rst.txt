@@ -1,0 +1,50 @@
+gustaf.vertices.VerticesShowOption
+==================================
+
+.. currentmodule:: gustaf.vertices
+
+.. autoclass:: VerticesShowOption
+   :show-inheritance:
+
+   
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+      :toctree:
+   
+      
+      
+        
+      
+      
+        
+      
+      
+        
+      
+      
+        
+      
+      
+        
+      
+      
+        
+      
+      
+        
+      
+      
+        
+      
+      
+        
+      
+   
+   
+
+   
+   
+   

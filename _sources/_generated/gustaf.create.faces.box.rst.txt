@@ -1,0 +1,6 @@
+gustaf.create.faces.box
+=======================
+
+.. currentmodule:: gustaf.create.faces
+
+.. autofunction:: box

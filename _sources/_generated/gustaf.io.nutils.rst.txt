@@ -1,0 +1,34 @@
+.. _gustaf.io.nutils:
+
+gustaf.io.nutils
+================
+
+.. automodule:: gustaf.io.nutils
+
+   
+   
+   
+
+   
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+      :toctree:
+   
+      export
+      load
+      to_nutils_simplex
+   
+   
+
+   
+   
+   
+
+   
+   
+   
+
+
+

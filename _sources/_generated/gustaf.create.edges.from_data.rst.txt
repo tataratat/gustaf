@@ -1,0 +1,6 @@
+gustaf.create.edges.from\_data
+==============================
+
+.. currentmodule:: gustaf.create.edges
+
+.. autofunction:: from_data

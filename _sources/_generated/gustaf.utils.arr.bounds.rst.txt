@@ -1,0 +1,6 @@
+gustaf.utils.arr.bounds
+=======================
+
+.. currentmodule:: gustaf.utils.arr
+
+.. autofunction:: bounds
