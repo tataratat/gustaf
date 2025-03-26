@@ -1,0 +1,6 @@
+gustaf.vertices.Vertices.unique\_vertices
+=========================================
+
+.. currentmodule:: gustaf.vertices
+
+.. automethod:: Vertices.unique_vertices

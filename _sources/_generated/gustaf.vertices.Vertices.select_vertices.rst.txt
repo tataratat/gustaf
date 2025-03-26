@@ -1,0 +1,6 @@
+gustaf.vertices.Vertices.select\_vertices
+=========================================
+
+.. currentmodule:: gustaf.vertices
+
+.. automethod:: Vertices.select_vertices

@@ -1,0 +1,6 @@
+gustaf.utils.connec.range\_to\_edges
+====================================
+
+.. currentmodule:: gustaf.utils.connec
+
+.. autofunction:: range_to_edges
