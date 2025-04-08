@@ -1,0 +1,6 @@
+gustaf.utils.arr.select\_with\_ranges
+=====================================
+
+.. currentmodule:: gustaf.utils.arr
+
+.. autofunction:: select_with_ranges

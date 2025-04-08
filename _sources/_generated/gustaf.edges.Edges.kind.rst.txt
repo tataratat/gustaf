@@ -1,0 +1,6 @@
+gustaf.edges.Edges.kind
+=======================
+
+.. currentmodule:: gustaf.edges
+
+.. autoattribute:: Edges.kind

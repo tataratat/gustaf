@@ -1,0 +1,38 @@
+gustaf.utils.tictoc.Tic
+=======================
+
+.. currentmodule:: gustaf.utils.tictoc
+
+.. autoclass:: Tic
+   :show-inheritance:
+
+   
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+      :toctree:
+   
+      
+      
+        
+          Tic.now
+        
+      
+      
+        
+          Tic.summary
+        
+      
+      
+        
+          Tic.toc
+        
+      
+   
+   
+
+   
+   
+   

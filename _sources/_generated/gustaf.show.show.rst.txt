@@ -1,0 +1,6 @@
+gustaf.show.show
+================
+
+.. currentmodule:: gustaf.show
+
+.. autofunction:: show

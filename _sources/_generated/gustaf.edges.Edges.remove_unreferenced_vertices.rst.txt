@@ -1,0 +1,6 @@
+gustaf.edges.Edges.remove\_unreferenced\_vertices
+=================================================
+
+.. currentmodule:: gustaf.edges
+
+.. automethod:: Edges.remove_unreferenced_vertices

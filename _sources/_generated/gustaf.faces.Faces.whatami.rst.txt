@@ -1,0 +1,6 @@
+gustaf.faces.Faces.whatami
+==========================
+
+.. currentmodule:: gustaf.faces
+
+.. autoproperty:: Faces.whatami

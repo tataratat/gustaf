@@ -1,0 +1,6 @@
+gustaf.create.vertices.raster
+=============================
+
+.. currentmodule:: gustaf.create.vertices
+
+.. autofunction:: raster
