@@ -1,0 +1,6 @@
+gustaf.utils.arr.make\_c\_contiguous
+====================================
+
+.. currentmodule:: gustaf.utils.arr
+
+.. autofunction:: make_c_contiguous

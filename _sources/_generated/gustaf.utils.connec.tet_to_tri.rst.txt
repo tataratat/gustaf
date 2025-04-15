@@ -1,0 +1,6 @@
+gustaf.utils.connec.tet\_to\_tri
+================================
+
+.. currentmodule:: gustaf.utils.connec
+
+.. autofunction:: tet_to_tri

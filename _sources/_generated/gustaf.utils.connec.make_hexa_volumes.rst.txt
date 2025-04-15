@@ -1,0 +1,6 @@
+gustaf.utils.connec.make\_hexa\_volumes
+=======================================
+
+.. currentmodule:: gustaf.utils.connec
+
+.. autofunction:: make_hexa_volumes

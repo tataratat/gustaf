@@ -1,0 +1,6 @@
+gustaf.vertices.Vertices.merge\_vertices
+========================================
+
+.. currentmodule:: gustaf.vertices
+
+.. automethod:: Vertices.merge_vertices

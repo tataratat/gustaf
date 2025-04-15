@@ -1,0 +1,47 @@
+gustaf.helpers.data.Unique2DFloats
+==================================
+
+.. currentmodule:: gustaf.helpers.data
+
+.. autoclass:: Unique2DFloats
+   :show-inheritance:
+
+   
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+      :toctree:
+   
+      
+      
+        
+      
+      
+        
+      
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+      :toctree:
+   
+      
+         Unique2DFloats.ids
+      
+      
+         Unique2DFloats.intersection
+      
+      
+         Unique2DFloats.inverse
+      
+      
+         Unique2DFloats.values
+      
+   
+   

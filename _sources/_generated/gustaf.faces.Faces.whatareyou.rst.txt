@@ -1,0 +1,6 @@
+gustaf.faces.Faces.whatareyou
+=============================
+
+.. currentmodule:: gustaf.faces
+
+.. automethod:: Faces.whatareyou

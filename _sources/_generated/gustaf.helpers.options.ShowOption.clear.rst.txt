@@ -1,0 +1,6 @@
+gustaf.helpers.options.ShowOption.clear
+=======================================
+
+.. currentmodule:: gustaf.helpers.options
+
+.. automethod:: ShowOption.clear
