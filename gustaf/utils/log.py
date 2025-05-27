@@ -4,7 +4,7 @@ Thin logging wrapper.
 """
 
 import logging
-from functools import partial
+from functools import partial, partialmethod
 
 
 def configure(debug=False, logfile=None):
@@ -101,7 +101,7 @@ def warning(*log):
     logger.warning(" ".join(map(str, log)))
 
 
-def prepended_log(message, log_func):
+def prepended_log(message, log_func, as_method=True):
     """
     Prepend message before a logging function.
 
@@ -110,9 +110,13 @@ def prepended_log(message, log_func):
     message: str
     log_func: function
       one of the following - {info, debug, warning}
+    as_method: bool
+      If True, uses partialmethod, else partial.
+      Default is True.
 
     Returns
     -------
     prepended: function
     """
-    return partial(log_func, message)
+    p = partialmethod if as_method else partial
+    return p(log_func, message)
