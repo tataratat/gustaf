@@ -383,12 +383,10 @@ def make_showable(obj, as_dict=False, **kwargs):
 
         if obj.show_options.get("arrow_data_to_origin", False):
             # point arrow to the origin instead
-            arrow_shift = np.diff(
-                as_edges.vertices.reshape(-1, 2, a_data_dim), axis=1
-            )
-            as_edges.vertices[:] = (
-                as_edges.vertices.reshape(-1, 2, a_data_dim) - arrow_shift
-            ).reshape(-1, a_data_dim)
+            arrow_vertices = as_edges.vertices.reshape(-1, 2, a_data_dim)
+            arrow_shift = np.diff(arrow_vertices, axis=1)
+            arrow_vertices -= arrow_shift
+            as_edges.vertices = arrow_vertices.reshape(-1, a_data_dim)
 
         arrows = vedo.Arrows(
             as_edges.vertices[as_edges.edges],
