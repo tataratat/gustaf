@@ -183,8 +183,9 @@ vedo_common_options = (
     Option(
         "vedo",
         "arrow_data_to_origin",
-        "Points arrow data to geometric origin."
-        "Equivalent to shifting arrows backwards with their own magitudes.",
+        "Points arrow data to geometric origin. By default, arrows point away from origin. "
+        "When enabled, arrows are shifted backwards by their own magnitudes. "
+        "Works in conjunction with arrow_data and arrow_data_scale options.",
         (bool,),
     ),
     Option(
