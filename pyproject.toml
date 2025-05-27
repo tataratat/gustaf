@@ -10,7 +10,7 @@ keywords = [
     "visualization",
     "mesh",
 ]
-requires-python = ">=3.8"
+requires-python = ">=3.9"
 license = {file = "LICENSE.txt"}
 classifiers = [
     "Development Status :: 4 - Beta",
