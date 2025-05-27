@@ -1,0 +1,6 @@
+gustaf.edges.Edges.dashed
+=========================
+
+.. currentmodule:: gustaf.edges
+
+.. automethod:: Edges.dashed

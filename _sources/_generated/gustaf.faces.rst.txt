@@ -1,0 +1,34 @@
+.. _gustaf.faces:
+
+gustaf.faces
+============
+
+.. automodule:: gustaf.faces
+
+   
+   
+   
+
+   
+   
+   
+
+   
+   
+   .. rubric:: Classes
+
+   .. autosummary::
+      :toctree:
+      :template:
+   
+      Faces
+      FacesShowOption
+   
+   
+
+   
+   
+   
+
+
+

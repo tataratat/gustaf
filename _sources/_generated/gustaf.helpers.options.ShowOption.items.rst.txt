@@ -1,0 +1,6 @@
+gustaf.helpers.options.ShowOption.items
+=======================================
+
+.. currentmodule:: gustaf.helpers.options
+
+.. automethod:: ShowOption.items

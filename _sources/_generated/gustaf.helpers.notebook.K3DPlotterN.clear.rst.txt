@@ -1,0 +1,6 @@
+gustaf.helpers.notebook.K3DPlotterN.clear
+=========================================
+
+.. currentmodule:: gustaf.helpers.notebook
+
+.. automethod:: K3DPlotterN.clear

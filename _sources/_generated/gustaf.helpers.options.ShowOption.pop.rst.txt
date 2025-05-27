@@ -1,0 +1,6 @@
+gustaf.helpers.options.ShowOption.pop
+=====================================
+
+.. currentmodule:: gustaf.helpers.options
+
+.. automethod:: ShowOption.pop
