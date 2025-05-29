@@ -56,9 +56,12 @@ def test_mfem_export(to_tmpf, are_stripped_lines_same, grid, request):
         tmpf = to_tmpf(tmpd)
         gus.io.mfem.export(tmpf, mesh)
 
-        with open(tmpf) as tmp_read, open(
-            os.path.dirname(__file__) + f"/./data/{ground_truth_filename}"
-        ) as base_file:
+        with (
+            open(tmpf) as tmp_read,
+            open(
+                os.path.dirname(__file__) + f"/./data/{ground_truth_filename}"
+            ) as base_file,
+        ):
             assert are_stripped_lines_same(
                 base_file.readlines(), tmp_read.readlines(), True
             )
