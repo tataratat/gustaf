@@ -392,6 +392,15 @@ def make_showable(obj, as_dict=False, **kwargs):
             as_edges.vertices[as_edges.edges],
             c=obj.show_options.get("arrow_data_color", "plasma"),
         )
+        # if obj.show_options.get("arrow_data_vmin")
+        # this is now just
+        # a_color = np.empty(len(as_edges.edges))
+        a_color = obj.vertex_data[f"{arrow_data}__norm"]
+        arrows.pointdata["a_color"] = np.repeat(
+            a_color,
+            int(arrows.vertices.shape[0] / as_edges.edges.shape[0]),
+        )
+        arrows.cmap("plasma", "a_color", vmin=0)
         if not as_dict:
             vedo_obj += arrows
         else:
