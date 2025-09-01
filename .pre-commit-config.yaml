@@ -11,7 +11,7 @@ ci:
 
 repos:
 - repo: https://github.com/pre-commit/pre-commit-hooks
-  rev: "v5.0.0"
+  rev: "v6.0.0"
   hooks:
   - id: check-added-large-files
   - id: check-case-conflict
@@ -33,7 +33,7 @@ repos:
     args: [--line-length=79]
 
 - repo: https://github.com/astral-sh/ruff-pre-commit
-  rev: v0.11.11
+  rev: v0.12.11
   hooks:
     - id: ruff
       args: [
@@ -50,7 +50,7 @@ repos:
     args: [-w]
 
 - repo: https://github.com/keewis/blackdoc
-  rev: v0.3.9
+  rev: v0.4.1
   hooks:
   - id: blackdoc
     args: [--line-length=75]
