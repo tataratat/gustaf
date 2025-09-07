@@ -94,7 +94,7 @@ def show(*args, **kwargs):
             return None
 
         for i in range(num_renderers):
-            plotter.clear(at=i, deep=True)
+            plotter.clear(at=i)
 
         return None
 
