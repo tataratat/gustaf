@@ -1,0 +1,6 @@
+gustaf.utils.connec.subdivide\_edges
+====================================
+
+.. currentmodule:: gustaf.utils.connec
+
+.. autofunction:: subdivide_edges
