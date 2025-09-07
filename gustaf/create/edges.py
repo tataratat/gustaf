@@ -122,7 +122,6 @@ def from_data(gus_obj, data, scale=None, data_norm=None):
         utils.log.debug(
             f"creating edges from data with scaling factor ({scale})"
         )
-
     # by here, this should be good to go
     vs = np.hstack((origin, origin + (increment * scale))).reshape(
         -1, origin.shape[1]

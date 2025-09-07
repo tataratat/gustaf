@@ -329,6 +329,7 @@ def make_showable(obj, as_dict=False, **kwargs):
             vedo_obj.pointdata[data] = vertex_data
 
         # form cmap kwargs for init
+        
         cmap_keys = ("vmin", "vmax")
         cmap_kwargs = obj.show_options[cmap_keys]
         # set a default cmap if needed
@@ -380,7 +381,6 @@ def make_showable(obj, as_dict=False, **kwargs):
             obj.show_options.get("arrow_data_scale", None),
             data_norm=obj.vertex_data.as_scalar(arrow_data),
         )
-
         if obj.show_options.get("arrow_data_to_origin", False):
             # point arrow to the origin instead
             arrow_shift = np.diff(
@@ -394,6 +394,11 @@ def make_showable(obj, as_dict=False, **kwargs):
             as_edges.vertices[as_edges.edges],
             c=obj.show_options.get("arrow_data_color", "plasma"),
         )
+
+        vmin = obj.show_options.get("vmin", None)
+        vmax = obj.show_options.get("vmax", None)
+        if vmax is not None and vmin is not None:
+            arrows.cmap(obj.show_options.get("cmap", "plasma"), np.linalg.norm(arrow_data_value, axis=1).repeat(31), vmin=vmin, vmax=vmax)
         if not as_dict:
             vedo_obj += arrows
         else:
