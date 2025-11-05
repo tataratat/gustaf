@@ -125,7 +125,7 @@ def to_simplex(quad, alternate=False):
     else:
         tri = quad
         utils.log.debug(
-            "Non quadrilateral mesh provided, return original" " mesh."
+            "Non quadrilateral mesh provided, return original mesh."
         )
 
     return tri
