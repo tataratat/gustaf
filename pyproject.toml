@@ -101,6 +101,7 @@ ignore = [
     "PLR0912", # Too many branches
     "PLR0913", # Too many arguments to function call
     "PLR0915", # Too many statements
+    "PLC0415", # Non top-level import
     "B904", # Within an `except` clause, raise exceptions with ...
 ]
 

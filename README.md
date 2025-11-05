@@ -74,13 +74,13 @@ tet.show(background="grey")
 ```python
 hexa = gus.Volumes(
     vertices=[
-        [0.0, 0.0, 0.0], #0
-        [1.0, 0.0, 0.0], #1
+        [0.0, 0.0, 0.0],  # 0
+        [1.0, 0.0, 0.0],  # 1
         [0.0, 1.0, 0.0],
-        [1.0, 1.0, 0.0], #3
+        [1.0, 1.0, 0.0],  # 3
         [0.0, 0.0, 1.0],
         [1.0, 0.0, 1.0],
-        [0.0, 1.0, 1.0], #6
+        [0.0, 1.0, 1.0],  # 6
         [1.0, 1.0, 1.0],
     ],
     volumes=[
@@ -102,10 +102,7 @@ possibilities in vedo. You can plot multiple objects next to each other:
 ```python
 # show multiple items in one plot
 # each list will be put into a separate subplot.
-gus.show(
-    ["Tetrahedron", tet],
-    ["Hexahedron", hexa]
-)
+gus.show(["Tetrahedron", tet], ["Hexahedron", hexa])
 ```
 ![Compare hexahedron and tetrahedron-based volumes](docs/source/_static/tet_quad.png)
 
@@ -116,7 +113,9 @@ and length.
 # let's visualize some scalar data and vector data defined on vertices
 tet.vertex_data["arange"] = np.arange(len(tet.vertices))  # scalar
 tet.show_options["data"] = "arange"
-tet.vertex_data["random"] = np.random.random((len(tet.vertices), 3))  # vector
+tet.vertex_data["random"] = np.random.random(
+    (len(tet.vertices), 3)
+)  # vector
 tet.show_options["arrow_data"] = "random"
 tet.show(background="grey")
 ```
