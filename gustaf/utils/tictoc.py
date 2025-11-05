@@ -88,7 +88,7 @@ class Tic(GustafBase):
            times for each lap from the timer start (cumulative time).
         """
         start = self._laps[0]
-        cumulative = [f"{lap-start:.10f}" for lap in self._laps[1:]]
+        cumulative = [f"{lap - start:.10f}" for lap in self._laps[1:]]
 
         if log or print_:
             message = [f"\n+++ {self._title} - time logs +++\n"]
