@@ -11,13 +11,19 @@ all_grids = (
     ("faces_quad_2d", "mfem_quadrilaterals_2d.mesh"),
     ("volumes_hexa", "mfem_hexahedra_3d.mesh"),
     ("volumes_tet", "mfem_tetrahedra_3d.mesh"),
+    ("volumes_hexa_222", "mfem_hexahedra_3d_222.mesh"),
 )
 
 
-@pytest.mark.parametrize("grid", all_grids)
-def test_mfem_export(to_tmpf, are_stripped_lines_same, grid, request):
-    mesh = request.getfixturevalue(grid[0])
-    ground_truth_filename = grid[1]
+@pytest.mark.parametrize("grid, ground_truth_filename", all_grids)
+def test_mfem_export(
+    to_tmpf,
+    are_stripped_lines_same,
+    grid,
+    ground_truth_filename,
+    request,
+):
+    mesh = request.getfixturevalue(grid)
 
     verts = mesh.vertices
 
@@ -38,6 +44,7 @@ def test_mfem_export(to_tmpf, are_stripped_lines_same, grid, request):
         faces = mesh.to_faces(False)
 
         BC = {1: [], 2: [], 3: []}
+        # single faces only produces exterior/boundary faces
         for i in faces.single_faces():
             # mark boundaries at x = 0 with 1
             if np.max(verts[faces.const_faces[i], 0]) < 0.1:
@@ -45,7 +52,8 @@ def test_mfem_export(to_tmpf, are_stripped_lines_same, grid, request):
             # mark boundaries at x = 1 with 2
             elif np.min(verts[faces.const_faces[i], 0]) > 0.9:
                 BC[2].append(i)
-            # mark rest of the boundaries with 3
+            # mark rest of the boundaries with 3 if they do not contain
+            # interior vertices
             else:
                 BC[3].append(i)
 

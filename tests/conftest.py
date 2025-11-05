@@ -196,27 +196,49 @@ def volumes_hexa(vertices_3d, hexa_connec):
 
 
 @pytest.fixture
-def provide_data_to_unittest(
-    request,
-    vertices_3d,
-    vertices_2d,
-    edge_connec,
-    tri_connec,
-    tri_connec_2d,
-    quad_connec,
-    quad_connec_2d,
-    tet_connec,
-    hexa_connec,
-):
-    request.cls.V = vertices_3d
-    request.cls.V2d = vertices_2d
-    request.cls.E = edge_connec
-    request.cls.TF = tri_connec
-    request.cls.TF2d = tri_connec_2d
-    request.cls.QF = quad_connec
-    request.cls.QF2d = quad_connec_2d
-    request.cls.TV = tet_connec
-    request.cls.HV = hexa_connec
+def volumes_hexa_222():
+    v = [
+        [0.0, 0.0, 0.0],
+        [0.5, 0.0, 0.0],
+        [1.0, 0.0, 0.0],
+        [0.0, 0.5, 0.0],
+        [0.5, 0.5, 0.0],
+        [1.0, 0.5, 0.0],
+        [0.0, 1.0, 0.0],
+        [0.5, 1.0, 0.0],
+        [1.0, 1.0, 0.0],
+        [0.0, 0.0, 0.5],
+        [0.5, 0.0, 0.5],
+        [1.0, 0.0, 0.5],
+        [0.0, 0.5, 0.5],
+        [0.5, 0.5, 0.5],
+        [1.0, 0.5, 0.5],
+        [0.0, 1.0, 0.5],
+        [0.5, 1.0, 0.5],
+        [1.0, 1.0, 0.5],
+        [0.0, 0.0, 1.0],
+        [0.5, 0.0, 1.0],
+        [1.0, 0.0, 1.0],
+        [0.0, 0.5, 1.0],
+        [0.5, 0.5, 1.0],
+        [1.0, 0.5, 1.0],
+        [0.0, 1.0, 1.0],
+        [0.5, 1.0, 1.0],
+        [1.0, 1.0, 1.0],
+    ]
+
+    vol = [
+        [0, 1, 4, 3, 9, 10, 13, 12],
+        [1, 2, 5, 4, 10, 11, 14, 13],
+        [3, 4, 7, 6, 12, 13, 16, 15],
+        [4, 5, 8, 7, 13, 14, 17, 16],
+        [9, 10, 13, 12, 18, 19, 22, 21],
+        [10, 11, 14, 13, 19, 20, 23, 22],
+        [12, 13, 16, 15, 21, 22, 25, 24],
+        [13, 14, 17, 16, 22, 23, 26, 25],
+    ]
+
+    return gus.Volumes(v, vol)
 
 
 @pytest.fixture
