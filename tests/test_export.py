@@ -15,7 +15,7 @@ all_grids = (
 )
 
 
-@pytest.mark.parametrize(("grid, ground_truth_filename"), all_grids)
+@pytest.mark.parametrize(("grid", "ground_truth_filename"), all_grids)
 def test_mfem_export(
     to_tmpf,
     are_stripped_lines_same,

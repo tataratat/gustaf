@@ -244,8 +244,21 @@ def volumes_hexa_222():
 @pytest.fixture
 def are_stripped_lines_same():
     def _are_stripped_lines_same(a, b, ignore_order=False):
-        """returns True if items in a and b same, preceding and tailing
-        whitespaces are ignored and strings are joined"""
+        """Check if two lists of strings are the same after str.strip().
+
+        Check whether two lists of strings are the same after stripping leading
+        and trailing whitespace. If ignore_order is True, the order of words
+        inside of a line is ignored, which is useful for checking attributes.
+
+        Args:
+            a (List[str]): First list of strings
+            b (List[str]): Second list of strings
+            ignore_order (bool, optional): Whether to ignore order of strings
+            inside of a line. Defaults to False.
+
+        Returns:
+            bool: True if the stripped lines are the same, False otherwise.
+        """
         all_same = True
 
         if len(a) != len(b):
@@ -326,7 +339,7 @@ def are_stripped_lines_same():
 @pytest.fixture
 def to_tmpf():
     def _to_tmpf(tmpd):
-        """given tmpd, returns tmpf"""
+        """Given a temporary directory, return a temporary filename"""
         return os.path.join(tmpd, "nqv248p90")
 
     return _to_tmpf
