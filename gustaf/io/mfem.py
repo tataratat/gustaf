@@ -125,18 +125,15 @@ def format_array(array):
 
 def export(fname, mesh):
     """Export mesh in MFEM format. Supports 2D triangle and quadrilateral
-    meshes as well as 3D tetrahedral meshes. Handles boundary conditions for
-    3D tetrahedral meshes. Does not support different element attributes or
-    difference in vertex dimension and mesh dimension.
+    meshes as well as 3D tetrahedral and hexahedral meshes. Also extracts
+    boundary information from the GustafObject.BC variable. Does not
+    support different element attributes or difference in vertex dimension
+    and mesh dimension.
 
     Parameters
     ------------
     fname: str
-    mesh: Faces
-    BC: dict
-        Boundary conditions for 3D case.
-        Keys are boundary IDs and values are lists of face IDs.
-        If none are provided, all boundary faces are assigned to 1.
+    mesh: Faces, Volumes
 
     Returns
     ------------
