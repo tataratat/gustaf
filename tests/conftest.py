@@ -248,6 +248,10 @@ def are_stripped_lines_same():
         whitespaces are ignored and strings are joined"""
         all_same = True
 
+        if len(a) != len(b):
+            print(f"Different line counts: a-{len(a)}, b-{len(b)}")
+            return False
+
         for i, (line_a, line_b) in enumerate(zip(a, b)):
             # check stripped string
             stripped_a, stripped_b = line_a.strip(), line_b.strip()
@@ -258,51 +262,61 @@ def are_stripped_lines_same():
                 print(f"\tfrom first: {line_a}")
                 print(f"\tfrom second: {line_b}")
 
-            # give one more chance if ignore_order
-            if stripped_a != stripped_b and ignore_order:
-                print("\tchecking again, while ignoring word order:")
+                # give one more chance if ignore_order
+                if stripped_a != stripped_b and ignore_order:
+                    print("\tchecking again, while ignoring word order:")
 
-                # This is meant for attributes
-                delimiters = r" |\>|\<|\t|,"
-                splitted_a = list(
-                    filter(None, re.split(delimiters, stripped_a))
-                )
-                splitted_b = list(
-                    filter(None, re.split(delimiters, stripped_b))
-                )
-                # first, len check
-                len_a, len_b = len(splitted_a), len(splitted_b)
-                if len(splitted_a) != len(splitted_b):
-                    print(f"\t\tdifferent word counts: a-{len_a}, b-{len_b}")
-                    all_same = False
-                else:
-                    # word order
-                    a_to_b = []
-                    nums_b = None
-                    for word_a in splitted_a:
-                        try:
-                            a_to_b.append(splitted_b.index(word_a))
-                        except BaseException:
+                    # This is meant for attributes
+                    delimiters = r" |\>|\<|\t|,"
+                    splitted_a = list(
+                        filter(None, re.split(delimiters, stripped_a))
+                    )
+                    splitted_b = list(
+                        filter(None, re.split(delimiters, stripped_b))
+                    )
+                    # first, len check
+                    len_a, len_b = len(splitted_a), len(splitted_b)
+                    if len(splitted_a) != len(splitted_b):
+                        print(
+                            f"\t\tdifferent word counts: a-{len_a}, b-{len_b}"
+                        )
+                        all_same = False
+                    else:
+                        # word order
+                        a_to_b = []
+                        nums_b = None
+                        for word_a in splitted_a:
                             try:
-                                num_a = float(word_a)
-                            except ValueError:
-                                pass
-                            else:
-                                if nums_b is None:
-                                    nums_b = []
-                                    for idx, num_b in enumerate(splitted_b):
-                                        with contextlib.suppress(ValueError):
-                                            nums_b.append((idx, float(num_b)))
-                                for idx, num_b in nums_b:
-                                    if np.isclose(num_a, num_b):
-                                        a_to_b.append(idx)
-                                        break
+                                a_to_b.append(splitted_b.index(word_a))
+                            except BaseException:
+                                try:
+                                    num_a = float(word_a)
+                                except ValueError:
+                                    pass
                                 else:
-                                    print(
-                                        f"\t\tsecond does not contain "
-                                        f"({word_a})"
-                                    )
-                                    all_same = False
+                                    if nums_b is None:
+                                        nums_b = []
+                                        for idx, num_b in enumerate(
+                                            splitted_b
+                                        ):
+                                            with contextlib.suppress(
+                                                ValueError
+                                            ):
+                                                nums_b.append(
+                                                    (idx, float(num_b))
+                                                )
+                                    for idx, num_b in nums_b:
+                                        if np.isclose(num_a, num_b):
+                                            a_to_b.append(idx)
+                                            break
+                                    else:
+                                        print(
+                                            f"\t\tsecond does not contain "
+                                            f"({word_a})"
+                                        )
+                                        all_same = False
+                else:
+                    all_same = False
 
         return all_same
 
