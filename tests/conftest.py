@@ -263,7 +263,7 @@ def are_stripped_lines_same():
                 print(f"\tfrom second: {line_b}")
 
                 # give one more chance if ignore_order
-                if stripped_a != stripped_b and ignore_order:
+                if ignore_order:
                     print("\tchecking again, while ignoring word order:")
 
                     # This is meant for attributes
