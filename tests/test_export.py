@@ -15,7 +15,7 @@ all_grids = (
 )
 
 
-@pytest.mark.parametrize("grid, ground_truth_filename", all_grids)
+@pytest.mark.parametrize(("grid, ground_truth_filename"), all_grids)
 def test_mfem_export(
     to_tmpf,
     are_stripped_lines_same,
@@ -28,7 +28,7 @@ def test_mfem_export(
     verts = mesh.vertices
 
     if mesh.whatami in ("tri", "quad"):
-        lines = mesh.to_edges(False)
+        lines = mesh.to_edges(unique=False)
         BC = {1: [], 2: [], 3: []}
         for i in lines.single_edges():
             # mark boundaries at x = 0 with 1
@@ -41,7 +41,7 @@ def test_mfem_export(
             else:
                 BC[3].append(i)
     elif mesh.whatami in ("hexa", "tet"):
-        faces = mesh.to_faces(False)
+        faces = mesh.to_faces(unique=False)
 
         BC = {1: [], 2: [], 3: []}
         # single faces only produces exterior/boundary faces
@@ -67,9 +67,12 @@ def test_mfem_export(
         with (
             open(tmpf) as tmp_read,
             open(
-                os.path.dirname(__file__) + f"/./data/{ground_truth_filename}"
+                os.path.join(
+                    os.path.dirname(__file__),
+                    f"data/{ground_truth_filename}",
+                )
             ) as base_file,
         ):
             assert are_stripped_lines_same(
-                base_file.readlines(), tmp_read.readlines(), True
+                base_file.readlines(), tmp_read.readlines(), ignore_order=True
             )
