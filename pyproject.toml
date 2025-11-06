@@ -53,8 +53,15 @@ test = [
 ]
 dev = [
     "pre-commit",
-    "gustaf[test]",
-    "gustaf[all]",
+    "vedo>=2023.5.0",
+    "scipy",
+    "meshio",
+    "napf>=0.0.5",
+    "funi>=0.0.1",
+    "requests",
+    "ipywidgets",
+    "k3d",
+    "pytest",
 ]
 
 [tool.setuptools]
