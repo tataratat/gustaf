@@ -28,7 +28,11 @@ repos:
 
 
 - repo: https://github.com/astral-sh/ruff-pre-commit
+<<<<<<< HEAD
   rev: v0.12.11
+=======
+  rev: v0.14.3
+>>>>>>> 2926e0c (Chore(precommit): precommit updates)
   hooks:
     # Run the linter.
     - id: ruff-check
@@ -45,3 +49,9 @@ repos:
     additional_dependencies:
       - tomli
     args: [-w]
+
+- repo: https://github.com/keewis/blackdoc
+  rev: v0.4.5
+  hooks:
+  - id: blackdoc
+    args: [--line-length=75]
