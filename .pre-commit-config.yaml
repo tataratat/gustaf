@@ -26,14 +26,14 @@ repos:
   - id: requirements-txt-fixer
   - id: trailing-whitespace
 
-- repo: https://github.com/psf/black
-  rev: "25.1.0"
+- repo: https://github.com/psf/black-pre-commit-mirror
+  rev: "25.11.0"
   hooks:
   - id: black
     args: [--line-length=79]
 
 - repo: https://github.com/astral-sh/ruff-pre-commit
-  rev: v0.12.12
+  rev: v0.14.4
   hooks:
     - id: ruff-check
       args: [
@@ -50,7 +50,7 @@ repos:
     args: [-w]
 
 - repo: https://github.com/keewis/blackdoc
-  rev: v0.4.1
+  rev: v0.4.5
   hooks:
   - id: blackdoc
     args: [--line-length=75]
