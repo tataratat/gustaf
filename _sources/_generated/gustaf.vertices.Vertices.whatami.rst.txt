@@ -1,0 +1,6 @@
+gustaf.vertices.Vertices.whatami
+================================
+
+.. currentmodule:: gustaf.vertices
+
+.. autoproperty:: Vertices.whatami

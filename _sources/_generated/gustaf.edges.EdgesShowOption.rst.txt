@@ -1,0 +1,50 @@
+gustaf.edges.EdgesShowOption
+============================
+
+.. currentmodule:: gustaf.edges
+
+.. autoclass:: EdgesShowOption
+   :show-inheritance:
+
+   
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+      :toctree:
+   
+      
+      
+        
+      
+      
+        
+      
+      
+        
+      
+      
+        
+      
+      
+        
+      
+      
+        
+      
+      
+        
+      
+      
+        
+      
+      
+        
+      
+   
+   
+
+   
+   
+   

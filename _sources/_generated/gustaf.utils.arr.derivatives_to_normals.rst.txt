@@ -1,0 +1,6 @@
+gustaf.utils.arr.derivatives\_to\_normals
+=========================================
+
+.. currentmodule:: gustaf.utils.arr
+
+.. autofunction:: derivatives_to_normals

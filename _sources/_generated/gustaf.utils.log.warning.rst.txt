@@ -1,0 +1,6 @@
+gustaf.utils.log.warning
+========================
+
+.. currentmodule:: gustaf.utils.log
+
+.. autofunction:: warning

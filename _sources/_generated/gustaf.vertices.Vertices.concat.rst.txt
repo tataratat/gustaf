@@ -1,0 +1,6 @@
+gustaf.vertices.Vertices.concat
+===============================
+
+.. currentmodule:: gustaf.vertices
+
+.. automethod:: Vertices.concat

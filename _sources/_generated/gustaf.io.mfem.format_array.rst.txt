@@ -1,0 +1,6 @@
+gustaf.io.mfem.format\_array
+============================
+
+.. currentmodule:: gustaf.io.mfem
+
+.. autofunction:: format_array

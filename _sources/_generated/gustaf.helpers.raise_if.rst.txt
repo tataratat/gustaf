@@ -1,0 +1,40 @@
+.. _gustaf.helpers.raise_if:
+
+gustaf.helpers.raise\_if
+========================
+
+.. automodule:: gustaf.helpers.raise_if
+
+   
+   
+   
+
+   
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+      :toctree:
+   
+      invalid_inherited_attr
+   
+   
+
+   
+   
+   .. rubric:: Classes
+
+   .. autosummary::
+      :toctree:
+      :template:
+   
+      ModuleImportRaiser
+   
+   
+
+   
+   
+   
+
+
+

@@ -1,0 +1,42 @@
+.. _gustaf.helpers.options:
+
+gustaf.helpers.options
+======================
+
+.. automodule:: gustaf.helpers.options
+
+   
+   
+   
+
+   
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+      :toctree:
+   
+      make_valid_options
+   
+   
+
+   
+   
+   .. rubric:: Classes
+
+   .. autosummary::
+      :toctree:
+      :template:
+   
+      Option
+      SetDefault
+      ShowOption
+   
+   
+
+   
+   
+   
+
+
+

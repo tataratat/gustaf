@@ -1,0 +1,40 @@
+.. _gustaf.helpers.notebook:
+
+gustaf.helpers.notebook
+=======================
+
+.. automodule:: gustaf.helpers.notebook
+
+   
+   
+   
+
+   
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+      :toctree:
+   
+      get_shape
+   
+   
+
+   
+   
+   .. rubric:: Classes
+
+   .. autosummary::
+      :toctree:
+      :template:
+   
+      K3DPlotterN
+   
+   
+
+   
+   
+   
+
+
+

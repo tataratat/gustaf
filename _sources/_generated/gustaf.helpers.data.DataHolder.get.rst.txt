@@ -1,0 +1,6 @@
+gustaf.helpers.data.DataHolder.get
+==================================
+
+.. currentmodule:: gustaf.helpers.data
+
+.. automethod:: DataHolder.get

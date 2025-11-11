@@ -1,0 +1,34 @@
+.. _gustaf.edges:
+
+gustaf.edges
+============
+
+.. automodule:: gustaf.edges
+
+   
+   
+   
+
+   
+   
+   
+
+   
+   
+   .. rubric:: Classes
+
+   .. autosummary::
+      :toctree:
+      :template:
+   
+      Edges
+      EdgesShowOption
+   
+   
+
+   
+   
+   
+
+
+

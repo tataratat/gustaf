@@ -1,0 +1,32 @@
+.. _gustaf.create.volumes:
+
+gustaf.create.volumes
+=====================
+
+.. automodule:: gustaf.create.volumes
+
+   
+   
+   
+
+   
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+      :toctree:
+   
+      box
+   
+   
+
+   
+   
+   
+
+   
+   
+   
+
+
+

@@ -1,0 +1,6 @@
+gustaf.io.ioutils.abs\_fname
+============================
+
+.. currentmodule:: gustaf.io.ioutils
+
+.. autofunction:: abs_fname

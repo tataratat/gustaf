@@ -1,0 +1,6 @@
+gustaf.volumes.Volumes.const\_volumes
+=====================================
+
+.. currentmodule:: gustaf.volumes
+
+.. autoproperty:: Volumes.const_volumes

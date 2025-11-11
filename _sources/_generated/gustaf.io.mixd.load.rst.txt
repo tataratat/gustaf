@@ -1,0 +1,6 @@
+gustaf.io.mixd.load
+===================
+
+.. currentmodule:: gustaf.io.mixd
+
+.. autofunction:: load

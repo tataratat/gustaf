@@ -1,0 +1,6 @@
+gustaf.faces.Faces.const\_edges
+===============================
+
+.. currentmodule:: gustaf.faces
+
+.. autoproperty:: Faces.const_edges

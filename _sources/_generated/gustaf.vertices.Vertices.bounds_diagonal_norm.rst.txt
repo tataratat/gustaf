@@ -1,0 +1,6 @@
+gustaf.vertices.Vertices.bounds\_diagonal\_norm
+===============================================
+
+.. currentmodule:: gustaf.vertices
+
+.. automethod:: Vertices.bounds_diagonal_norm

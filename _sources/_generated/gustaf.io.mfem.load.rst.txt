@@ -1,0 +1,6 @@
+gustaf.io.mfem.load
+===================
+
+.. currentmodule:: gustaf.io.mfem
+
+.. autofunction:: load

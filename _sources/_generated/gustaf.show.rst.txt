@@ -1,0 +1,34 @@
+.. _gustaf.show:
+
+gustaf.show
+===========
+
+.. automodule:: gustaf.show
+
+   
+   
+   
+
+   
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+      :toctree:
+   
+      interpolate_vedo_dictcam
+      make_showable
+      show
+   
+   
+
+   
+   
+   
+
+   
+   
+   
+
+
+

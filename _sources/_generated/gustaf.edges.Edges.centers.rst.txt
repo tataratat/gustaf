@@ -1,0 +1,6 @@
+gustaf.edges.Edges.centers
+==========================
+
+.. currentmodule:: gustaf.edges
+
+.. automethod:: Edges.centers

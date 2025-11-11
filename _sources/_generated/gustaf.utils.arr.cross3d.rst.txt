@@ -1,0 +1,6 @@
+gustaf.utils.arr.cross3d
+========================
+
+.. currentmodule:: gustaf.utils.arr
+
+.. autofunction:: cross3d

@@ -1,0 +1,6 @@
+gustaf.helpers.data.Unique2DIntegers.values
+===========================================
+
+.. currentmodule:: gustaf.helpers.data
+
+.. autoattribute:: Unique2DIntegers.values

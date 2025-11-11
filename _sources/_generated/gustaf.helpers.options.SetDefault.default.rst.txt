@@ -1,0 +1,6 @@
+gustaf.helpers.options.SetDefault.default
+=========================================
+
+.. currentmodule:: gustaf.helpers.options
+
+.. autoattribute:: SetDefault.default

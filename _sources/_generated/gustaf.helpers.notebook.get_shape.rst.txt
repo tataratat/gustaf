@@ -1,0 +1,6 @@
+gustaf.helpers.notebook.get\_shape
+==================================
+
+.. currentmodule:: gustaf.helpers.notebook
+
+.. autofunction:: get_shape

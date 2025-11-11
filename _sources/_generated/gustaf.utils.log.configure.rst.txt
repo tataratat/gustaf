@@ -1,0 +1,6 @@
+gustaf.utils.log.configure
+==========================
+
+.. currentmodule:: gustaf.utils.log
+
+.. autofunction:: configure

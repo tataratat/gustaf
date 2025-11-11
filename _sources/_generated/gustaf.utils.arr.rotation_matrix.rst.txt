@@ -1,0 +1,6 @@
+gustaf.utils.arr.rotation\_matrix
+=================================
+
+.. currentmodule:: gustaf.utils.arr
+
+.. autofunction:: rotation_matrix

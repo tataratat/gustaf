@@ -1,0 +1,6 @@
+gustaf.vertices.Vertices.copy
+=============================
+
+.. currentmodule:: gustaf.vertices
+
+.. automethod:: Vertices.copy

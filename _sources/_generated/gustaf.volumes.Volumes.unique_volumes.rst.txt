@@ -1,0 +1,6 @@
+gustaf.volumes.Volumes.unique\_volumes
+======================================
+
+.. currentmodule:: gustaf.volumes
+
+.. automethod:: Volumes.unique_volumes

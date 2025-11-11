@@ -1,0 +1,6 @@
+gustaf.utils.connec.sequence\_to\_edges
+=======================================
+
+.. currentmodule:: gustaf.utils.connec
+
+.. autofunction:: sequence_to_edges

@@ -1,0 +1,6 @@
+gustaf.utils.connec.subdivide\_tri
+==================================
+
+.. currentmodule:: gustaf.utils.connec
+
+.. autofunction:: subdivide_tri

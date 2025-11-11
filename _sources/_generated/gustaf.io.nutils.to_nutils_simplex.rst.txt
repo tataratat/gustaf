@@ -1,0 +1,6 @@
+gustaf.io.nutils.to\_nutils\_simplex
+====================================
+
+.. currentmodule:: gustaf.io.nutils
+
+.. autofunction:: to_nutils_simplex

@@ -1,0 +1,6 @@
+gustaf.utils.log.debug
+======================
+
+.. currentmodule:: gustaf.utils.log
+
+.. autofunction:: debug

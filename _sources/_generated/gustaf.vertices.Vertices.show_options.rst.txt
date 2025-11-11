@@ -1,0 +1,6 @@
+gustaf.vertices.Vertices.show\_options
+======================================
+
+.. currentmodule:: gustaf.vertices
+
+.. autoproperty:: Vertices.show_options

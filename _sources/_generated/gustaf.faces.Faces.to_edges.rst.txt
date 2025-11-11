@@ -1,0 +1,6 @@
+gustaf.faces.Faces.to\_edges
+============================
+
+.. currentmodule:: gustaf.faces
+
+.. automethod:: Faces.to_edges

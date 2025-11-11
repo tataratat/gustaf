@@ -1,0 +1,6 @@
+gustaf.vertices.Vertices.showable
+=================================
+
+.. currentmodule:: gustaf.vertices
+
+.. automethod:: Vertices.showable

@@ -1,0 +1,6 @@
+gustaf.utils.connec.volumes\_to\_faces
+======================================
+
+.. currentmodule:: gustaf.utils.connec
+
+.. autofunction:: volumes_to_faces

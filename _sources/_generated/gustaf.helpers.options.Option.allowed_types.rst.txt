@@ -1,0 +1,6 @@
+gustaf.helpers.options.Option.allowed\_types
+============================================
+
+.. currentmodule:: gustaf.helpers.options
+
+.. autoattribute:: Option.allowed_types

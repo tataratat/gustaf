@@ -1,0 +1,6 @@
+gustaf.vertices.Vertices.vertex\_data
+=====================================
+
+.. currentmodule:: gustaf.vertices
+
+.. autoproperty:: Vertices.vertex_data

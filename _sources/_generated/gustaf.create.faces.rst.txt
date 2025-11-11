@@ -1,0 +1,36 @@
+.. _gustaf.create.faces:
+
+gustaf.create.faces
+===================
+
+.. automodule:: gustaf.create.faces
+
+   
+   
+   
+
+   
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+      :toctree:
+   
+      box
+      edges_as_quad
+      to_quad
+      to_simplex
+      vertex_normals
+   
+   
+
+   
+   
+   
+
+   
+   
+   
+
+
+

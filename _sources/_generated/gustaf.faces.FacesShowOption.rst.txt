@@ -1,0 +1,50 @@
+gustaf.faces.FacesShowOption
+============================
+
+.. currentmodule:: gustaf.faces
+
+.. autoclass:: FacesShowOption
+   :show-inheritance:
+
+   
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+      :toctree:
+   
+      
+      
+        
+      
+      
+        
+      
+      
+        
+      
+      
+        
+      
+      
+        
+      
+      
+        
+      
+      
+        
+      
+      
+        
+      
+      
+        
+      
+   
+   
+
+   
+   
+   

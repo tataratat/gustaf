@@ -1,0 +1,6 @@
+gustaf.io.mixd.make\_mrng
+=========================
+
+.. currentmodule:: gustaf.io.mixd
+
+.. autofunction:: make_mrng

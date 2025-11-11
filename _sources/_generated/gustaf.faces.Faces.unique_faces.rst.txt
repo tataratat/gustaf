@@ -1,0 +1,6 @@
+gustaf.faces.Faces.unique\_faces
+================================
+
+.. currentmodule:: gustaf.faces
+
+.. automethod:: Faces.unique_faces

@@ -1,0 +1,32 @@
+.. _gustaf.create.vertices:
+
+gustaf.create.vertices
+======================
+
+.. automodule:: gustaf.create.vertices
+
+   
+   
+   
+
+   
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+      :toctree:
+   
+      raster
+   
+   
+
+   
+   
+   
+
+   
+   
+   
+
+
+

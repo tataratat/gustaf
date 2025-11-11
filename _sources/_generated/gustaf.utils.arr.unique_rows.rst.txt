@@ -1,0 +1,6 @@
+gustaf.utils.arr.unique\_rows
+=============================
+
+.. currentmodule:: gustaf.utils.arr
+
+.. autofunction:: unique_rows

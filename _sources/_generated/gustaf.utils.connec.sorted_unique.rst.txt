@@ -1,0 +1,6 @@
+gustaf.utils.connec.sorted\_unique
+==================================
+
+.. currentmodule:: gustaf.utils.connec
+
+.. autofunction:: sorted_unique

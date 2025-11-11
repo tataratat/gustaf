@@ -1,0 +1,6 @@
+gustaf.create.volumes.box
+=========================
+
+.. currentmodule:: gustaf.create.volumes
+
+.. autofunction:: box

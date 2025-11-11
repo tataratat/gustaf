@@ -1,0 +1,6 @@
+gustaf.helpers.data.Unique2DIntegers.inverse
+============================================
+
+.. currentmodule:: gustaf.helpers.data
+
+.. autoattribute:: Unique2DIntegers.inverse

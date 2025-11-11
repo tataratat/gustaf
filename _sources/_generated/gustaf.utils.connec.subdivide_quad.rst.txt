@@ -1,0 +1,6 @@
+gustaf.utils.connec.subdivide\_quad
+===================================
+
+.. currentmodule:: gustaf.utils.connec
+
+.. autofunction:: subdivide_quad

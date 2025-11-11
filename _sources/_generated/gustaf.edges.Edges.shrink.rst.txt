@@ -1,0 +1,6 @@
+gustaf.edges.Edges.shrink
+=========================
+
+.. currentmodule:: gustaf.edges
+
+.. automethod:: Edges.shrink

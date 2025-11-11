@@ -1,0 +1,6 @@
+gustaf.utils.connec.faces\_to\_edges
+====================================
+
+.. currentmodule:: gustaf.utils.connec
+
+.. autofunction:: faces_to_edges

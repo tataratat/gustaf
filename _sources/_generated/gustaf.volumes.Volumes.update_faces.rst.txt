@@ -1,0 +1,6 @@
+gustaf.volumes.Volumes.update\_faces
+====================================
+
+.. currentmodule:: gustaf.volumes
+
+.. automethod:: Volumes.update_faces

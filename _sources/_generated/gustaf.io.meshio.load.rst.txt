@@ -1,0 +1,6 @@
+gustaf.io.meshio.load
+=====================
+
+.. currentmodule:: gustaf.io.meshio
+
+.. autofunction:: load

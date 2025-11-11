@@ -1,0 +1,33 @@
+.. _gustaf.utils.tictoc:
+
+gustaf.utils.tictoc
+===================
+
+.. automodule:: gustaf.utils.tictoc
+
+   
+   
+   
+
+   
+   
+   
+
+   
+   
+   .. rubric:: Classes
+
+   .. autosummary::
+      :toctree:
+      :template:
+   
+      Tic
+   
+   
+
+   
+   
+   
+
+
+

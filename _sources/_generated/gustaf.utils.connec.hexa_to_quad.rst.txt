@@ -1,0 +1,6 @@
+gustaf.utils.connec.hexa\_to\_quad
+==================================
+
+.. currentmodule:: gustaf.utils.connec
+
+.. autofunction:: hexa_to_quad

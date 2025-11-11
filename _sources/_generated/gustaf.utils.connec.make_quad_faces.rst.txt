@@ -1,0 +1,6 @@
+gustaf.utils.connec.make\_quad\_faces
+=====================================
+
+.. currentmodule:: gustaf.utils.connec
+
+.. autofunction:: make_quad_faces

@@ -1,0 +1,6 @@
+gustaf.helpers.data.VertexData.as\_arrow
+========================================
+
+.. currentmodule:: gustaf.helpers.data
+
+.. automethod:: VertexData.as_arrow

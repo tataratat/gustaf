@@ -1,0 +1,6 @@
+gustaf.create.edges.from\_vertices
+==================================
+
+.. currentmodule:: gustaf.create.edges
+
+.. autofunction:: from_vertices

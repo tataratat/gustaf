@@ -1,0 +1,142 @@
+gustaf.edges.Edges
+==================
+
+.. currentmodule:: gustaf.edges
+
+.. autoclass:: Edges
+   :show-inheritance:
+
+   
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+      :toctree:
+   
+      
+      
+        
+      
+      
+        
+      
+      
+        
+      
+      
+        
+          Edges.centers
+        
+      
+      
+        
+      
+      
+        
+      
+      
+        
+          Edges.dashed
+        
+      
+      
+        
+      
+      
+        
+          Edges.referenced_vertices
+        
+      
+      
+        
+          Edges.remove_unreferenced_vertices
+        
+      
+      
+        
+      
+      
+        
+      
+      
+        
+      
+      
+        
+      
+      
+        
+          Edges.shrink
+        
+      
+      
+        
+          Edges.single_edges
+        
+      
+      
+        
+          Edges.sorted_edges
+        
+      
+      
+        
+          Edges.to_vertices
+        
+      
+      
+        
+          Edges.unique_edges
+        
+      
+      
+        
+      
+      
+        
+          Edges.update_edges
+        
+      
+      
+        
+          Edges.update_elements
+        
+      
+      
+        
+      
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+      :toctree:
+   
+      
+         Edges.const_edges
+      
+      
+         Edges.const_elements
+      
+      
+      
+         Edges.edges
+      
+      
+         Edges.elements
+      
+      
+         Edges.kind
+      
+      
+      
+      
+      
+         Edges.whatami
+      
+   
+   

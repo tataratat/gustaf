@@ -1,0 +1,172 @@
+gustaf.volumes.Volumes
+======================
+
+.. currentmodule:: gustaf.volumes
+
+.. autoclass:: Volumes
+   :show-inheritance:
+
+   
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+      :toctree:
+   
+      
+      
+        
+      
+      
+        
+      
+      
+        
+      
+      
+        
+      
+      
+        
+      
+      
+        
+      
+      
+        
+      
+      
+        
+      
+      
+        
+          Volumes.faces
+        
+      
+      
+        
+      
+      
+        
+      
+      
+        
+      
+      
+        
+      
+      
+        
+      
+      
+        
+      
+      
+        
+      
+      
+        
+      
+      
+        
+      
+      
+        
+      
+      
+        
+      
+      
+        
+      
+      
+        
+          Volumes.sorted_volumes
+        
+      
+      
+        
+      
+      
+        
+          Volumes.to_faces
+        
+      
+      
+        
+      
+      
+        
+      
+      
+        
+      
+      
+        
+      
+      
+        
+      
+      
+        
+          Volumes.unique_volumes
+        
+      
+      
+        
+      
+      
+        
+      
+      
+        
+          Volumes.update_faces
+        
+      
+      
+        
+      
+      
+        
+          Volumes.update_volumes
+        
+      
+      
+        
+          Volumes.whatareyou
+        
+      
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+      :toctree:
+   
+      
+      
+      
+      
+         Volumes.const_faces
+      
+      
+      
+         Volumes.const_volumes
+      
+      
+      
+         Volumes.kind
+      
+      
+      
+      
+      
+         Volumes.volumes
+      
+      
+   
+   

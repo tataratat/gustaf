@@ -1,0 +1,6 @@
+gustaf.helpers.options.make\_valid\_options
+===========================================
+
+.. currentmodule:: gustaf.helpers.options
+
+.. autofunction:: make_valid_options

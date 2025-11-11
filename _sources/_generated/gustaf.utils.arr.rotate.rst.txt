@@ -1,0 +1,6 @@
+gustaf.utils.arr.rotate
+=======================
+
+.. currentmodule:: gustaf.utils.arr
+
+.. autofunction:: rotate

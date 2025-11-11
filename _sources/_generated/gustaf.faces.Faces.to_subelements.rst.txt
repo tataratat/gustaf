@@ -1,0 +1,6 @@
+gustaf.faces.Faces.to\_subelements
+==================================
+
+.. currentmodule:: gustaf.faces
+
+.. automethod:: Faces.to_subelements

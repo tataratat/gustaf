@@ -1,0 +1,47 @@
+.. _gustaf.utils.arr:
+
+gustaf.utils.arr
+================
+
+.. automodule:: gustaf.utils.arr
+
+   
+   
+   
+
+   
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+      :toctree:
+   
+      bounds
+      bounds_diagonal
+      bounds_mean
+      bounds_norm
+      close_rows
+      cross3d
+      derivatives_to_normals
+      enforce_len
+      is_one_of_shapes
+      is_shape
+      make_c_contiguous
+      rotate
+      rotation_matrix
+      rotation_matrix_around_axis
+      select_with_ranges
+      unique_rows
+   
+   
+
+   
+   
+   
+
+   
+   
+   
+
+
+

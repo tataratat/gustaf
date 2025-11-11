@@ -1,0 +1,6 @@
+gustaf.create.faces.vertex\_normals
+===================================
+
+.. currentmodule:: gustaf.create.faces
+
+.. autofunction:: vertex_normals

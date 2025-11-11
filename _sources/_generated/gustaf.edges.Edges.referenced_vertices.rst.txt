@@ -1,0 +1,6 @@
+gustaf.edges.Edges.referenced\_vertices
+=======================================
+
+.. currentmodule:: gustaf.edges
+
+.. automethod:: Edges.referenced_vertices

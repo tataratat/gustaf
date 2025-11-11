@@ -1,0 +1,6 @@
+gustaf.volumes.Volumes.sorted\_volumes
+======================================
+
+.. currentmodule:: gustaf.volumes
+
+.. automethod:: Volumes.sorted_volumes

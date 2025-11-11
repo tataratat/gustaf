@@ -1,0 +1,6 @@
+gustaf.faces.Faces.BC
+=====================
+
+.. currentmodule:: gustaf.faces
+
+.. autoattribute:: Faces.BC

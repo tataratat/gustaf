@@ -1,0 +1,6 @@
+gustaf.helpers.data.ComputedData.depends\_on
+============================================
+
+.. currentmodule:: gustaf.helpers.data
+
+.. automethod:: ComputedData.depends_on

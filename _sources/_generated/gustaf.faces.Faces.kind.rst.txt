@@ -1,0 +1,6 @@
+gustaf.faces.Faces.kind
+=======================
+
+.. currentmodule:: gustaf.faces
+
+.. autoattribute:: Faces.kind

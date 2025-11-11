@@ -1,0 +1,6 @@
+gustaf.utils.arr.rotation\_matrix\_around\_axis
+===============================================
+
+.. currentmodule:: gustaf.utils.arr
+
+.. autofunction:: rotation_matrix_around_axis

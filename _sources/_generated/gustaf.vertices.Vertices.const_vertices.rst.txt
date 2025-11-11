@@ -1,0 +1,6 @@
+gustaf.vertices.Vertices.const\_vertices
+========================================
+
+.. currentmodule:: gustaf.vertices
+
+.. autoproperty:: Vertices.const_vertices

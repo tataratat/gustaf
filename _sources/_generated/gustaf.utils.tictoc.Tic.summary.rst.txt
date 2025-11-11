@@ -1,0 +1,6 @@
+gustaf.utils.tictoc.Tic.summary
+===============================
+
+.. currentmodule:: gustaf.utils.tictoc
+
+.. automethod:: Tic.summary

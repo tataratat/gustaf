@@ -1,0 +1,6 @@
+gustaf.faces.Faces.faces
+========================
+
+.. currentmodule:: gustaf.faces
+
+.. autoproperty:: Faces.faces

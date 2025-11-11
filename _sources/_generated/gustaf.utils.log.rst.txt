@@ -1,0 +1,36 @@
+.. _gustaf.utils.log:
+
+gustaf.utils.log
+================
+
+.. automodule:: gustaf.utils.log
+
+   
+   
+   
+
+   
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+      :toctree:
+   
+      configure
+      debug
+      info
+      prepended_log
+      warning
+   
+   
+
+   
+   
+   
+
+   
+   
+   
+
+
+

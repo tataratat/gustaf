@@ -1,0 +1,6 @@
+gustaf.edges.Edges.update\_elements
+===================================
+
+.. currentmodule:: gustaf.edges
+
+.. automethod:: Edges.update_elements

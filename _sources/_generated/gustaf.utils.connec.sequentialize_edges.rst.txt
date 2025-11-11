@@ -1,0 +1,6 @@
+gustaf.utils.connec.sequentialize\_edges
+========================================
+
+.. currentmodule:: gustaf.utils.connec
+
+.. autofunction:: sequentialize_edges

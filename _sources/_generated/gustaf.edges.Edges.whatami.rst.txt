@@ -1,0 +1,6 @@
+gustaf.edges.Edges.whatami
+==========================
+
+.. currentmodule:: gustaf.edges
+
+.. autoproperty:: Edges.whatami

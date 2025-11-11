@@ -1,0 +1,6 @@
+gustaf.vertices.Vertices.remove\_vertices
+=========================================
+
+.. currentmodule:: gustaf.vertices
+
+.. automethod:: Vertices.remove_vertices
